@@ -7,7 +7,6 @@ import '../styles/fa/css/brands.min.css';
 import faviconSvg from '../assets/images/favicon.svg';
 import favicon32 from '../assets/images/favicon_32x32.png';
 import favicon16 from '../assets/images/favicon_16x16.png';
-import faviconIco from '../assets/images/favicon.ico';
 import appleTouchIcon from '../assets/images/logo_512x512_white.png';
 
 const { title, description, holidayMessage } = Astro.props;
@@ -41,12 +40,10 @@ const { title, description, holidayMessage } = Astro.props;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="/fa/css/brands.min.css">
-
     <link rel="icon" type="image/svg+xml" href={faviconSvg.src}>
     <link rel="icon" type="image/png" sizes="32x32" href={favicon32.src}>
     <link rel="icon" type="image/png" sizes="16x16" href={favicon16.src}>
-    <link rel="shortcut icon" href={faviconIco}>
+    <link rel="shortcut icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href={appleTouchIcon.src}>
 
     <link rel="manifest" href="/manifest.json">
