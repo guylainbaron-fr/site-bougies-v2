@@ -1,7 +1,7 @@
 ---
 import HolidayBar from './HolidayBar.astro';
 import { Image } from 'astro:assets';
-// On importe le logo depuis le nouveau dossier assets
+// On importe le logo depuis le dossier assets
 import logoEntreprise from '../assets/images/logo-entreprise.webp';
 
 const { holidayMessage } = Astro.props;
@@ -19,8 +19,8 @@ const { holidayMessage } = Astro.props;
                         <Image 
                             src={logoEntreprise} 
                             alt="Logo Jean-François & Aniuta" 
-                            width={88} 
-                            height={88}
+                            width={176} 
+                            height={176}
                             loading="eager"
                             fetchpriority="high"
                         />
@@ -68,7 +68,6 @@ const { holidayMessage } = Astro.props;
             link.classList.remove('active');
 
             // On l'ajoute si le chemin correspond
-            // On gère "/" et les chemins qui finiraient par .html ou sans
             if (path === href || (path === "/" && href === "/index")) {
                 link.classList.add('active');
             }
