@@ -2,8 +2,17 @@
 // 1. Génération de l'année
 const currentYear = new Date().getFullYear();
 
-// 2. Import de FontAwesome (Ajuste le chemin si besoin)
+// 2. Import des styles et polices (Comme dans MainLayout)
+import '../styles/style.css';
 import '../styles/fa/css/brands.min.css';
+import '@fontsource/poppins/400.css';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
+
+// 3. Import des images pour les favicons (Ajuste les chemins si besoin)
+import faviconSvg from '../assets/images/favicon.svg';
+import favicon32 from '../assets/images/favicon_32x32.png';
+import favicon16 from '../assets/images/favicon_16x16.png';
 ---
 <!DOCTYPE html>
 <html lang="fr">
@@ -16,16 +25,12 @@ import '../styles/fa/css/brands.min.css';
 
     <title>Page perdue | Jean François & ANIUTA</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    {/* ON A SUPPRIMÉ LE LIEN GOOGLE FONTS ICI - L'IMPORT JS S'EN OCCUPE */}
 
-    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-    <link rel="icon" type="image/png" sizes="144x144" href="/images/logo_144.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_16x16.png">
-    <link rel="shortcut icon" href="/images/favicon.ico">
-    <link rel="icon" type="image/png" sizes="112x112" href="/images/logo_112x112_white.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/images/logo_512x512_white.png">
-    <link rel="apple-touch-icon" href="/images/logo_512x512_white.png">
+    <link rel="icon" type="image/svg+xml" href={faviconSvg.src}>
+    <link rel="icon" type="image/png" sizes="32x32" href={favicon32.src}>
+    <link rel="icon" type="image/png" sizes="16x16" href={favicon16.src}>
+    <link rel="shortcut icon" href="/favicon.ico">
     <link rel="manifest" href="/manifest.json">
 
     <style>
