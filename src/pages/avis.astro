@@ -1,0 +1,107 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+---
+
+<MainLayout 
+  title="Livre d'Or : Avis Clients | Jean-François & Aniuta"
+  description="Consultez les avis de nos clients sur nos créations artisanales en Lozère et laissez votre propre témoignage sur notre livre d'or."
+  holidayMessage="<strong>Livre d'Or :</strong> votre satisfaction est notre plus belle création."
+>
+    <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "LocalBusiness",
+          "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+          "name": "Jean-François & Aniuta",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "5",
+            "reviewCount": "5" 
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://jf-aniuta.vercel.app/avis#webpage",
+          "url": "https://jf-aniuta.vercel.app/avis",
+          "name": "Livre d'Or et Avis Clients | Jean-François & Aniuta"
+        }
+      ]
+    }
+    </script>
+
+    <section id="apropos-livre">
+        <div class="container">
+            <h2>Le Livre d'Or</h2>
+            <p>
+                Chaque pièce qui sort de notre atelier est le fruit d'un travail passionné. Mais pour qu'un petit atelier comme le nôtre puisse continuer à sculpter et à créer, <span class="highlight-atelier">votre voix est essentielle</span>. 
+                <br><br>
+                En partageant votre expérience, vous nous aidez à gagner en visibilité et permettez à l'artisanat lozérien de rayonner.
+            </p>
+        </div>
+    </section>
+
+    <section id="avis-google-unique">
+        <div class="container">
+            
+            <div class="google-modern-title">Avis Clients Google</div>
+
+            <div class="grille-google">
+                <article class="carte-google-avis">
+                    <div>
+                        <div class="google-stars">★★★★★</div>
+                        <p class="google-avis-texte">"Produits de qualités. Que ce soit les bougies parfumées ou bien les coffrets pour Noël c'est super bien réalisé. Les produits sont de qualités !"</p>
+                    </div>
+                    <span class="google-avis-auteur">— Paco Zapata</span>
+                </article>
+
+                <article class="carte-google-avis">
+                    <div>
+                        <div class="google-stars">★★★★★</div>
+                        <p class="google-avis-texte">"Bougies et coffrets au top, vraiment très qualitatif !"</p>
+                    </div>
+                    <span class="google-avis-auteur">— MECS Le sentier</span>
+                </article>
+
+                <article class="carte-google-avis">
+                    <div>
+                        <div class="google-stars">★★★★★</div>
+                        <p class="google-avis-texte">"Bougies magnifiques et originales !les cèpes sont d'un réalisme incroyable et apportent une vraie touche chaleureuse à la deco."</p>
+                    </div>
+                    <span class="google-avis-auteur">— sandra gaugain</span>
+                </article>
+
+                <article class="carte-google-avis">
+                    <div>
+                        <div class="google-stars">★★★★★</div>
+                        <p class="google-avis-texte">"De très belles réalisations, produits de qualités personne très agréable et à l'écoute lorsque j'ai passé ma commande , la livraison est rapide."</p>
+                    </div>
+                    <span class="google-avis-auteur">— billy chevet</span>
+                </article>
+
+                <article class="carte-google-avis">
+                    <div>
+                        <div class="google-stars">★★★★★</div>
+                        <p class="google-avis-texte">"Je recommande vivement !!! Les produits sont de bonne qualité et sont très réalistes. Le thème correspond complètement à notre région !! Je félicite et remercie Jean François et Aniuta pour leur travail d’exception !!! Bravo à vous 😉 …"</p>
+                    </div>
+                    <span class="google-avis-auteur">— lionel de ranieri</span>
+                </article>
+
+                <article class="carte-google-avis" style="border: 1px dashed var(--couleur-bordure); opacity: 0.8;">
+                    <div>
+                        <div class="google-stars" style="color: #ccc;">★★★★★</div>
+                        <p class="google-action-titre" style="margin-top: 15px;">Bientôt votre avis ?</p>
+                        <p class="google-avis-texte">Chaque retour est précieux pour faire grandir l'atelier.</p>
+                    </div>
+                </article>
+            </div>
+
+            <div class="google-btn-wrapper">
+                <a href="https://g.page/r/Ccq2wwBX0aHgEBM/review" target="_blank" class="google-btn-red">
+                    <i class="fab fa-google"></i> Soutenir l'atelier sur Google
+                </a>
+            </div>
+        </div>
+    </section>
+</MainLayout>

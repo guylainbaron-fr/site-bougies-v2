@@ -1,0 +1,153 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import VideoItem from '../components/VideoItem.astro'; // 1. On importe le nouveau composant
+import { Image } from 'astro:assets';
+
+// 2. Imports des images fixes
+import afficheMende from '../assets/images/marches/marche_noel_mende_750.webp';
+import miniature1 from '../assets/images/miniature-evenement-1.webp';
+import miniature2 from '../assets/images/miniature-evenement-2.webp';
+
+// 3. Importation dynamique des photos de la galerie
+const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp');
+---
+
+<MainLayout 
+  title="Jean François & ANIUTA | Artisans Sculpteurs et Créateurs de Bougies en Lozère (48)"
+  description="Découvrez l'artisanat du bois et de la bougie de J.F. & Aniuta. Sculptures uniques sur bois local et bougies naturelles parfumées à Chasseradès (Lozère)."
+  holidayMessage="Célébrons ensemble les <strong>instants magiques</strong> de 2026."
+>
+    <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "EventVenue",
+          "@id": "https://jf-aniuta.vercel.app/#venue",
+          "name": "Jean-François & Aniuta en déplacement",
+          "description": "Retrouvez nos créations artisanales sur les marchés et événements en Occitanie.",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Chasseradès",
+            "postalCode": "48250",
+            "addressRegion": "Occitanie",
+            "addressCountry": "FR"
+          }
+        },
+        {
+          "@type": "LocalBusiness",
+          "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+          "name": "Jean-François & Aniuta",
+          "url": "https://jf-aniuta.vercel.app/evenements",
+          "image": "https://jf-aniuta.vercel.app/images/logo_144.png",
+          "telephone": "+33658909835",
+          "sameAs": [
+            "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
+            "https://www.instagram.com/jean_francois_aniuta/",
+            "https://www.tiktok.com/@jeanfrancoisbaron2"
+          ],
+          "location": { "@id": "https://jf-aniuta.vercel.app/#venue" }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://jf-aniuta.vercel.app/evenements#webpage",
+          "url": "https://jf-aniuta.vercel.app/evenements",
+          "name": "Événements et Marchés - Jean-François & Aniuta",
+          "description": "Photos et vidéos de nos marchés artisanaux et événements autour du Mont Lozère.",
+          "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" }
+        }
+      ]
+    }
+    </script>
+
+    <section id="evenements-page">
+        <div class="container">
+            <h2>🗓️ Nos Événements & Marchés</h2>
+            <p class="intro-evenements">
+                Retrouvez Jean-François et Aniuta sur les foires et marchés de la région pour découvrir nos créations artisanales en direct.
+            </p>
+
+            <div id="attente-date"> 
+                <div class="event-empty">
+                    <div class="event-empty-icon">
+                        <div class="css-heart"></div>
+                    </div>
+                    <h3>De nouvelles dates arrivent bientôt !</h3>
+                    <p>Nous préparons actuellement nos prochaines sorties artisanales.</p>
+                    <a href="/contact" class="btn-contact-simple">Nous contacter</a>
+                </div>
+            </div>
+
+            <div id="prochain-evenement" class="hidden"> 
+                </div>
+        </div>
+    </section>
+
+    <section id="autres-dates">
+        <div class="container">
+            <h2>Nos Prochaines Dates de Marché</h2>
+            <div class="events-grid">
+                <div class="event-card event-past">
+                    <div class="event-date">
+                        <span class="day">12-14</span>
+                        <span class="month">Déc.</span>
+                    </div>
+                    <div class="event-details">
+                        <h3>Marché de Noël de Mende (48)</h3>
+                        <p><strong>Lieu :</strong> Place et halle au Blé & chapelle des pénitents</p>
+                        <p><strong>Horaires :</strong> Terminé (2025)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="souvenirs">
+        <div class="container">
+            <h2>📸 Souvenirs de Nos Stands et Marchés</h2>
+            <div class="affiche-container">
+                <div class="photo-presentation">
+                    <Image 
+                        src={afficheMende} 
+                        alt="Affiche Marché de Noël de Mende" 
+                        width={750} 
+                        height={1078}
+                        loading="eager"
+                    />
+                    <h4>Affiche du Marché de Noël de Mende</h4>
+                </div>
+            </div>
+
+            <div class="photo-gallery"> 
+                {galleryImages.map((img, index) => (
+                    <div class="photo-item">
+                        <Image 
+                            src={img.default} 
+                            alt={`Photo stand ${index + 1}`} 
+                            width={400} 
+                            loading="lazy"
+                        />
+                    </div>
+                ))}
+            </div> 
+        </div> 
+    </section> 
+
+    <section id="evenements-videos">
+        <div class="container">
+            <h2>Nos Événements en Vidéo</h2>
+            <div class="video-gallery">
+                <VideoItem 
+                    title="L'Ambiance de Notre Stand de Noël"
+                    videoSrc="/videos/video-evenement-1.mp4"
+                    posterImg={miniature1}
+                />
+                <VideoItem 
+                    title="Immersion : Stand Artisanat à Mende"
+                    videoSrc="/videos/video-evenement-2.mp4"
+                    posterImg={miniature2}
+                />
+            </div>
+        </div>
+    </section>
+</MainLayout>

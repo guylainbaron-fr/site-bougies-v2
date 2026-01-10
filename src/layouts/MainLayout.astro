@@ -1,0 +1,76 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/style.css';
+import '../styles/fa/css/brands.min.css';
+
+import faviconSvg from '../assets/images/favicon.svg';
+import favicon32 from '../assets/images/favicon_32x32.png';
+import favicon16 from '../assets/images/favicon_16x16.png';
+import faviconIco from '../assets/images/favicon.ico';
+import appleTouchIcon from '../assets/images/logo_512x512_white.png';
+
+const { title, description, holidayMessage } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:title" content={title || "JF & A"}>
+    <meta property="og:site_name" content="JF & A">
+    <meta property="og:url" content="https://jf-aniuta.vercel.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://jf-aniuta.vercel.app/images/logo_512x512_white.png">
+    <meta property="og:description" content={description || "JF & A — Sculptures uniques sur bois local et bougies naturelles parfumées."}>
+    
+    <meta name="google-site-verification" content="googleca94fc0ed3c52975" />
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content={title || "JF & A"}>
+    <meta name="twitter:description" content={description || "JF & A — Sculptures uniques sur bois local et bougies naturelles parfumées."}>
+    <meta name="twitter:image" content="https://jf-aniuta.vercel.app/images/logo_512x512_white.png">
+
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/fa/css/brands.min.css">
+
+    <link rel="icon" type="image/svg+xml" href={faviconSvg.src}>
+    <link rel="icon" type="image/png" sizes="32x32" href={favicon32.src}>
+    <link rel="icon" type="image/png" sizes="16x16" href={favicon16.src}>
+    <link rel="shortcut icon" href={faviconIco}>
+    <link rel="apple-touch-icon" href={appleTouchIcon.src}>
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#fdfaf7">
+
+    <slot name="head" />
+</head>
+<body>
+    <Header holidayMessage={holidayMessage} />
+    
+    <main>
+        <slot /> 
+    </main>
+
+    <Footer />
+
+    <script>
+        // Enregistrement du Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .catch(err => console.log('Erreur SW:', err));
+            });
+        }
+    </script>
+</body>
+</html>

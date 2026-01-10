@@ -1,0 +1,29 @@
+---
+// On récupère la classe passée en paramètre (optionnelle)
+const { class: className = "" } = Astro.props;
+---
+
+<span class="email-placeholder" data-class={className}></span>
+
+<script>
+    const revealEmails = () => {
+        const placeholders = document.querySelectorAll('.email-placeholder');
+        
+        placeholders.forEach(span => {
+            if (span.getAttribute('data-filled') !== 'true') {
+                const user = "jeanfrancoisbaron";
+                const domain = "laposte.net";
+                const email = `${user}@${domain}`;
+                
+                // On récupère la classe qu'on a stockée dans l'attribut data-class
+                const extraClass = span.getAttribute('data-class');
+                
+                // On injecte le lien avec la classe spécifique
+                span.outerHTML = `<a href="mailto:${email}" class="${extraClass}">${email}</a>`;
+            }
+        });
+    }
+
+    revealEmails();
+    document.addEventListener('astro:page-load', revealEmails);
+</script>

@@ -1,0 +1,51 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  title: string;
+  videoSrc: string;
+  posterImg: any; // On passe l'objet image d'Astro
+  width?: string;
+  height?: string;
+}
+
+const { title, videoSrc, posterImg, width = "270", height = "270" } = Astro.props;
+---
+
+<div class="video-item">
+    <h4>{title}</h4>
+    <div class="video-responsive">
+        <video 
+            controls 
+            preload="none" 
+            poster={posterImg.src} 
+            width={width} 
+            height={height}
+            playsinline
+        >
+            <source src={videoSrc} type="video/mp4">
+            Votre navigateur ne supporte pas la balise vidéo.
+        </video>
+    </div>
+</div>
+
+<script>
+    // Ce script ne sera chargé qu'UNE SEULE FOIS sur la page, 
+    // même si tu as 10 composants VideoItem.
+    const setupVideoLogic = () => {
+        const allVideos = document.querySelectorAll('video');
+        allVideos.forEach(video => {
+            video.addEventListener('play', () => {
+                allVideos.forEach(otherVideo => {
+                    if (otherVideo !== video) {
+                        (otherVideo as HTMLVideoElement).pause();
+                    }
+                });
+            });
+        });
+    }
+
+    // Astro gère intelligemment l'exécution
+    setupVideoLogic();
+    document.addEventListener('astro:page-load', setupVideoLogic);
+</script>

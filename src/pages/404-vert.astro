@@ -1,0 +1,159 @@
+---
+// 1. Génération de l'année
+const currentYear = new Date().getFullYear();
+
+// 2. Import de FontAwesome (Ajuste le chemin si besoin)
+import '../styles/fa/css/brands.min.css';
+---
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Page non trouvée | Jean François & ANIUTA</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="144x144" href="/images/logo_144.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_16x16.png">
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="112x112" href="/images/logo_112x112_white.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/images/logo_512x512_white.png">
+    <link rel="apple-touch-icon" href="/images/logo_512x512_white.png">
+    <link rel="manifest" href="/manifest.json">
+
+    <style>
+        /* RESET & BASE */
+        * { margin: 0; padding: 0; box-sizing: border-box; text-decoration: none; }
+        :root { --vert-artisan: #4a5d23; }
+        
+        html, body { 
+            min-height: 100vh;
+            min-height: 100dvh; 
+            background-color: #ffffff; 
+            color: #333; 
+            font-family: 'Poppins', sans-serif; 
+        }
+
+        body { 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+        }
+
+        /* --- CONTENU PRINCIPAL --- */
+        main { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            padding: 40px 20px; 
+        }
+
+        /* Animation Scie */
+        .scie-box { position: relative; width: 80px; height: 80px; margin-bottom: 30px; }
+        .scie-dentelle { 
+            width: 100%; height: 100%; 
+            border: 7px dashed var(--vert-artisan); 
+            border-radius: 50%; 
+            animation: rotation 5s linear infinite; 
+        }
+        .scie-centre { 
+            position: absolute; top: 50%; left: 50%; 
+            width: 15px; height: 15px; 
+            background-color: var(--vert-artisan); 
+            border-radius: 50%; 
+            transform: translate(-50%, -50%); 
+        }
+
+        h1 { font-size: clamp(3.5rem, 10vw, 5rem); color: var(--vert-artisan); line-height: 1; }
+        h2 { font-size: 1.4rem; margin: 10px 0 15px; color: #333; }
+        p { max-width: 450px; color: #666; margin-bottom: 25px; line-height: 1.4; font-size: 0.95rem; }
+
+        .btn-retour { 
+            padding: 14px 30px; 
+            background-color: var(--vert-artisan); 
+            color: #ffffff !important; 
+            border-radius: 6px; 
+            font-weight: 600; 
+            transition: opacity 0.3s ease;
+        }
+        .btn-retour:hover { opacity: 0.8; }
+
+        /* --- PIED DE PAGE --- */
+        footer { 
+            padding-bottom: 40px; 
+            padding-top: 20px;
+            text-align: center; 
+            background-color: #ffffff !important; 
+        }
+
+        .social-links { margin-bottom: 25px; }
+
+        .social-links a { 
+            margin: 0 8px; 
+            color: var(--vert-artisan) !important; 
+            font-size: 1.1rem; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 42px; 
+            height: 42px; 
+            background: transparent !important; 
+            border: 1px solid #ddd !important; 
+            border-radius: 50% !important; 
+            transition: 0.3s ease;
+        }
+        .social-links a:hover { border-color: var(--vert-artisan) !important; transform: translateY(-3px); }
+
+        .footer-text { font-size: 0.85rem; color: var(--vert-artisan); margin: 4px 0; display: block; }
+        .legal-link { color: var(--vert-artisan) !important; text-decoration: underline; font-weight: 600; }
+
+        @keyframes rotation { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        @media (max-width: 480px) {
+            main { padding-top: 60px; }
+            h1 { font-size: 3.5rem; }
+            h2 { font-size: 1.2rem; }
+            footer { padding-bottom: 60px; }
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <div class="scie-box">
+            <div class="scie-dentelle"></div>
+            <div class="scie-centre"></div>
+        </div>
+        <h1>404</h1>
+        <h2>Oups ! Un détour imprévu...</h2>
+        <p>Il semble que vous ayez pris un sentier qui n'existe plus. Pas d'inquiétude, l'atelier est juste ici.</p>
+        <a href="/" class="btn-retour">Retourner à l'Accueil</a>
+    </main>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/jean_francois_aniuta/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://wa.me/33658909835" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.tiktok.com/@jeanfrancoisbaron2" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            <a href="https://maps.app.goo.gl/TY3NhqRHVrUwbWwp6" target="_blank" aria-label="Voir l'atelier sur Google Maps"><i class="fab fa-google"></i></a>
+        </div>
+        
+        <span class="footer-text">
+            © <span>{currentYear}</span> Jean François & Aniuta. Tous droits réservés.
+        </span>
+        
+        <span class="footer-text">
+            <a href="/mentions-legales" class="legal-link" title="Consulter les Mentions Légales et Conditions Générales de Vente">Mentions Légales & CGV</a>
+        </span>
+    </footer>
+
+</body>
+</html>
