@@ -59,33 +59,6 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
             body { height: 100vh; overflow-y: hidden; }
         }
 
-        /* BANDEAU DE NOËL ÉPURÉ */
-        .holiday-bar {
-            background-color: var(--fond-ecume);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 12px;
-            width: 100%;
-            border-bottom: 1px solid rgba(61, 43, 31, 0.1);
-            z-index: 1000;
-            flex-shrink: 0;
-        }
-
-        .holiday-text {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            text-align: center;
-            background: linear-gradient(to right, #3d2b1f 20%, var(--or-doux) 50%, #3d2b1f 80%);
-            background-size: 200% auto;
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shine-right 6s linear infinite;
-        }
-
         /* LE GRAND FLOCON */
         .snowflake-artisan {
             position: relative; 
@@ -180,21 +153,13 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
         }
 
         @keyframes rotate-snow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes shine-right { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
 
         @media (max-width: 768px) {
-            .holiday-text { font-size: 0.65rem; max-width: 90%; }
-            main { justify-content: flex-start; padding-top: 50px; }
+            main { justify-content: flex-start; padding-top: 80px; }
         }
     </style>
 </head>
 <body>
-
-<div class="holiday-bar" role="complementary" aria-label="Vœux de la Nouvelle Année 2026">
-    <span class="holiday-text">
-        <strong>2026 s'éveille :</strong> même sous le givre, la flamme de la création reste vive.
-    </span>
-</div>
 
 <main>
     <div class="snowflake-artisan" aria-hidden="true">
