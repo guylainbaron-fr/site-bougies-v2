@@ -1,21 +1,16 @@
 ---
-// On récupère le message envoyé par le Layout
+// 1. L'INTERRUPTEUR (true = affiché, false = masqué)
+const showHolidayBar = false; 
+
+// 2. On récupère le message envoyé par le Layout
 const { message } = Astro.props;
 ---
-<div class="holiday-bar glow" role="complementary" aria-label="Vœux de la Nouvelle Année 2026">
-    <div class="snow-group" aria-hidden="true">
-        <div class="snowflake-css"></div>
-        <div class="snowflake-css"></div>
-        <div class="snowflake-css"></div>
+
+{showHolidayBar && (
+    <div class="holiday-bar glow" role="complementary" aria-label="Vœux de la Nouvelle Année 2026">
+        {/* Flocons retirés pour cohérence, on garde juste le texte */}
+        <span class="holiday-text">
+            <Fragment set:html={message} />
+        </span>
     </div>
-    
-    <span class="holiday-text">
-        <Fragment set:html={message} />
-    </span>
-    
-    <div class="snow-group" aria-hidden="true">
-        <div class="snowflake-css"></div>
-        <div class="snowflake-css"></div>
-        <div class="snowflake-css"></div>
-    </div>
-</div>
+)}
