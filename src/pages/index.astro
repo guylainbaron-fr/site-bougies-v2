@@ -14,54 +14,76 @@ import aproposImg from '../assets/images/accueil-h2-3.webp';
     description="Découvrez l'artisanat du bois et de la bougie de J.F. & Aniuta. Sculptures uniques sur bois local et bougies naturelles parfumées à Chasseradès (Lozère)."
     holidayMessage="Que l’année <strong>2026</strong> s’illumine de mille feux... Meilleurs Vœux !"
 >
-    <script type="application/ld+json" slot="head">
+<script type="application/ld+json" slot="head">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
+      "@type": "Organization",
+      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "name": "Jean-François & Aniuta",
+      "url": "https://jf-aniuta.vercel.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://jf-aniuta.vercel.app/#logo",
+        "url": "https://jf-aniuta.vercel.app/images/logo_144.png",
+        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_144.png",
+        "width": 144,
+        "height": 144,
+        "caption": "Jean-François & Aniuta"
+      },
+      "image": { "@id": "https://jf-aniuta.vercel.app/#logo" },
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
+        "https://www.instagram.com/jean_francois_aniuta/",
+        "https://www.tiktok.com/@jeanfrancoisbaron2",
+        "https://wa.me/33658909835"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://jf-aniuta.vercel.app/#website",
+      "url": "https://jf-aniuta.vercel.app/",
+      "name": "Jean-François & Aniuta - Créations Artisanales",
+      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" },
+      "inLanguage": "fr-FR"
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+      "name": "Jean-François & Aniuta - Atelier Artisanal (Sculpture & Bougies)",
+      "url": "https://jf-aniuta.vercel.app/",
+      "telephone": "+33658909835",
+      "priceRange": "$$",
+      "image": "https://jf-aniuta.vercel.app/images/logo_144.png",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Village de Chasseradès",
+        "addressLocality": "Mont Lozère et Goulet",
+        "postalCode": "48250",
+        "addressRegion": "Occitanie",
+        "addressCountry": "FR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 44.5513388,
+        "longitude": 3.8251625
+      },
+      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" },
+      "openingHoursSpecification": [
         {
-          "@type": "Organization",
-          "@id": "https://jf-aniuta.vercel.app/#organization",
-          "name": "Jean-François & Aniuta",
-          "url": "https://jf-aniuta.vercel.app/",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://jf-aniuta.vercel.app/images/logo_144.png",
-            "width": 144,
-            "height": 144
-          },
-          "image": "https://jf-aniuta.vercel.app/images/logo_144.png",
-          "sameAs": [
-            "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
-            "https://www.instagram.com/jean_francois_aniuta/",
-            "https://www.tiktok.com/@jeanfrancoisbaron2",
-            "https://wa.me/33658909835"
-          ]
-        },
-        {
-          "@type": "WebSite",
-          "@id": "https://jf-aniuta.vercel.app/#website",
-          "url": "https://jf-aniuta.vercel.app/",
-          "name": "Jean-François & Aniuta - Créations Artisanales",
-          "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" }
-        },
-        {
-          "@type": "LocalBusiness",
-          "name": "Jean-François & Aniuta",
-          "@id": "https://jf-aniuta.vercel.app/#localbusiness",
-          "url": "https://jf-aniuta.vercel.app/",
-          "telephone": "+33658909835",
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "Chasseradès",
-            "addressLocality": "Mont Lozère et Goulet",
-            "postalCode": "48250",
-            "addressRegion": "Occitanie",
-            "addressCountry": "FR"
-          }
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+          ],
+          "opens": "07:00",
+          "closes": "19:00"
         }
       ]
     }
-    </script>
+  ]
+}
+</script>
 
     <section id="hero">
         {/* Ici, Astro gère automatiquement le srcset et la compression */}
@@ -73,6 +95,8 @@ import aproposImg from '../assets/images/accueil-h2-3.webp';
             fetchpriority="high"
             width={1435}
             height={708}
+            widths={[400, 800, 1435]}
+            sizes="(max-width: 768px) 400px, 1435px"
         />
         <div class="container">
             <h1>L'Héritage Lozérien : Maîtres Sculpteurs et Créateurs de Bougies Artisanales.</h1> 
