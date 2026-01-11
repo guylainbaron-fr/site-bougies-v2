@@ -3137,14 +3137,14 @@ h2::after {
 .google-avis-texte {
     font-family: var(--font-secondaire);
     font-style: italic;
-    color: #333;
+    color: #202124;
     line-height: 1.7;
     margin-bottom: 20px;
 }
 .google-avis-auteur {
-    color: #ea4335;
+    color: #d93025;
     font-weight: 700;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
 }
 .google-action-titre {
@@ -3154,7 +3154,7 @@ h2::after {
     margin-bottom: 5px;
 }
 .google-action-sous-titre {
-    color: #666;
+    color: #3c4043;
     font-size: 0.85rem;
 }
 
