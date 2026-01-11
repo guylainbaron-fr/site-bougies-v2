@@ -110,9 +110,12 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
                     <Image 
                         src={afficheMende} 
                         alt="Affiche Marché de Noël de Mende - Édition 2025" 
-                        width={400} 
-                        height={575}
+                        width={350} 
+                        height={500}
                         loading="eager"
+                        fetchpriority="high"
+                        decoding="async"
+                        quality={80}
                     />
                     <h3>Affiche du Marché de Noël de Mende</h3>
                 </div>
@@ -124,8 +127,11 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
                         <Image 
                             src={img.default} 
                             alt={`Photo de notre stand artisanal numéro ${index + 1}`} 
-                            width={400} 
+                            width={380}
+                            height={285}
                             loading="lazy"
+                            decoding="async"
+                            quality={80}
                         />
                     </div>
                 ))}
