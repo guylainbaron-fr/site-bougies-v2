@@ -8,9 +8,9 @@ import imageAtelier from '../assets/images/image-contact-atelier.webp';
 ---
 
 <MainLayout 
-    title="Contactez les Artisans du Bois et Bougie | Atelier Lozère - J.F. & ANIUTA"
-    description="Vous avez une question sur nos sculptures ou nos bougies ? Contactez-nous par téléphone, e-mail, ou visitez notre atelier à Chasseradès (48)."
-    holidayMessage="Projetez vos <strong>envies de lumière</strong> pour cette nouvelle année."
+  title="Contactez les Artisans du Bois et Bougie | Atelier Lozère - J.F. & ANIUTA"
+  description="Vous avez une question sur nos sculptures ou nos bougies ? Contactez-nous par téléphone, e-mail, ou visitez notre atelier à Chasseradès (48)."
+  holidayMessage="Projetez vos <strong>envies de lumière</strong> pour cette nouvelle année."
 >
     <script type="application/ld+json" slot="head">
     {
@@ -111,7 +111,16 @@ import imageAtelier from '../assets/images/image-contact-atelier.webp';
                     <h4>Où nous trouver ?</h4>
                     
                     <div class="map-container">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2843.2328154685383!2d3.8251625000000007!3d44.5513388!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12b49b6c0d140a75%3A0xe0a1d15700c3b6ca!2sJean-Fran%C3%A7ois%20%26%20Aniuta%20-%20Atelier%20Artisanal%20(Sculpture%20%26%20Bougies)!5e0!3m2!1sfr!2sfr!4v1767542273786!5m2!1sfr!2sfr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2843.2328154685383!2d3.8251625000000007!3d44.5513388!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12b49b6c0d140a75%3A0xe0a1d15700c3b6ca!2sJean-Fran%C3%A7ois%20%26%20Aniuta%20-%20Atelier%20Artisanal%20(Sculpture%20%26%20Bougies)!5e0!3m2!1sfr!2sfr!4v1767542273786!5m2!1sfr!2sfr" 
+                            title="Localisation de l'Atelier Jean-François & Aniuta"
+                            width="600" 
+                            height="450" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
                     </div>
                 </div> 
             </div> 
@@ -124,7 +133,6 @@ import imageAtelier from '../assets/images/image-contact-atelier.webp';
         const newsletterForm = document.getElementById('sib-form') as HTMLFormElement;
         const successMsg = document.getElementById('sib-success');
 
-        // Vérification si déjà inscrit (LocalStorage)
         if (localStorage.getItem('newsletter_inscrit') === 'true') {
             if (newsletterForm) newsletterForm.style.display = 'none';
             if (successMsg) {
@@ -137,7 +145,6 @@ import imageAtelier from '../assets/images/image-contact-atelier.webp';
             newsletterForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                // Protection Anti-Spam (Honeypot)
                 const hpField = newsletterForm.querySelector('input[name*="hp"]') as HTMLInputElement;
                 if (hpField && hpField.value !== "") {
                     newsletterForm.style.display = 'none';
@@ -168,8 +175,6 @@ import imageAtelier from '../assets/images/image-contact-atelier.webp';
         }
     }
 
-    // Lancement au chargement initial
     handleNewsletter();
-    // Lancement lors du changement de page (Astro View Transitions)
     document.addEventListener('astro:page-load', handleNewsletter);
 </script>
