@@ -158,8 +158,14 @@ import souvenirsImg from '../assets/images/guylain-et-jeanfrancois.webp';
         const hasMouse = window.matchMedia('(pointer: fine)').matches;
 
         if (imgContainer && img && hasMouse) {
+            let rect: any;
+
+            imgContainer.addEventListener('mouseenter', () => {
+                rect = imgContainer.getBoundingClientRect();
+            });
+
             imgContainer.addEventListener('mousemove', (e: any) => {
-                const rect = imgContainer.getBoundingClientRect();
+                if (!rect) rect = imgContainer.getBoundingClientRect();
                 const x = ((e.clientX - rect.left) / rect.width) * 100;
                 const y = ((e.clientY - rect.top) / rect.height) * 100;
                 img.style.transformOrigin = `${x}% ${y}%`;
