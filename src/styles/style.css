@@ -2052,7 +2052,7 @@ h2::after {
     display: none !important;
 }
 /* ==========================================================================
-   SECTION ÉVÉNEMENTS & MARCHÉS : IDENTITÉ COCO & SABLE
+   SECTION ÉVÉNEMENTS & MARCHÉS : IDENTITÉ COCO & SABLE (CORRIGÉ ACCESSIBILITÉ)
    ========================================================================== */
 
 /* 1. GRILLE ET CARTES D'ÉVÉNEMENTS */
@@ -2153,25 +2153,45 @@ h2::after {
     border-radius: 50%;
 }
 
-/* 4. ÉVÉNEMENTS PASSÉS */
+/* 4. ÉVÉNEMENTS PASSÉS - STYLE CHALEUREUX & ACCESSIBLE */
 .event-card.event-past {
-    opacity: 0.6;
-    background: var(--fond-sable);
-    border-left: 4px solid var(--sable-dore);
-    filter: grayscale(0.8);
+    /* Au lieu du gris, on utilise ton beige de section (Sable) */
+    background: var(--fond-sable); 
+    border: 1px dashed var(--bois-flotte); /* Bordure en pointillés pour l'effet "souvenir" */
+    border-left: 4px solid var(--bois-flotte);
+    box-shadow: none;
+    filter: none; /* On enlève le noir et blanc qui était triste */
+}
+
+.event-card.event-past .event-date {
+    /* La date devient plus douce (Bois flotté) au lieu de marron foncé */
+    background-color: var(--bois-flotte);
+    opacity: 0.9;
+}
+
+.event-card.event-past .event-details h3 {
+    /* Le titre reste en Coco mais un peu plus doux */
+    color: var(--brun-coco) !important;
+}
+
+.event-card.event-past .event-details p {
+    /* On garde ton texte galet pour le contraste SEO */
+    color: var(--texte-galet) !important;
 }
 
 .event-card.event-past::after {
-    content: "Terminé";
+    content: "Édition Terminée";
     position: absolute;
     top: 15px; right: 20px;
-    font-size: 0.7rem;
-    font-weight: 700;
+    font-size: 0.65rem;
+    font-weight: 600;
+    /* On utilise un ton "Vieux Papier/Sable" pour le badge */
     color: var(--brun-profond);
     text-transform: uppercase;
-    background: var(--vanille-brume);
-    padding: 3px 12px;
-    border-radius: 4px;
+    background: var(--sable-dore);
+    padding: 4px 10px;
+    border-radius: 20px; /* Badge arrondi plus moderne */
+    letter-spacing: 1px;
 }
 
 /* 5. ÉTAT VIDE */
