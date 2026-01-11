@@ -8,61 +8,71 @@ import EmailProtect from '../components/EmailProtect.astro';
   description="Consultez les mentions légales, les conditions générales de vente (CGV) et la politique de confidentialité du site Jean François & ANIUTA."
   holidayMessage="Une année <strong>2026</strong> placée sous le signe de la confiance."
 >
-    <script type="application/ld+json" slot="head">
+<script type="application/ld+json" slot="head">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "Organization",
-          "@id": "https://jf-aniuta.vercel.app/#organization",
-          "name": "Jean-François & Aniuta",
-          "url": "https://jf-aniuta.vercel.app/",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://jf-aniuta.vercel.app/images/logo_144.png",
-            "width": 144,
-            "height": 144
-          },
-          "address": {
-            "@type": "PostalAddress",
-            "addressLocality": "Chasseradès",
-            "postalCode": "48250",
-            "addressRegion": "Occitanie",
-            "addressCountry": "FR"
-          },
-          "sameAs": [
-            "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
-            "https://www.instagram.com/jean_francois_aniuta/",
-            "https://www.tiktok.com/@jeanfrancoisbaron2",
-            "https://wa.me/33658909835"
-          ]
-        },
-        {
-          "@type": "WebPage",
-          "@id": "https://jf-aniuta.vercel.app/mentions-legales#webpage",
-          "url": "https://jf-aniuta.vercel.app/mentions-legales",
-          "name": "Mentions Légales - Jean-François & Aniuta",
-          "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
-          "breadcrumb": {
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Accueil",
-                "item": "https://jf-aniuta.vercel.app/"
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Mentions Légales"
-              }
-            ]
-          }
-        }
+      "@type": "Organization",
+      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "name": "Jean-François & Aniuta",
+      "url": "https://jf-aniuta.vercel.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://jf-aniuta.vercel.app/images/logo_144.png",
+        "width": 144,
+        "height": 144
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+33658909835",
+        "contactType": "customer service",
+        "areaServed": "FR",
+        "availableLanguage": "French"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Village de Chasseradès",
+        "addressLocality": "Mont Lozère et Goulet",
+        "postalCode": "48250",
+        "addressRegion": "Occitanie",
+        "addressCountry": "FR"
+      },
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
+        "https://www.instagram.com/jean_francois_aniuta/",
+        "https://www.tiktok.com/@jeanfrancoisbaron2",
+        "https://wa.me/33658909835"
       ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://jf-aniuta.vercel.app/mentions-legales#webpage",
+      "url": "https://jf-aniuta.vercel.app/mentions-legales",
+      "name": "Mentions Légales - Jean-François & Aniuta",
+      "description": "Informations légales, conditions de vente et politique de confidentialité de l'Atelier Jean-François & Aniuta.",
+      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Accueil",
+            "item": "https://jf-aniuta.vercel.app/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Mentions Légales",
+            "item": "https://jf-aniuta.vercel.app/mentions-legales"
+          }
+        ]
+      }
     }
-    </script>
+  ]
+}
+</script>
 
     <section id="mentions-legales">
         <div class="container">
