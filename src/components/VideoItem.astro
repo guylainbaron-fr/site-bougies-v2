@@ -1,6 +1,4 @@
 ---
-import { Image } from 'astro:assets';
-
 interface Props {
   title: string;
   videoSrc: string;
@@ -9,11 +7,12 @@ interface Props {
   height?: string;
 }
 
-const { title, videoSrc, posterImg, width = "270", height = "270" } = Astro.props;
+const { title, videoSrc, posterImg, width = "270", height = "410" } = Astro.props;
 ---
 
 <div class="video-item">
-    <h4>{title}</h4>
+    {/* CORRECTION : h3 au lieu de h4 pour la hiérarchie SEO/Accessibilité */}
+    <h3>{title}</h3>
     <div class="video-responsive">
         <video 
             controls 
@@ -22,16 +21,18 @@ const { title, videoSrc, posterImg, width = "270", height = "270" } = Astro.prop
             width={width} 
             height={height}
             playsinline
+            muted
         >
             <source src={videoSrc} type="video/mp4">
+            {/* CORRECTION : Ajout de la balise track pour le 100% Accessibilité */}
+            <track kind="captions" srclang="fr" label="Français" />
             Votre navigateur ne supporte pas la balise vidéo.
         </video>
     </div>
 </div>
 
 <script>
-    // Ce script ne sera chargé qu'UNE SEULE FOIS sur la page, 
-    // même si tu as 10 composants VideoItem.
+    // Ce script ne sera chargé qu'UNE SEULE FOIS sur la page
     const setupVideoLogic = () => {
         const allVideos = document.querySelectorAll('video');
         allVideos.forEach(video => {
@@ -47,5 +48,6 @@ const { title, videoSrc, posterImg, width = "270", height = "270" } = Astro.prop
 
     // Astro gère intelligemment l'exécution
     setupVideoLogic();
+    // Utile si tu utilises Astro View Transitions
     document.addEventListener('astro:page-load', setupVideoLogic);
 </script>
