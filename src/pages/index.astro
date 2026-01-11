@@ -87,17 +87,19 @@ import aproposImg from '../assets/images/accueil-h2-3.webp';
 
     <section id="hero">
         {/* Ici, Astro gère automatiquement le srcset et la compression */}
-        <Image 
-            src={heroHome} 
-            alt="Scènes d'atelier de sculptures et bougies" 
-            class="hero-background-image" 
-            loading="eager"
-            fetchpriority="high"
-            width={1435}
-            height={708}
-            widths={[400, 800, 1435]}
-            sizes="(max-width: 768px) 400px, 1435px"
-        />
+<Image 
+    src={heroHome} 
+    alt="Scènes d'atelier de sculptures et bougies" 
+    class="hero-background-image" 
+    loading="eager"
+    fetchpriority="high"
+    quality={80}
+    width={1435}
+    height={708}
+    widths={[400, 800, 1435]}
+    sizes="(max-width: 768px) 400px, 1435px"
+    decoding="sync"
+/>
         <div class="container">
             <h1>L'Héritage Lozérien : Maîtres Sculpteurs et Créateurs de Bougies Artisanales.</h1> 
             <p>Chaleur du bois sculpté, réconfort de la flamme parfumée. L'artisanat conçu pour enrichir votre intérieur.</p>
