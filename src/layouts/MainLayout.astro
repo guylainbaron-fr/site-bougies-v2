@@ -4,11 +4,15 @@ import Footer from '../components/Footer.astro';
 import '../styles/style.css';
 import '../styles/fa/css/brands.min.css';
 
-// IMPORT DES POLICES EN LOCAL (Installées via npm)
+// IMPORT DES POLICES EN LOCAL
 import '@fontsource/poppins/300.css';
 import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
+
+// Import pour le préchargement dynamique du Hero
+import { getImage } from "astro:assets";
+import heroHome from '../assets/images/hero-home.webp';
 
 import faviconSvg from '../assets/images/favicon.svg';
 import favicon32 from '../assets/images/favicon_32x32.png';
@@ -16,6 +20,14 @@ import favicon16 from '../assets/images/favicon_16x16.png';
 import appleTouchIcon from '../assets/images/logo_512x512_white.png';
 
 const { title, description, holidayMessage } = Astro.props;
+
+// On génère l'URL optimisée pour le préchargement (version mobile)
+const optimizedHero = await getImage({
+  src: heroHome,
+  width: 400,
+  format: 'webp',
+  quality: 80
+});
 ---
 
 <!DOCTYPE html>
@@ -23,6 +35,13 @@ const { title, description, holidayMessage } = Astro.props;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link 
+      rel="preload" 
+      as="image" 
+      href={optimizedHero.src} 
+      fetchpriority="high"
+    />
 
     <meta property="og:locale" content="fr_FR">
     <meta property="og:title" content={title || "JF & A"}>
@@ -41,6 +60,7 @@ const { title, description, holidayMessage } = Astro.props;
 
     <title>{title}</title>
     <meta name="description" content={description}>
+    <link rel="canonical" href="https://jf-aniuta.vercel.app/" />
 
     <link rel="icon" type="image/svg+xml" href={faviconSvg.src}>
     <link rel="icon" type="image/png" sizes="32x32" href={favicon32.src}>
