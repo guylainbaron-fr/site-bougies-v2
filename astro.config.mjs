@@ -1,5 +1,9 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
+// ... tes autres imports
 
-// https://astro.build/config
-export default defineConfig({});
+export default defineConfig({
+  // ... ton adapter Vercel, etc.
+  build: {
+    inlineStylesheets: 'always'
+  }
+});
