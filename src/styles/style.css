@@ -21,6 +21,7 @@
     --brun-coco: #4a3728;       /* Ton marron de footer actuel */
     --brun-profond: #2d221a;    /* Pour les contrastes forts */
     --bois-flotte: #967969;     /* Un marron-sable doux (ancien vert) */
+    --bois-ecorce: #6b564a; /* C'est le même ton que ton bois-flotté, mais en version sombre */
 
     /* --- LES FONDS ET TEXTES --- */
     --fond-ecume: #fdfaf7;      /* Ton blanc dédicace */
@@ -2692,7 +2693,7 @@ h2::after {
 .visiting-card p {
     line-height: 1.8;
     /* Couleur Bois Flotté */
-    color: var(--bois-flotte);
+    color: var(--bois-ecorce);
     margin: 0;
 }
 
@@ -2763,7 +2764,7 @@ h2::after {
 .newsletter-box p {
     font-style: italic;
     font-size: 0.9rem;
-    color: var(--bois-flotte); 
+    color: var(--bois-ecorce); 
     margin: 0 0 18px 0; 
     line-height: 1.5;
 }
@@ -2860,7 +2861,7 @@ h2::after {
 .whatsapp-box-simple p {
     font-style: italic;
     font-size: 0.85rem;
-    color: var(--bois-flotte); /* Utilisation de ton gris/bois existant */
+    color: var(--bois-ecorce); /* Utilisation de ton gris/bois existant */
     line-height: 1.5;
     margin-bottom: 20px;
     padding: 0 10px;
