@@ -7,29 +7,32 @@ import MainLayout from '../layouts/MainLayout.astro';
   description="Consultez les avis de nos clients sur nos créations artisanales en Lozère et laissez votre propre témoignage sur notre livre d'or."
   holidayMessage="<strong>Livre d'Or :</strong> votre satisfaction est notre plus belle création."
 >
-    <script type="application/ld+json" slot="head">
+<script type="application/ld+json" slot="head">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "LocalBusiness",
-          "@id": "https://jf-aniuta.vercel.app/#localbusiness",
-          "name": "Jean-François & Aniuta",
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "5",
-            "reviewCount": "5" 
-          }
-        },
-        {
-          "@type": "WebPage",
-          "@id": "https://jf-aniuta.vercel.app/avis#webpage",
-          "url": "https://jf-aniuta.vercel.app/avis",
-          "name": "Livre d'Or et Avis Clients | Jean-François & Aniuta"
-        }
-      ]
+      "@type": "WebPage",
+      "@id": "https://jf-aniuta.vercel.app/avis/#webpage",
+      "url": "https://jf-aniuta.vercel.app/avis",
+      "name": "Livre d'Or et Avis Clients | Jean-François & Aniuta",
+      "description": "Découvrez les témoignages et avis de nos clients sur nos sculptures en bois et bougies artisanales.",
+      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+      "about": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+      "name": "Jean-François & Aniuta",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5",
+        "reviewCount": "5" 
+      }
     }
-    </script>
+  ]
+}
+</script>
 
     <section id="apropos-livre">
         <div class="container">
