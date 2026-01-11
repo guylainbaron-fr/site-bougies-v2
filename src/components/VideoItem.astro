@@ -7,11 +7,15 @@ interface Props {
   height?: string;
 }
 
-const { title, videoSrc, posterImg, width = "270", height = "410" } = Astro.props;
+/** * OPTIMISATION PERFORMANCE : 
+ * Lighthouse a détecté que les images s'affichent en 219x332 sur mobile.
+ * On change donc les valeurs par défaut (270 -> 220) pour économiser du poids.
+ */
+const { title, videoSrc, posterImg, width = "220", height = "330" } = Astro.props;
 ---
 
 <div class="video-item">
-    {/* CORRECTION : h3 au lieu de h4 pour la hiérarchie SEO/Accessibilité */}
+    {/* ACCESSIBILITÉ : h3 au lieu de h4 pour respecter la hiérarchie SEO */}
     <h3>{title}</h3>
     <div class="video-responsive">
         <video 
@@ -24,7 +28,7 @@ const { title, videoSrc, posterImg, width = "270", height = "410" } = Astro.prop
             muted
         >
             <source src={videoSrc} type="video/mp4">
-            {/* CORRECTION : Ajout de la balise track pour le 100% Accessibilité */}
+            {/* ACCESSIBILITÉ : Track captions obligatoire pour le 100% */}
             <track kind="captions" srclang="fr" label="Français" />
             Votre navigateur ne supporte pas la balise vidéo.
         </video>
@@ -46,8 +50,7 @@ const { title, videoSrc, posterImg, width = "270", height = "410" } = Astro.prop
         });
     }
 
-    // Astro gère intelligemment l'exécution
+    // Astro gère l'exécution au chargement initial et lors des navigations
     setupVideoLogic();
-    // Utile si tu utilises Astro View Transitions
     document.addEventListener('astro:page-load', setupVideoLogic);
 </script>
