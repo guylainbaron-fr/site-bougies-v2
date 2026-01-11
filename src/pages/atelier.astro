@@ -51,6 +51,7 @@ import vitrineProduits from '../assets/images/vitrine-produits.webp';
           "url": "https://jf-aniuta.vercel.app/atelier",
           "name": "L'Atelier : Sculpture et Création - Jean-François & Aniuta",
           "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+          "about": { "@id": "https://jf-aniuta.vercel.app/#atelier" },
           "description": "Visitez virtuellement l'atelier de Jean-François & Aniuta situé à Chasseradès. Un savoir-faire artisanal entre bois et cire."
         }
       ]
@@ -62,7 +63,7 @@ import vitrineProduits from '../assets/images/vitrine-produits.webp';
             <h2>L'Atelier : Là où le Bois Prend Vie</h2>
             
             <div class="atelier-images-grid">
-                {/* OPTIMISATION : Largeur réduite à 400px pour le mobile (LCP) */}
+                {/* LCP : On garde 400px de large pour un chargement instantané sur mobile */}
                 <Image 
                     src={sculptureBois} 
                     alt="Sculpture de cèpe en bois brut" 
@@ -75,7 +76,6 @@ import vitrineProduits from '../assets/images/vitrine-produits.webp';
                     quality={80}
                 />
 
-                {/* OPTIMISATION : Passage en loading="lazy" car moins prioritaire que le cèpe */}
                 <Image 
                     src={processusFabrication} 
                     alt="Artisan en train de fabriquer les cèpes en bois" 
