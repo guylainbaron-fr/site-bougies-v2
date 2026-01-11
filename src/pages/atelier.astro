@@ -23,7 +23,7 @@ import vitrineProduits from '../assets/images/vitrine-produits.webp';
           "name": "L'Atelier Jean-François & Aniuta",
           "url": "https://jf-aniuta.vercel.app/atelier",
           "telephone": "+33658909835",
-          "image": "https://jf-aniuta.vercel.app/images/logo_144.png",
+          "image": "https://jf-aniuta.vercel.app/logo-entreprise.webp",
           "priceRange": "€€",
           "description": "Découvrez l'univers de notre atelier en Lozère : sculpture sur bois et création de bougies artisanales coulées à la main.",
           "address": {
@@ -62,32 +62,40 @@ import vitrineProduits from '../assets/images/vitrine-produits.webp';
             <h2>L'Atelier : Là où le Bois Prend Vie</h2>
             
             <div class="atelier-images-grid">
+                {/* OPTIMISATION : Largeur réduite à 400px pour le mobile (LCP) */}
                 <Image 
                     src={sculptureBois} 
                     alt="Sculpture de cèpe en bois brut" 
                     class="atelier-img-large"
-                    width={600} 
-                    height={800}
+                    width={400} 
+                    height={533}
                     loading="eager" 
                     fetchpriority="high"
+                    decoding="async"
+                    quality={80}
                 />
 
+                {/* OPTIMISATION : Passage en loading="lazy" car moins prioritaire que le cèpe */}
                 <Image 
                     src={processusFabrication} 
                     alt="Artisan en train de fabriquer les cèpes en bois" 
                     class="atelier-img-small"
-                    width={800} 
-                    height={600}
-                    loading="eager"
+                    width={400} 
+                    height={300}
+                    loading="lazy"
+                    decoding="async"
+                    quality={80}
                 />
 
                 <Image 
                     src={vitrineProduits} 
                     alt="Exposition de bougies et sculptures cèpes" 
                     class="atelier-img-small"
-                    width={600} 
-                    height={800}
+                    width={400} 
+                    height={533}
                     loading="lazy"
+                    decoding="async"
+                    quality={80}
                 />
             </div>
             
