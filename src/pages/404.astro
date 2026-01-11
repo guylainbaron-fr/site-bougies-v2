@@ -36,6 +36,7 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
             --or-doux: #b8860b; 
             --or-brillant: #d4af37; 
             --fond-ecume: #fdfaf7;
+            --texte-gris-fort: #575757; 
         }
         
         html, body { 
@@ -44,6 +45,7 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
             background-color: var(--fond-ecume); 
             color: var(--marron-artisan); 
             font-family: 'Poppins', sans-serif; 
+            font-display: swap;
         }
 
         body { 
@@ -57,14 +59,13 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
             body { height: 100vh; overflow-y: hidden; }
         }
 
-        /* BANDEAU DE NOËL (Style indépendant conservé) */
+        /* BANDEAU DE NOËL ÉPURÉ */
         .holiday-bar {
             background-color: var(--fond-ecume);
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
-            padding: 10px;
+            padding: 12px;
             width: 100%;
             border-bottom: 1px solid rgba(61, 43, 31, 0.1);
             z-index: 1000;
@@ -75,7 +76,7 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             text-align: center;
             background: linear-gradient(to right, #3d2b1f 20%, var(--or-doux) 50%, #3d2b1f 80%);
             background-size: 200% auto;
@@ -84,18 +85,6 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
             -webkit-text-fill-color: transparent;
             animation: shine-right 6s linear infinite;
         }
-
-        .snow-group { display: flex; gap: 8px; opacity: 0.7; }
-        .snowflake-css {
-            width: 1px; height: 10px; background: var(--marron-artisan); 
-            position: relative;
-            animation: rotate-snow 10s infinite linear, twinkle 3s infinite ease-in-out;
-        }
-        .snowflake-css::before, .snowflake-css::after {
-            content: ""; position: absolute; width: 1px; height: 10px; background: inherit; top: 0; left: 0;
-        }
-        .snowflake-css::before { transform: rotate(60deg); }
-        .snowflake-css::after { transform: rotate(120deg); }
 
         /* LE GRAND FLOCON */
         .snowflake-artisan {
@@ -149,7 +138,7 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
             clip-path: inset(50% 0 0 0);
         }
         h2 { font-size: 1.5rem; margin: 20px 0 10px; font-weight: 700; text-transform: uppercase; }
-        p { max-width: 500px; color: #666; margin-bottom: 25px; line-height: 1.4; font-size: 0.95rem; }
+        p { max-width: 500px; color: var(--texte-gris-fort); margin-bottom: 25px; line-height: 1.4; font-size: 0.95rem; }
 
         .btn-retour { 
             padding: 15px 40px; background-color: var(--marron-artisan); 
@@ -175,16 +164,26 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
             transform: translateY(-5px); 
         }
 
-        @keyframes rotate-snow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes shine-right { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.1); }
+        .copyright { color: var(--texte-gris-fort); font-size: 0.75rem; display: block; margin-top: 15px; }
+        
+        /* LIEN MENTIONS LÉGALES - COULEURS INVERSÉES */
+        .legal-link { 
+            color: var(--marron-artisan) !important; 
+            text-decoration: underline; 
+            text-underline-offset: 3px; 
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .legal-link:hover { 
+            color: var(--or-doux) !important; 
+            text-decoration: none;
         }
 
+        @keyframes rotate-snow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes shine-right { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
+
         @media (max-width: 768px) {
-            .holiday-text { font-size: 0.65rem; max-width: 70%; }
-            .snowflake-css:nth-child(2), .snowflake-css:nth-child(3) { display: none; }
+            .holiday-text { font-size: 0.65rem; max-width: 90%; }
             main { justify-content: flex-start; padding-top: 50px; }
         }
     </style>
@@ -192,19 +191,13 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
 <body>
 
 <div class="holiday-bar" role="complementary" aria-label="Vœux de la Nouvelle Année 2026">
-    <div class="snow-group">
-        <div class="snowflake-css"></div><div class="snowflake-css"></div><div class="snowflake-css"></div>
-    </div>
     <span class="holiday-text">
         <strong>2026 s'éveille :</strong> même sous le givre, la flamme de la création reste vive.
     </span>
-    <div class="snow-group">
-        <div class="snowflake-css"></div><div class="snowflake-css"></div><div class="snowflake-css"></div>
-    </div>
 </div>
 
 <main>
-    <div class="snowflake-artisan">
+    <div class="snowflake-artisan" aria-hidden="true">
         <div class="axis"><div class="chevron top"></div><div class="chevron bottom"></div></div>
         <div class="axis"><div class="chevron top"></div><div class="chevron bottom"></div></div>
         <div class="axis"><div class="chevron top"></div><div class="chevron bottom"></div></div>
@@ -225,9 +218,9 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
         <a href="https://wa.me/33658909835" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a href="https://www.tiktok.com/@jeanfrancoisbaron2" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
     </div>
-    <span style="color:#888; font-size: 0.75rem; display: block; margin-top: 15px;">
+    <span class="copyright">
         © <span>{currentYear}</span> Jean François & Aniuta. Gravé dans la cire, protégé par l'hiver.
-        | <a href="/mentions-legales" style="color:#777; text-decoration: underline; text-underline-offset: 3px; font-weight: 500;" title="Consulter les Mentions Légales">Mentions Légales & CGV</a>
+        | <a href="/mentions-legales" class="legal-link" title="Consulter les Mentions Légales">Mentions Légales & CGV</a>
     </span>
 </footer>
 
