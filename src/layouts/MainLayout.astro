@@ -10,7 +10,6 @@ import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 
-// Import pour le préchargement dynamique du Hero
 import { getImage } from "astro:assets";
 import heroHome from '../assets/images/hero-home.webp';
 
@@ -21,7 +20,10 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
 
 const { title, description, holidayMessage } = Astro.props;
 
-// On génère l'URL optimisée pour le préchargement (version mobile)
+// 1. GENERER L'URL CANONIQUE DYNAMIQUE
+// Cela prend l'URL actuelle (ex: /bougies) et l'ajoute au domaine
+const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app");
+
 const optimizedHero = await getImage({
   src: heroHome,
   width: 400,
@@ -46,7 +48,7 @@ const optimizedHero = await getImage({
     <meta property="og:locale" content="fr_FR">
     <meta property="og:title" content={title || "JF & A"}>
     <meta property="og:site_name" content="JF & A">
-    <meta property="og:url" content="https://jf-aniuta.vercel.app/">
+    <meta property="og:url" content={canonicalURL.href}>
     <meta property="og:type" content="website">
     <meta property="og:image" content={appleTouchIcon.src}>
     <meta property="og:description" content={description || "JF & A — Sculptures uniques sur bois local et bougies naturelles parfumées."}>
@@ -60,7 +62,8 @@ const optimizedHero = await getImage({
 
     <title>{title}</title>
     <meta name="description" content={description}>
-    <link rel="canonical" href="https://jf-aniuta.vercel.app/" />
+    
+    <link rel="canonical" href={canonicalURL.href} />
 
     <link rel="icon" type="image/svg+xml" href={faviconSvg.src}>
     <link rel="icon" type="image/png" sizes="32x32" href={favicon32.src}>
