@@ -1,14 +1,14 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
-import VideoItem from '../components/VideoItem.astro'; // 1. On importe le nouveau composant
+import VideoItem from '../components/VideoItem.astro'; 
 import { Image } from 'astro:assets';
 
-// 2. Imports des images fixes
+// Imports des images fixes
 import afficheMende from '../assets/images/marches/marche_noel_mende_750.webp';
 import miniature1 from '../assets/images/miniature-evenement-1.webp';
 import miniature2 from '../assets/images/miniature-evenement-2.webp';
 
-// 3. Importation dynamique des photos de la galerie
+// Importation dynamique des photos de la galerie
 const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp');
 ---
 
@@ -23,7 +23,7 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
       "@graph": [
         {
           "@type": "EventVenue",
-          "@id": "https://jf-aniuta.vercel.app/#venue",
+          "@id": "https://jf-aniuta.vercel.app/evenements#venue",
           "name": "Jean-François & Aniuta en déplacement",
           "description": "Retrouvez nos créations artisanales sur les marchés et événements en Occitanie.",
           "address": {
@@ -39,14 +39,14 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
           "@id": "https://jf-aniuta.vercel.app/#localbusiness",
           "name": "Jean-François & Aniuta",
           "url": "https://jf-aniuta.vercel.app/evenements",
-          "image": "https://jf-aniuta.vercel.app/images/logo_144.png",
+          "image": "https://jf-aniuta.vercel.app/logo-entreprise.webp",
           "telephone": "+33658909835",
           "sameAs": [
             "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
             "https://www.instagram.com/jean_francois_aniuta/",
             "https://www.tiktok.com/@jeanfrancoisbaron2"
           ],
-          "location": { "@id": "https://jf-aniuta.vercel.app/#venue" }
+          "location": { "@id": "https://jf-aniuta.vercel.app/evenements#venue" }
         },
         {
           "@type": "WebPage",
@@ -79,7 +79,7 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
             </div>
 
             <div id="prochain-evenement" class="hidden"> 
-                </div>
+            </div>
         </div>
     </section>
 
@@ -109,12 +109,12 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
                 <div class="photo-presentation">
                     <Image 
                         src={afficheMende} 
-                        alt="Affiche Marché de Noël de Mende" 
-                        width={750} 
-                        height={1078}
+                        alt="Affiche Marché de Noël de Mende - Édition 2025" 
+                        width={400} 
+                        height={575}
                         loading="eager"
                     />
-                    <h4>Affiche du Marché de Noël de Mende</h4>
+                    <h3>Affiche du Marché de Noël de Mende</h3>
                 </div>
             </div>
 
@@ -123,7 +123,7 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
                     <div class="photo-item">
                         <Image 
                             src={img.default} 
-                            alt={`Photo stand ${index + 1}`} 
+                            alt={`Photo de notre stand artisanal numéro ${index + 1}`} 
                             width={400} 
                             loading="lazy"
                         />
