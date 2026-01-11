@@ -2,13 +2,13 @@
 // 1. Génération de l'année
 const currentYear = new Date().getFullYear();
 
-// 2. Imports pour la performance (Police locale et FontAwesome)
+// 2. Imports pour la performance
 import '../styles/fa/css/brands.min.css';
 import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 
-// 3. Imports des images pour les favicons (Ajuste les chemins si besoin)
+// 3. Imports des images
 import faviconSvg from '../assets/images/favicon.svg';
 import favicon32 from '../assets/images/favicon_32x32.png';
 import favicon16 from '../assets/images/favicon_16x16.png';
@@ -22,24 +22,26 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
     <meta name="robots" content="noindex, nofollow">
     <title>Page non trouvée | Jean François & ANIUTA</title>
     
-    {/* PLUS DE LIEN GOOGLE FONTS ICI - C'EST GÉRÉ PAR L'IMPORT CI-DESSUS */}
-
     <link rel="icon" type="image/svg+xml" href={faviconSvg.src}>
     <link rel="icon" type="image/png" sizes="32x32" href={favicon32.src}>
     <link rel="icon" type="image/png" sizes="16x16" href={favicon16.src}>
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href={appleTouchIcon.src}>
-    <link rel="manifest" href="/manifest.json">
 
     <style>
-        /* --- RESET & BASE --- */
+        /* RESET & BASE */
         * { margin: 0; padding: 0; box-sizing: border-box; text-decoration: none; }
-        :root { --marron-artisan: #3d2b1f; --or-doux: #b8860b; --or-brillant: #d4af37; }
+        :root { 
+            --marron-artisan: #3d2b1f; 
+            --or-doux: #b8860b; 
+            --or-brillant: #d4af37; 
+            --fond-ecume: #fdfaf7;
+        }
         
         html, body { 
             min-height: 100vh;
             min-height: 100dvh; 
-            background-color: #fdfaf7; 
+            background-color: var(--fond-ecume); 
             color: var(--marron-artisan); 
             font-family: 'Poppins', sans-serif; 
         }
@@ -55,14 +57,14 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
             body { height: 100vh; overflow-y: hidden; }
         }
 
-        /* --- BANDEAU DE NOËL --- */
+        /* BANDEAU DE NOËL (Style indépendant conservé) */
         .holiday-bar {
-            background-color: #fdfaf7;
+            background-color: var(--fond-ecume);
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 15px;
-            padding: 8px 10px;
+            padding: 10px;
             width: 100%;
             border-bottom: 1px solid rgba(61, 43, 31, 0.1);
             z-index: 1000;
@@ -89,15 +91,13 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
             position: relative;
             animation: rotate-snow 10s infinite linear, twinkle 3s infinite ease-in-out;
         }
-        .snowflake-css:nth-child(2) { animation-delay: 0.5s, 1.2s; animation-duration: 10s, 4.5s; }
-        .snowflake-css:nth-child(3) { animation-delay: 1s, 0.2s; animation-duration: 10s, 2.5s; }
         .snowflake-css::before, .snowflake-css::after {
             content: ""; position: absolute; width: 1px; height: 10px; background: inherit; top: 0; left: 0;
         }
         .snowflake-css::before { transform: rotate(60deg); }
         .snowflake-css::after { transform: rotate(120deg); }
 
-        /* --- LE GRAND FLOCON --- */
+        /* LE GRAND FLOCON */
         .snowflake-artisan {
             position: relative; 
             width: clamp(160px, 22vh, 220px); 
@@ -117,11 +117,6 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
             background: var(--marron-artisan); border-radius: 5px;
             transform-origin: bottom center; bottom: 50%;
         }
-        .snowflake-artisan:hover .axis, 
-        .snowflake-artisan:hover .chevron::before, 
-        .snowflake-artisan:hover .chevron::after {
-            background: var(--or-doux);
-        }
         .axis:nth-child(1) { transform: rotate(0deg); }
         .axis:nth-child(2) { transform: rotate(60deg); }
         .axis:nth-child(3) { transform: rotate(120deg); }
@@ -138,7 +133,7 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
         .chevron::before { transform: rotate(-45deg); left: -10px; }
         .chevron::after { transform: rotate(45deg); right: -10px; }
 
-        /* --- CONTENU --- */
+        /* CONTENU */
         main { 
             flex: 1; display: flex; flex-direction: column; 
             justify-content: center; align-items: center; 
@@ -164,17 +159,15 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
         }
         .btn-retour:hover { transform: scale(1.05); background: var(--or-doux); }
 
-        /* --- FOOTER MODIFIÉ --- */
+        /* FOOTER */
         footer { padding: 20px 0 40px; text-align: center; flex-shrink: 0; }
+        .social-links { margin-bottom: 15px; }
         .social-links a { 
             margin: 0 10px; color: var(--marron-artisan) !important; font-size: 1.2rem;
             display: inline-flex; align-items: center; justify-content: center;
             width: 44px; height: 44px; border: 1px solid rgba(61, 43, 31, 0.1); 
             border-radius: 50%; transition: 0.4s;
-            background-color: transparent; /* Fond transparent par défaut */
         }
-        
-        /* AU SURVOL : Fond Or, Bordure Or, Icône Blanche */
         .social-links a:hover { 
             background-color: var(--or-doux) !important;
             color: #fff !important; 
@@ -182,7 +175,6 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
             transform: translateY(-5px); 
         }
 
-        /* --- ANIMATIONS --- */
         @keyframes rotate-snow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes shine-right { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
         @keyframes twinkle {
@@ -191,7 +183,7 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
         }
 
         @media (max-width: 768px) {
-            .holiday-text { font-size: 0.65rem; max-width: 65%; }
+            .holiday-text { font-size: 0.65rem; max-width: 70%; }
             .snowflake-css:nth-child(2), .snowflake-css:nth-child(3) { display: none; }
             main { justify-content: flex-start; padding-top: 50px; }
         }
@@ -203,9 +195,9 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
     <div class="snow-group">
         <div class="snowflake-css"></div><div class="snowflake-css"></div><div class="snowflake-css"></div>
     </div>
-       <span class="holiday-text">
-       <strong>2026 s'éveille :</strong> même sous le givre, la flamme de la création reste vive.
-       </span>
+    <span class="holiday-text">
+        <strong>2026 s'éveille :</strong> même sous le givre, la flamme de la création reste vive.
+    </span>
     <div class="snow-group">
         <div class="snowflake-css"></div><div class="snowflake-css"></div><div class="snowflake-css"></div>
     </div>
@@ -223,20 +215,19 @@ import appleTouchIcon from '../assets/images/logo_512x512_white.png';
     <h1>404</h1>
     <h2>La piste est effacée...</h2>
     <p>Le blizzard a recouvert le chemin vers cette page. Ne restez pas dans la tempête, retrouvez la chaleur de notre atelier à l'accueil.</p>
-    <a href="index.html" class="btn-retour">Retrouver la chaleur (Accueil)</a>
+    <a href="/" class="btn-retour">Retrouver la chaleur (Accueil)</a>
 </main>
 
 <footer>
     <div class="social-links">
-        <a href="https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR" target="_blank"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://www.instagram.com/jean_francois_aniuta/" target="_blank"><i class="fab fa-instagram"></i></a>
-        <a href="https://wa.me/33658909835" target="_blank"><i class="fab fa-whatsapp"></i></a>
-        <a href="https://www.tiktok.com/@jeanfrancoisbaron2" target="_blank"><i class="fab fa-tiktok"></i></a>
-        <a href="https://maps.app.goo.gl/TY3NhqRHVrUwbWwp6" target="_blank" aria-label="Voir l'atelier sur Google Maps"><i class="fab fa-google"></i></a>
+        <a href="https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/jean_francois_aniuta/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://wa.me/33658909835" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.tiktok.com/@jeanfrancoisbaron2" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
     </div>
     <span style="color:#888; font-size: 0.75rem; display: block; margin-top: 15px;">
-        &copy; <span>{currentYear}</span> Jean François & Aniuta. Gravé dans la cire, protégé par l'hiver.
-        | <a href="mentions-legales.html" style="color:#777; text-decoration: underline; text-underline-offset: 3px; font-weight: 500;" title="Consulter les Mentions Légales et Conditions Générales de Vente">Mentions Légales & CGV</a>
+        © <span>{currentYear}</span> Jean François & Aniuta. Gravé dans la cire, protégé par l'hiver.
+        | <a href="/mentions-legales" style="color:#777; text-decoration: underline; text-underline-offset: 3px; font-weight: 500;" title="Consulter les Mentions Légales">Mentions Légales & CGV</a>
     </span>
 </footer>
 
