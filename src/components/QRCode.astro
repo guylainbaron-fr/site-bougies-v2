@@ -1,40 +1,25 @@
 ---
 // src/components/QRCode.astro
-import * as QRCodeLib from 'qrcode'; // On le renomme ici pour éviter le conflit
-
 interface Props {
   url?: string;
   size?: number;
 }
 
-const { url = "https://jf-aniuta.vercel.app/", size = 200 } = Astro.props;
+const { url = "https://jf-aniuta.vercel.app/", size = 150 } = Astro.props;
 
-let qrSvg = "";
-
-try {
-  // On utilise le nouveau nom "QRCodeLib"
-  qrSvg = await QRCodeLib.toString(url, {
-    type: 'svg',
-    width: size,
-    margin: 2,
-    color: {
-      dark: '#4a3728', 
-      light: '#fdfaf7' 
-    }
-  });
-} catch (err) {
-  console.error(err);
-}
+// On utilise l'API de Google Charts pour générer le QR code proprement sans bibliothèque
+const qrImageUrl = `https://chart.googleapis.com/chart?cht=qr&chs=${size}x${size}&chl=${encodeURIComponent(url)}&chld=M|2`;
 ---
 
 <div class="qr-code">
-  <Fragment set:html={qrSvg} />
+  <img src={qrImageUrl} alt="QR Code" width={size} height={size} />
 </div>
 
 <style>
-  .qr-code :global(svg) {
+  .qr-code img {
     display: block;
     max-width: 100%;
     height: auto;
+    border-radius: 4px;
   }
 </style>
