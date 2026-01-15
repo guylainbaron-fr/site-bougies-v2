@@ -1,0 +1,40 @@
+---
+// src/components/QRCode.astro
+import * as QRCodeLib from 'qrcode'; // On le renomme ici pour éviter le conflit
+
+interface Props {
+  url?: string;
+  size?: number;
+}
+
+const { url = "https://jf-aniuta.vercel.app/", size = 200 } = Astro.props;
+
+let qrSvg = "";
+
+try {
+  // On utilise le nouveau nom "QRCodeLib"
+  qrSvg = await QRCodeLib.toString(url, {
+    type: 'svg',
+    width: size,
+    margin: 2,
+    color: {
+      dark: '#4a3728', 
+      light: '#fdfaf7' 
+    }
+  });
+} catch (err) {
+  console.error(err);
+}
+---
+
+<div class="qr-code">
+  <Fragment set:html={qrSvg} />
+</div>
+
+<style>
+  .qr-code :global(svg) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+</style>
