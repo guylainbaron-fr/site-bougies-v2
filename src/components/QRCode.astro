@@ -5,21 +5,20 @@ interface Props {
   size?: number;
 }
 
-// On définit l'URL en dur ici pour être certain qu'il n'y a pas d'erreur de transmission
 const siteUrl = "https://jf-aniuta.vercel.app/";
 const { size = 150 } = Astro.props;
 
-const darkColor = "4a3728"; 
-const lightColor = "fdfaf7"; 
+// Tes couleurs exactes (sans le # pour l'URL)
+const darkColor = "4a3728"; // Marron
+const lightColor = "fdfaf7"; // Beige de fond
 
-// On utilise l'API QuickChart avec un paramètre supplémentaire (center) qui aide parfois la lecture
-const qrImageUrl = `https://quickchart.io/qr?text=${encodeURIComponent(siteUrl)}&size=${size}&margin=4&dark=${darkColor}&light=${lightColor}&ecLevel=H`;
+const qrImageUrl = `https://quickchart.io/qr?text=${encodeURIComponent(siteUrl)}&size=${size}&margin=2&dark=${darkColor}&light=${lightColor}&ecLevel=H`;
 ---
 
 <div class="qr-code-wrapper">
   <img 
     src={qrImageUrl} 
-    alt="QR Code"
+    alt="QR Code Artisanal"
     width={size} 
     height={size}
     loading="eager"
@@ -31,9 +30,11 @@ const qrImageUrl = `https://quickchart.io/qr?text=${encodeURIComponent(siteUrl)}
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #fdfaf7;
-    padding: 4px;
+    background: #fdfaf7; /* Assorti au fond du QR */
+    padding: 8px;
     border-radius: 8px;
+    /* On ajoute une petite ombre légère pour le rendu sur la carte */
+    box-shadow: 0 2px 8px rgba(74, 55, 40, 0.1);
   }
   img {
     display: block;
