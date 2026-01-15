@@ -5,21 +5,39 @@ interface Props {
   size?: number;
 }
 
-const { url = "https://jf-aniuta.vercel.app/", size = 150 } = Astro.props;
+// On définit l'URL en dur ici pour être certain qu'il n'y a pas d'erreur de transmission
+const siteUrl = "https://jf-aniuta.vercel.app/";
+const { size = 150 } = Astro.props;
 
-// On utilise l'API de Google Charts pour générer le QR code proprement sans bibliothèque
-const qrImageUrl = `https://chart.googleapis.com/chart?cht=qr&chs=${size}x${size}&chl=${encodeURIComponent(url)}&chld=M|2`;
+const darkColor = "4a3728"; 
+const lightColor = "fdfaf7"; 
+
+// On utilise l'API QuickChart avec un paramètre supplémentaire (center) qui aide parfois la lecture
+const qrImageUrl = `https://quickchart.io/qr?text=${encodeURIComponent(siteUrl)}&size=${size}&margin=4&dark=${darkColor}&light=${lightColor}&ecLevel=H`;
 ---
 
-<div class="qr-code">
-  <img src={qrImageUrl} alt="QR Code" width={size} height={size} />
+<div class="qr-code-wrapper">
+  <img 
+    src={qrImageUrl} 
+    alt="QR Code"
+    width={size} 
+    height={size}
+    loading="eager"
+  />
 </div>
 
 <style>
-  .qr-code img {
+  .qr-code-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fdfaf7;
+    padding: 4px;
+    border-radius: 8px;
+  }
+  img {
     display: block;
     max-width: 100%;
     height: auto;
-    border-radius: 4px;
   }
 </style>
