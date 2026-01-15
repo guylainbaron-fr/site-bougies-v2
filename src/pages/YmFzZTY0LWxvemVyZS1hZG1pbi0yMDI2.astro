@@ -1,0 +1,85 @@
+---
+// src/pages/YmFzZTY0LWxvemVyZS1hZG1pbi0yMDI2.astro
+import ThankYouCard from '../components/ThankYouCard.astro';
+---
+
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Espace Technique - Impression</title>
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    
+    <style>
+      @page { size: A4 portrait; margin: 0; }
+      body { margin: 0; padding: 0; background-color: #1a1a1a; font-family: sans-serif; }
+      
+      .header-prive { 
+        text-align: center; 
+        padding: 15px; 
+        background: #b49673; 
+        color: white;
+        border-bottom: 2px solid #4a3728;
+      }
+      
+      .btn-print { 
+        background: #4a3728; 
+        color: white; 
+        border: none; 
+        padding: 10px 25px; 
+        border-radius: 5px; 
+        cursor: pointer; 
+        font-weight: bold;
+        margin-top: 10px;
+      }
+
+      .page-a4 {
+        width: 210mm;
+        height: 297mm;
+        background: white;
+        margin: 20px auto;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 0 30px rgba(0,0,0,0.5);
+      }
+
+      .half {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+
+      .cut-line {
+        position: absolute;
+        bottom: 0;
+        left: 10%;
+        right: 10%;
+        border-bottom: 1px dashed #ccc;
+      }
+
+      @media print {
+        .header-prive { display: none; }
+        body { background: white; }
+        .page-a4 { margin: 0; box-shadow: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header-prive">
+      <strong>ACCÈS PRIVÉ - ATELIER</strong><br/>
+      <button class="btn-print" onclick="window.print()">LANCER L'IMPRESSION A4</button>
+    </div>
+
+    <div class="page-a4">
+      <div class="half">
+        <ThankYouCard />
+        <div class="cut-line"></div>
+      </div>
+      <div class="half">
+        <ThankYouCard />
+      </div>
+    </div>
+  </body>
+</html>
