@@ -11,7 +11,7 @@
   "categories": ["lifestyle", "shopping"],
   "icons": [
     {
-      "src": "/images/logo_192x192.png",
+      "src": "/images/logo_192.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any"
