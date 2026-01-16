@@ -1,23 +1,23 @@
 ---
-// src/components/EmailProtect.astro
+// src/components/PhoneProtect.astro
 const { class: className = "" } = Astro.props;
 
-const p1 = "bm9yYWJzaW9jbmFyZm5hZWo="; 
-const p2 = "dGVuLmV0c29wYWw=";
+const p1 = "MDkgODUgNjA="; 
+const p2 = "NTMgODk=";
 ---
 
-<span class="email-placeholder" 
+<span class="phone-placeholder" 
       data-class={className} 
       data-p1={p1} 
       data-p2={p2}>
     <noscript>
-        <small class="js-warning">Email protégé</small>
+        <small class="js-warning">Tel protégé</small>
     </noscript>
 </span>
 
 <script>
-    const revealEmails = () => {
-        const placeholders = document.querySelectorAll('.email-placeholder');
+    const revealPhones = () => {
+        const placeholders = document.querySelectorAll('.phone-placeholder');
         
         placeholders.forEach(span => {
             if (span.getAttribute('data-filled') !== 'true') {
@@ -26,17 +26,17 @@ const p2 = "dGVuLmV0c29wYWw=";
                 const extraClass = span.getAttribute('data-class') || "";
                 
                 if (part1 !== "" && part2 !== "") {
-                    const user = atob(part1).split('').reverse().join('');
-                    const domain = atob(part2).split('').reverse().join('');
-                    const email = `${user}@${domain}`;
+                    const start = atob(part1).split('').reverse().join('');
+                    const end = atob(part2).split('').reverse().join('');
+                    const fullPhone = `${start} ${end}`;
                     
                     span.setAttribute('data-filled', 'true');
                     
                     setTimeout(() => {
                         const link = document.createElement('a');
-                        link.href = `mailto:${email}`;
+                        link.href = `tel:${fullPhone.replace(/\s/g, '')}`;
                         link.className = extraClass;
-                        link.textContent = email;
+                        link.textContent = fullPhone;
                         span.replaceWith(link);
                     }, 500);
                 }
@@ -44,14 +44,14 @@ const p2 = "dGVuLmV0c29wYWw=";
         });
     }
 
-    revealEmails();
-    document.addEventListener('astro:page-load', revealEmails);
+    revealPhones();
+    document.addEventListener('astro:page-load', revealPhones);
 </script>
 
 <style>
-    .email-placeholder {
+    .phone-placeholder {
         display: inline-block;
-        min-width: 120px; 
+        min-width: 110px; 
         vertical-align: middle;
     }
     .js-warning {
