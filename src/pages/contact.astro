@@ -1,6 +1,7 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
 import EmailProtect from '../components/EmailProtect.astro';
+import PhoneProtect from '../components/PhoneProtect.astro';
 import { Image } from 'astro:assets';
 
 // Importation de l'image de l'atelier pour optimisation automatique
@@ -99,7 +100,7 @@ import imageAtelier from '../assets/images/image-contact-atelier.webp';
                         <h3>Nos Coordonnées</h3>
                         <p>
                             <strong>Jean François & Aniuta BARON</strong> <br>
-                            <i class="fas fa-phone-alt"></i> Tél : <a href="tel:+33658909835">06 58 90 98 35</a> <br>
+                            <i class="fas fa-phone-alt"></i> Tél : <PhoneProtect class="poetic-link" /> <br>
                             <i class="fas fa-envelope"></i> Email : <EmailProtect class="poetic-link" /> <br>
                             <i class="fas fa-map-marker-alt"></i> Atelier : Chasseradès 48250 Mont Lozère et Goulet
                         </p>
