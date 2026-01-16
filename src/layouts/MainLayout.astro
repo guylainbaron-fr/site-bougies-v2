@@ -23,13 +23,6 @@ const { title, description, holidayMessage } = Astro.props;
 // 1. GENERER L'URL CANONIQUE DYNAMIQUE
 // Cela prend l'URL actuelle (ex: /bougies) et l'ajoute au domaine
 const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app");
-
-const optimizedHero = await getImage({
-  src: heroHome,
-  width: 1435,
-  format: 'webp',
-  quality: 80
-});
 ---
 
 <!DOCTYPE html>
@@ -37,15 +30,6 @@ const optimizedHero = await getImage({
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-<link 
-  rel="preload" 
-  as="image" 
-  href={optimizedHero.src} 
-  fetchpriority="high"
-  imagesrcset={`${optimizedHero.src} 1435w`}
-  imagesizes="1435px"
-/>
 
     <meta property="og:locale" content="fr_FR">
     <meta property="og:title" content={title || "JF & A"}>
