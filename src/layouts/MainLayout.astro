@@ -26,7 +26,7 @@ const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app")
 
 const optimizedHero = await getImage({
   src: heroHome,
-  width: 400,
+  width: 1435,
   format: 'webp',
   quality: 80
 });
@@ -38,12 +38,14 @@ const optimizedHero = await getImage({
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <link 
-      rel="preload" 
-      as="image" 
-      href={optimizedHero.src} 
-      fetchpriority="high"
-    />
+<link 
+  rel="preload" 
+  as="image" 
+  href={optimizedHero.src} 
+  fetchpriority="high"
+  imagesrcset={`${optimizedHero.src} 1435w`}
+  imagesizes="1435px"
+/>
 
     <meta property="og:locale" content="fr_FR">
     <meta property="og:title" content={title || "JF & A"}>
