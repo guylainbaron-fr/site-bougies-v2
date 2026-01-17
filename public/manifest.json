@@ -17,13 +17,13 @@
       "purpose": "any"
     },
     {
-      "src": "/images/logo_512x512.png",
+      "src": "/images/logo_512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
     },
     {
-      "src": "/images/logo_512x512.png",
+      "src": "/images/logo_512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
