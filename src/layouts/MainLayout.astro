@@ -10,19 +10,14 @@ import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 
-import { getImage } from "astro:assets";
-import heroHome from '../assets/images/hero-home.webp';
-
-import faviconSvg from '../assets/images/favicon.svg';
-import favicon32 from '../assets/images/favicon_32x32.png';
-import favicon16 from '../assets/images/favicon_16x16.png';
-import appleTouchIcon from '../assets/images/logo_512x512_white.png';
-
 const { title, description, holidayMessage } = Astro.props;
 
 // 1. GENERER L'URL CANONIQUE DYNAMIQUE
 // Cela prend l'URL actuelle (ex: /bougies) et l'ajoute au domaine
 const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app");
+
+// L'URL de ton image de partage (doit être une URL absolue pour les réseaux sociaux)
+const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel.app");
 ---
 
 <!DOCTYPE html>
@@ -36,7 +31,8 @@ const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app")
     <meta property="og:site_name" content="JF & A">
     <meta property="og:url" content={canonicalURL.href}>
     <meta property="og:type" content="website">
-    <meta property="og:image" content={appleTouchIcon.src}>
+    <meta property="og:image" content={socialImageURL.href}>
+    
     <meta property="og:description" content={description || "JF & A — Sculptures uniques sur bois local et bougies naturelles parfumées."}>
     
     <meta name="google-site-verification" content="googleca94fc0ed3c52975" />
@@ -44,18 +40,27 @@ const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app")
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content={title || "JF & A"}>
     <meta name="twitter:description" content={description || "JF & A — Sculptures uniques sur bois local et bougies naturelles parfumées."}>
-    <meta name="twitter:image" content={appleTouchIcon.src}>
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    <meta name="twitter:image:alt" content="Logo JF & ANIUTA">
+    <meta name="twitter:image" content={socialImageURL.href}>
 
     <title>{title}</title>
     <meta name="description" content={description}>
     
     <link rel="canonical" href={canonicalURL.href} />
 
-    <link rel="icon" type="image/svg+xml" href={faviconSvg.src}>
-    <link rel="icon" type="image/png" sizes="32x32" href={favicon32.src}>
-    <link rel="icon" type="image/png" sizes="16x16" href={favicon16.src}>
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href={appleTouchIcon.src}>
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_32x32.png" />
+
+    <link rel="icon" type="image/png" sizes="144x144" href="/images/logo_144.png" />
+
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/logo_192.png" />
+
+    <link rel="apple-touch-icon" href="/images/logo_192.png" />
 
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#fdfaf7">
