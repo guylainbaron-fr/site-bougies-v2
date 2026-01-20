@@ -4,7 +4,7 @@ const currentYear = new Date().getFullYear();
 export const prerender = false;
 
 import { createClient } from '@vercel/kv';
-import { loadEnv } from 'vite';
+// Suppression de loadEnv qui faisait planter le build
 
 interface LogEntry {
     device: string;
@@ -15,9 +15,10 @@ interface LogEntry {
     flag_code?: string;
 }
 
-const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
-const KV_URL = (env.KV_REST_API_URL || process.env.KV_REST_API_URL || '') as string;
-const KV_TOKEN = (env.KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN || '') as string;
+// Récupération hybride compatible Local et Vercel
+const KV_URL = (import.meta.env.KV_REST_API_URL || process.env.KV_REST_API_URL || '') as string;
+const KV_TOKEN = (import.meta.env.KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN || '') as string;
+
 const kv = createClient({ url: KV_URL, token: KV_TOKEN });
 
 if (Astro.request.method === "POST") {
@@ -41,17 +42,20 @@ let pcCount = 0;
 let qrCount = 0;
 
 try {
-    totalVisites = await (kv.get('visites_totales') as Promise<number>) || 0;
-    const rawLogs = await kv.lrange('journal_visites', 0, 99) || []; 
-    
-    logs = rawLogs.map((item: any) => {
-        const log: LogEntry = typeof item === 'string' ? JSON.parse(item) : item;
-        if (log.device === "iOS") iosCount++;
-        else if (log.device === "Android") androidCount++;
-        else if (log.device === "Ordinateur" || log.device === "PC") pcCount++;
-        if (log.isQR === true || String(log.isQR) === 'true') qrCount++;
-        return log;
-    });
+    // On ne tente l'appel que si les clés existent
+    if (KV_URL && KV_TOKEN) {
+        totalVisites = await (kv.get('visites_totales') as Promise<number>) || 0;
+        const rawLogs = await kv.lrange('journal_visites', 0, 99) || []; 
+        
+        logs = rawLogs.map((item: any) => {
+            const log: LogEntry = typeof item === 'string' ? JSON.parse(item) : item;
+            if (log.device === "iOS") iosCount++;
+            else if (log.device === "Android") androidCount++;
+            else if (log.device === "Ordinateur" || log.device === "PC") pcCount++;
+            if (log.isQR === true || String(log.isQR) === 'true') qrCount++;
+            return log;
+        });
+    }
 } catch (e) {
     console.error("Erreur Admin:", e);
 }

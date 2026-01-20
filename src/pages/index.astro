@@ -4,7 +4,6 @@ export const prerender = false;
 import MainLayout from '../layouts/MainLayout.astro';
 import { Image } from 'astro:assets';
 import { createClient } from '@vercel/kv';
-import { loadEnv } from 'vite';
 
 // --- 1. PRÉPARATION DES DONNÉES ---
 let userIP: string = "Privé";
@@ -48,15 +47,17 @@ function getFlagEmoji(countryCode: string) {
 }
 
 // --- 3. LOGIQUE D'ENREGISTREMENT ---
-const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
-const KV_URL = (env.KV_REST_API_URL || process.env.KV_REST_API_URL || '') as string;
-const KV_TOKEN = (env.KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN || '') as string;
+// Suppression de loadEnv (Vite) qui faisait planter Vercel
+const KV_URL = (import.meta.env.KV_REST_API_URL || process.env.KV_REST_API_URL || '') as string;
+const KV_TOKEN = (import.meta.env.KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN || '') as string;
+
 const kv = createClient({ url: KV_URL, token: KV_TOKEN });
 
-// Change 'false' par 'true' pour stopper le comptage quand tu travailles
+// On ne tente l'enregistrement que si la config est présente
 const blockCounting = false;
+const isConfigured = KV_URL && KV_TOKEN;
 
-if (!blockCounting && !Astro.url.pathname.includes('admin')) {
+if (isConfigured && !blockCounting && !Astro.url.pathname.includes('admin')) {
     try {
         const geo = await getCountryData(userIP);
         const flag = getFlagEmoji(geo.code);
