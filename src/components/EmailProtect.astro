@@ -1,0 +1,61 @@
+---
+// src/components/EmailProtect.astro
+const { class: className = "" } = Astro.props;
+
+const p1 = "bm9yYWJzaW9jbmFyZm5hZWo="; 
+const p2 = "dGVuLmV0c29wYWw=";
+---
+
+<span class="email-placeholder" 
+      data-class={className} 
+      data-p1={p1} 
+      data-p2={p2}>
+    <noscript>
+        <small class="js-warning">Email protégé</small>
+    </noscript>
+</span>
+
+<script>
+    const revealEmails = () => {
+        const placeholders = document.querySelectorAll('.email-placeholder');
+        
+        placeholders.forEach(span => {
+            if (span.getAttribute('data-filled') !== 'true') {
+                const part1 = span.getAttribute('data-p1') || "";
+                const part2 = span.getAttribute('data-p2') || "";
+                const extraClass = span.getAttribute('data-class') || "";
+                
+                if (part1 !== "" && part2 !== "") {
+                    const user = atob(part1).split('').reverse().join('');
+                    const domain = atob(part2).split('').reverse().join('');
+                    const email = `${user}@${domain}`;
+                    
+                    span.setAttribute('data-filled', 'true');
+                    
+                    setTimeout(() => {
+                        const link = document.createElement('a');
+                        link.href = `mailto:${email}`;
+                        link.className = extraClass;
+                        link.textContent = email;
+                        span.replaceWith(link);
+                    }, 500);
+                }
+            }
+        });
+    }
+
+    revealEmails();
+    document.addEventListener('astro:page-load', revealEmails);
+</script>
+
+<style>
+    .email-placeholder {
+        display: inline-block;
+        min-width: 120px; 
+        vertical-align: middle;
+    }
+    .js-warning {
+        font-size: 0.85em;
+        opacity: 0.7;
+    }
+</style>

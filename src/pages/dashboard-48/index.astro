@@ -1,0 +1,500 @@
+---
+const currentYear = new Date().getFullYear();
+
+export const prerender = false;
+
+import { createClient } from '@vercel/kv';
+import { loadEnv } from 'vite';
+
+interface LogEntry {
+    device: string;
+    ip?: string;
+    isQR?: boolean | string;
+    date: string;
+    country?: string;
+    flag_code?: string;
+}
+
+const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
+const KV_URL = (env.KV_REST_API_URL || process.env.KV_REST_API_URL || '') as string;
+const KV_TOKEN = (env.KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN || '') as string;
+const kv = createClient({ url: KV_URL, token: KV_TOKEN });
+
+if (Astro.request.method === "POST") {
+    try {
+        const formData = await Astro.request.formData();
+        if (formData.get("action") === "reset") {
+            await kv.set('visites_totales', 0);
+            await kv.del('journal_visites');
+            return Astro.redirect('/dashboard-48'); 
+        }
+    } catch (e) {
+        console.error("Erreur Reset:", e);
+    }
+}
+
+let totalVisites = 0;
+let logs: LogEntry[] = [];
+let iosCount = 0;
+let androidCount = 0;
+let pcCount = 0;
+let qrCount = 0;
+
+try {
+    totalVisites = await (kv.get('visites_totales') as Promise<number>) || 0;
+    const rawLogs = await kv.lrange('journal_visites', 0, 99) || []; 
+    
+    logs = rawLogs.map((item: any) => {
+        const log: LogEntry = typeof item === 'string' ? JSON.parse(item) : item;
+        if (log.device === "iOS") iosCount++;
+        else if (log.device === "Android") androidCount++;
+        else if (log.device === "Ordinateur" || log.device === "PC") pcCount++;
+        if (log.isQR === true || String(log.isQR) === 'true') qrCount++;
+        return log;
+    });
+} catch (e) {
+    console.error("Erreur Admin:", e);
+}
+
+const totalForDevices = iosCount + androidCount + pcCount;
+const iosPct = totalForDevices > 0 ? Math.round((iosCount / totalForDevices) * 100) : 0;
+const androidPct = totalForDevices > 0 ? Math.round((androidCount / totalForDevices) * 100) : 0;
+const pcPct = totalForDevices > 0 ? Math.round((pcCount / totalForDevices) * 100) : 0;
+
+const qrPct = totalVisites > 0 ? Math.round((qrCount / totalVisites) * 100) : 0;
+const directPct = 100 - qrPct;
+---
+
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>Dashboard Atelier | J.F. & Aniuta</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+    :root { 
+        --sable-dore: #e0c297; 
+        --vanille-pure: #fcf4dd; 
+        --brun-coco: #4a3728; 
+        --fond-ecume: #fdfaf7;
+        --font-principale: "Poppins", sans-serif;
+        --color-ios: #2980b9; --color-android: #27ae60; --color-pc: #7f8c8d;
+        --color-qr: #d35400; --color-direct: #2c3e50;
+    }
+
+    /* Reset global pour forcer les bordures vers l'intérieur */
+    * { box-sizing: border-box; }
+
+    body { font-family: var(--font-principale); background-color: var(--fond-ecume); color: var(--brun-coco); margin: 0; padding: 15px; overflow-x: hidden; }
+    
+    .dashboard-container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 4px; border: 1px solid var(--sable-dore); }
+
+    /* HEADER RESPONSIVE */
+    .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--sable-dore); padding-bottom: 15px; flex-wrap: wrap; gap: 15px; }
+    .header-flex h1 { margin: 0; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; color: var(--brun-coco); display: flex; align-items: center; gap: 10px; }
+    
+    .nav-right { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+    .social-mini-nav { display: flex; gap: 12px; border-right: 1px solid var(--sable-dore); padding-right: 15px; }
+    .social-mini-nav a { color: var(--brun-coco); font-size: 1rem; text-decoration: none; }
+    
+    .btn-group { display: flex; gap: 8px; }
+    .btn { padding: 8px 12px; border-radius: 4px; text-decoration: none; font-weight: 700; text-transform: uppercase; font-size: 0.6rem; cursor: pointer; border: 1px solid var(--sable-dore); display: flex; align-items: center; gap: 6px; color: var(--brun-coco); background: white; white-space: nowrap; }
+    .btn-gold { background: var(--vanille-pure); }
+
+    /* GRILLE STATS */
+    .stats-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 25px; }
+    .stat-card-mini { padding: 15px 5px; border-radius: 4px; display: flex; flex-direction: column; text-align: center; justify-content: center; color: white; font-weight: bold; min-width: 0; }
+    
+    .card-total { background: var(--color-direct); }
+    .card-qr { background: var(--color-qr); }
+    .card-ios { background: var(--color-ios); }
+    .card-android { background: var(--color-android); }
+    .card-pc { background: var(--color-pc); }
+    .card-clock { background: var(--brun-coco); color: white; border: none; }
+    .stat-card-mini .val { font-size: 1.4rem; font-weight: 800; }
+    .stat-card-mini .label { font-size: 0.55rem; text-transform: uppercase; margin-top: 5px; opacity: 0.9; }
+
+    /* BARS & LEGENDS */
+    .dist-section { margin-bottom: 25px; }
+    .dist-header { display: inline-flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: 4px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; border: 1.5px solid var(--sable-dore); background: var(--vanille-pure); color: var(--brun-coco); }
+    .distribution-bar { display: flex; width: 100%; height: 22px; border-radius: 4px; overflow: hidden; background-color: #eee; margin-bottom: 10px; }
+    .segment { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 900; color: white; }
+    .bg-ios { background-color: var(--color-ios); }
+    .bg-android { background-color: var(--color-android); }
+    .bg-pc { background-color: var(--color-pc); }
+    .bg-qr { background-color: var(--color-qr); }
+    .bg-direct { background-color: var(--color-direct); }
+
+    .bar-legend { display: flex; flex-wrap: wrap; gap: 15px; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 0.6rem; font-weight: bold; text-transform: uppercase; }
+    .dot { width: 10px; height: 10px; border-radius: 2px; }
+
+    /* ACTIONS */
+    .actions-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 15px; flex-wrap: wrap; }
+
+    /* JOURNAL RESPONSIVE - CORRECTION TRAIT DROIT */
+    .logs-section { background: white; border: 1px solid var(--sable-dore); padding: 15px; border-radius: 4px; width: 100%; }
+    .logs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+    .log-entry { display: grid; grid-template-columns: 40px 1fr 80px; align-items: center; border: 1px solid var(--sable-dore); background: #fff; height: 55px; border-radius: 3px; overflow: hidden; }
+    .log-cell-num { background: var(--vanille-pure); height: 100%; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--sable-dore); font-weight: 900; font-family: monospace; font-size: 0.8rem; }
+    .log-cell-right { border-left: 1px solid var(--sable-dore); height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--fond-ecume); font-size: 0.65rem; font-weight: 800; }
+
+    /* FILTRES */
+    .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding: 5px 2px 10px 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .filter-btn { background: white; border: 1px solid var(--sable-dore); padding: 7px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--brun-coco); cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; transition: all 0.2s ease; }
+    .filter-btn.active { background: var(--brun-coco) !important; color: var(--vanille-pure) !important; border-color: var(--brun-coco) !important; }
+
+    .badge { background: var(--vanille-pure); color: var(--brun-coco); padding: 2px 6px; border-radius: 3px; font-size: 0.6rem; font-family: monospace; font-weight: 900; }
+    .filter-btn.active .badge { background: white !important; color: var(--brun-coco) !important; }
+    .filter-btn:not(.active):hover { background: var(--fond-ecume); border-color: var(--brun-coco); }
+
+    .dashboard-footer {
+    margin-top: 30px;
+    padding: 15px 0;
+    border-top: 1px solid var(--sable-dore);
+    text-align: center;
+}
+
+.dashboard-footer p {
+    margin: 0;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+    color: var(--brun-coco);
+    opacity: 0.7; /* Pour rester discret */
+}
+
+    /* MEDIA QUERIES */
+    @media (max-width: 1024px) {
+        .stats-row { grid-template-columns: repeat(3, 1fr); }
+        .logs-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 650px) {
+        .header-flex { flex-direction: column; align-items: flex-start; }
+        .nav-right { width: 100%; justify-content: space-between; }
+        .stats-row { grid-template-columns: repeat(2, 1fr); }
+        .logs-grid { grid-template-columns: 1fr; }
+        .actions-row { flex-direction: column; align-items: stretch; }
+        .actions-row .btn { justify-content: center; }
+        .filter-bar { margin-left: -5px; padding-left: 5px; }
+    }
+
+    /* --- IMPRESSION OPTIMISÉE --- */
+    @media print {
+        @page { margin: 10mm; }
+        body { padding: 0 !important; background: white !important; font-size: 10pt; }
+        
+        /* On réduit à 99% pour forcer la bordure droite à rester sur la feuille */
+        .dashboard-container { border: none !important; width: 99% !important; max-width: none !important; padding: 0 !important; }
+        .nav-right, .actions-row, .social-mini-nav, .filter-bar, #confirmReset { display: none !important; }
+
+        .logs-section { border: 1px solid var(--sable-dore) !important; padding: 10px !important; width: 100% !important; }
+        
+        /* En impression, le GRID pose problème pour les bordures, on passe en BLOCK */
+        .logs-grid { display: block !important; width: 100% !important; }
+        
+        .log-entry { 
+            display: grid !important; 
+            grid-template-columns: 40px 1fr 80px; 
+            width: 100% !important; 
+            margin-bottom: 5px !important; 
+            border: 1px solid var(--sable-dore) !important; 
+            page-break-inside: avoid; 
+            break-inside: avoid; 
+        }
+
+        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    }
+</style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="header-flex">
+            <h1><i class="fa-solid fa-gauge-high" style="color: var(--sable-dore);"></i> Dashboard Atelier</h1>
+            <div class="nav-right">
+                <div class="social-mini-nav">
+    <a href="https://www.instagram.com/jean_francois_aniuta/" target="_blank" title="Instagram" style="color: #E1306C;"><i class="fa-brands fa-instagram"></i></a>
+    <a href="https://whatsapp.com/channel/0029VbBimwMHQbS9rBEXXu0T" target="_blank" title="Chaîne WhatsApp" style="color: #25D366;"><i class="fa-brands fa-whatsapp"></i></a>
+    <a href="https://www.tiktok.com/@jeanfrancoisbaron2" target="_blank" title="TikTok" style="color: #000000;"><i class="fa-brands fa-tiktok"></i></a>
+    <a href="https://app.brevo.com/" target="_blank" title="Gestion Newsletter (Brevo)" style="color: #008060;"><i class="fa-solid fa-paper-plane"></i></a>
+    <a href="https://www.laposte.net/accueil" target="_blank" title="Mail La Poste" style="color: #004b9a;"><i class="fa-solid fa-envelope"></i></a>
+</div>
+                <div class="btn-group">
+    <a href="/" class="btn btn-gold"><i class="fa-solid fa-house"></i> Accueil</a>
+    <a href="/dashboard-48/cartes" class="btn btn-gold"><i class="fa-solid fa-id-card"></i> Cartes</a>
+    <a href="#" onclick="exportLogsToCSV(); return false;" class="btn btn-gold"><i class="fa-solid fa-file-export"></i> Export CSV</a>
+    <button onclick="logout()" class="btn btn-gold" style="background: #4a3728; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</button>
+</div>
+            </div>
+        </header>
+
+        <div class="stats-row">
+            <div class="stat-card-mini card-total"><span class="val">{totalVisites}</span><span class="label">Visites</span></div>
+            <div class="stat-card-mini card-qr"><span class="val">{qrCount}</span><span class="label">Scans QR</span></div>
+            <div class="stat-card-mini card-ios"><span class="val">{iosCount}</span><span class="label">iOS</span></div>
+            <div class="stat-card-mini card-android"><span class="val">{androidCount}</span><span class="label">Android</span></div>
+            <div class="stat-card-mini card-pc"><span class="val">{pcCount}</span><span class="label">PC</span></div>
+            <div class="stat-card-mini card-clock">
+                <span id="live-clock" style="font-size: 1.1rem; font-weight: 800; font-family: monospace;">00:00:00</span>
+                <span id="live-date" style="font-size: 0.5rem; text-transform: uppercase; font-weight:bold;">...</span>
+            </div>
+        </div>
+
+        <div class="dist-section">
+            <div class="dist-header">Technologie</div>
+            <div class="distribution-bar">
+                {iosCount > 0 && <div class="segment bg-ios" style={`width: ${iosPct}%`}>{iosPct}%</div>}
+                {androidCount > 0 && <div class="segment bg-android" style={`width: ${androidPct}%`}>{androidPct}%</div>}
+                {pcCount > 0 && <div class="segment bg-pc" style={`width: ${pcPct}%`}>{pcPct}%</div>}
+            </div>
+            <div class="bar-legend">
+                <span class="legend-item"><span class="dot bg-ios"></span> Apple</span>
+                <span class="legend-item"><span class="dot bg-android"></span> Android</span>
+                <span class="legend-item"><span class="dot bg-pc"></span> Ordinateur</span>
+            </div>
+        </div>
+
+        <div class="dist-section">
+            <div class="dist-header">Origine</div>
+            <div class="distribution-bar">
+                {qrCount > 0 && <div class="segment bg-qr" style={`width: ${qrPct}%`}>{qrPct}%</div>}
+                {directPct > 0 && <div class="segment bg-direct" style={`width: ${directPct}%`}>{directPct}%</div>}
+            </div>
+            <div class="bar-legend">
+                <span class="legend-item"><span class="dot bg-qr"></span> Scan QR</span>
+                <span class="legend-item"><span class="dot bg-direct"></span> Navigation Directe</span>
+            </div>
+        </div>
+
+        <div class="actions-row">
+            <button onclick="window.print()" class="btn btn-gold"><i class="fa-solid fa-file-pdf"></i> Rapport</button>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <input type="text" id="confirmReset" placeholder="RESET" style="width:60px; padding:6px; border:1px solid var(--sable-dore); border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold;" />
+                <form method="POST">
+                    <input type="hidden" name="action" value="reset" />
+                    <button type="submit" id="resetBtn" disabled style="background: var(--brun-coco); color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">EFFACER</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="logs-section">
+    <div style="font-weight:900; text-transform:uppercase; font-size:0.65rem; margin-bottom:12px; border-bottom:1px solid var(--vanille-pure); padding-bottom:8px; color: var(--brun-coco);">Journal des passages</div>
+    <div class="filter-bar" style="display:flex; gap:8px; margin-bottom:15px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 8px;">
+    <button class="filter-btn active" onclick="filterLogs('all')">
+        Tous <span class="badge" id="count-all">0</span>
+    </button>
+    <button class="filter-btn" onclick="filterLogs('qr')">
+        <i class="fa-solid fa-qrcode"></i> QR <span class="badge" id="count-qr">0</span>
+    </button>
+    <button class="filter-btn" onclick="filterLogs('mobile')">
+        <i class="fa-solid fa-mobile-screen"></i> Mobiles <span class="badge" id="count-mobile">0</span>
+    </button>
+    <button class="filter-btn" onclick="filterLogs('pc')">
+        <i class="fa-solid fa-desktop"></i> PC <span class="badge" id="count-pc">0</span>
+    </button>
+    <button class="filter-btn" onclick="filterLogs('france')">France <span class="badge" id="count-france">0</span>
+    </button>
+    <button class="filter-btn" onclick="filterLogs('international')">
+        <i class="fa-solid fa-earth-americas"></i> Hors France <span class="badge" id="count-intl">0</span>
+    </button>
+</div>
+    <div class="logs-grid">
+        {logs.map((log, index) => {
+            const [dateS, timeS] = (log.date || " - ").split(' ');
+            
+            // Logique des icônes de connexion (Prise / Globe / Masque)
+            let connectionIcon = "fa-user-secret";
+            let connectionLabel = "Privé";
+            if (log.ip === '::1' || log.ip === '127.0.0.1') {
+                connectionIcon = "fa-plug";
+                connectionLabel = "Local";
+            } else if (log.ip && log.ip !== 'Privé' && log.ip !== 'IP Inconnue') {
+                connectionIcon = "fa-globe";
+                connectionLabel = log.ip;
+            }
+
+            return (
+                <div class="log-entry" 
+     data-qr={String(log.isQR)} 
+     data-device={log.device} 
+     data-country={log.country?.toUpperCase() || 'FRANCE'}>
+                    <div class="log-cell-num">{totalVisites - index}</div>
+                    <div style="padding:0 8px; overflow: hidden;">
+                        <div style="display:flex; align-items:center; gap:8px; white-space: nowrap;">
+                            <span style="font-size:1rem;">
+                                {log.device === 'iOS' && <i class="fa-brands fa-apple"></i>}
+                                {log.device === 'Android' && <i class="fa-brands fa-android"></i>}
+                                {(log.device === 'Ordinateur' || log.device === 'PC') && <i class="fa-solid fa-desktop"></i>}
+                            </span>
+                            
+                            <i class={`fa-solid ${connectionIcon}`} style="font-size:0.75rem; color: var(--sable-dore);"></i>
+                            
+                            <span style="font-size:0.7rem; font-weight:800;">{connectionLabel}</span>
+                            
+                            { (log.isQR === true || String(log.isQR) === 'true') && <i class="fa-solid fa-qrcode" style="color:var(--color-qr); font-size:0.7rem;"></i> }
+                        </div>
+
+                        <div style="font-size:0.55rem; font-weight:900; opacity:0.8; margin-top:2px; display:flex; align-items:center; gap:5px;">
+    {log.flag_code ? (
+        <img 
+            src={`https://flagcdn.com/${log.flag_code}.svg`} 
+            width="16" 
+            height="12" 
+            alt={log.country}
+            style="border-radius: 1px; box-shadow: 0 0 1px rgba(0,0,0,0.5); object-fit: cover;"
+        />
+    ) : (
+        <i class="fa-solid fa-location-dot" style="font-size:0.5rem;"></i>
+    )}
+    <span>{log.country ? log.country.toUpperCase() : 'FRANCE'} / ATELIER</span>
+</div>
+                    </div>
+                    <div class="log-cell-right">
+                        <span>{timeS}</span>
+                        <span style="font-size:0.55rem; opacity:0.7;">{dateS}</span>
+                    </div>
+                </div>
+            );
+        })}
+    </div>
+</div>
+    </div>
+
+<script>
+    // Bloc TypeScript (Gestion du bouton Reset et Horloge)
+    const inputReset = document.getElementById('confirmReset') as HTMLInputElement;
+    const btnReset = document.getElementById('resetBtn') as HTMLButtonElement;
+    
+    inputReset?.addEventListener('input', (e) => {
+        if ((e.target as HTMLInputElement).value.toUpperCase() === 'RESET') {
+            btnReset.disabled = false;
+            btnReset.style.background = '#d32f2f'; btnReset.style.opacity = '1'; btnReset.style.cursor = 'pointer';
+        } else {
+            btnReset.disabled = true;
+            btnReset.style.background = '#4a3728'; btnReset.style.opacity = '0.5'; btnReset.style.cursor = 'not-allowed';
+        }
+    });
+
+    function updateClock() {
+        const now = new Date();
+        const clockEl = document.getElementById('live-clock');
+        const dateEl = document.getElementById('live-date');
+        if (clockEl) clockEl.textContent = now.toLocaleTimeString('fr-FR');
+        if (dateEl) dateEl.textContent = now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+    setInterval(updateClock, 1000); 
+    updateClock();
+</script>
+
+<script is:inline>
+// Fonction de déconnexion
+function logout() {
+    // 1. On crée une requête HTTP synchrone vers une page protégée
+    // avec des identifiants invalides
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", "/dashboard-48", true, "logout", "logout");
+    
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4) {
+            // 2. Une fois que le navigateur a reçu la réponse (401)
+            // avec les mauvais identifiants, on le redirige
+            window.location.href = "/";
+        }
+    };
+    
+    xmlhttp.send();
+}
+
+// Fonction pour calculer les badges au chargement
+function updateBadges() {
+    const entries = document.querySelectorAll('.log-entry');
+    let counts = { all: 0, qr: 0, mobile: 0, pc: 0, france: 0, intl: 0 };
+
+    entries.forEach(entry => {
+        const isQR = entry.getAttribute('data-qr') === 'true';
+        const device = entry.getAttribute('data-device');
+        const country = entry.getAttribute('data-country');
+
+        counts.all++;
+        if (isQR) counts.qr++;
+        if (device === 'iOS' || device === 'Android') counts.mobile++;
+        if (device === 'PC' || device === 'Ordinateur') counts.pc++;
+        if (country === 'FRANCE') counts.france++;
+        else counts.intl++;
+    });
+
+    document.getElementById('count-all').innerText = counts.all;
+    document.getElementById('count-qr').innerText = counts.qr;
+    document.getElementById('count-mobile').innerText = counts.mobile;
+    document.getElementById('count-pc').innerText = counts.pc;
+    document.getElementById('count-france').innerText = counts.france;
+    document.getElementById('count-intl').innerText = counts.intl;
+}
+
+// Fonction de filtrage
+function filterLogs(type) {
+    const entries = document.querySelectorAll('.log-entry');
+    const buttons = document.querySelectorAll('.filter-btn');
+
+    buttons.forEach(btn => btn.classList.remove('active'));
+    if (event) event.currentTarget.classList.add('active');
+
+    entries.forEach(entry => {
+        const isQR = entry.getAttribute('data-qr') === 'true';
+        const device = entry.getAttribute('data-device');
+        const country = entry.getAttribute('data-country');
+
+        let show = false;
+        if (type === 'all') show = true;
+        else if (type === 'qr' && isQR) show = true;
+        else if (type === 'mobile' && (device === 'iOS' || device === 'Android')) show = true;
+        else if (type === 'pc' && (device === 'PC' || device === 'Ordinateur')) show = true;
+        else if (type === 'france' && country === 'FRANCE') show = true;
+        else if (type === 'international' && country !== 'FRANCE') show = true;
+
+        entry.style.display = show ? 'grid' : 'none';
+    });
+}
+
+// --- NOUVELLE FONCTION : EXPORT CSV ---
+function exportLogsToCSV() {
+    // On récupère les entrées visibles ou toutes les entrées
+    const entries = document.querySelectorAll('.log-entry');
+    let csvContent = "Date;Heure;Source;Appareil;Pays;Ville\r\n"; // En-têtes
+
+    entries.forEach(entry => {
+        // On ne prend que les lignes affichées (si tu as filtré avant l'export)
+        if (entry.style.display !== 'none') {
+            const cells = entry.querySelectorAll('span');
+            const rowData = Array.from(cells)
+                .map(cell => `"${cell.innerText.trim().replace(/"/g, '""')}"`)
+                .join(";");
+            csvContent += rowData + "\r\n";
+        }
+    });
+
+    // Encodage UTF-8 avec BOM pour Excel
+    const BOM = "\uFEFF";
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const dateFile = new Date().toLocaleDateString('fr-FR').replace(/\//g, '-');
+
+    link.setAttribute("href", url);
+    link.setAttribute("download", `logs_atelier_${dateFile}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+window.onload = updateBadges;
+</script>
+<footer class="dashboard-footer">
+  <p>&copy; {new Date().getFullYear()} Jean François & Aniuta — Dashboard Atelier</p>
+</footer>
+</body>
+</html>

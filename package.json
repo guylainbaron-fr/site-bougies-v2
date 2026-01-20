@@ -1,0 +1,22 @@
+{
+  "name": "site-bougies-astro",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/vercel": "^9.0.4",
+    "@fontsource/poppins": "^5.2.7",
+    "@vercel/kv": "^1.0.1",
+    "astro": "^5.16.6",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "@types/qrcode": "^1.5.6"
+  }
+}

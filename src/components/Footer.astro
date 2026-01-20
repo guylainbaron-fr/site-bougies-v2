@@ -1,0 +1,39 @@
+---
+// On récupère l'année automatiquement en JS pour ne plus jamais y toucher
+const currentYear = new Date().getFullYear();
+---
+<div class="footer-divider">
+    <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+        <path d="M0,100 C480,0 960,0 1440,100 Z" fill="#4a3728"></path>
+    </svg>
+</div>
+
+<footer class="site-footer">
+    <div class="container">
+        <div class="social-links">
+            <a href="https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR" target="_blank" aria-label="Lien vers la page Facebook de l'entreprise">
+                <i class="fab fa-facebook-f" aria-hidden="true"></i> 
+            </a>
+
+            <a href="https://www.instagram.com/jean_francois_aniuta/" target="_blank" aria-label="Lien vers le profil Instagram de l'entreprise">
+                <i class="fab fa-instagram" aria-hidden="true"></i>
+            </a>
+
+            <a href="https://wa.me/33658909835" target="_blank" class="whatsapp-link" aria-label="Démarrer une conversation sur WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+
+            <a href="https://www.tiktok.com/@jeanfrancoisbaron2" target="_blank" class="tiktok-link" aria-label="Lien vers le profil TikTok">
+                <i class="fab fa-tiktok"></i>
+            </a>
+
+            <a href="https://maps.app.goo.gl/TY3NhqRHVrUwbWwp6" target="_blank" class="google-link" aria-label="Voir l'atelier sur Google Maps">
+                <i class="fab fa-google-plus-g"></i>
+            </a>
+        </div>        
+        <div class="footer-bottom">
+            <p>&copy; {currentYear} Jean François & Aniuta. Tous droits réservés.</p>
+            <a href="/mentions-legales" class="legal-link" title="Consulter les Mentions Légales et Conditions Générales de Vente">Mentions Légales & CGV</a>
+        </div>
+    </div>
+</footer>

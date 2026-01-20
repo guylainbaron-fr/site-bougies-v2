@@ -1,0 +1,3212 @@
+/* ==========================================================================
+   1. RESET UNIFIÉ (LA BASE)
+   ========================================================================== */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* On laisse l'outline rouge pour tes tests de décalage */
+    /* outline: 1px solid red !important; */
+}
+
+:root {
+    /* --- LES TEINTES DE SABLE ET DE SOLEIL --- */
+    --noir-logo: #1a1a1a;
+    --sable-dore: #e0c297;      /* Ton nouveau Laiton */
+    --vanille-pure: #fcf4dd;    /* Ta couleur star, douce et crémeuse */
+    --vanille-eclat: #e9c46a;   /* Un jaune vanille plus intense pour les accents */
+    --vanille-brume: rgba(252, 244, 221, 0.3);
+
+    /* --- LES TEINTES DE TERRE ET DE BOIS --- */
+    --brun-coco: #4a3728;       /* Ton marron de footer actuel */
+    --brun-profond: #2d221a;    /* Pour les contrastes forts */
+    --bois-flotte: #967969;     /* Un marron-sable doux (ancien vert) */
+    --bois-ecorce: #6b564a; /* C'est le même ton que ton bois-flotté, mais en version sombre */
+
+    /* --- LES FONDS ET TEXTES --- */
+    --fond-ecume: #fdfaf7;      /* Ton blanc dédicace */
+    --fond-sable: #f9f1e7;      /* Ton beige de section */
+    --texte-galet: #2c2424;     /* Ton texte sombre */
+
+    /* --- LES POLICES --- */
+    --font-principale: "Poppins", sans-serif;
+    --font-secondaire: "Georgia", serif;
+}
+
+/* ==========================================================================
+   2. STRUCTURE GÉNÉRALE : VERSION ÉVASION CARAÏBES
+   ========================================================================== */
+html {
+    scroll-behavior: smooth;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; 
+}
+
+body {
+    font-family: var(--font-principale);
+    line-height: 1.6;
+    /* On utilise maintenant le fond écume (plus frais) */
+    background-color: var(--fond-ecume); 
+    color: var(--texte-galet);
+    font-size: 16px;
+    
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
+    margin: 0;
+    padding: 0;
+
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px; 
+    width: 100%;
+}
+
+h1, h3, h4, h5, h6, 
+button, input {
+    font-weight: 600 !important;
+}
+
+a {
+    /* Tes liens passent en Vanille Éclat (couleur soleil) */
+    color: var(--vanille-eclat);
+    text-decoration: none;
+    transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+a:hover {
+    /* Au survol, on va vers le Marron-Bois profond */
+    color: var(--brun-profond);
+}
+
+h1, h3, h4 {
+    margin-bottom: 20px;
+    /* Les titres utilisent ton gris galet doux */
+    color: var(--texte-galet);
+}
+
+p {
+    font-size: 1.125rem;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 400;
+    line-height: 1.8;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--texte-galet);
+    min-height: 1.2em;
+}
+/* ==========================================================================
+   SÉPARATEURS & SECTIONS GÉNÉRALES
+   ========================================================================== */
+
+.separator {
+    width: 60px; 
+    height: 4px; 
+    background-color: var(--vanille-eclat); 
+    margin: 12px 0;
+    border-radius: 4px;
+    display: block; 
+}
+
+section {
+    padding: 80px 0;
+    text-align: center;
+    background-color: var(--fond-sable);
+    width: 100%;
+    overflow: hidden;
+    display: block;
+}
+
+/* ==========================================================================
+   DESIGN HEADER : "L'ÉVEIL DES ÎLES - VANILLE & COCO"
+   ========================================================================== */
+
+.site-header {
+    background-color: var(--fond-ecume); 
+    padding: 40px 0 30px 0;
+    position: relative; 
+    z-index: 100;
+    border-bottom: 1px solid var(--sable-dore);
+    overflow: hidden; 
+}
+
+.site-header .container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px;
+}
+
+/* --- CONTENEUR DE MARQUE --- */
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+/* --- LE LOGO (NET ET PROPRE) --- */
+.logo-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 88px;
+    height: 88px;
+}
+
+.logo-box img {
+    width: 100%;
+    height: auto;
+    position: relative;
+    z-index: 2;
+    mix-blend-mode: multiply; /* Fond le blanc du logo dans le décor */
+    filter: contrast(1.05);
+}
+
+/* --- IDENTITÉ POÉTIQUE --- */
+.poetic-identity {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    z-index: 2;
+}
+
+.site-title {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: var(--noir-logo);
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    line-height: 1.1;
+}
+
+.poetic-divider {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    height: 2px;
+    background: linear-gradient(to right, 
+        transparent 0%, 
+        var(--sable-dore) 20%, 
+        var(--vanille-eclat) 50%, 
+        var(--sable-dore) 80%, 
+        transparent 100%
+    );
+    margin: 10px 0 18px 0;
+}
+
+/* --- LA TACHE VANILLE (DERRIÈRE LE SLOGAN) --- */
+.brand-slogan {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 5px 15px;
+}
+
+.brand-slogan::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%; /* Plus large pour l'effet coup de pinceau */
+    height: 140%;
+    
+    /* Onctueuse tache vanille sans effet rouge */
+    background: radial-gradient(
+        ellipse at center, 
+        rgba(252, 244, 221, 0.9) 0%,   /* Vanille dense */
+        rgba(252, 244, 221, 0.4) 60%,  /* Bordure fondue */
+        transparent 90%
+    );
+    
+    filter: blur(15px);
+    z-index: -1; /* Passe derrière le texte */
+    pointer-events: none;
+}
+
+.brand-slogan .slogan-line {
+    font-size: 0.85rem;
+    color: var(--vanille-eclat);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 3px 0;
+    position: relative;
+    z-index: 1; /* Assure que le texte est lisible sur la tache */
+}
+
+/* --- RESPONSIVE MOBILE --- */
+@media (max-width: 768px) {
+    .header-brand {
+        flex-direction: column;
+        gap: 30px;
+    }
+    .poetic-identity {
+        align-items: center;
+        text-align: center;
+    }
+    .brand-slogan::before {
+        width: 100%;
+        height: 120%;
+    }
+}
+/* --- MENU "BRIQUE" (LOOK COCO & SABLE) --- */
+.main-nav { 
+    width: 100%; 
+    box-sizing: border-box;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 12px;
+    padding: 0;
+    margin: 0;
+}
+
+.main-nav a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.8rem;
+    /* Texte couleur Marron Coco */
+    color: var(--brun-coco);
+    text-transform: uppercase;
+    /* Bordure en Marron Coco */
+    border: 2px solid var(--brun-coco);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: color 0.8s ease;
+}
+
+.main-nav a::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    background-color: var(--brun-coco); /* Remplissage chocolat au survol */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 1.2s cubic-bezier(0.2, 0, 0.2, 1), 
+                height 1.2s cubic-bezier(0.2, 0, 0.2, 1);
+    z-index: -1;
+}
+
+.main-nav a:hover::before, 
+.main-nav a.active::before {
+    width: 220%;
+    height: 550%;
+    border-radius: 0;
+}
+
+.main-nav a:hover, 
+.main-nav a.active {
+    /* Le texte passe en Sable très clair sur le marron foncé */
+    color: var(--fond-sable);
+}
+
+/* --- RESPONSIVE --- */
+
+@media (max-width: 1100px) {
+    .main-nav ul { 
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 10px;
+    }
+}
+
+@media (max-width: 850px) {
+    .main-nav ul { 
+        grid-template-columns: repeat(2, 1fr); 
+    }
+    .site-title {
+        font-size: 1.8rem;
+        letter-spacing: 3px;
+    }
+}
+
+@media (max-width: 650px) {
+    .header-brand { 
+        flex-direction: column; 
+        text-align: center; 
+        gap: 20px;
+    }
+    .header-brand::before { 
+        left: 50%; 
+        width: 100%; 
+    }
+    .poetic-identity { 
+        align-items: center; 
+    }
+}
+/* ==========================================================================
+   CODE COMPLET : TOUS LES BOUTONS (STYLE VANILLE & COCO)
+   ========================================================================== */
+
+/* 1. BASE COMMUNE POUR TOUS LES BOUTONS */
+.btn,
+.whatsapp-btn,
+.btn-contact-simple,
+.newsletter-btn,
+.google-btn-red {
+    display: inline-flex; 
+    align-items: center;  
+    justify-content: center; 
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+    /* Transition ultra-douce conservée */
+    transition: all 0.8s cubic-bezier(0.15, 0.85, 0.35, 1);
+    border: 1px solid transparent;
+    letter-spacing: 1.5px;
+    font-family: var(--font-principale) !important;
+    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 2. L'EFFET DE BRILLANCE SOLAIRE (3 SECONDES) */
+.btn::before, 
+.whatsapp-btn::before, 
+.google-btn-red::before, 
+.btn-contact-simple::before {
+    content: '';
+    position: absolute;
+    top: 0; 
+    left: -150%;
+    width: 80%; 
+    height: 100%;
+    /* Le reflet devient une lumière vanille très légère */
+    background: linear-gradient(to right, transparent, rgba(252, 244, 221, 0.2), transparent);
+    transform: skewX(-20deg);
+}
+
+.btn:hover::before, 
+.whatsapp-btn:hover::before, 
+.google-btn-red:hover::before, 
+.btn-contact-simple:hover::before {
+    animation: shine-btn 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes shine-btn {
+    0% { left: -150%; }
+    100% { left: 200%; }
+}
+
+/* 3. EFFETS AU SURVOL GLOBAUX */
+.btn:hover,
+.whatsapp-btn:hover,
+.newsletter-btn:hover,
+.google-btn-red:hover {
+    transform: translateY(-4px);
+    /* Le texte passe en vanille claire au survol */
+    color: var(--vanille-pure) !important;
+}
+
+/* 4. BOUTON PRINCIPAL (LOOK COCO PROFOND) */
+.btn {
+    /* Utilise ton nouveau marron profond */
+    background-color: var(--brun-profond); 
+    color: var(--fond-sable) !important;
+    display: flex; 
+    margin: 50px auto 0 auto !important;
+    width: fit-content; 
+    border: 1px solid var(--brun-coco);
+    box-shadow: 0 4px 12px rgba(45, 34, 26, 0.15);
+}
+
+.btn:hover {
+    /* Devient un peu plus clair (Coco Brûlé) au survol */
+    background-color: var(--brun-coco) !important; 
+    box-shadow: 0 10px 20px rgba(74, 55, 40, 0.25);
+}
+
+/* 5. BOUTON WHATSAPP (VERT) */
+.whatsapp-btn {
+    background-color: #25d366;
+    color: white !important;
+    margin-top: 30px;
+    box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2);
+}
+
+.whatsapp-btn i {
+    margin-right: 12px;
+}
+
+.whatsapp-btn:hover {
+    background-color: #128c7e !important;
+}
+
+/* 6. BOUTON GOOGLE (ROUGE) */
+.google-btn-red {
+    background-color: #ea4335 !important;
+    color: white !important;
+    padding: 18px 45px;
+    box-shadow: 0 4px 15px rgba(234, 67, 53, 0.2);
+}
+
+.google-btn-red i {
+    margin-right: 12px;
+}
+
+/* ==========================================================================
+   7. VARIANTES & NEWSLETTER : HARMONISATION "CARAÏBES & VANILLE"
+   ========================================================================== */
+
+/* --- BASE COMMUNE POUR L'ÉCLAT (REFLET SOLAIRE) --- */
+.btn-contact-simple::before,
+.newsletter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -150%;
+    width: 80%; height: 100%;
+    /* Reflet Vanille subtil */
+    background: linear-gradient(to right, transparent, rgba(252, 244, 221, 0.2), transparent);
+    transform: skewX(-20deg);
+    pointer-events: none;
+}
+
+.btn-contact-simple:hover::before,
+.newsletter-btn:hover::before {
+    animation: shine-btn 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* --- BOUTON CONTACT : LOOK BOIS POLI --- */
+.btn-contact-simple {
+    background-color: var(--brun-profond); /* Brun profond au repos */
+    color: var(--fond-sable) !important;
+    border: 1px solid var(--brun-profond);
+    margin-top: 25px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.8s cubic-bezier(0.15, 0.85, 0.35, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    border-radius: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.btn-contact-simple:hover {
+    background-color: var(--brun-coco) !important; /* S'éclaire en Brun Coco au survol */
+    border-color: var(--brun-coco) !important;
+    transform: translateY(-4px);
+}
+
+/* --- TAILLES ET CARTES PRODUITS --- */
+.small-btn { padding: 8px 20px; font-size: 0.8rem; }
+.large-btn { 
+    padding: 16px 45px; 
+    font-size: 1rem; 
+    border: 1px solid var(--sable-dore); /* Style étiquette luxe */
+}
+.produit-card .btn { margin-top: 15px !important; }
+
+/* --- GROUPE NEWSLETTER : SOUDÉ --- */
+.newsletter-input-group {
+    display: flex !important;
+    max-width: 400px;
+    margin: 20px auto 0;
+    height: 48px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+#newsletter-email {
+    flex: 1;
+    border: 1px solid var(--sable-dore);
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+    padding: 0 15px;
+    background: white;
+    outline: none;
+    color: var(--brun-profond);
+    font-family: var(--font-principale);
+}
+
+.newsletter-btn {
+    width: 60px !important;
+    background-color: var(--brun-profond) !important;
+    color: white !important;
+    border: 1px solid var(--brun-profond) !important;
+    border-radius: 0 4px 4px 0 !important;
+    position: relative;
+    overflow: hidden;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.8s ease, border-color 0.8s ease !important;
+}
+
+.newsletter-btn:hover {
+    background-color: var(--brun-coco) !important;
+    border-color: var(--brun-coco) !important;
+    transform: none !important;
+}
+
+.newsletter-btn i {
+    color: white !important;
+    font-size: 1.2rem;
+}
+
+/* --- ALTERNANCE DES SECTIONS (ÉCUME & SABLE) --- */
+#accueil {
+    padding-top: 80px;
+}
+
+#accueil,
+#atelier,
+#contact-info,
+#evenements-videos,
+#prochain-evenement {
+    background-color: var(--fond-ecume); /* Blanc écume */
+}
+
+#bougies,
+#apropos,
+#contact-map,
+#mentions-legales,
+#souvenirs {
+    background-color: var(--fond-sable); /* Beige sable doux */
+}
+
+#souvenirs {
+    padding: 60px 0;
+}
+
+@media (max-width: 768px) {
+    section {
+        padding: 50px 0;
+    }
+}
+/* ==========================================================================
+   SECTION FOOTER : COLLINE ET CONTENU
+   ========================================================================== */
+
+/* CORRECTIF SÉCURITÉ MOBILE : Empêche le contenu de la page de toucher la colline */
+main section, section {
+    padding-bottom: 100px; /* Augmenté à 100px pour plus de sécurité sur mobile */
+}
+
+/* 1. LA COLLINE */
+.footer-divider {
+    width: 100%;
+    height: 60px;
+    line-height: 0;
+    position: relative;
+    z-index: 10;
+    margin-top: -60px;  /* Ton aspiration */
+    margin-bottom: -1px; 
+    overflow: hidden;   
+}
+
+.footer-divider svg {
+    /* Élargi pour supprimer les traits blancs sur les côtés */
+    width: 101vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100%;
+    display: block;
+}
+
+/* 2. LE CORPS DU FOOTER (Plus compact pour ne pas coller en bas de l'écran PC) */
+footer.site-footer {
+    background-color: #4a3728;
+    color: #f9f1e7;
+    /* RÉDUIT : 40px en haut et 25px en bas pour rester élégant sans descendre trop bas */
+    padding: 40px 0 25px 0; 
+    text-align: center;
+    position: relative;
+    z-index: 5;
+}
+
+footer .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px; /* Plus compact entre les réseaux et le texte */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* --- RÉSEAUX SOCIAUX --- */
+.social-links { 
+    display: flex; 
+    gap: 20px; 
+}
+
+.social-links a {
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    width: 44px; /* Un poil plus petit pour gagner en hauteur */
+    height: 44px; 
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #f9f1e7; 
+    border: 1px solid rgba(249, 241, 231, 0.2);
+    font-size: 1.2rem; 
+    transition: all 0.4s ease;
+    text-decoration: none;
+}
+
+.social-links a:hover {
+    background-color: #f9f1e7;
+    color: #4a3728;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* --- COPYRIGHT & TEXTE (DISPOSITION AÉRÉE) --- */
+.footer-bottom {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 25px; /* Espace équilibré entre texte et lien */
+    flex-wrap: wrap;
+}
+
+footer p { 
+    font-size: 0.9rem; 
+    color: #f9f1e7;
+    opacity: 0.8; 
+    margin: 0;
+}
+
+/* --- MENTIONS LÉGALES : LE BOUTON (FOOTER) --- */
+.legal-link {
+    color: #D4AF37; 
+    text-decoration: none;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px; 
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block;
+    padding: 6px 16px;
+    border: 1.5px solid #D4AF37; /* On utilise l'or laiton pour la bordure aussi */
+    border-radius: 4px;
+    background-color: rgba(212, 175, 55, 0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.legal-link:hover { 
+    color: #f9f1e7;
+    border-color: #f9f1e7;
+    background-color: rgba(212, 175, 55, 0.2);
+    transform: translateY(-2px);
+}
+
+/* --- LE CADRE DE LA PAGE MENTIONS (LISIBILITÉ MAXIMALE) --- */
+.legal-box {
+    background-color: #ffffff; 
+    padding: 60px; /* Plus d'espace pour que le texte respire */
+    border: 1px solid var(--sable-dore);
+    border-radius: 12px; /* Arrondi plus doux */
+    box-shadow: 0 15px 35px rgba(74, 55, 40, 0.05);
+    margin: 40px auto 60px;
+    max-width: 900px;
+    text-align: left;
+    line-height: 1.8; /* AUGMENTE LA LISIBILITÉ : Espace entre les lignes */
+    color: #4a4a4a; /* Gris doux mais contrasté */
+}
+
+/* Titres des sections */
+.legal-box h2 {
+    color: var(--brun-profond);
+    border-bottom: 2px solid var(--vanille-eclat);
+    display: inline-block;
+    padding-bottom: 8px;
+    margin-bottom: 40px;
+    font-size: 2rem;
+}
+
+.legal-box h3 {
+    color: var(--brun-coco);
+    margin-top: 50px;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- LA GRILLE D'IDENTIFICATION (PRO ET NET) --- */
+/* Pour styliser les <dl>, <dt>, <dd> de ton HTML */
+.legal-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr; /* Aligne les étiquettes à gauche */
+    gap: 12px;
+    background: var(--fond-ecume);
+    padding: 25px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.legal-grid dt {
+    font-weight: 700;
+    color: var(--brun-profond);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.legal-grid dd {
+    margin: 0;
+    font-weight: 400;
+}
+
+/* Séparateurs */
+.legal-box hr {
+    border: 0;
+    border-top: 1px dashed var(--sable-dore);
+    margin: 40px 0;
+    opacity: 0.5;
+}
+
+/* Adaptation Mobile */
+@media (max-width: 768px) {
+    .legal-box {
+        padding: 30px 20px;
+    }
+    .legal-grid {
+        grid-template-columns: 1fr; /* Empile les infos sur mobile */
+        padding: 15px;
+    }
+}
+
+/* --- MÉTHODE RADICALE : SIMPLIFICATION TABLETTE (PORTRAIT UNIQUEMENT) --- */
+@media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+    
+    /* 1. On fait disparaître la colline car le rendu des pixels est instable en portrait */
+    .footer-divider {
+        display: none !important;
+    }
+
+    /* 2. On retire les marges négatives et on stabilise le haut du footer */
+    footer.site-footer {
+        margin-top: 0 !important;
+        /* Le liseré doré apporte la finition élégante qui remplace la courbe */
+        border-top: 1px solid var(--sable-dore); 
+    }
+
+    /* 3. On ajuste les espacements pour que le contenu ne "colle" pas au footer */
+    main section:last-of-type, 
+    .legal-box {
+        margin-bottom: 0 !important;
+        padding-bottom: 60px !important;
+    }
+}
+/* --- LIENS POÉTIQUES ANIMÉS (VANILLE) --- */
+.poetic-link {
+    color: var(--brun-coco); 
+    font-weight: 600;
+    text-decoration: none !important;
+    position: relative;
+    display: inline; 
+    transition: color 0.4s ease;
+    padding-bottom: 2px;
+}
+
+.poetic-link::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -1px;
+    left: 0;
+    background-color: var(--vanille-eclat);
+    transform: scaleX(0);
+    transform-origin: left; 
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.poetic-link:hover {
+    color: var(--vanille-eclat) !important; 
+}
+
+.poetic-link:hover::after {
+    transform: scaleX(1);
+}
+
+/* Correction mobile : Invisible par défaut, visible au survol */
+@media (max-width: 768px) {
+    .poetic-link {
+        display: inline;
+        /* Soulignement invisible par défaut */
+        text-decoration: underline !important;
+        text-decoration-color: transparent !important; 
+        text-underline-offset: 4px;
+        text-decoration-thickness: 2px;
+        transition: text-decoration-color 0.4s ease, color 0.4s ease;
+    }
+
+    /* Devient visible uniquement au survol (ou au toucher sur mobile) */
+    .poetic-link:hover, .poetic-link:active {
+        text-decoration-color: var(--vanille-eclat) !important;
+    }
+
+    /* On cache l'animation ::after qui causait le bug de largeur */
+    .poetic-link::after {
+        display: none !important;
+    }
+}
+/* ==========================================================================
+   IMAGES D'INTRODUCTION (LOOK SABLE & RELIEF)
+   ========================================================================== */
+
+.intro-image-1,
+.intro-image-2,
+.intro-image-3 {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    /* L'ombre devient une ombre de terre cuite, moins "sale" que le noir */
+    box-shadow: 0 10px 30px rgba(45, 34, 26, 0.15); 
+}
+
+.intro-image-1,
+.intro-image-3 {
+    aspect-ratio: 600 / 669;
+    object-fit: cover;
+}
+
+.intro-image-2 {
+    aspect-ratio: 600 / 800;
+    object-fit: cover;
+}
+
+/* ==========================================================================
+   SECTION HERO : "CRÉPUSCULE SUR L'ARCHIPEL"
+   ========================================================================== */
+#hero {
+    background: none;
+    position: relative;
+    color: #fff;
+    text-align: center;
+    padding: 100px 20px;
+    min-height: 550px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.hero-background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+    max-width: 100%;
+}
+
+#hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Un voile Brun Profond au lieu du noir pur pour plus de chaleur */
+    background-color: rgba(45, 34, 26, 0.3); 
+    z-index: -1;
+}
+
+#hero .container {
+    z-index: 2;
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+#hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    /* Ombre portée couleur Coco pour la profondeur */
+    text-shadow: 2px 2px 6px rgba(26, 15, 10, 0.9);
+    color: #fff;
+    border-bottom: none;
+    display: block;
+    font-weight: 700;
+}
+
+#hero p {
+    font-size: 1.6rem;
+    color: #fff;
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px 20px;
+    line-height: 1.6;
+    /* Les bordures passent en Vanille Éclat transparente */
+    border-top: 1px solid rgba(233, 196, 106, 0.4);
+    border-bottom: 1px solid rgba(233, 196, 106, 0.4);
+    /* Le gradient utilise un mélange de Brun Coco et de vide */
+    background: radial-gradient(circle, rgba(45, 34, 26, 0.6) 0%, rgba(45, 34, 26, 0.3) 60%, transparent 100%);
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+/* ==========================================================================
+   RESPONSIVE (STABILISÉ IPAD)
+   ========================================================================== */
+@media (max-width: 992px) {
+    #hero {
+        min-height: 450px;
+    }
+    #hero h1 { 
+        font-size: 2.5rem;
+    }
+    #hero p {
+        font-size: 1.25rem;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    #hero {
+        width: 100%;
+        overflow: hidden;
+    }
+}
+
+@media screen and (max-width: 767px) and (orientation: landscape) {
+    #hero {
+        min-height: 85vh;
+        padding: 50px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    #hero h1 { 
+        font-size: 2rem;
+    }
+    /* Harmonisation du titre de section en Sable Doré */
+    .section-title {
+        font-size: 1.8rem;
+        letter-spacing: 2px;
+        color: var(--sable-dore);
+    }
+}
+/* ==========================================================================
+   L'ÉTIQUETTE SIGNATURE (H2 UNIFIÉ) : LOOK VANILLE & COCO
+   ========================================================================== */
+h2 {
+    font-family: var(--font-principale);
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    /* On passe du vin-profond au Brun Profond (Chocolat) */
+    color: var(--brun-profond); 
+    
+    position: relative;
+    display: table;
+    margin: 40px auto; 
+    padding: 20px 45px;
+    
+    /* Le fond devient Vanille Pure */
+    background-color: var(--vanille-pure); 
+    border: 1px solid var(--sable-dore);
+    box-shadow: 0 4px 15px rgba(45, 34, 26, 0.12);
+}
+
+/* Le cadre intérieur */
+h2::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    bottom: 6px;
+    /* Bordure fine couleur Bois Flotté */
+    border: 1px solid rgba(150, 121, 105, 0.2);
+    pointer-events: none;
+}
+
+/* Les 4 rivets aux angles (Sable Doré) */
+h2::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: 
+        radial-gradient(circle, var(--sable-dore) 1.5px, transparent 1.5px),
+        radial-gradient(circle, var(--sable-dore) 1.5px, transparent 1.5px),
+        radial-gradient(circle, var(--sable-dore) 1.5px, transparent 1.5px),
+        radial-gradient(circle, var(--sable-dore) 1.5px, transparent 1.5px);
+    background-position: 6px 6px, calc(100% - 6px) 6px, 6px calc(100% - 6px), calc(100% - 6px) calc(100% - 6px);
+    background-size: 12px 12px;
+    background-repeat: no-repeat;
+}
+
+@media (max-width: 768px) {
+    h2 {
+        font-size: 1.3rem;
+        padding: 15px 20px;
+        letter-spacing: 3px;
+        margin: 30px auto;
+    }
+}
+
+/* --- CARTES PRODUITS (HARMONISÉES) --- */
+.produits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+    padding: 0 15px;
+}
+
+.produit-card {
+    background-color: #fff;
+    border-radius: 10px;
+    /* Ombre plus chaude (Coco) */
+    box-shadow: 0 4px 15px rgba(45, 34, 26, 0.08);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.produit-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(45, 34, 26, 0.15);
+}
+
+.produit-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.produit-card-content {
+    padding: 25px;
+}
+
+.produit-card-content h3 {
+    /* Titre des produits en Brun Coco */
+    color: var(--brun-coco);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+/* --- SECTION PRESSE STYLE ÉPURÉ --- */
+#presse-section {
+    margin-top: 80px;
+    padding-bottom: 40px;
+}
+
+#presse-section h2 {
+    text-align: center;
+    margin-bottom: 50px;
+    color: var(--brun-coco);
+}
+
+.presse-item-recent {
+    margin-bottom: 60px;
+    padding: 40px;
+    background-color: var(--fond-sable);
+    border-radius: 15px;
+    position: relative; /* Nécessaire pour le placement du guillemet */
+    overflow: hidden;   /* Empêche le guillemet de dépasser du cadre arrondi */
+}
+
+/* Le guillemet décoratif (l'icône double apostrophe) */
+.presse-item-recent::before {
+    content: '“';
+    position: absolute;
+    top: -20px;         /* Ajusté pour être visible mais pas trop haut */
+    left: 10px;
+    font-size: 140px;   
+    color: var(--sable-dore);
+    opacity: 0.45;      /* Opacité optimale pour la visibilité sans gêner la lecture */
+    font-weight: 900;   
+    font-family: 'Georgia', serif; 
+    line-height: 1;
+    z-index: 0;         /* Placé derrière le texte */
+    pointer-events: none; /* Le clic passe à travers */
+}
+
+/* Titre, citation et infos : on les force au-dessus du guillemet */
+.presse-item-recent h3, 
+.citation-presse-moderne, 
+.presse-infos {
+    position: relative; 
+    z-index: 1;         /* Passe devant le guillemet */
+}
+
+.presse-item-recent h3 {
+    margin-bottom: 15px;
+    color: var(--brun-coco);
+    padding-left: 10px; /* Évite de coller au bord gauche */
+}
+
+.citation-presse-moderne {
+    font-family: var(--font-secondaire);
+    font-style: italic;
+    color: var(--texte-galet);
+    font-size: 1.1rem;
+    margin: 20px 0;
+    line-height: 1.8;
+}
+
+.presse-infos {
+    margin-top: 25px;
+    font-size: 0.95rem;
+}
+
+/* --- AJUSTEMENTS MOBILE --- */
+@media (max-width: 768px) {
+    .presse-item-recent {
+        padding: 30px 20px; /* Moins de padding pour gagner de la place */
+    }
+
+    .presse-item-recent::before {
+        font-size: 100px; /* Taille réduite pour l'écran mobile */
+        top: -10px;
+        left: 5px;
+        opacity: 0.35;    /* Un peu plus léger sur mobile */
+    }
+
+    .citation-presse-moderne {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+}
+/* ==========================================================================
+   SECTION PRESSE JF & A - STYLE ÉPURÉ (SANS LISERETS)
+   ========================================================================== */
+
+#presse-section {
+    margin-top: 80px;
+    padding-bottom: 40px;
+}
+
+#presse-section h2 {
+    text-align: center;
+    margin-bottom: 50px;
+    color: var(--brun-coco);
+}
+
+/* --- AJUSTEMENT BLOC PRESSE --- */
+.presse-item-recent {
+    margin-bottom: 60px;
+    padding: 40px;
+    background-color: var(--fond-sable);
+    border-radius: 15px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Le guillemet : On l'ajuste pour qu'il ne gêne pas la lecture */
+.presse-item-recent::before {
+    content: '“';
+    position: absolute;
+    top: -5px;
+    left: 15px;
+    font-size: 80px; /* Réduit un peu la taille */
+    color: var(--sable-dore);
+    opacity: 0.15; /* Plus discret pour ne pas gêner le texte */
+    font-family: var(--font-secondaire);
+    line-height: 1;
+    pointer-events: none; /* Pour que le clic passe à travers */
+}
+
+.presse-item-recent h3 {
+    color: var(--brun-coco);
+    margin-top: 0;
+    position: relative;
+}
+
+.citation-presse-moderne {
+    font-family: var(--font-secondaire);
+    font-style: italic;
+    color: var(--texte-galet);
+    font-size: 1.1rem;
+    margin: 20px 0;
+    line-height: 1.8;
+    position: relative;
+}
+
+.info-attente {
+    font-size: 0.9em;
+    margin-bottom: 10px;
+    color: var(--brun-coco);
+    opacity: 0.8;
+    font-style: italic;
+}
+
+.presse-infos {
+    margin-top: 25px;
+}
+
+/* Article La Lozère Nouvelle */
+.article-wrapper {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.article-image-container {
+    flex: 1;
+    max-width: 380px;
+}
+
+.article-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 15px 35px rgba(74, 55, 40, 0.12);
+}
+
+.article-text-summary h3 {
+    margin-top: 0;
+}
+
+.citation-italique {
+    font-family: var(--font-secondaire);
+    font-style: italic;
+    color: var(--texte-galet);
+    margin-top: 15px;
+    display: block;
+}
+
+/* Bouton Contact */
+.cta-container {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+/* Responsive Presse */
+@media (max-width: 768px) {
+    .article-wrapper {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* ==========================================================================
+   SECTION DÉDICACE : VERSION ÉVASION CARAÏBES
+   ========================================================================== */
+
+/* Le conteneur parent */
+.section-dedicace {
+    padding: 60px 20px;
+    margin-top: 40px;
+    text-align: center;
+}
+
+.section-dedicace h3 {
+    font-family: var(--font-principale);
+    /* Ton marron coco remplace le vin-rubis */
+    color: var(--brun-coco); 
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Le bloc de texte (L'écrin vanille) */
+.dedicace {
+    display: block;
+    font-style: italic;
+    padding: 45px 35px;
+    margin: 40px auto;
+    max-width: 750px;
+    position: relative;
+    
+    background-color: var(--fond-ecume); 
+    /* Bordures dorées comme le sable fin */
+    border-top: 2px solid var(--sable-dore);
+    border-bottom: 2px solid var(--sable-dore);
+    color: var(--texte-galet);
+    
+    /* Ombre douce couleur coco */
+    box-shadow: 0 10px 30px rgba(74, 55, 40, 0.08);
+    
+    line-height: 1.8;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Le guillemet stylisé (Vanille Éclat) */
+.dedicace::before {
+    content: "“";
+    font-size: 5rem;
+    /* Couleur soleil pour illuminer ton message */
+    color: var(--vanille-eclat); 
+    position: absolute;
+    top: -25px;
+    left: 20px;
+    opacity: 0.5; /* Un peu plus visible qu'avant car le jaune est clair */
+}
+
+/* La photo souvenir (Style Polaroid des îles) */
+.concepteur-photo {
+    margin-top: 40px;
+}
+
+.photo-souvenir {
+    max-width: 320px;
+    width: 100%;
+    height: auto;
+    border-radius: 4px; /* Plus carré pour le look Polaroid */
+    border: 10px solid #ffffff; /* Bordure blanche plus large pour l'effet photo */
+    /* Ombre portée plus marquée pour le relief */
+    box-shadow: 0 15px 35px rgba(45, 34, 26, 0.2);
+    transform: rotate(-2deg);
+    transition: transform 0.5s ease;
+}
+
+.photo-souvenir:hover {
+    transform: rotate(0deg) scale(1.05);
+}
+
+/* La légende sous la photo */
+.photo-legende {
+    display: block;
+    margin-top: 20px;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--texte-galet); 
+    opacity: 0.8;
+}
+/* ==========================================================================
+   ARTICLES ET FICHES PRODUITS : LOOK CARAÏBES
+   ========================================================================== */
+
+.article-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    background-color: #fff;
+    padding: 30px;
+    margin: 60px auto;
+    max-width: 900px;
+    border: 1px solid var(--sable-dore);
+    /* L'outline utilise ton nouveau fond sable doux */
+    outline: 12px solid var(--fond-sable);
+    box-shadow: 0 15px 35px rgba(45, 34, 26, 0.1);
+}
+
+.article-image-container {
+    flex: 0 0 400px;
+    height: 550px;
+    overflow: hidden;
+    border: 1px solid var(--fond-sable);
+    cursor: zoom-in;
+    border-radius: 2px;
+    position: relative;
+    background-color: var(--fond-ecume);
+    touch-action: none;
+}
+
+.article-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+    transform-origin: center center;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.article-text-summary {
+    flex: 1;
+}
+
+.article-text-summary h3 {
+    /* Titre en Bois Coco Profond */
+    color: var(--brun-profond);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-family: var(--font-secondaire);
+}
+
+.article-text-summary p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--texte-galet);
+}
+
+/* --- CORRECTIF FINAL : SCROLL + ZOOM MANUEL SUR MOBILE --- */
+@media (pointer: coarse) {
+    .article-image-container {
+        /* "manipulation" autorise le scroll et le pincement pour zoomer */
+        touch-action: manipulation !important; 
+        pointer-events: auto !important;
+        overflow: hidden;
+    }
+    
+    .article-image {
+        /* ON RÉACTIVE le pointer-events pour permettre le zoom à deux doigts */
+        pointer-events: auto !important; 
+        
+        /* On bloque le script de loupe qui ferait sauter l'image */
+        transform: none !important; 
+        
+        /* Évite que le menu "enregistrer l'image" s'ouvre trop facilement */
+        -webkit-user-drag: none;
+    }
+}
+
+/* --- IMAGE HERO BOUGIE --- */
+.bougie-hero-img {
+    display: block;
+    max-width: 800px;
+    width: 100%;
+    height: auto;
+    margin: 30px auto 50px auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(45, 34, 26, 0.15);
+    transition: all 0.8s cubic-bezier(0.2, 0, 0.2, 1);
+    filter: brightness(0.95);
+}
+
+.bougie-hero-img:hover {
+    transform: translateY(-8px);
+    filter: brightness(1.05);
+    /* Ombre couleur Coco au survol */
+    box-shadow: 0 15px 35px rgba(74, 55, 40, 0.3);
+}
+
+/* --- GRILLE DES CARACTÉRISTIQUES --- */
+.caracteristiques-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin: 40px 0;
+}
+
+.caracteristiques-grid article {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(45, 34, 26, 0.05);
+    /* Bordure gauche en Bois Coco */
+    border-left: 5px solid var(--brun-coco);
+    transition: transform 0.3s ease;
+}
+
+.caracteristiques-grid article:hover {
+    transform: translateX(5px);
+}
+
+/* --- LISTE DE CONSEILS GÉNÉRALE --- */
+.conseils-list {
+    list-style: none;
+    max-width: 850px;
+    margin: 30px auto;
+    padding: 0;
+}
+
+.conseils-list li {
+    padding: 18px 0;
+    /* Séparateur en Sable Doré discret */
+    border-bottom: 1px solid var(--sable-dore);
+    color: var(--texte-galet);
+    line-height: 1.6;
+}
+
+/* --- ALERTE DE SÉCURITÉ --- */
+.conseils-list li.security-alert {
+    background-color: #fff9f9; /* Rouge très pâle, presque blanc */
+    border: 1px solid #fbdada;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 30px 0;
+    border-left: 6px solid #d9534f;
+    color: #b94a48;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.conseils-list li.security-alert::before {
+    content: "!";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    background-color: #d9534f;
+    color: #fff;
+    font-weight: 700;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: pulse-alert 2s infinite;
+}
+
+.conseils-list li.security-alert span {
+    display: block;
+    flex: 1;
+    text-align: left;
+}
+
+/* --- RESPONSIVE IPAD --- */
+@media (max-width: 768px) {
+    .article-wrapper {
+        flex-direction: column;
+        outline: none;
+        padding: 20px;
+        margin: 40px 15px;
+        text-align: center;
+    }
+    .article-image-container {
+        width: 100%;
+        height: 400px;
+        flex: none;
+    }
+}
+
+@keyframes pulse-alert {
+    0% {
+        box-shadow: 0 0 0 0 rgba(217, 83, 79, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(217, 83, 79, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(217, 83, 79, 0);
+    }
+}
+/* ==========================================================================
+    PAGE BOUGE : GRILLES & TAILLES (CORRIGÉ POUR MOBILE)
+   ========================================================================== */
+
+.bougies-images-grid {
+    text-align: center;
+    margin: 60px auto;
+    max-width: 900px;
+    padding: 0 20px;
+}
+
+.tailles-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 30px;
+    /* Permet aux éléments de passer à la ligne si l'espace manque */
+    flex-wrap: wrap; 
+}
+
+/* --- EFFETS TAILLES DE BOUGIES --- */
+.taille-image {
+    flex: 1;
+    /* Sur grand écran, elles ne dépassent pas 280px */
+    min-width: 200px;
+    max-width: 280px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(45, 34, 26, 0.08);
+    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    filter: brightness(0.95);
+    object-fit: cover;
+}
+
+.taille-image:hover {
+    transform: scale(1.05) translateY(-5px);
+    filter: brightness(1.1) drop-shadow(0 0 10px rgba(233, 196, 106, 0.3));
+    cursor: pointer;
+    z-index: 2;
+}
+
+/* --- GRILLE ATELIER (RESTE INCHANGÉE MAIS STABILISÉE) --- */
+.atelier-images-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 15px;
+    margin: 40px auto 80px auto;
+    max-width: 900px;
+    height: 600px;
+}
+
+.atelier-img-large { grid-row: span 2; }
+
+.atelier-img-large,
+.atelier-img-small {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(45, 34, 26, 0.1);
+    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); 
+}
+
+.atelier-img-large:hover,
+.atelier-img-small:hover {
+    transform: scale(1.03);
+    filter: brightness(1.05) contrast(1.05);
+    box-shadow: 0 10px 25px rgba(45, 34, 26, 0.2);
+    cursor: pointer;
+    z-index: 5;
+}
+
+/* ==========================================================================
+    RÉPARATION MOBILE & IPAD (LE CŒUR DU PROBLÈME)
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* On force les 3 bougies à s'empiler verticalement */
+    .tailles-wrapper {
+        flex-direction: column;
+        align-items: center;
+        gap: 40px; /* Plus d'espace pour bien les distinguer */
+    }
+
+    .taille-image {
+        width: 100%;
+        max-width: 320px; /* Elles reprennent une belle taille sur téléphone */
+    }
+
+    /* On empile aussi la grille atelier qui sinon devient illisible */
+    .atelier-images-grid {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+    }
+
+    .atelier-img-large, 
+    .atelier-img-small {
+        height: 300px;
+    }
+}
+/* --- ÉTAPES DE CRÉATION --- */
+.creation-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px;
+    margin: 60px auto;
+    max-width: 850px;
+}
+
+.step-card {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.step-number {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--brun-profond);
+    background: #fff;
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+    border: 3px solid var(--sable-dore);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.step-card:hover .step-number {
+    background: var(--brun-coco);
+    color: var(--vanille-pure);
+    transform: scale(1.1);
+}
+
+/* ==========================================================================
+    SECTION DÉMARCHE & ICÔNES (COMPLET)
+   ========================================================================== */
+
+.demarche-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin: 60px 0;
+}
+
+.demarche-details article {
+    flex: 1 1 300px;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    border: 1px solid rgba(220, 205, 192, 0.4);
+    box-shadow: 0 10px 30px rgba(45, 34, 26, 0.05);
+    transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    z-index: 1;
+}
+
+.article-bois { border-top: 5px solid var(--bois-flotte); }
+.article-bougie { border-top: 5px solid var(--vanille-eclat); }
+
+/* --- SURVOL DES CARTES --- */
+.article-bois:hover, 
+.article-bougie:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 40px rgba(45, 34, 26, 0.12);
+    z-index: 5;
+}
+
+.article-bois:hover { background-color: var(--fond-ecume); border-color: var(--bois-flotte); }
+.article-bougie:hover { background-color: var(--vanille-brume); border-color: var(--vanille-eclat); }
+
+/* --- ICÔNES CSS STRUCTURE --- */
+.icon-css {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    margin-bottom: 25px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.icon-bois-vert {
+    background-color: var(--vanille-brume);
+    border: 2px solid var(--bois-flotte);
+}
+.icon-bois-vert::before {
+    content: "";
+    position: absolute;
+    width: 4px;
+    height: 22px;
+    background-color: var(--bois-flotte);
+    bottom: 18px;
+    transition: all 0.3s ease;
+}
+.icon-bois-vert::after {
+    content: "";
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    background-color: var(--bois-flotte);
+    border-radius: 50%;
+    top: 10px;
+    transition: all 0.4s ease;
+}
+
+.icon-bougie-jaune {
+    background-color: var(--vanille-brume);
+    border: 2px solid var(--vanille-eclat);
+}
+.icon-bougie-jaune::before {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 24px;
+    background-color: var(--vanille-pure);
+    border: 1px solid var(--vanille-eclat);
+    bottom: 15px;
+    border-radius: 2px;
+}
+.icon-bougie-jaune::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 12px;
+    background-color: #ff9800;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    top: 10px;
+    box-shadow: 0 0 15px #ff9800;
+    animation: flickerVivid 1.5s infinite alternate;
+}
+
+/* --- ANIMATIONS AU SURVOL (LOGIQUE GROUPÉE) --- */
+.article-bois:hover .icon-bois-vert::after {
+    transform: translateY(-4px) scale(1.15);
+    background-color: var(--brun-coco);
+}
+
+.article-bougie:hover .icon-bougie-jaune::after {
+    box-shadow: 0 0 25px #ff9800;
+    transform: rotate(-45deg) scale(1.3);
+}
+
+/* ==========================================================================
+    LAYOUT CONTACT
+   ========================================================================== */
+
+.contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin: 40px auto;
+    max-width: 1000px;
+    padding: 0 15px;
+    align-items: start;
+}
+
+/* ==========================================================================
+    TOUTES LES ANIMATIONS (KEYFRAMES)
+   ========================================================================== */
+
+@keyframes flickerVivid {
+    0% { transform: rotate(-45deg) scale(0.9); opacity: 0.8; }
+    100% { transform: rotate(-45deg) scale(1.1); opacity: 1; }
+}
+
+@keyframes shine-btn {
+    0% { left: -150%; }
+    100% { left: 150%; }
+}
+
+@keyframes sun-shine-on-coco {
+    0% { background-position: 150% center; }
+    100% { background-position: -150% center; }
+}
+
+@keyframes icon-line-tip {
+    0% { width: 0; left: 1px; top: 19px; opacity: 0; }
+    100% { width: 25px; left: 14px; top: 46px; opacity: 1; }
+}
+
+@keyframes icon-line-long {
+    0% { width: 0; right: 46px; top: 54px; opacity: 0; }
+    30% { width: 0; right: 46px; top: 54px; opacity: 0; } 
+    100% { width: 47px; right: 8px; top: 38px; opacity: 1; }
+}
+
+/* --- SECTION TARIFS & SEO --- */
+.bougies-wrapper-seo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.tarifs-block {
+    max-width: 565px; 
+    margin: 0 auto;
+    overflow: hidden; 
+    border-radius: 12px;
+    /* Ombre couleur Coco légère */
+    box-shadow: 0 8px 20px rgba(45, 34, 26, 0.08);
+    transition: box-shadow 0.5s ease;
+}
+
+.tarifs-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.8s cubic-bezier(0.2, 0, 0.2, 1), filter 0.5s ease;
+    filter: brightness(0.98);
+}
+
+.tarifs-block:hover .tarifs-image {
+    transform: scale(1.03);
+    filter: brightness(1.02);
+    cursor: zoom-in;
+}
+
+.tarifs-block:hover {
+    box-shadow: 0 12px 30px rgba(74, 55, 40, 0.15);
+}
+
+/* --- IMAGES D'ACCUEIL & SECTIONS --- */
+.section-image-accueil {
+    text-align: center;
+    padding: 0 15px;
+}
+
+.section-image-accueil img {
+    max-width: 600px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 0 auto;
+}
+
+.section-top-image {
+    max-width: 600px;
+    margin: 20px auto 40px auto;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(45, 34, 26, 0.1);
+}
+
+.section-top-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: grayscale(0.2) contrast(0.95);
+    transition: transform 1s cubic-bezier(0.2, 0, 0.2, 1), filter 0.8s ease, box-shadow 0.8s ease;
+}
+
+.section-top-image:hover img {
+    transform: scale(1.08);
+    filter: grayscale(0) contrast(1.1) brightness(1.05);
+    cursor: pointer;
+}
+
+/* ==========================================================================
+    CORRECTIF FINAL : AFFICHAGE PAYSAGE (LANDSCAPE)
+   ========================================================================== */
+
+/* Ce bloc s'active uniquement quand on tourne le téléphone ou la tablette */
+@media (max-width: 932px) and (orientation: landscape) {
+    
+    .atelier-images-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        height: auto !important; /* Libère la hauteur coincée à 600px */
+        gap: 20px !important;
+        padding: 0 10px;
+    }
+
+    .atelier-img-large, 
+    .atelier-img-small {
+        /* On utilise 80vh (80% de la hauteur de l'écran) pour que l'image 
+           ne dépasse jamais du cadre du téléphone couché */
+        height: 80vh !important; 
+        width: 100% !important;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+
+    /* On réduit un peu les marges pour gagner de la place en largeur */
+    .bougies-images-grid {
+        margin: 20px auto !important;
+    }
+    
+    .tailles-wrapper {
+        gap: 15px !important;
+    }
+}
+
+/* --- WHATSAPP & VIDÉO --- */
+.whatsapp-image-container {
+    text-align: center;
+    margin: 30px auto;
+    max-width: 550px;
+}
+
+.image-sous-whatsapp {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-sizing: border-box;
+    /* Ombre subtile Coco */
+    box-shadow: 0 4px 10px rgba(45, 34, 26, 0.1);
+    transition: all 0.5s ease;
+    filter: brightness(0.95);
+    display: block;
+    margin: 20px auto;
+}
+
+.image-sous-whatsapp:hover {
+    filter: brightness(1.05);
+    transform: scale(1.02);
+    /* Lueur verte WhatsApp mélangée au Brun Coco */
+    box-shadow: 0 8px 20px rgba(37, 211, 102, 0.2);
+    cursor: pointer;
+}
+
+.video-item h4 {
+    margin-top: 0;
+    margin-bottom: 30px;
+    text-align: center;
+    min-height: 60px;
+    /* Titre vidéo en Bois Coco */
+    color: var(--brun-coco);
+}
+
+.hidden {
+    display: none !important;
+}
+/* ==========================================================================
+   SECTION ÉVÉNEMENTS & MARCHÉS : IDENTITÉ COCO & SABLE (CORRIGÉ ACCESSIBILITÉ)
+   ========================================================================== */
+
+/* 1. GRILLE ET CARTES D'ÉVÉNEMENTS */
+.events-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin: 40px auto;
+    max-width: 900px;
+}
+
+.event-card {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    align-items: center;
+    background: var(--vanille-pure); /* Fond Vanille */
+    border-radius: 4px;
+    padding: 25px;
+    border: 1px solid var(--sable-dore); /* Bordure Sable */
+    box-shadow: 0 4px 15px rgba(45, 34, 26, 0.08);
+    transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+    position: relative;
+}
+
+.event-card:hover {
+    background: #ffffff;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(74, 55, 40, 0.12);
+}
+
+/* 2. LE BLOC DATE (COCO PROFOND) */
+.event-date {
+    background-color: var(--brun-profond); 
+    color: var(--vanille-pure); 
+    width: 85px;
+    height: 85px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(45, 34, 26, 0.2);
+    flex-shrink: 0;
+}
+
+.event-date .day {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.event-date .month {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 5px;
+}
+
+/* 3. DÉTAILS DE L'ÉVÉNEMENT */
+.event-details {
+    padding-left: 25px;
+}
+
+.event-details h3 {
+    margin: 0 0 8px 0 !important;
+    font-size: 1.4rem;
+    color: var(--brun-profond); /* Titre en Coco */
+    text-align: left !important;
+    font-family: var(--font-principale);
+}
+
+.event-details p {
+    margin: 6px 0 !important;
+    font-size: 0.95rem !important;
+    color: var(--texte-galet); /* Texte Gris Sable */
+    padding-left: 25px;
+    position: relative;
+    text-align: left !important;
+}
+
+/* Icônes personnalisées : Goutte de cire Vanille & Cercle Sable */
+.event-details p:nth-of-type(1)::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 6px;
+    width: 8px; height: 8px;
+    background: var(--vanille-eclat); 
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+}
+
+.event-details p:nth-of-type(2)::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 6px;
+    width: 10px; height: 10px;
+    border: 2px solid var(--sable-dore);
+    border-radius: 50%;
+}
+
+/* 4. ÉVÉNEMENTS PASSÉS - STYLE CHALEUREUX & ACCESSIBLE */
+.event-card.event-past {
+    /* Au lieu du gris, on utilise ton beige de section (Sable) */
+    background: var(--fond-sable); 
+    border: 1px dashed var(--bois-flotte); /* Bordure en pointillés pour l'effet "souvenir" */
+    border-left: 4px solid var(--bois-flotte);
+    box-shadow: none;
+    filter: none; /* On enlève le noir et blanc qui était triste */
+}
+
+.event-card.event-past .event-date {
+    /* La date devient plus douce (Bois flotté) au lieu de marron foncé */
+    background-color: var(--bois-flotte);
+    opacity: 0.9;
+}
+
+.event-card.event-past .event-details h3 {
+    /* Le titre reste en Coco mais un peu plus doux */
+    color: var(--brun-coco) !important;
+}
+
+.event-card.event-past .event-details p {
+    /* On garde ton texte galet pour le contraste SEO */
+    color: var(--texte-galet) !important;
+}
+
+.event-card.event-past::after {
+    content: "Édition Terminée";
+    position: absolute;
+    top: 15px; right: 20px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    /* On utilise un ton "Vieux Papier/Sable" pour le badge */
+    color: var(--brun-profond);
+    text-transform: uppercase;
+    background: var(--sable-dore);
+    padding: 4px 10px;
+    border-radius: 20px; /* Badge arrondi plus moderne */
+    letter-spacing: 1px;
+}
+
+/* 5. ÉTAT VIDE */
+.event-empty {
+    text-align: center;
+    padding: 60px 30px;
+    background: var(--vanille-pure);
+    border: 1px solid var(--sable-dore);
+    border-radius: 4px;
+    margin: 20px auto;
+    max-width: 800px;
+}
+
+.event-empty h3 {
+    color: var(--brun-coco) !important;
+    font-size: 1.6rem;
+    margin-bottom: 12px;
+}
+
+/* 6. MARCHÉ & CARTE GOOGLE */
+.market-info-wrapper {
+    display: flex;
+    gap: 30px;
+    align-items: stretch;
+    margin: 40px auto;
+    max-width: 1200px;
+}
+
+.market-details {
+    width: 45%;
+    padding: 30px;
+    background-color: var(--vanille-pure);
+    border-radius: 4px;
+    border: 1px solid var(--sable-dore);
+    box-shadow: 0 4px 15px rgba(45, 34, 26, 0.05);
+    text-align: left;
+}
+
+.market-details h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: var(--brun-profond);
+    border-bottom: 1px solid var(--sable-dore);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.market-map {
+    width: 55%;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--sable-dore);
+    min-height: 350px;
+}
+
+/* 7. RESPONSIVE (IPAD & MOBILE) */
+@media (max-width: 768px) {
+    .market-info-wrapper { flex-direction: column; }
+    .market-details, .market-map { width: 100%; }
+    .event-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 20px;
+    }
+    .event-date { margin: 0 auto; }
+    .event-details { padding-left: 0; }
+    .event-details h3, .event-details p { text-align: center !important; }
+    .event-details p { padding-left: 0; }
+    .event-details p::before { display: none; }
+}
+/* ==========================================================================
+   GALERIE SOUVENIRS & VIDÉOS (LOOK CARAÏBES)
+   ========================================================================== */
+
+.affiche-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    margin: 40px auto 60px auto;
+    max-width: 1200px;
+}
+
+.photo-presentation {
+    max-width: 350px;
+    flex: 1 1 300px;
+    text-align: center;
+    transition: transform 0.4s ease;
+}
+
+.photo-presentation img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    /* Ombre subtile couleur Coco */
+    box-shadow: 0 5px 15px rgba(45, 34, 26, 0.15);
+    display: block;
+    margin-bottom: 15px;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.photo-presentation:hover img {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 15px 30px rgba(45, 34, 26, 0.25);
+}
+
+.photo-presentation p {
+    font-size: 1.1rem !important;
+    font-weight: bold !important;
+    color: var(--brun-profond);
+    margin: 0 !important;
+}
+
+.photo-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin: 40px 0;
+}
+
+.photo-item {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(45, 34, 26, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.photo-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(45, 34, 26, 0.15);
+}
+
+.photo-item img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+.photo-item p {
+    font-size: 1rem !important;
+    padding: 15px;
+    margin: 0 !important;
+    text-align: center;
+    color: var(--texte-galet);
+}
+
+/* --- VIDÉOS CORRIGÉES --- */
+.video-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.video-item {
+    flex: 1 1 300px;
+    max-width: 450px;
+    background-color: var(--vanille-brume);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 10px 20px rgba(45, 34, 26, 0.05);
+    display: flex;
+    flex-direction: column; /* Aligne titre, vidéo et texte verticalement */
+}
+
+.video-item h4 {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    color: var(--brun-coco);
+}
+
+/* LE CADRE QUI NE BOUGE JAMAIS */
+.video-responsive {
+    width: 100%;
+    /* On force un format Carré pour que les 3 miniatures soient identiques */
+    aspect-ratio: 1 / 1; 
+    background-color: #000; /* Fond noir pour combler si la vidéo est portrait */
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.video-responsive video {
+    width: 100%;
+    height: 100%; /* Ne s'adapte plus à la source, mais au cadre .video-responsive */
+    display: block;
+    object-fit: contain; /* Magique : garde les proportions sans déformer ni agrandir le bloc */
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.video-item p {
+    font-size: 1rem !important;
+    margin-top: 15px !important;
+    font-weight: 500;
+    color: var(--brun-coco);
+}
+/* ==========================================================================
+   MENTIONS LÉGALES : ÉLÉGANCE ET CLARTÉ
+   ========================================================================== */
+
+#mentions-legales {
+    padding: 80px 0;
+    background-color: var(--fond-ecume);
+    min-height: 80vh;
+}
+
+#mentions-legales a {
+    color: var(--brun-coco);
+    text-decoration: underline;
+}
+
+#mentions-legales .container {
+    max-width: 900px;
+    /* Gradient doux Vanille */
+    background: linear-gradient(135deg, var(--vanille-pure) 0%, #fff 100%);
+    padding: 50px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(74, 55, 40, 0.08);
+}
+
+#mentions-legales h2 {
+    color: var(--brun-profond);
+    text-align: center;
+    margin-bottom: 50px;
+    font-size: 2.4rem;
+}
+
+#mentions-legales h3 {
+    color: var(--brun-profond);
+    margin-top: 40px;
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+    text-align: center;
+}
+
+/* Les tildes passent en Vanille Éclat (Soleil) */
+#mentions-legales h3::before {
+    content: "~ ";
+    color: var(--vanille-eclat);
+    font-weight: 300;
+}
+
+#mentions-legales h3::after {
+    content: " ~";
+    color: var(--vanille-eclat);
+    font-weight: 300;
+}
+
+.legal-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 12px 20px;
+    margin: 30px 0;
+    text-align: left;
+}
+
+.legal-grid dt {
+    font-weight: 700;
+    color: var(--brun-coco);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    line-height: 1.2;
+}
+
+.legal-grid dd {
+    margin: 0;
+    color: var(--texte-galet);
+    line-height: 1.6;
+    padding: 8px 0;
+    /* Bordure pointillée Sable */
+    border-bottom: 1px dashed var(--sable-dore);
+}
+
+#mentions-legales p {
+    line-height: 1.8;
+    color: var(--texte-galet);
+    margin-bottom: 20px;
+}
+
+#mentions-legales hr {
+    border: 0;
+    height: 1px;
+    /* Ligne de séparation Vanille */
+    background: linear-gradient(to right, transparent, var(--vanille-eclat), transparent);
+    margin: 40px 0;
+    opacity: 0.5;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .photo-gallery {
+        grid-template-columns: 1fr;
+        padding: 0 10px;
+    }
+    .photo-presentation {
+        max-width: 90%;
+    }
+    .legal-grid {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+    .legal-grid dt {
+        margin-top: 15px;
+    }
+    .legal-grid dd {
+        border-bottom: 1px solid rgba(74, 55, 40, 0.1);
+        padding-bottom: 10px;
+    }
+    #mentions-legales .container {
+        padding: 30px 20px;
+    }
+}
+/* ==========================================================================
+   ÉCLATS DE SOLEIL (EX-NOËL) & CŒUR TROPICAL
+   ========================================================================== */
+
+.titre-noel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.scintillement {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: eclat-total 2s infinite ease-in-out;
+}
+
+.scintillement::before,
+.scintillement::after {
+    content: "";
+    position: absolute;
+    /* On utilise l'Or (Sable Doré) pour l'éclat solaire */
+    background: var(--sable-dore);
+    border-radius: 50%;
+    box-shadow: 0 0 5px var(--sable-dore);
+}
+
+.scintillement::before {
+    width: 2px;
+    height: 100%;
+}
+
+.scintillement::after {
+    width: 100%;
+    height: 2px;
+}
+
+.scintillement:last-child {
+    animation-delay: 1s;
+}
+
+@keyframes eclat-total {
+    0%, 100% {
+        transform: scale(0.5) rotate(0deg);
+        opacity: 0.3;
+        filter: blur(1px);
+    }
+    50% {
+        transform: scale(1.3) rotate(90deg);
+        opacity: 1;
+        /* Halo lumineux couleur Vanille/Or */
+        filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px var(--sable-dore)) drop-shadow(0 0 20px var(--vanille-eclat));
+    }
+}
+
+/* --- CŒUR DES ÉVÉNEMENTS : HARMONISATION VANILLE --- */
+.event-empty-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    margin-bottom: 10px;
+}
+
+.css-heart {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    /* Le cœur devient Vanille Éclat (chaleur tropicale) */
+    background: var(--vanille-eclat); 
+    transform: rotate(-45deg);
+    animation: calmHeartBeat 4s infinite ease-in-out;
+}
+
+.css-heart::before,
+.css-heart::after {
+    content: "";
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: var(--vanille-eclat); 
+    border-radius: 50%;
+}
+
+.css-heart::before { top: -15px; left: 0; }
+.css-heart::after { top: 0; left: 15px; }
+
+@keyframes calmHeartBeat {
+    0%, 100% {
+        transform: rotate(-45deg) scale(1);
+        filter: drop-shadow(0 0 0px rgba(233, 196, 106, 0));
+    }
+    50% {
+        transform: rotate(-45deg) scale(1.1);
+        /* Halo doré comme une bougie qui brille doucement */
+        filter: drop-shadow(0 0 12px rgba(233, 196, 106, 0.6)) brightness(1.1);
+    }
+}
+
+/* ==========================================================================
+   PAGE CONTACT : STRUCTURE (HARMONISATION COCO)
+   ========================================================================== */
+
+#contact-page .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
+    margin-top: 40px;
+}
+
+#contact-page .contact-image-wrapper,
+#contact-page .contact-info-map {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    /* Ombre couleur Coco très légère */
+    box-shadow: 0 8px 20px rgba(45, 34, 26, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#contact-page .newsletter-inside h3,
+#contact-page .visiting-card h3 {
+    margin: 0;
+    padding: 0 0 10px 0;
+    font-family: var(--font-principale);
+    font-weight: 600;
+    /* Titres en Brun Profond */
+    color: var(--brun-profond);
+    font-size: 1.2rem;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+}
+/* ==========================================================================
+   COLONNE DROITE : LA CARTE DE VISITE ET CITATION (LOOK ARTISAN)
+   ========================================================================== */
+.visiting-card {
+    /* Fond "Papier Vanille" */
+    background-color: var(--vanille-brume); 
+    /* Bordure pointillée comme une couture de sac en toile */
+    border: 2px dashed var(--sable-dore); 
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(45, 34, 26, 0.02);
+    text-align: center;
+    
+    /* Sécurité iPhone SE */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.visiting-card h3 {
+    /* Séparateur Sable Doré */
+    border-bottom: 1px solid var(--sable-dore);
+    margin-bottom: 15px;
+    height: auto;
+    padding-bottom: 10px;
+    color: var(--brun-profond);
+}
+
+.visiting-card p {
+    line-height: 1.8;
+    /* Couleur Bois Flotté */
+    color: var(--bois-ecorce);
+    margin: 0;
+}
+
+/* Protection email iPhone */
+.visiting-card a {
+    word-break: break-all;
+    /* Lien en Brun Coco pour le contraste */
+    color: var(--brun-coco);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* CITATION : Fond "Sable Doux" */
+.contact-note {
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--texte-galet);
+    text-align: center;
+    padding: 18px; 
+    line-height: 1.5;
+    background-color: var(--fond-sable); 
+    border-radius: 12px;
+    margin: 15px 0;
+}
+
+/* Précision augmentée pour le titre de la carte/map */
+.contact-info-map h4 {
+    margin: 15px 0 10px 0;
+    text-align: center;
+    font-size: 1.15rem;
+    /* Titre en Bois Coco */
+    color: var(--brun-coco);
+}
+
+/* Ajustement iPhone SE & petits écrans */
+@media (max-width: 380px) {
+    .visiting-card p {
+        font-size: 0.88rem;
+    }
+    .visiting-card {
+        padding: 15px;
+    }
+}
+/* ==========================================================================
+    COLONNE GAUCHE : NEWSLETTER SOUDÉE (VERSION STABILISÉE)
+   ========================================================================== */
+
+.newsletter-inside {
+    /* Stabilise la colonne : empêche l'image de droite de bouger */
+    min-height: 240px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.newsletter-box {
+    background-color: var(--vanille-brume); 
+    padding: 25px;
+    border-radius: 6px;
+    border: 1px solid var(--sable-dore); 
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(45, 34, 26, 0.03);
+    /* Indispensable pour que le message de succès se positionne bien */
+    position: relative; 
+    min-height: 140px; 
+}
+
+.newsletter-box p {
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--bois-ecorce); 
+    margin: 0 0 18px 0; 
+    line-height: 1.5;
+}
+
+/* --- LE MESSAGE DE SUCCÈS (STYLE CARAÏBES) --- */
+#sib-success {
+    /* On l'habille pour qu'il remplace visuellement le formulaire */
+    background-color: white;
+    border: 1px solid var(--vanille-eclat);
+    color: var(--brun-profond) !important;
+    padding: 15px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 10px rgba(39, 174, 96, 0.1);
+    animation: fadeInSuccess 0.5s ease-out forwards;
+}
+
+/* --- INPUT GROUP ET BOUTON --- */
+.newsletter-input-group {
+    display: flex;
+    flex-wrap: nowrap;
+    max-width: 100%;
+    height: 48px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+#newsletter-email {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    border: 1px solid var(--sable-dore); 
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+    padding: 0 15px;
+    outline: none;
+    background: white;
+    font-family: var(--font-principale);
+    color: var(--brun-coco); 
+}
+
+.newsletter-input-group .newsletter-btn {
+    width: 65px;
+    height: 100%;
+    background-color: var(--brun-coco); 
+    color: white;
+    border: 1px solid var(--brun-coco);
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease;
+}
+
+.newsletter-input-group .newsletter-btn:hover {
+    background-color: var(--brun-profond); 
+    border-color: var(--brun-profond);
+}
+
+/* Reflet Solaire */
+.newsletter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -150%;
+    width: 200%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(233, 196, 106, 0.3), transparent);
+    transform: skewX(-20deg);
+    pointer-events: none;
+}
+
+.newsletter-btn:hover::before {
+    animation: shine-btn 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes fadeInSuccess {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- HARMONISATION WHATSAPP (COLONNE CONTACT) --- */
+
+.whatsapp-box-simple {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid var(--sable-dore); /* Rappel de ta bordure newsletter */
+    text-align: center;
+}
+
+.whatsapp-box-simple p {
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--bois-ecorce); /* Utilisation de ton gris/bois existant */
+    line-height: 1.5;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+/* On force l'affichage du bouton pour qu'il ne soit pas "collé" au texte */
+.whatsapp-box-simple .whatsapp-btn {
+    margin-top: 0 !important; /* On annule le margin-top du CSS global pour gérer l'espace ici */
+    width: 100%; /* Le bouton prend toute la largeur de la newsletter-box */
+    box-sizing: border-box;
+}
+
+/* Optionnel : si tu veux que l'icône WhatsApp garde sa couleur d'origine */
+.whatsapp-btn i {
+    color: #ffffff;
+    font-size: 1.2rem;
+}
+/* ==========================================================================
+   BARRE D'ANNONCE : ÉCRIN COCO & ÉCLAT VANILLE
+   ========================================================================== */
+.holiday-bar {
+    /* Fond Brun Coco avec un léger dégradé pour la profondeur tropicale */
+    background: linear-gradient(135deg, var(--brun-profond) 0%, var(--brun-coco) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    width: 100%;
+    /* Bordure fine en Sable Doré */
+    border-bottom: 1px solid var(--sable-dore);
+    position: relative;
+    z-index: 1001;
+    box-shadow: 0 2px 10px rgba(45, 34, 26, 0.2);
+}
+
+.holiday-text {
+    font-family: inherit; 
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    font-size: 0.75rem;
+    text-align: center;
+    
+    /* Le texte de base est en Vanille Éclat */
+    color: var(--vanille-eclat);
+    
+    /* L'ÉCLAT QUI DÉFILE : REFLET SOLAIRE OR/BLANC */
+    background: linear-gradient(
+        to right, 
+        var(--vanille-eclat) 0%, 
+        var(--vanille-eclat) 40%, 
+        #ffffff 50%, /* Éclat Blanc pur comme un reflet sur l'eau */
+        var(--vanille-eclat) 60%, 
+        var(--vanille-eclat) 100%
+    );
+    background-size: 250% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: sun-shine-on-coco 7s linear infinite;
+}
+
+/* Animation de l'éclat Solaire */
+@keyframes sun-shine-on-coco {
+    0% { background-position: 150% center; }
+    100% { background-position: -150% center; }
+}
+
+@media (max-width: 768px) {
+    .holiday-bar { padding: 12px 10px; }
+    .holiday-text { 
+        font-size: 0.68rem; 
+        letter-spacing: 1.5px; 
+    }
+}
+
+/* ==========================================================================
+   IMAGES ET MAPS (FINITIONS)
+   ========================================================================== */
+.contact-image {
+    width: 100%;
+    /* On remplace auto par une valeur fixe pour s'aligner sur la map */
+    height: 360px; 
+    border-radius: 8px;
+    object-fit: cover;
+    /* Filtre adouci conservé */
+    filter: sepia(0.1) brightness(0.95) contrast(1);
+    margin-top: 20px; /* Petit espace sous le bloc WhatsApp */
+}
+
+.map-container {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    /* Bordure subtile en Bois Flotté */
+    border: 1px solid var(--fond-sable);
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 300px;
+    border: 0;
+    display: block;
+}
+/* ==========================================================================
+   RESPONSIVE ET ANIMATIONS (VERSION STABILISÉE)
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    #contact-page .contact-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- ANIMATION SUCCÈS (CHECKMARK) --- */
+.success-checkmark { 
+    width: 80px; 
+    height: 80px; 
+    margin: 0 auto 20px; 
+}
+
+.check-icon { 
+    width: 80px; 
+    height: 80px; 
+    position: relative; 
+    border-radius: 50%; 
+    /* Vert jungle doux pour la validation */
+    border: 4px solid #4caf50; 
+    box-sizing: content-box; 
+}
+
+.icon-line { 
+    height: 5px; 
+    background-color: #4caf50; 
+    display: block; 
+    border-radius: 2px; 
+    position: absolute; 
+    z-index: 10; 
+}
+
+.line-tip { 
+    width: 25px; 
+    left: 14px; 
+    top: 46px; 
+    transform: rotate(45deg); 
+    animation: icon-line-tip 0.75s ease-in-out; 
+}
+
+.line-long { 
+    width: 47px; 
+    right: 8px; 
+    top: 38px; 
+    transform: rotate(-45deg); 
+    animation: icon-line-long 0.75s ease-in-out; 
+}
+
+@keyframes icon-line-tip {
+    0% { width: 0; left: 1px; top: 19px; opacity: 0; }
+    100% { width: 25px; left: 14px; top: 46px; opacity: 1; }
+}
+
+@keyframes icon-line-long {
+    0% { width: 0; right: 46px; top: 54px; opacity: 0; }
+    30% { width: 0; right: 46px; top: 54px; opacity: 0; } 
+    100% { width: 47px; right: 8px; top: 38px; opacity: 1; }
+}
+
+/* --- NOTE DE BIENVEILLANCE (L'ESPRIT DE L'ATELIER) --- */
+.note-bienveillance {
+    padding: 40px 30px; /* Un peu plus d'espace en haut/bas pour l'élégance */
+    border-top: 1px solid var(--sable-dore);
+    border-bottom: 1px solid var(--sable-dore);
+    
+    /* On utilise la couleur Vanille Brume pour un aspect "papier parchemin" */
+    background-color: var(--vanille-brume); 
+    
+    font-family: var(--font-principale);
+    margin: 60px auto;
+    max-width: 800px;
+    color: var(--texte-galet);
+    text-align: center;
+    line-height: 1.8;
+    
+    /* Un léger arrondi pour casser le côté trop rigide des bordures */
+    border-radius: 4px; 
+}
+
+.note-bienveillance .ligne-deco {
+    display: block;
+    width: 60px; /* Un peu plus large pour mieux équilibrer */
+    height: 2px;
+    background: var(--sable-dore);
+    margin: 0 auto 25px;
+}
+
+.note-bienveillance strong {
+    color: var(--brun-coco);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.95rem;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.note-bienveillance .signature {
+    display: block;
+    margin-top: 20px;
+    font-family: var(--font-secondaire);
+    color: var(--brun-profond);
+    font-size: 1.3rem;
+    font-style: italic;
+}
+/* --- SECTION LIVRE D'OR --- */
+#apropos-livre {
+    background-color: var(--blanc-creme);
+    padding: 80px 0;
+    border: none;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+/* --- SECTION AVIS GOOGLE --- */
+#avis-google-unique {
+    background-color: var(--fond-page);
+    padding: 60px 0 100px 0;
+    margin-top: -5px; 
+    border: none;
+    position: relative;
+    z-index: 2;
+}
+
+/* On ajoute l'ID devant pour garantir que le rouge Google (#ea4335) 
+   écrase toute autre couleur de titre générale */
+#avis-google-unique .google-modern-title {
+    color: #ea4335;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 50px;
+    display: block;
+}
+
+.grille-google {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+/* En ciblant .carte-google-avis à l'intérieur de l'ID #avis-google-unique, 
+   le navigateur donne la priorité à ce style sur les styles de cartes génériques */
+#avis-google-unique .carte-google-avis {
+    background: #ffffff;
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.05);
+    border: 1px solid var(--laiton);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 250px;
+    transition: transform 0.3s ease;
+}
+.carte-google-avis:hover {
+    transform: translateY(-5px);
+}
+.google-stars {
+    color: #d4af37;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+.google-avis-texte {
+    font-family: var(--font-secondaire);
+    font-style: italic;
+    color: #202124;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+.google-avis-auteur {
+    color: #d93025;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+.google-action-titre {
+    color: #ea4335;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+.google-action-sous-titre {
+    color: #3c4043;
+    font-size: 0.85rem;
+}
+
+/* ==========================================================================
+    RESPONSIVE GLOBAL & FIX TABLETTES (IPAD, SURFACE, MOBILE)
+   ========================================================================== */
+
+/* Cible les tablettes (Surface Pro, iPad) et les mobiles */
+@media (max-width: 1024px) {
+    
+    .contact-layout,
+    .atelier-images-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        /* height: auto libère la galerie sur Surface Pro */
+        height: auto !important; 
+        gap: 25px !important;
+        width: 100% !important;
+    }
+
+    .atelier-img-large, 
+    .atelier-img-small {
+        /* Hauteur adaptée aux écrans tactiles larges */
+        height: 450px !important; 
+        width: 100% !important;
+        object-fit: cover;
+    }
+
+    .article-wrapper {
+        flex-direction: column !important;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .creation-steps-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .tailles-wrapper {
+        flex-wrap: wrap !important;
+        gap: 30px !important;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* Ajustement final pour les petits smartphones */
+@media (max-width: 480px) {
+    .atelier-img-large, 
+    .atelier-img-small {
+        height: 300px !important;
+    }
+}

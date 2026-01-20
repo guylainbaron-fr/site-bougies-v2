@@ -1,0 +1,81 @@
+---
+import HolidayBar from './HolidayBar.astro';
+import { Image } from 'astro:assets';
+// On importe le logo depuis le dossier assets
+import logoEntreprise from '../assets/images/logo-entreprise.webp';
+
+const { holidayMessage } = Astro.props;
+---
+
+<div class="header-wrapper">
+    <HolidayBar message={holidayMessage} />
+
+    <header class="site-header">
+        <div class="container">
+            
+            <div class="header-brand">
+                <a href="/" class="logo-link">
+                    <div class="logo-box">
+                        <Image 
+                            src={logoEntreprise} 
+                            alt="Logo Jean-François & Aniuta" 
+                            width={176} 
+                            height={176}
+                            loading="eager"
+                            fetchpriority="high"
+                        />
+                    </div>
+                </a>
+                
+                <div class="brand-content poetic-identity">
+                    <h1 class="site-title">Jean François & Aniuta</h1>
+                    
+                    <span class="poetic-divider"></span>
+                    
+                    <div class="brand-slogan">
+                        <p class="slogan-line">Sculpteurs et Décorateurs sur Bois</p>
+                        <p class="slogan-line">Créateurs de Bougies Artisanales Parfumées</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="main-nav">
+                <ul class="nav-menu">
+                    <li><a href="/" class="nav-link">Accueil</a></li>
+                    <li><a href="/bougies" class="nav-link">Les Bougies</a></li>
+                    <li><a href="/evenements" class="nav-link">Événements</a></li>
+                    <li><a href="/atelier" class="nav-link">L'Atelier</a></li>
+                    <li><a href="/apropos" class="nav-link">À Propos</a></li>
+                    <li><a href="/videos" class="nav-link">Vidéos</a></li>
+                    <li><a href="/avis" class="nav-link">Livre d'Or</a></li>
+                    <li><a href="/contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+
+        </div>
+    </header>
+</div>
+
+<script>
+    const updateActiveLink = () => {
+        const path = window.location.pathname;
+        const navLinks = document.querySelectorAll(".nav-link");
+
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            
+            // On retire la classe active partout
+            link.classList.remove('active');
+
+            // On l'ajoute si le chemin correspond
+            if (path === href || (path === "/" && href === "/index")) {
+                link.classList.add('active');
+            }
+        });
+    };
+
+    // Lancement au chargement
+    updateActiveLink();
+    // Relance le script à chaque navigation entre les pages Astro
+    document.addEventListener('astro:page-load', updateActiveLink);
+</script>

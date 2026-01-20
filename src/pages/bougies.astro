@@ -1,0 +1,143 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import { Image } from 'astro:assets';
+
+import tarifsImg from '../assets/images/bougie-tarifs.webp';
+import petiteImg from '../assets/images/bougie-petite.webp';
+import moyenneImg from '../assets/images/bougie-moyenne.webp';
+import grandeImg from '../assets/images/bougie-grande.webp';
+import allumeesImg from '../assets/images/bougies-allumees.jpg';
+---
+
+<MainLayout 
+    title="Bougie Artisanale Vanille Gourmande | Cire Végétale - J.F. & ANIUTA"
+    description="Découvrez notre bougie artisanale unique, coulée à la main avec de la cire végétale et le parfum Vanille Gourmande. Commandez en ligne via WhatsApp."
+    holidayMessage="De nouvelles <strong>lueurs</strong> pour une année 2026 chaleureuse."
+>
+    <Fragment slot="head">
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Store",
+              "@id": "https://jf-aniuta.vercel.app/#store",
+              "name": "Jean-François & Aniuta - Bougies Artisanales",
+              "url": "https://jf-aniuta.vercel.app/bougies",
+              "image": "https://jf-aniuta.vercel.app/logo-entreprise.webp",
+              "telephone": "+33658909835",
+              "priceRange": "€€",
+              "description": "Découvrez nos bougies artisanales coulées à la main. Créations uniques et naturelles fabriquées dans notre atelier en Lozère.",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Chasseradès",
+                "postalCode": "48250",
+                "addressRegion": "Occitanie",
+                "addressCountry": "FR"
+              },
+              "sameAs": [
+                "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
+                "https://www.instagram.com/jean_francois_aniuta/",
+                "https://wa.me/33658909835"
+              ]
+            },
+            {
+              "@type": "WebPage",
+              "@id": "https://jf-aniuta.vercel.app/bougies#webpage",
+              "url": "https://jf-aniuta.vercel.app/bougies",
+              "name": "Les Bougies Artisanales - Jean-François & Aniuta",
+              "description": "Catalogue de nos bougies artisanales parfumées. Fabrication française et artisanale en Lozère."
+            }
+          ]
+        }
+        </script>
+    </Fragment>
+
+    <section id="bougies">
+        <div class="container">
+            <h2>Découvrez nos Bougies Artisanales</h2>
+            
+            <p>
+                Chaque bougie Jean François & Aniuta est une invitation à l'évasion olfactive, conçue avec la plus grande exigence. Coulées à la main dans notre atelier en Lozère, elles incarnent notre engagement envers l'artisanat de qualité, le naturel et le respect de l'environnement.
+            </p>
+
+            <div class="bougies-wrapper-seo">
+                <div class="tarifs-block">
+                    <Image 
+                        src={tarifsImg} 
+                        alt="Grille des tarifs des bougies artisanales (Petite, Moyenne, Grande)" 
+                        class="tarifs-image"
+                        width={565}   
+                        height={800}  
+                        loading="eager"     
+                        fetchpriority="high"
+                    />
+                </div>
+                
+                <div class="tailles-wrapper">
+                    <Image 
+                        src={petiteImg} 
+                        alt="Bougie artisanale petite taille - Vanille Gourmande" 
+                        class="taille-image"
+                        width={240}   
+                        height={268}  
+                        decoding="async"
+                    />
+                    <Image 
+                        src={moyenneImg} 
+                        alt="Bougie artisanale taille moyenne - Cire végétale" 
+                        class="taille-image"
+                        width={240}   
+                        height={268}  
+                        decoding="async"
+                    />
+                    <Image 
+                        src={grandeImg} 
+                        alt="Bougie artisanale grande taille - Parfum de Grasse" 
+                        class="taille-image"
+                        width={240}   
+                        height={268}  
+                        decoding="async"
+                    />
+                </div>
+            </div>
+            
+            <a 
+                href="https://wa.me/33658909835" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="btn large-btn whatsapp-btn main-whatsapp-btn"
+                aria-label="Commander vos bougies artisanales via WhatsApp"
+                title="Ouvrir WhatsApp pour commander"
+            >
+                <i class="fab fa-whatsapp" aria-hidden="true"></i> Commander en ligne via WhatsApp
+            </a>
+            
+            <div class="whatsapp-image-container">
+                <Image 
+                    src={allumeesImg} 
+                    alt="Ambiance chaleureuse avec nos bougies cèpes allumées" 
+                    class="image-sous-whatsapp"
+                    width={500}
+                    height={500}
+                    decoding="async"
+                />
+            </div>
+        </div>
+    </section>
+
+    <section id="conseils" style="background-color: var(--couleur-fond-clair);">
+        <div class="container">
+            <h2>Conseils d'Utilisation</h2>
+            <p>Pour profiter au maximum de votre bougie Jean François & Aniuta, suivez cette recommandation :</p>
+            
+            <ul class="conseils-list">
+                <li class="security-alert">
+                    <span><strong>Sécurité :</strong> Ne laissez jamais une bougie allumée sans surveillance et tenez-la hors de portée des enfants et des animaux.</span>
+                </li>
+            </ul>
+            
+            <a href="/contact" class="btn" title="Contactez-nous pour plus d'informations">Poser une Question</a>
+        </div>
+    </section>
+</MainLayout>

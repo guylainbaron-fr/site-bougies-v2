@@ -1,0 +1,16 @@
+---
+// 1. L'INTERRUPTEUR (true = affiché, false = masqué)
+const showHolidayBar = false; 
+
+// 2. On récupère le message envoyé par le Layout
+const { message } = Astro.props;
+---
+
+{showHolidayBar && (
+    <div class="holiday-bar glow" role="complementary" aria-label="Vœux de la Nouvelle Année 2026">
+        {/* Flocons retirés pour cohérence, on garde juste le texte */}
+        <span class="holiday-text">
+            <Fragment set:html={message} />
+        </span>
+    </div>
+)}

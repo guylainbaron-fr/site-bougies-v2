@@ -1,0 +1,182 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import EmailProtect from '../components/EmailProtect.astro';
+import PhoneProtect from '../components/PhoneProtect.astro';
+import { Image } from 'astro:assets';
+
+// Importation de l'image de l'atelier pour optimisation automatique
+import imageAtelier from '../assets/images/image-contact-atelier.webp';
+---
+
+<MainLayout 
+  title="Contactez les Artisans du Bois et Bougie | Atelier Lozère - J.F. & ANIUTA"
+  description="Vous avez une question sur nos sculptures ou nos bougies ? Contactez-nous par téléphone, e-mail, ou visitez notre atelier à Chasseradès (48)."
+  holidayMessage="Projetez vos <strong>envies de lumière</strong> pour cette nouvelle année."
+>
+    <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "ContactPage",
+          "@id": "https://jf-aniuta.vercel.app/contact#webpage",
+          "url": "https://jf-aniuta.vercel.app/contact",
+          "name": "Contactez l'Atelier - Jean-François & Aniuta",
+          "description": "Une question sur nos sculptures ou nos bougies ? Contactez Jean-François & Aniuta. Situés à Chasseradès, au cœur de la Lozère.",
+          "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" }
+        },
+        {
+          "@type": "LocalBusiness",
+          "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+          "name": "Jean-François & Aniuta",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Village de Chasseradès",
+            "addressLocality": "Mont Lozère et Goulet",
+            "postalCode": "48250",
+            "addressCountry": "FR"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <section id="contact-page">
+        <div class="container">
+            <h2>Contactez-nous</h2>
+            <p class="intro-contact">
+                Que vous ayez une demande spécifique de sculpture sur bois, un projet de bougie personnalisée ou simplement une question sur nos créations, nous sommes là pour vous.
+            </p>
+
+            <div class="contact-layout">
+                <div class="contact-image-wrapper">
+                    <div class="newsletter-inside">
+                        <h3>Suivre l'Atelier</h3>
+                        
+                        <div class="newsletter-box">
+                            <p>"Un peu de copeaux et de parfum de cire dans votre boîte mail à chaque nouvelle création."</p>
+                            
+                            <form id="sib-form" action="https://3ca71f37.sibforms.com/serve/MUIFAAbnUUPCA2SoeOZpHaq_raEJ0wzKBqWkj0L_WRIXMIgMDyYU-dK22m6VZe6p1A4wKxOJkldm1oFiIT_-MLF-OCVVfDDpg9h-5oTevSelYIWFCz0EDMEX8SIdHD70aNHRGw52nXCvXdtvYrEeNrGdi9e_aHGgLGIU9szm8A7Cp8b7le-pk5qXPVITawEDhRWapm-s82jIBul3lA==" method="POST">
+                                <div class="newsletter-input-group">
+                                    <input type="email" id="newsletter-email" name="EMAIL" placeholder="une-idee@lumineuse.fr" required autocomplete="email">
+                                    <button type="submit" id="sib-submit" class="newsletter-btn">OK</button>
+                                </div>
+
+                                <div style="display:none;" aria-hidden="true">
+                                    <input type="text" name="hp" tabindex="-1" value="">
+                                    <input type="hidden" name="locale" value="fr">
+                                    <input type="hidden" name="is_subscription" value="1">
+                                </div>
+                            </form>
+
+                            <div id="sib-success" style="display:none; color: #27ae60; font-weight: 600; margin-top: 15px; font-size: 0.9rem;">
+                                ✓ Inscription envoyée ! Vérifiez vos e-mails.
+                            </div>
+                        </div> 
+
+                        <div class="whatsapp-box-simple">
+                            <p>Suivez les actualités de notre atelier artisanal en Lozère : nouvelles sculptures sur bois et créations de bougies parfumées en direct sur votre téléphone.</p>
+                            <a href="https://whatsapp.com/channel/0029VbBimwMHQbS9rBEXXu0T" 
+                               target="_blank" 
+                               class="whatsapp-btn" 
+                               title="Rejoindre la chaîne WhatsApp de Jean-François et Aniuta">
+                                 <i class="fab fa-whatsapp" aria-hidden="true"></i> Rejoindre la chaîne WhatsApp
+                            </a>
+                        </div>
+                    </div> 
+
+                    <Image 
+                        src={imageAtelier} 
+                        alt="L'Atelier de sculpture de Jean-François et Aniuta en Lozère" 
+                        class="contact-image"
+                        width={600}
+                        height={450}
+                        loading="eager"
+                    />
+                </div> 
+
+                <div class="contact-info-map">
+                    <div class="visiting-card">
+                        <h3>Nos Coordonnées</h3>
+                        <p>
+                            <strong>Jean François & Aniuta BARON</strong> <br>
+                            <i class="fas fa-phone-alt"></i> Tél : <PhoneProtect class="poetic-link" /> <br>
+                            <i class="fas fa-envelope"></i> Email : <EmailProtect class="poetic-link" /> <br>
+                            <i class="fas fa-map-marker-alt"></i> Atelier : Chasseradès 48250 Mont Lozère et Goulet
+                        </p>
+                    </div>
+
+                    <div class="contact-note">
+                        "Venez pour les créations, restez pour le parfum. L'odeur de bois frais est addictive !"
+                    </div>
+
+                    <h4>Où nous trouver ?</h4>
+                    
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2843.2328154685383!2d3.8251625000000007!3d44.5513388!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12b49b6c0d140a75%3A0xe0a1d15700c3b6ca!2sJean-Fran%C3%A7ois%20%26%20Aniuta%20-%20Atelier%20Artisanal%20(Sculpture%20%26%20Bougies)!5e0!3m2!1sfr!2sfr!4v1767542273786!5m2!1sfr!2sfr" 
+                            title="Localisation de l'Atelier Jean-François & Aniuta"
+                            width="600" 
+                            height="450" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div> 
+            </div> 
+        </div> 
+    </section>
+</MainLayout>
+
+<script>
+    const handleNewsletter = () => {
+        const newsletterForm = document.getElementById('sib-form') as HTMLFormElement;
+        const successMsg = document.getElementById('sib-success');
+
+        if (localStorage.getItem('newsletter_inscrit') === 'true') {
+            if (newsletterForm) newsletterForm.style.display = 'none';
+            if (successMsg) {
+                successMsg.style.display = 'block';
+                successMsg.textContent = "✓ Vous êtes déjà abonné à la Note de l'Atelier.";
+            }
+        }
+
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const hpField = newsletterForm.querySelector('input[name*="hp"]') as HTMLInputElement;
+                if (hpField && hpField.value !== "") {
+                    newsletterForm.style.display = 'none';
+                    if (successMsg) successMsg.style.display = 'block';
+                    return;
+                }
+
+                const btn = document.getElementById('sib-submit');
+                newsletterForm.style.opacity = '0.5';
+                newsletterForm.style.pointerEvents = 'none';
+                if (btn) btn.innerText = '...';
+
+                fetch(newsletterForm.action, {
+                    method: 'POST',
+                    body: new FormData(newsletterForm),
+                    mode: 'no-cors' 
+                }).then(() => {
+                    localStorage.setItem('newsletter_inscrit', 'true');
+                    newsletterForm.style.display = 'none';
+                    if (successMsg) successMsg.style.display = 'block';
+                }).catch(() => {
+                    newsletterForm.style.opacity = '1';
+                    newsletterForm.style.pointerEvents = 'auto';
+                    if (btn) btn.innerText = 'OK';
+                    alert("Erreur lors de l'envoi.");
+                });
+            });
+        }
+    }
+
+    handleNewsletter();
+    document.addEventListener('astro:page-load', handleNewsletter);
+</script>

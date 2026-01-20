@@ -1,0 +1,158 @@
+---
+// src/pages/dashboard-48/cartes.astro
+import ThankYouCard from '../../components/ThankYouCard.astro';
+const currentYear = new Date().getFullYear();
+---
+
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Impression Cartes | Atelier J.F. & Aniuta</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
+    <style>
+      :root { 
+          --sable-dore: #e0c297; 
+          --vanille-pure: #fcf4dd; 
+          --brun-coco: #4a3728; 
+          --fond-ecume: #fdfaf7;
+          --font-principale: "Poppins", sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+
+      body { 
+          margin: 0; padding: 0; 
+          background-color: var(--fond-ecume); 
+          font-family: var(--font-principale); 
+          color: var(--brun-coco);
+      }
+      
+      /* --- HEADER HARMONISÉ (Style Dashboard) --- */
+      .header-prive { 
+          background: white; 
+          padding: 15px 20px; /* Aligné sur le padding du container dashboard */
+          max-width: 1200px;
+          margin: 0 auto 25px auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 2px solid var(--sable-dore);
+          flex-wrap: wrap;
+          gap: 15px;
+      }
+
+      .header-prive h1 {
+          margin: 0;
+          font-size: 0.9rem; /* Taille identique dashboard */
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: var(--brun-coco);
+      }
+
+      .nav-right { display: flex; align-items: center; gap: 15px; }
+
+      /* --- BOUTONS (Style Dashboard) --- */
+      .btn { 
+          padding: 8px 12px; border-radius: 4px; text-decoration: none; 
+          font-weight: 700; text-transform: uppercase; font-size: 0.6rem; 
+          cursor: pointer; border: 1px solid var(--sable-dore); 
+          display: flex; align-items: center; gap: 6px; 
+          color: var(--brun-coco); background: white;
+          white-space: nowrap;
+      }
+      .btn-gold { background: var(--vanille-pure); }
+
+      /* --- FOOTER HARMONISÉ --- */
+      .dashboard-footer {
+          margin-top: 40px;
+          padding: 20px 0;
+          border-top: 1px solid var(--sable-dore);
+          text-align: center;
+          max-width: 1200px;
+          margin-left: auto;
+          margin-right: auto;
+      }
+      .dashboard-footer p {
+          margin: 0;
+          font-size: 0.65rem;
+          text-transform: uppercase;
+          letter-spacing: 1.2px;
+          font-weight: 700;
+          color: var(--brun-coco);
+          opacity: 0.8;
+      }
+
+      /* --- MISE EN PAGE A4 (Inchangée) --- */
+      @page { size: A4 portrait; margin: 0; }
+      
+      .page-a4 {
+          width: 210mm;
+          height: 297mm;
+          background: white;
+          margin: 20px auto;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+          position: relative;
+      }
+
+      .half {
+          flex: 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          position: relative;
+      }
+
+      .cut-line {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          border-bottom: 1px dashed #eee;
+      }
+
+      /* GESTION DE L'IMPRESSION */
+      @media print {
+          .header-prive, .dashboard-footer { display: none !important; }
+          body { background: white !important; padding: 0 !important; }
+          .page-a4 { margin: 0 !important; box-shadow: none !important; border: none !important; }
+          .cut-line { border-bottom: 1px dashed #ccc !important; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header class="header-prive">
+      <h1><i class="fa-solid fa-id-card" style="color: var(--sable-dore);"></i> Impression des Cartes</h1>
+      
+      <div class="nav-right">
+          <a href="/dashboard-48" class="btn"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+          <button class="btn btn-gold" onclick="window.print()">
+            <i class="fa-solid fa-print"></i> Lancer l'impression
+          </button>
+      </div>
+    </header>
+
+    <div class="page-a4">
+      <div class="half">
+        <ThankYouCard />
+        <div class="cut-line"></div> 
+      </div>
+      <div class="half">
+        <ThankYouCard />
+      </div>
+    </div>
+
+    <footer class="dashboard-footer">
+      <p>&copy; {currentYear} Jean François & Aniuta — Dashboard Atelier</p>
+    </footer>
+
+  </body>
+</html>

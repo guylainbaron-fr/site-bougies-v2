@@ -1,0 +1,196 @@
+---
+// 1. Génération de l'année
+const currentYear = new Date().getFullYear();
+
+// 2. Imports pour la performance
+import '../styles/fa/css/brands.min.css';
+import '@fontsource/poppins/400.css';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
+---
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Page non trouvée | Jean François & ANIUTA</title>
+
+    <link rel="icon" href="/favicon.ico" sizes="16x16" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/logo_16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/logo_32.png" />
+
+    <link rel="icon" type="image/png" sizes="144x144" href="/images/logo_144.png" />
+
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/logo_192.png" />
+
+    <link rel="apple-touch-icon" href="/images/logo_192.png" />
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#fdfaf7">
+
+    <style>
+        /* RESET & BASE */
+        * { margin: 0; padding: 0; box-sizing: border-box; text-decoration: none; }
+        :root { 
+            --marron-artisan: #3d2b1f; 
+            --or-doux: #b8860b; 
+            --or-brillant: #d4af37; 
+            --fond-ecume: #fdfaf7;
+            --texte-gris-fort: #575757; 
+        }
+        
+        html, body { 
+            min-height: 100vh;
+            min-height: 100dvh; 
+            background-color: var(--fond-ecume); 
+            color: var(--marron-artisan); 
+            font-family: 'Poppins', sans-serif; 
+            font-display: swap;
+        }
+
+        body { 
+            display: flex; 
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: auto; 
+        }
+
+        @media (min-width: 1025px) {
+            body { height: 100vh; overflow-y: hidden; }
+        }
+
+        /* LE GRAND FLOCON */
+        .snowflake-artisan {
+            position: relative; 
+            width: clamp(160px, 22vh, 220px); 
+            height: clamp(160px, 22vh, 220px);
+            margin: 0 auto 40px; 
+            display: flex; justify-content: center; align-items: center;
+            animation: rotate-snow 30s infinite linear;
+            cursor: pointer; transition: 0.5s ease;
+            flex-shrink: 0;
+        }
+        .snowflake-artisan:hover {
+            animation: rotate-snow 8s infinite linear;
+            filter: drop-shadow(0 0 20px var(--or-brillant));
+        }
+        .axis {
+            position: absolute; width: 10px; height: 50%; 
+            background: var(--marron-artisan); border-radius: 5px;
+            transform-origin: bottom center; bottom: 50%;
+        }
+        .axis:nth-child(1) { transform: rotate(0deg); }
+        .axis:nth-child(2) { transform: rotate(60deg); }
+        .axis:nth-child(3) { transform: rotate(120deg); }
+        .axis:nth-child(4) { transform: rotate(180deg); }
+        .axis:nth-child(5) { transform: rotate(240deg); }
+        .axis:nth-child(6) { transform: rotate(300deg); }
+        .chevron { position: absolute; width: 100%; height: 30px; left: 0; }
+        .chevron.top { top: 0px; }
+        .chevron.bottom { top: 42%; }
+        .chevron::before, .chevron::after {
+            content: ""; position: absolute; width: 10px; height: 22px; 
+            background: var(--marron-artisan); border-radius: 5px;
+        }
+        .chevron::before { transform: rotate(-45deg); left: -10px; }
+        .chevron::after { transform: rotate(45deg); right: -10px; }
+
+        /* CONTENU */
+        main { 
+            flex: 1; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; 
+            text-align: center; padding: 20px;
+        }
+        h1 { 
+            font-size: clamp(4rem, 13vh, 7rem); color: var(--or-doux); 
+            position: relative; line-height: 0.7; font-weight: 800; 
+        }
+        h1::after {
+            content: "404"; position: absolute; top: 0; left: 50%;
+            transform: translateX(-50%); color: var(--marron-artisan); 
+            clip-path: inset(50% 0 0 0);
+        }
+        h2 { font-size: 1.5rem; margin: 20px 0 10px; font-weight: 700; text-transform: uppercase; }
+        p { max-width: 500px; color: var(--texte-gris-fort); margin-bottom: 25px; line-height: 1.4; font-size: 0.95rem; }
+
+        .btn-retour { 
+            padding: 15px 40px; background-color: var(--marron-artisan); 
+            color: white !important; border-radius: 50px; 
+            font-weight: 600; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(61, 43, 31, 0.2);
+        }
+        .btn-retour:hover { transform: scale(1.05); background: var(--or-doux); }
+
+        /* FOOTER */
+        footer { padding: 20px 0 40px; text-align: center; flex-shrink: 0; }
+        .social-links { margin-bottom: 15px; }
+        .social-links a { 
+            margin: 0 10px; color: var(--marron-artisan) !important; font-size: 1.2rem;
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 44px; height: 44px; border: 1px solid rgba(61, 43, 31, 0.1); 
+            border-radius: 50%; transition: 0.4s;
+        }
+        .social-links a:hover { 
+            background-color: var(--or-doux) !important;
+            color: #fff !important; 
+            border-color: var(--or-doux); 
+            transform: translateY(-5px); 
+        }
+
+        .copyright { color: var(--texte-gris-fort); font-size: 0.75rem; display: block; margin-top: 15px; }
+        
+        /* LIEN MENTIONS LÉGALES - COULEURS INVERSÉES */
+        .legal-link { 
+            color: var(--marron-artisan) !important; 
+            text-decoration: underline; 
+            text-underline-offset: 3px; 
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .legal-link:hover { 
+            color: var(--or-doux) !important; 
+            text-decoration: none;
+        }
+
+        @keyframes rotate-snow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            main { justify-content: flex-start; padding-top: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+<main>
+    <div class="snowflake-artisan" aria-hidden="true">
+        <div class="axis"><div class="chevron top"></div><div class="chevron bottom"></div></div>
+        <div class="axis"><div class="chevron top"></div><div class="chevron bottom"></div></div>
+        <div class="axis"><div class="chevron top"></div><div class="chevron bottom"></div></div>
+        <div class="axis"><div class="chevron top"></div><div class="chevron bottom"></div></div>
+        <div class="axis"><div class="chevron top"></div><div class="chevron bottom"></div></div>
+        <div class="axis"><div class="chevron top"></div><div class="chevron bottom"></div></div>
+    </div>
+    <h1>404</h1>
+    <h2>La piste est effacée...</h2>
+    <p>Le blizzard a recouvert le chemin vers cette page. Ne restez pas dans la tempête, retrouvez la chaleur de notre atelier à l'accueil.</p>
+    <a href="/" class="btn-retour">Retrouver la chaleur (Accueil)</a>
+</main>
+
+<footer>
+    <div class="social-links">
+        <a href="https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/jean_francois_aniuta/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://wa.me/33658909835" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.tiktok.com/@jeanfrancoisbaron2" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+    </div>
+    <span class="copyright">
+        © <span>{currentYear}</span> Jean François & Aniuta. Gravé dans la cire, protégé par l'hiver.
+        | <a href="/mentions-legales" class="legal-link" title="Consulter les Mentions Légales">Mentions Légales & CGV</a>
+    </span>
+</footer>
+
+</body>
+</html>

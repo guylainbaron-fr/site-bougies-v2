@@ -1,0 +1,62 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+---
+
+<MainLayout 
+  title="Désinscription Confirmée | Jean François & ANIUTA - Artisans en Lozère"
+  description="Votre désinscription à la Note de l'Atelier est confirmée. Vous pouvez revenir quand vous le souhaitez dans l'univers de Jean François & Aniuta."
+  holidayMessage="La flamme reste <strong>allumée</strong> pour vous en 2026... À bientôt !"
+>
+    <meta name="robots" content="noindex, nofollow" slot="head" />
+
+    <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          "@id": "https://jf-aniuta.vercel.app/au-revoir#webpage",
+          "url": "https://jf-aniuta.vercel.app/au-revoir",
+          "name": "Désinscription Confirmée - Jean-François & Aniuta",
+          "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+          "description": "Votre désinscription à La Note de l'Atelier est bien confirmée. Vous pouvez revenir quand vous le souhaitez dans l'univers de Jean-François & Aniuta."
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://jf-aniuta.vercel.app/#organization",
+          "name": "Jean-François & Aniuta",
+          "url": "https://jf-aniuta.vercel.app/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://jf-aniuta.vercel.app/images/logo_144.png",
+            "width": 144,
+            "height": 144
+          }
+        }
+      ]
+    }
+    </script>
+
+    <section id="contact-page" style="padding: 80px 0; min-height: 50vh; display: flex; align-items: center;">
+        <div class="container">
+            <div style="max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); text-align: center;">
+                
+                <div class="success-checkmark">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                    </div>
+                </div>
+                
+                <h2 style="margin-bottom: 20px; color: var(--couleur-texte-sombre);">Désinscription confirmée</h2>
+                <p style="margin-bottom: 30px; font-style: italic; color: #5d4037;">
+                    "La récolte s'arrête ici pour vous, mais la forêt reste ouverte."
+                </p>
+                <p style="margin-bottom: 30px;">
+                    Vous ne recevrez plus <strong>La Note de l'Atelier</strong>. On vous garde une place au coin du feu si vous décidez de revenir.
+                </p>
+                <a href="/" class="btn small-btn">Retourner à l'accueil</a>
+            </div>
+        </div>
+    </section>
+</MainLayout>

@@ -1,0 +1,111 @@
+---
+import QRCode from './QRCode.astro';
+---
+
+<div class="card-artisan">
+  <p class="merci">Merci pour votre confiance !</p>
+  
+  <p class="phrase-impact">
+    Votre satisfaction est notre plus belle récompense.
+  </p>
+  
+  <div class="stars-row">
+    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+  </div>
+
+  <p class="appel-avis">Un petit avis sur notre site nous aiderait énormément !</p>
+  
+  <p class="noms">Jean-François & Aniuta</p>
+
+  <div class="qr-container">
+    <div class="qr-zone">
+      <QRCode size={105} />
+    </div>
+  </div>
+
+  <p class="decouvrir">
+    Laissez votre avis sur : <br/>
+    <span class="url-site">jf-aniuta.vercel.app</span>
+  </p>
+</div>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+
+  .card-artisan {
+    width: 155mm;
+    height: 125mm;
+    background: #fdfaf7;
+    border: 2px solid #e2cfb6;
+    text-align: center;
+    font-family: 'Indie Flower', cursive;
+    color: #4a3728;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin: auto; /* Centre la carte si plusieurs sur une page */
+  }
+
+  .merci { 
+    font-size: 1.3rem; 
+    font-weight: bold; 
+    margin: 0; 
+    text-transform: uppercase; 
+  }
+
+  .phrase-impact { 
+    font-size: 1.05rem; 
+    margin: 0; 
+    max-width: 85%; 
+  }
+  
+  .stars-row { 
+    color: #d4af37; 
+    font-size: 1.4rem; 
+    letter-spacing: 4px; 
+    margin: 2px 0;
+  }
+
+  .appel-avis { 
+    font-size: 0.95rem; 
+    font-style: italic; 
+    margin: 0; 
+    max-width: 90%;
+  }
+
+  .noms { 
+    font-size: 1.6rem; 
+    font-weight: bold; 
+    margin: 2px 0; 
+  }
+
+  .qr-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .qr-zone { 
+    background: white; 
+    padding: 6px; 
+    border-radius: 12px; 
+    border: 1px solid #f3eee6;
+    line-height: 0;
+    box-shadow: 0 2px 10px rgba(74, 55, 40, 0.05);
+  }
+
+  .decouvrir { 
+    font-size: 0.9rem; 
+    margin: 0; 
+  }
+
+  .url-site { 
+    font-size: 1rem; 
+    font-weight: bold;
+    display: block;
+    margin-top: 2px;
+  }
+</style>

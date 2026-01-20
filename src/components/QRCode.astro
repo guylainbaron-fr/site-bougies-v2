@@ -1,0 +1,44 @@
+---
+// src/components/QRCode.astro
+interface Props {
+  url?: string;
+  size?: number;
+}
+
+// L'URL par défaut contient maintenant la "signature" pour tes stats
+const defaultUrl = "https://jf-aniuta.vercel.app/?ref=qr";
+const { url = defaultUrl, size = 150 } = Astro.props;
+
+// Tes couleurs exactes
+const darkColor = "4a3728"; // Marron
+const lightColor = "fdfaf7"; // Beige de fond
+
+const qrImageUrl = `https://quickchart.io/qr?text=${encodeURIComponent(url)}&size=${size}&margin=2&dark=${darkColor}&light=${lightColor}&ecLevel=H`;
+---
+
+<div class="qr-code-wrapper">
+  <img 
+    src={qrImageUrl} 
+    alt="QR Code JF & Aniuta"
+    width={size} 
+    height={size}
+    loading="eager"
+  />
+</div>
+
+<style>
+  .qr-code-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fdfaf7; 
+    padding: 8px;
+    border-radius: 12px; /* Un peu plus arrondi pour le style */
+    box-shadow: 0 4px 12px rgba(74, 55, 40, 0.08);
+  }
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+</style>

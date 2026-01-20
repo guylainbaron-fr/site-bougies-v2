@@ -1,0 +1,97 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import VideoItem from '../components/VideoItem.astro';
+
+// Importation des miniatures
+import poster1 from '../assets/images/miniature-cadeau-1.webp';
+import poster2 from '../assets/images/miniature-cadeau-2.webp';
+import poster3 from '../assets/images/miniature-cadeau-3.webp';
+---
+
+<MainLayout 
+  title="L'Atelier en Vidéo : Bougies Artisanales | JF & A"
+  description="Découvrez le savoir-faire de Jean-François & Aniuta à travers nos présentations vidéo. Collection Vanille Gourmande en Lozère."
+  holidayMessage="<strong>Éclats de 2026 :</strong> découvrez nos créations prendre vie en vidéo."
+>
+    <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "CollectionPage",
+          "@id": "https://jf-aniuta.vercel.app/videos/#webpage",
+          "url": "https://jf-aniuta.vercel.app/videos",
+          "name": "L'Atelier en Vidéo : Collection Vanille Gourmande | JF & A",
+          "description": "Découvrez le savoir-faire de Jean-François & Aniuta à travers nos présentations vidéo.",
+          "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+          "about": { "@id": "https://jf-aniuta.vercel.app/#organization" },
+          "inLanguage": "fr-FR"
+        },
+        {
+          "@type": "VideoObject",
+          "name": "Vanille Gourmande - Présentation 1",
+          "description": "Découverte de la collection de bougies artisanales Vanille Gourmande par JF & Aniuta.",
+          "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-1.webp",
+          "uploadDate": "2026-01-11",
+          "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-1.mp4"
+        },
+        {
+          "@type": "VideoObject",
+          "name": "Vanille Gourmande - Présentation 2",
+          "description": "Le rendu visuel de nos bougies artisanales Vanille Gourmande.",
+          "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-2.webp",
+          "uploadDate": "2026-01-11",
+          "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-2.mp4"
+        },
+        {
+          "@type": "VideoObject",
+          "name": "Vanille Gourmande - Présentation 3",
+          "description": "Détails et finitions de la collection Vanille.",
+          "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-3.webp",
+          "uploadDate": "2026-01-11",
+          "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-3.mp4"
+        }
+      ]
+    }
+    </script>
+
+    <section id="christmas-videos" class="main-content">
+        <div class="container">
+            <h2 class="titre-noel">
+                <span class="scintillement"></span> 
+                L'Atelier en Vidéo : Collection Vanille
+                <span class="scintillement"></span>
+            </h2>
+            
+            <p style="text-align: center; margin-bottom: 30px;">
+                Découvrez notre collection Vanille Gourmande.
+            </p>
+
+            <div class="video-gallery">
+                <VideoItem 
+                    title="Vanille Gourmande (Présentation 1)"
+                    videoSrc="/videos/video-noel-1.mp4"
+                    posterImg={poster1}
+                />
+
+                <VideoItem 
+                    title="Vanille Gourmande (Présentation 2)"
+                    videoSrc="/videos/video-noel-2.mp4"
+                    posterImg={poster2}
+                />
+
+                <VideoItem 
+                    title="Vanille Gourmande (Présentation 3)"
+                    videoSrc="/videos/video-noel-3.mp4"
+                    posterImg={poster3}
+                />
+            </div>
+            
+            <div class="cta-wrapper" style="margin-top: 50px; margin-bottom: 50px;">
+                <a href="https://wa.me/33658909835" target="_blank" class="btn large-btn whatsapp-btn main-whatsapp-btn" title="Commander via WhatsApp">
+                    <i class="fab fa-whatsapp"></i> Commander en ligne via WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+</MainLayout>

@@ -1,0 +1,225 @@
+---
+export const prerender = false;
+
+import MainLayout from '../layouts/MainLayout.astro';
+import { Image } from 'astro:assets';
+import { createClient } from '@vercel/kv';
+import { loadEnv } from 'vite';
+
+// --- 1. PRÉPARATION DES DONNÉES ---
+let userIP: string = "Privé";
+let detectedDevice: string = "PC";
+
+// Récupération de l'IP
+const forwarded = Astro.request.headers.get("x-forwarded-for");
+if (forwarded) {
+    userIP = forwarded.split(',')[0].trim();
+}
+
+// Détection de l'appareil
+const ua = Astro.request.headers.get("user-agent") || "";
+if (/android/i.test(ua)) detectedDevice = "Android";
+else if (/iPad|iPhone|iPod/i.test(ua)) detectedDevice = "iOS";
+
+// Détection si c'est un scan QR
+const isQR = Astro.url.searchParams.get('ref') === 'qr';
+
+// --- 2. FONCTIONS GÉO-IP ---
+async function getCountryData(ip: string) {
+    if (ip === "::1" || ip === "127.0.0.1" || ip === "Privé") {
+        return { country: "France", code: "FR" };
+    }
+    try {
+        const response = await fetch(`http://ip-api.com/json/${ip}`);
+        const data: any = await response.json();
+        if (data && data.status === 'success') {
+            return { country: data.country, code: data.countryCode };
+        }
+    } catch (e) {
+        console.error("Erreur géo-IP:", e);
+    }
+    return { country: "France", code: "FR" };
+}
+
+function getFlagEmoji(countryCode: string) {
+    return countryCode
+        .toUpperCase()
+        .replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397));
+}
+
+// --- 3. LOGIQUE D'ENREGISTREMENT ---
+const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
+const KV_URL = (env.KV_REST_API_URL || process.env.KV_REST_API_URL || '') as string;
+const KV_TOKEN = (env.KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN || '') as string;
+const kv = createClient({ url: KV_URL, token: KV_TOKEN });
+
+// Change 'false' par 'true' pour stopper le comptage quand tu travailles
+const blockCounting = true;
+
+if (!blockCounting && !Astro.url.pathname.includes('admin')) {
+    try {
+        const geo = await getCountryData(userIP);
+        const flag = getFlagEmoji(geo.code);
+
+        const logEntry = {
+            date: new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }),
+            device: detectedDevice,
+            isQR: isQR,
+            ip: userIP,
+            country: geo.country,
+            flag_code: geo.code.toLowerCase()
+        };
+
+        await kv.incr('visites_totales');
+        await kv.lpush('journal_visites', JSON.stringify(logEntry));
+        await kv.ltrim('journal_visites', 0, 99);
+    } catch (e: any) {
+        console.error("Erreur Stats Index:", e.message);
+    }
+}
+
+// Imports d'images
+import heroHome from '../assets/images/hero-home.webp';
+import accueilImg from '../assets/images/accueil-h2-1.webp';
+import atelierImg from '../assets/images/accueil-h2-2.webp';
+import aproposImg from '../assets/images/accueil-h2-3.webp';
+---
+
+<MainLayout 
+    title="Jean François & ANIUTA | Artisans Sculpteurs et Créateurs de Bougies en Lozère (48)"
+    description="Découvrez l'artisanat du bois et de la bougie de J.F. & Aniuta. Sculptures uniques sur bois local et bougies naturelles parfumées à Chasseradès (Lozère)."
+    holidayMessage="Que l’année <strong>2026</strong> s’illumine de mille feux... Meilleurs Vœux !"
+>
+<script type="application/ld+json" slot="head">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "name": "Jean-François & Aniuta",
+      "url": "https://jf-aniuta.vercel.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://jf-aniuta.vercel.app/#logo",
+        "url": "https://jf-aniuta.vercel.app/images/logo_144.png",
+        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_144.png",
+        "width": 144,
+        "height": 144,
+        "caption": "Jean-François & Aniuta"
+      },
+      "image": { "@id": "https://jf-aniuta.vercel.app/#logo" },
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
+        "https://www.instagram.com/jean_francois_aniuta/",
+        "https://www.tiktok.com/@jeanfrancoisbaron2",
+        "https://wa.me/33658909835"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://jf-aniuta.vercel.app/#website",
+      "url": "https://jf-aniuta.vercel.app/",
+      "name": "Jean-François & Aniuta - Créations Artisanales",
+      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" },
+      "inLanguage": "fr-FR"
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+      "name": "Jean-François & Aniuta - Atelier Artisanal (Sculpture & Bougies)",
+      "url": "https://jf-aniuta.vercel.app/",
+      "telephone": "+33658909835",
+      "priceRange": "$$",
+      "image": "https://jf-aniuta.vercel.app/images/logo_144.png",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Village de Chasseradès",
+        "addressLocality": "Mont Lozère et Goulet",
+        "postalCode": "48250",
+        "addressRegion": "Occitanie",
+        "addressCountry": "FR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 44.5513388,
+        "longitude": 3.8251625
+      },
+      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+          ],
+          "opens": "07:00",
+          "closes": "19:00"
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+    <section id="hero">
+        {/* Ici, Astro gère automatiquement le srcset et la compression */}
+<Image 
+    src={heroHome} 
+    alt="Scènes d'atelier de sculptures et bougies" 
+    class="hero-background-image" 
+    loading="eager"
+    fetchpriority="high"
+    quality={80}
+    width={1435}
+    height={708}
+    widths={[480, 800, 1435]}
+    sizes="(max-width: 768px) 100vw, 1435px"
+    decoding="async"
+/>
+        <div class="container">
+            <h1>L'Héritage Lozérien : Maîtres Sculpteurs et Créateurs de Bougies Artisanales.</h1> 
+            <p>Chaleur du bois sculpté, réconfort de la flamme parfumée. L'artisanat conçu pour enrichir votre intérieur.</p>
+            <a href="/bougies" class="btn large-btn" title="Accéder à notre collection de bougies"> Découvrir l'univers</a>
+        </div>
+    </section>
+
+    <section id="accueil">
+        <div class="container">
+            <div class="section-top-image">
+                <Image src={accueilImg} alt="Image illustrant l'art du bois et des bougies" class="intro-image-1" width={600} height={669} />
+            </div>
+            <h2>L'Art du Bois et le Parfum des Sens.</h2>              
+            <p>
+                Découvrez l'harmonie parfaite entre la chaleur du bois sculpté et les senteurs envoûtantes de nos créations artisanales. Chaque pièce raconte une histoire de passion et de nature.
+            </p>
+            <a href="/bougies" class="btn">Découvrir les Bougies</a> 
+        </div>
+    </section>
+
+    <section id="atelier">
+        <div class="container">
+            <div class="section-top-image">
+                <Image src={atelierImg} alt="Vue intérieure de l'atelier de création" class="intro-image-2" width={600} height={800} />
+            </div>
+            <h2>Notre Atelier : Là où la Magie Opère</h2>
+            <p>
+                Situé à Chasseradès, au cœur de la Lozère, notre atelier est le lieu de rencontre entre la matière brute (bois locaux) et notre savoir-faire ancestral. Venez découvrir notre processus de création, de la première découpe à la dernière finition.
+            </p>
+            <a href="/atelier" class="btn">Visiter l'Atelier</a>
+        </div>
+    </section>
+
+    <section id="apropos">
+        <div class="container">
+            <div class="section-top-image">
+                <Image src={aproposImg} alt="Portrait de l'artisan Jean-François BARON" class="intro-image-3" width={600} height={669} />
+            </div>
+            <h2>À Propos de l'Artisan et Notre Histoire</h2>
+            <p>
+                Artisans passionnés, Jean François & Aniuta se consacrent au travail du bois depuis de nombreuses années. Chaque pièce est le fruit d'une démarche respectueuse du matériau et d'une recherche d'esthétisme unique. Nous privilégions les essences locales et les finitions naturelles.
+            </p>
+            <a href="/apropos" class="btn">En Savoir Plus sur Nous</a> 
+        </div>
+    </section>
+
+</MainLayout>

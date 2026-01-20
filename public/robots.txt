@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Allow: /manifest.json
+
+# Empêche l’indexation des fichiers techniques
+Disallow: /assets/
+Disallow: /images/temp/
+Disallow: /tmp/
+
+# Empêche l’indexation des fichiers sensibles (on cible spécifiquement vercel.json)
+Disallow: /vercel.json
+Disallow: /*.txt$
+
+# Sitemap
+Sitemap: https://jf-aniuta.vercel.app/sitemap.xml

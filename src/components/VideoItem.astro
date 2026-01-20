@@ -1,0 +1,56 @@
+---
+interface Props {
+  title: string;
+  videoSrc: string;
+  posterImg: any; // On passe l'objet image d'Astro
+  width?: string;
+  height?: string;
+}
+
+/** * OPTIMISATION PERFORMANCE : 
+ * Lighthouse a détecté que les images s'affichent en 219x332 sur mobile.
+ * On change donc les valeurs par défaut (270 -> 220) pour économiser du poids.
+ */
+const { title, videoSrc, posterImg, width = "220", height = "330" } = Astro.props;
+---
+
+<div class="video-item">
+    {/* ACCESSIBILITÉ : h3 au lieu de h4 pour respecter la hiérarchie SEO */}
+    <h3>{title}</h3>
+    <div class="video-responsive">
+        <video 
+            controls 
+            preload="none" 
+            poster={posterImg.src} 
+            width={width} 
+            height={height}
+            playsinline
+            muted
+        >
+            <source src={videoSrc} type="video/mp4">
+            {/* ACCESSIBILITÉ : Track captions obligatoire pour le 100% */}
+            <track kind="captions" srclang="fr" label="Français" />
+            Votre navigateur ne supporte pas la balise vidéo.
+        </video>
+    </div>
+</div>
+
+<script>
+    // Ce script ne sera chargé qu'UNE SEULE FOIS sur la page
+    const setupVideoLogic = () => {
+        const allVideos = document.querySelectorAll('video');
+        allVideos.forEach(video => {
+            video.addEventListener('play', () => {
+                allVideos.forEach(otherVideo => {
+                    if (otherVideo !== video) {
+                        (otherVideo as HTMLVideoElement).pause();
+                    }
+                });
+            });
+        });
+    }
+
+    // Astro gère l'exécution au chargement initial et lors des navigations
+    setupVideoLogic();
+    document.addEventListener('astro:page-load', setupVideoLogic);
+</script>

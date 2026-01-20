@@ -1,0 +1,164 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import { Image } from 'astro:assets';
+
+// Importation des images pour l'optimisation automatique
+import sculptureBois from '../assets/images/sculpture-bois-artisanat.webp';
+import processusFabrication from '../assets/images/processus-fabrication-cepes.webp';
+import vitrineProduits from '../assets/images/vitrine-produits.webp';
+---
+
+<MainLayout 
+  title="Atelier de Sculpture sur Bois en Lozère | Visitez-nous à Chasseradès - J.F. & ANIUTA"
+  description="Plongez dans notre processus de création ! Découvrez le savoir-faire de nos Maîtres Sculpteurs et le travail du bois local dans notre atelier situé à Chasseradès (Mont Lozère)."
+  holidayMessage="En <strong>2026</strong>, la passion et l'artisanat continuent de briller."
+>
+    <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "LocalBusiness",
+          "@id": "https://jf-aniuta.vercel.app/#atelier",
+          "name": "L'Atelier Jean-François & Aniuta",
+          "url": "https://jf-aniuta.vercel.app/atelier",
+          "telephone": "+33658909835",
+          "image": "https://jf-aniuta.vercel.app/logo-entreprise.webp",
+          "priceRange": "€€",
+          "description": "Découvrez l'univers de notre atelier en Lozère : sculpture sur bois et création de bougies artisanales coulées à la main.",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Chasseradès",
+            "postalCode": "48250",
+            "addressRegion": "Occitanie",
+            "addressCountry": "FR"
+          },
+          "containedInPlace": {
+            "@type": "Place",
+            "name": "Mont Lozère et Goulet"
+          },
+          "areaServed": "France",
+          "sameAs": [
+            "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
+            "https://www.instagram.com/jean_francois_aniuta/",
+            "https://www.tiktok.com/@jeanfrancoisbaron2",
+            "https://wa.me/33658909835"
+          ]
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://jf-aniuta.vercel.app/atelier#webpage",
+          "url": "https://jf-aniuta.vercel.app/atelier",
+          "name": "L'Atelier : Sculpture et Création - Jean-François & Aniuta",
+          "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+          "about": { "@id": "https://jf-aniuta.vercel.app/#atelier" },
+          "description": "Visitez virtuellement l'atelier de Jean-François & Aniuta situé à Chasseradès. Un savoir-faire artisanal entre bois et cire."
+        }
+      ]
+    }
+    </script>
+
+    <section id="introduction-atelier">
+        <div class="container">
+            <h2>L'Atelier : Là où le Bois Prend Vie</h2>
+            
+            <div class="atelier-images-grid">
+                {/* LCP : On garde 400px de large pour un chargement instantané sur mobile */}
+                <Image 
+                    src={sculptureBois} 
+                    alt="Sculpture de cèpe en bois brut" 
+                    class="atelier-img-large"
+                    width={400} 
+                    height={533}
+                    loading="eager" 
+                    fetchpriority="high"
+                    decoding="async"
+                    quality={80}
+                />
+
+                <Image 
+                    src={processusFabrication} 
+                    alt="Artisan en train de fabriquer les cèpes en bois" 
+                    class="atelier-img-small"
+                    width={400} 
+                    height={300}
+                    loading="lazy"
+                    decoding="async"
+                    quality={80}
+                />
+
+                <Image 
+                    src={vitrineProduits} 
+                    alt="Exposition de bougies et sculptures cèpes" 
+                    class="atelier-img-small"
+                    width={400} 
+                    height={533}
+                    loading="lazy"
+                    decoding="async"
+                    quality={80}
+                />
+            </div>
+            
+            <a href="#demarche" class="btn">Notre Démarche Artisanale</a>
+        </div>
+    </section>
+
+    <section id="etapes" style="background-color: var(--couleur-fond-clair);">
+        <div class="container">
+            <h2>Le Processus de Création</h2>
+            <p>
+                Chaque pièce est unique, façonnée par la main de l'artisan, de la sélection de l'essence jusqu'à la finition naturelle.
+            </p>
+
+            <div class="creation-steps-grid">
+                <article class="step-card">
+                    <span class="step-number">1</span> <h3>Choix du Bois Local</h3>
+                    <p>Nous privilégions les essences de la région...</p>
+                </article>
+
+                <article class="step-card">
+                    <span class="step-number">2</span>
+                    <h3>Conception & Dessin</h3>
+                    <p>Chaque projet commence par un dessin détaillé...</p>
+                </article>
+
+                <article class="step-card">
+                    <span class="step-number">3</span>
+                    <h3>Sculpture & Découpe</h3>
+                    <p>L'utilisation de ciseaux à bois et de gouges...</p>
+                </article>
+                
+                <article class="step-card">
+                    <span class="step-number">4</span>
+                    <h3>Finitions Naturelles</h3>
+                    <p>Nous appliquons des huiles et des cires naturelles...</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="demarche">
+        <div class="container">
+            <h2>Notre Engagement Éthique</h2>
+            <p>
+                L'artisanat est pour nous synonyme de responsabilité. Notre atelier est guidé par une double exigence : la <strong>qualité</strong> et la <strong>durabilité</strong>.
+            </p>
+            
+            <div class="demarche-details">
+                <article class="article-bois">
+                    <div class="icon-css icon-bois-vert"></div>
+                    <h3>Bois Responsables</h3>
+                    <p>Le bois est une ressource précieuse. Nous nous engageons à n'utiliser que des matériaux provenant de coupes raisonnées...</p>
+                </article>
+
+                <article class="article-bougie">
+                    <div class="icon-css icon-bougie-jaune"></div>
+                    <h3>Vanille Gourmande</h3>
+                    <p>Nos bougies artisanales sont reconnues pour leur senteur unique de vanille gourmande, sélectionnée pour créer une ambiance chaleureuse...</p>
+                </article>
+            </div>
+            
+            <a href="/contact" class="btn">Lancer Votre Projet Sur Mesure</a>
+        </div>
+    </section>
+</MainLayout>

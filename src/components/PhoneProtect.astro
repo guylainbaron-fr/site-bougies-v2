@@ -1,0 +1,61 @@
+---
+// src/components/PhoneProtect.astro
+const { class: className = "" } = Astro.props;
+
+const p1 = "MDkgODUgNjA="; 
+const p2 = "NTMgODk=";
+---
+
+<span class="phone-placeholder" 
+      data-class={className} 
+      data-p1={p1} 
+      data-p2={p2}>
+    <noscript>
+        <small class="js-warning">Tel protégé</small>
+    </noscript>
+</span>
+
+<script>
+    const revealPhones = () => {
+        const placeholders = document.querySelectorAll('.phone-placeholder');
+        
+        placeholders.forEach(span => {
+            if (span.getAttribute('data-filled') !== 'true') {
+                const part1 = span.getAttribute('data-p1') || "";
+                const part2 = span.getAttribute('data-p2') || "";
+                const extraClass = span.getAttribute('data-class') || "";
+                
+                if (part1 !== "" && part2 !== "") {
+                    const start = atob(part1).split('').reverse().join('');
+                    const end = atob(part2).split('').reverse().join('');
+                    const fullPhone = `${start} ${end}`;
+                    
+                    span.setAttribute('data-filled', 'true');
+                    
+                    setTimeout(() => {
+                        const link = document.createElement('a');
+                        link.href = `tel:${fullPhone.replace(/\s/g, '')}`;
+                        link.className = extraClass;
+                        link.textContent = fullPhone;
+                        span.replaceWith(link);
+                    }, 500);
+                }
+            }
+        });
+    }
+
+    revealPhones();
+    document.addEventListener('astro:page-load', revealPhones);
+</script>
+
+<style>
+    .phone-placeholder {
+        display: inline-block;
+        min-width: 110px; 
+        vertical-align: middle;
+    }
+    .js-warning {
+        font-size: 0.85em;
+        opacity: 0.7;
+    }
+</style>

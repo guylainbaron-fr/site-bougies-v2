@@ -1,0 +1,222 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import EmailProtect from '../components/EmailProtect.astro';
+import PhoneProtect from '../components/PhoneProtect.astro';
+---
+
+<MainLayout 
+  title="Mentions Légales et Politique de Confidentialité | Jean François & ANIUTA"
+  description="Consultez les mentions légales, les conditions générales de vente (CGV) et la politique de confidentialité du site Jean François & ANIUTA."
+  holidayMessage="Une année <strong>2026</strong> placée sous le signe de la confiance."
+>
+<script type="application/ld+json" slot="head">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "name": "Jean-François & Aniuta",
+      "url": "https://jf-aniuta.vercel.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://jf-aniuta.vercel.app/images/logo_144.png",
+        "width": 144,
+        "height": 144
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+33658909835",
+        "contactType": "customer service",
+        "areaServed": "FR",
+        "availableLanguage": "French"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Village de Chasseradès",
+        "addressLocality": "Mont Lozère et Goulet",
+        "postalCode": "48250",
+        "addressRegion": "Occitanie",
+        "addressCountry": "FR"
+      },
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
+        "https://www.instagram.com/jean_francois_aniuta/",
+        "https://www.tiktok.com/@jeanfrancoisbaron2",
+        "https://wa.me/33658909835"
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://jf-aniuta.vercel.app/mentions-legales#webpage",
+      "url": "https://jf-aniuta.vercel.app/mentions-legales",
+      "name": "Mentions Légales - Jean-François & Aniuta",
+      "description": "Informations légales, conditions de vente et politique de confidentialité de l'Atelier Jean-François & Aniuta.",
+      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Accueil",
+            "item": "https://jf-aniuta.vercel.app/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Mentions Légales",
+            "item": "https://jf-aniuta.vercel.app/mentions-legales"
+          }
+        ]
+      }
+    }
+  ]
+}
+</script>
+
+    <section id="mentions-legales">
+        <div class="container">
+            <h2>Mentions Légales & CGV</h2>
+            
+            <p>Conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 pour la confiance en l'économie numérique, il est précisé aux utilisateurs du site <strong>jf-aniuta.vercel.app</strong> l'identité des différents intervenants dans le cadre de sa réalisation et de son suivi.</p>
+
+            <h3>1. Identification de l'Éditeur du Site</h3>
+            <dl class="legal-grid">
+                <dt>Atelier / Nom Commercial</dt>
+                <dd><strong>JEAN FRANÇOIS & ANIUTA</strong></dd>
+
+                <dt>Propriétaire / Éditeur</dt>
+                <dd>Jean-François BARON (Entrepreneur Individuel)</dd>
+
+                <dt>Co-créatrice</dt>
+                <dd>Aniuta BARON</dd>
+
+                <dt>Conception et Webmastering</dt>
+                <dd>Guylain BARON</dd>
+
+                <dt>Rédaction et Gestion éditoriale</dt>
+                <dd>Guylain BARON</dd>
+
+                <dt>Responsable de la publication</dt>
+                <dd>Jean-François BARON</dd>
+
+                <dt>Forme juridique</dt>
+                <dd>Entrepreneur Individuel (Micro-entreprise)</dd>
+
+                <dt>Immatriculation</dt>
+                <dd>Inscrit au Registre National des Entreprises (RNE) le 21/12/2023</dd>
+
+                <dt>Numéro SIREN</dt>
+                <dd>982 599 102</dd>
+
+                <dt>Numéro SIRET</dt>
+                <dd>982 599 102 000 18</dd>
+
+                <dt>Code APE / Activité</dt>
+                <dd>1629Z - Fabrication d'objets divers en bois</dd>
+
+                <dt>TVA</dt>
+                <dd>TVA non applicable, article 293 B du CGI</dd>
+
+                <dt>Adresse de l'atelier</dt>
+                <dd>Village de Chasseradès, 48250 Mont Lozère et Goulet</dd>
+
+                <dt>Contact Email</dt>
+                <dd><EmailProtect class="poetic-link" /></dd>
+
+                <dt>Contact Téléphone</dt>
+                <dd><PhoneProtect class="poetic-link" /></dd>
+            </dl>
+
+            <hr>
+
+            <h3>2. Hébergement du Site</h3>
+            <dl class="legal-grid">
+                <dt>Site hébergé par</dt>
+                <dd>Vercel Inc.</dd>
+
+                <dt>Localisation des serveurs</dt>
+                <dd>France / Allemagne (Région Europe AWS/GCP)</dd>
+
+                <dt>URL du site</dt>
+                <dd><a href="https://jf-aniuta.vercel.app" target="_blank" class="poetic-link">jf-aniuta.vercel.app</a></dd>
+
+                <dt>Adresse hébergeur</dt>
+                <dd>340 S Lemon Ave #4133, Walnut, CA 91789, USA</dd>
+
+                <dt>Site web</dt>
+                <dd><a href="https://vercel.com" target="_blank" class="poetic-link">vercel.com</a></dd>
+            </dl>
+
+            <hr>
+
+            <h3>3. Assurance et Médiation</h3>
+            <p>
+                <strong>Assurance Professionnelle :</strong> L'entreprise est titulaire d'un contrat d'assurance Multirisque Professionnelle n° <strong>13869260908</strong> souscrit auprès de <strong>PACIFICA</strong> (Crédit Agricole Assurances). Cette assurance couvre la Responsabilité Civile Professionnelle pour l'activité d'Arts plastiques et métiers d'art en France métropolitaine et DROM.
+            </p>
+            <p>
+                <strong>Médiation :</strong> En cas de litige non résolu, le client peut saisir gratuitement le médiateur de la consommation : <strong>Le Médiateur de l’Assurance</strong>, TSA 50110 – 75441 Paris Cedex 09 (www.mediation-assurance.org).
+            </p>
+
+            <hr>
+
+            <h3>4. Conditions Générales de Vente (CGV)</h3>
+            <p><strong>Ventes à l'Atelier :</strong> Les ventes effectuées directement à l'Atelier (Chasseradès) sont fermes et définitives. Conformément à la loi, aucun droit de rétractation ne s'applique aux achats physiques sur place.</p>
+            <p><strong>Ventes à Distance :</strong> Pour toute commande via le site ou téléphone, le client dispose de 14 jours pour exercer son droit de rétractation, sauf pour :</p>
+            <p><strong>Produits personnalisés :</strong> Les créations réalisées sur mesure ou selon des spécifications particulières (sculptures gravées, commandes spéciales) ne sont ni reprises ni remboursées.</p>
+            <p><strong>Produits déscellés :</strong> Pour des raisons de protection de la santé, de sécurité ou en raison de la dépréciation immédiate de l'article, les produits dont l'emballage de protection (film, scellé) a été retiré, les bougies ayant été allumées, ou tout article présentant des signes d'utilisation ne pourront faire l'objet d'une reprise.</p>
+            <p>En cas de rétractation valide, les frais de retour sont à la charge exclusive du client.</p>
+
+            <blockquote class="note-bienveillance">
+                <span class="ligne-deco"></span>
+                <strong>Note de Bienveillance</strong>
+                Au-delà de ces règles juridiques, nous sommes avant tout des artisans passionnés. 
+                Si un problème survient, n'hésitez pas à nous en parler : nous privilégions toujours l'humain et le dialogue.
+                <span class="signature">Jean-François & Aniuta</span>
+            </blockquote>
+
+            <hr>
+
+            <h3>5. Propriété Intellectuelle</h3>
+            <p>
+                <strong>Jean François & Aniuta BARON</strong> sont les propriétaires exclusifs des droits de propriété intellectuelle ou détiennent les droits d’usage sur tous les éléments accessibles sur le site, notamment les textes, images, vidéos, graphismes, logos, icônes, sons et logiciels.
+            </p>
+            <p>
+                Toute reproduction, représentation, modification, publication ou adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite, sauf autorisation écrite préalable de <strong>Jean François & Aniuta BARON</strong>.
+            </p>
+
+            <hr>
+
+            <h3 style="text-align: center;">6. Gestion des Données Personnelles (RGPD)</h3>
+            <p style="text-align: center;">
+                Conformément au Règlement Général sur la Protection des Données (RGPD), Jean François & Aniuta BARON s'engage à protéger la vie privée de ses utilisateurs.
+            </p>
+
+            <p style="text-align: center;">
+                <strong>Collecte et finalité :</strong> Les données collectées via nos formulaires servent à répondre à vos demandes de contact et à l'envoi de notre newsletter "La Note de l'Atelier" (uniquement avec votre consentement explicite).
+            </p>
+
+            <p style="text-align: center;">
+                <strong>Destinataires et Transfert :</strong> Vos données sont traitées uniquement par Jean François & Aniuta BARON. Pour l'envoi de la newsletter, nous utilisons le service français <strong>Brevo</strong>. Vos données ne sont jamais revendues à des tiers.
+            </p>
+
+            <p style="text-align: center;">
+                <strong>Durée de conservation :</strong> Les données sont conservées tant que l'utilisateur ne se désinscrit pas de la newsletter ou pour la durée nécessaire au traitement de la demande de contact.
+            </p>
+
+            <p class="text-rgpd-footer">
+                <strong>Vos droits :</strong> Vous disposez d'un droit d'accès, de rectification et de suppression de vos données. <br>
+                Pour la newsletter, un lien de désinscription est présent dans chaque email, mais vous pouvez également 
+                <a href="https://3ca71f37.sibforms.com/serve/MUIFAAe74lTPl8OcCSNpfeXMWk04VTQKM8PsLxX41pI6-3_Wb_XI_AD_0VlSG6tD1KHA36BeVPpe70_J26Fu6bR_ByU0OwrHcyBpcxbfkPFT9248sphhm-9rdRQe87sbiay2AJcUuYMiksDEgDSw4Nj8hDjaC9MieKNdTL_Ohq3fQY27aLNYHdifIWRC7k4mTMJWheLr9IZPG6gs9A==" 
+                   target="_blank" 
+                   class="poetic-link">vous désinscrire ici à tout moment</a>. <br>
+                Pour toute autre demande, contactez-nous à <EmailProtect class="poetic-link" />.
+            </p>
+
+            <hr>
+            
+            <p style="text-align: center; margin-top: 40px; opacity: 0.7;">Dernière mise à jour : Janvier 2026</p>
+        </div>
+    </section>
+</MainLayout>

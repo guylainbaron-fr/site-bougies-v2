@@ -1,0 +1,32 @@
+{
+  "name": "Jean François & ANIUTA - Artisanat",
+  "short_name": "JF & ANIUTA",
+  "description": "Atelier de création artisanale. Savoir-faire et élégance inspirés par la nature.",
+  "lang": "fr-FR",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#fdfaf7",
+  "background_color": "#fdfaf7",
+  "categories": ["lifestyle", "shopping"],
+  "icons": [
+    {
+      "src": "/images/logo_192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/logo_512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/logo_512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ]
+}
