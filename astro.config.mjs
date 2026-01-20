@@ -1,18 +1,13 @@
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel/serverless'; // On précise /serverless
+import vercel from '@astrojs/vercel/serverless';
 
 export default defineConfig({
-  // OBLIGATOIRE : Change le mode de sortie pour autoriser le code serveur
   output: 'server',
-
-  build: {
-    inlineStylesheets: 'always'
-  },
-
-  // L'adaptateur configuré explicitement
-  adapter: vercel({
-    webAnalytics: {
-      enabled: true,
+  adapter: vercel(),
+  // Ajoute cette option pour aider Astro à trouver les variables
+  vite: {
+    define: {
+      'process.env': process.env,
     },
-  })
+  },
 });
