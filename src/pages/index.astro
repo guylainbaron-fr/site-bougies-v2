@@ -1,40 +1,13 @@
 ---
 export const prerender = false;
-
 import MainLayout from '../layouts/MainLayout.astro';
 import { Image } from 'astro:assets';
-import { createClient } from '@vercel/kv';
-
-// Données simples (sans texte complexe)
-const forwarded = Astro.request.headers.get("x-forward-for");
-const userIP = forwarded ? forwarded.split(',')[0].trim() : "Privé";
-const ua = Astro.request.headers.get("user-agent") || "";
-let detectedDevice = "PC";
-if (/android/i.test(ua)) detectedDevice = "Android";
-else if (/iPad|iPhone|iPod/i.test(ua)) detectedDevice = "iOS";
-const isQR = Astro.url.searchParams.get('ref') === 'qr';
-
-// Logique KV ultra-simplifiée
-const KV_URL = process.env.KV_REST_API_URL || import.meta.env.KV_REST_API_URL || '';
-const KV_TOKEN = process.env.KV_REST_API_TOKEN || import.meta.env.KV_REST_API_TOKEN || '';
-
-if (KV_URL && KV_TOKEN && !Astro.url.pathname.includes('admin')) {
-    try {
-        const kv = createClient({ url: KV_URL, token: KV_TOKEN });
-        await kv.incr('visites_totales');
-        await kv.lpush('journal_visites', JSON.stringify({
-            date: new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }),
-            device: detectedDevice,
-            ip: userIP
-        }));
-        await kv.ltrim('journal_visites', 0, 99);
-    } catch (e) {}
-}
-
 import heroHome from "../assets/images/hero-home.webp";
 import accueilImg from "../assets/images/accueil-h2-1.webp";
 import atelierImg from "../assets/images/accueil-h2-2.webp";
 import aproposImg from "../assets/images/accueil-h2-3.webp";
+
+// On ne laisse AUCUN texte ici pour ne pas bloquer la ligne 57
 ---
 
 <MainLayout 
@@ -55,7 +28,7 @@ import aproposImg from "../assets/images/accueil-h2-3.webp";
         <div class="container">
             <div class="section-top-image"><Image src={accueilImg} alt="Art du bois" width={600} height={669} /></div>
             <h2>L'Art du Bois et le Parfum des Sens.</h2>              
-            <p>Découvrez l'harmonie parfaite entre la chaleur du bois sculpté et les senteurs envoûtantes de nos créations artisanales.</p>
+            <p>Découvrez l'harmonie parfaite entre la chaleur du bois sculpté et les senteurs envoûtantes de nos créations artisanales. Chaque pièce raconte une histoire de passion et de nature.</p>
             <a href="/bougies" class="btn">Découvrir les Bougies</a> 
         </div>
     </section>
@@ -73,7 +46,7 @@ import aproposImg from "../assets/images/accueil-h2-3.webp";
         <div class="container">
             <div class="section-top-image"><Image src={aproposImg} alt="Jean-François BARON" width={600} height={669} /></div>
             <h2>À Propos de l'Artisan et Notre Histoire</h2>
-            <p>Artisans passionnés, Jean François & Aniuta se consacrent au travail du bois depuis de nombreuses années.</p>
+            <p>Artisans passionnés, Jean François & Aniuta se consacrent au travail du bois depuis de nombreuses années. Nous privilégions les essences locales.</p>
             <a href="/apropos" class="btn">En Savoir Plus sur Nous</a> 
         </div>
     </section>
