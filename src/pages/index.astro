@@ -84,15 +84,9 @@ import heroHome from "../assets/images/hero-home.webp";
 import accueilImg from "../assets/images/accueil-h2-1.webp";
 import atelierImg from "../assets/images/accueil-h2-2.webp";
 import aproposImg from "../assets/images/accueil-h2-3.webp";
----
 
-<MainLayout 
-    title="Jean Francois &amp; ANIUTA Artisans Sculpteurs Lozere 48"
-    description="Artisanat du bois et de la bougie de J.F. et Aniuta. Sculptures sur bois local et bougies naturelles a Chasserades."
-    holidayMessage="Que l'annee 2026 s'illumine de mille feux... Meilleurs Voeux !"
->
-<script type="application/ld+json" slot="head" is:inline>
-{
+// --- 4. DONNÉES STRUCTURÉES (Sécurisées pour le build) ---
+const schemaData = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
@@ -159,10 +153,18 @@ import aproposImg from "../assets/images/accueil-h2-3.webp";
       ]
     }
   ]
-}
-</script>
+});
+---
+---
+
+<MainLayout 
+    title="Jean Francois &amp; ANIUTA Artisans Sculpteurs Lozere 48"
+    description="Artisanat du bois et de la bougie de J.F. et Aniuta. Sculptures sur bois local et bougies naturelles a Chasserades."
+    holidayMessage="Que l'annee 2026 s'illumine de mille feux... Meilleurs Voeux !"
+>
+<script type="application/ld+json" slot="head" set:html={schemaData} />
     <section id="hero">
-        {/* Ici, Astro gère automatiquement le srcset et la compression */}
+        {}
 <Image 
     src={heroHome} 
     alt="Scènes d'atelier de sculptures et bougies" 
