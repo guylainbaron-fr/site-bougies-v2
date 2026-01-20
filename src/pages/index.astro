@@ -5,43 +5,28 @@ import MainLayout from '../layouts/MainLayout.astro';
 import { Image } from 'astro:assets';
 import { createClient } from '@vercel/kv';
 
-// --- 1. DONNÉES ---
-let userIP = "Privé";
-let detectedDevice = "PC";
-const forwarded = Astro.request.headers.get("x-forwarded-for");
-if (forwarded) userIP = forwarded.split(',')[0].trim();
+// Données simples (sans texte complexe)
+const forwarded = Astro.request.headers.get("x-forward-for");
+const userIP = forwarded ? forwarded.split(',')[0].trim() : "Privé";
 const ua = Astro.request.headers.get("user-agent") || "";
+let detectedDevice = "PC";
 if (/android/i.test(ua)) detectedDevice = "Android";
 else if (/iPad|iPhone|iPod/i.test(ua)) detectedDevice = "iOS";
 const isQR = Astro.url.searchParams.get('ref') === 'qr';
 
-// --- 2. FONCTIONS (Correction type any) ---
-async function getCountryData(ip: any) {
-    if (!ip || ip.includes("Priv") || ip.length < 7) return { country: "France", code: "FR" };
-    try {
-        const response = await fetch("http://ip-api.com/json/" + ip);
-        const data = await response.json();
-        return { country: data?.country || "France", code: data?.countryCode || "FR" };
-    } catch (e) { return { country: "France", code: "FR" }; }
-}
-
-// --- 3. LOGIQUE KV ---
+// Logique KV ultra-simplifiée
 const KV_URL = process.env.KV_REST_API_URL || import.meta.env.KV_REST_API_URL || '';
 const KV_TOKEN = process.env.KV_REST_API_TOKEN || import.meta.env.KV_REST_API_TOKEN || '';
+
 if (KV_URL && KV_TOKEN && !Astro.url.pathname.includes('admin')) {
     try {
         const kv = createClient({ url: KV_URL, token: KV_TOKEN });
-        const geo = await getCountryData(userIP);
-        const logEntry = {
+        await kv.incr('visites_totales');
+        await kv.lpush('journal_visites', JSON.stringify({
             date: new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }),
             device: detectedDevice,
-            isQR: isQR,
-            ip: userIP,
-            country: geo.country,
-            flag_code: (geo.code || "FR").toLowerCase()
-        };
-        await kv.incr('visites_totales');
-        await kv.lpush('journal_visites', JSON.stringify(logEntry));
+            ip: userIP
+        }));
         await kv.ltrim('journal_visites', 0, 99);
     } catch (e) {}
 }
@@ -50,31 +35,19 @@ import heroHome from "../assets/images/hero-home.webp";
 import accueilImg from "../assets/images/accueil-h2-1.webp";
 import atelierImg from "../assets/images/accueil-h2-2.webp";
 import aproposImg from "../assets/images/accueil-h2-3.webp";
-
-// --- 4. TEXTES (Variables pour éviter l'erreur Unterminated String) ---
-const metaTitle = "Jean François & ANIUTA Artisans Sculpteurs Lozère 48";
-const metaDesc = "Artisanat du bois et de la bougie de J.F. et Aniuta. Sculptures sur bois local et bougies naturelles à Chasseradès.";
-const holidayMsg = "Que l'année 2026 s'illumine de mille feux... Meilleurs Voeux !";
-
-// JSON-LD simplifié pour passer le build ligne 87
-const schemaObj = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "Jean-François & Aniuta",
-  "url": "https://jf-aniuta.vercel.app/"
-};
-const schemaData = JSON.stringify(schemaObj);
 ---
 
-<MainLayout title={metaTitle} description={metaDesc} holidayMessage={holidayMsg}>
-    <script type="application/ld+json" slot="head" set:html={schemaData}></script>
-
+<MainLayout 
+    title="Jean François & ANIUTA Artisans Sculpteurs Lozère 48"
+    description="Artisanat du bois et de la bougie de J.F. et Aniuta. Sculptures sur bois local et bougies naturelles à Chasseradès."
+    holidayMessage="Que l'année 2026 s'illumine de mille feux... Meilleurs Voeux !"
+>
     <section id="hero">
         <Image src={heroHome} alt="Atelier" class="hero-background-image" loading="eager" width={1435} height={708} />
         <div class="container">
             <h1>L'Héritage Lozérien : Maîtres Sculpteurs et Créateurs de Bougies Artisanales.</h1> 
             <p>Chaleur du bois sculpté, réconfort de la flamme parfumée. L'artisanat conçu pour enrichir votre intérieur.</p>
-            <a href="/bougies" class="btn large-btn"> Découvrir l'univers</a>
+            <a href="/bougies" class="btn large-btn">Découvrir l'univers</a>
         </div>
     </section>
 
