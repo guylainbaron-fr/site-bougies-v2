@@ -5,7 +5,7 @@ import MainLayout from '../layouts/MainLayout.astro';
 import { Image } from 'astro:assets';
 import { createClient } from '@vercel/kv';
 
-// --- DONNÉES DE BASE ---
+// --- 1. DONNÉES ---
 let userIP = "Privé";
 let detectedDevice = "PC";
 const forwarded = Astro.request.headers.get("x-forwarded-for");
@@ -15,32 +15,17 @@ if (/android/i.test(ua)) detectedDevice = "Android";
 else if (/iPad|iPhone|iPod/i.test(ua)) detectedDevice = "iOS";
 const isQR = Astro.url.searchParams.get('ref') === 'qr';
 
-// --- 2. FONCTIONS GÉO-IP ---
-async function getCountryData(ip: string) {
-    if (!ip || ip === "::1" || ip === "127.0.0.1" || ip === "Privé" || ip === "Prive") {
-        return { country: "France", code: "FR" };
-    }
-
+// --- 2. FONCTIONS (Correction type any) ---
+async function getCountryData(ip: any) {
+    if (!ip || ip.includes("Priv") || ip.length < 7) return { country: "France", code: "FR" };
     try {
-        const response = await fetch(`http://ip-api.com/json/${ip}`, {
-            signal: AbortSignal.timeout(3000) 
-        });
-        
+        const response = await fetch("http://ip-api.com/json/" + ip);
         const data = await response.json();
-
-        if (data && data.status === 'success') {
-            return { 
-                country: data.country || "France", 
-                code: data.countryCode || "FR" 
-            };
-        }
-    } catch (e) {
-        console.error("Erreur géo-IP:", e);
-    }
-    return { country: "France", code: "FR" };
+        return { country: data?.country || "France", code: data?.countryCode || "FR" };
+    } catch (e) { return { country: "France", code: "FR" }; }
 }
 
-// --- LOGIQUE KV ---
+// --- 3. LOGIQUE KV ---
 const KV_URL = process.env.KV_REST_API_URL || import.meta.env.KV_REST_API_URL || '';
 const KV_TOKEN = process.env.KV_REST_API_TOKEN || import.meta.env.KV_REST_API_TOKEN || '';
 if (KV_URL && KV_TOKEN && !Astro.url.pathname.includes('admin')) {
@@ -66,25 +51,26 @@ import accueilImg from "../assets/images/accueil-h2-1.webp";
 import atelierImg from "../assets/images/accueil-h2-2.webp";
 import aproposImg from "../assets/images/accueil-h2-3.webp";
 
-// Tes textes exacts mis en variables pour éviter l'erreur de guillemets
-const siteTitle = "Jean François & ANIUTA Artisans Sculpteurs Lozère 48";
-const siteDesc = "Artisanat du bois et de la bougie de J.F. et Aniuta. Sculptures sur bois local et bougies naturelles à Chasseradès.";
-const msgHolidays = "Que l'année 2026 s'illumine de mille feux... Meilleurs Voeux !";
+// --- 4. TEXTES (Variables pour éviter l'erreur Unterminated String) ---
+const metaTitle = "Jean François & ANIUTA Artisans Sculpteurs Lozère 48";
+const metaDesc = "Artisanat du bois et de la bougie de J.F. et Aniuta. Sculptures sur bois local et bougies naturelles à Chasseradès.";
+const holidayMsg = "Que l'année 2026 s'illumine de mille feux... Meilleurs Voeux !";
 
-const schemaData = JSON.stringify({
+// JSON-LD simplifié pour passer le build ligne 87
+const schemaObj = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   "name": "Jean-François & Aniuta",
-  "description": siteDesc,
   "url": "https://jf-aniuta.vercel.app/"
-});
+};
+const schemaData = JSON.stringify(schemaObj);
 ---
 
-<MainLayout title={siteTitle} description={siteDesc} holidayMessage={msgHolidays}>
+<MainLayout title={metaTitle} description={metaDesc} holidayMessage={holidayMsg}>
     <script type="application/ld+json" slot="head" set:html={schemaData}></script>
 
     <section id="hero">
-        <Image src={heroHome} alt="Scènes d'atelier de sculptures et bougies" class="hero-background-image" loading="eager" width={1435} height={708} />
+        <Image src={heroHome} alt="Atelier" class="hero-background-image" loading="eager" width={1435} height={708} />
         <div class="container">
             <h1>L'Héritage Lozérien : Maîtres Sculpteurs et Créateurs de Bougies Artisanales.</h1> 
             <p>Chaleur du bois sculpté, réconfort de la flamme parfumée. L'artisanat conçu pour enrichir votre intérieur.</p>
@@ -96,7 +82,7 @@ const schemaData = JSON.stringify({
         <div class="container">
             <div class="section-top-image"><Image src={accueilImg} alt="Art du bois" width={600} height={669} /></div>
             <h2>L'Art du Bois et le Parfum des Sens.</h2>              
-            <p>Découvrez l'harmonie parfaite entre la chaleur du bois sculpté et les senteurs envoûtantes de nos créations artisanales. Chaque pièce raconte une histoire de passion et de nature.</p>
+            <p>Découvrez l'harmonie parfaite entre la chaleur du bois sculpté et les senteurs envoûtantes de nos créations artisanales.</p>
             <a href="/bougies" class="btn">Découvrir les Bougies</a> 
         </div>
     </section>
@@ -114,7 +100,7 @@ const schemaData = JSON.stringify({
         <div class="container">
             <div class="section-top-image"><Image src={aproposImg} alt="Jean-François BARON" width={600} height={669} /></div>
             <h2>À Propos de l'Artisan et Notre Histoire</h2>
-            <p>Artisans passionnés, Jean François & Aniuta se consacrent au travail du bois depuis de nombreuses années. Nous privilégions les essences locales.</p>
+            <p>Artisans passionnés, Jean François & Aniuta se consacrent au travail du bois depuis de nombreuses années.</p>
             <a href="/apropos" class="btn">En Savoir Plus sur Nous</a> 
         </div>
     </section>
