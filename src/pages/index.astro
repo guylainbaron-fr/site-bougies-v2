@@ -2,12 +2,12 @@
 export const prerender = false;
 import MainLayout from '../layouts/MainLayout.astro';
 import { Image } from 'astro:assets';
+
+// Imports d'images avec le chemin exact vers ton dossier assets
 import heroHome from "../assets/images/hero-home.webp";
 import accueilImg from "../assets/images/accueil-h2-1.webp";
 import atelierImg from "../assets/images/accueil-h2-2.webp";
 import aproposImg from "../assets/images/accueil-h2-3.webp";
-
-// On ne laisse AUCUN texte ici pour ne pas bloquer la ligne 57
 ---
 
 <MainLayout 
@@ -26,16 +26,20 @@ import aproposImg from "../assets/images/accueil-h2-3.webp";
 
     <section id="accueil">
         <div class="container">
-            <div class="section-top-image"><Image src={accueilImg} alt="Art du bois" width={600} height={669} /></div>
+            <div class="section-top-image">
+                <Image src={accueilImg} alt="Art du bois" width={600} height={669} />
+            </div>
             <h2>L'Art du Bois et le Parfum des Sens.</h2>              
-            <p>Découvrez l'harmonie parfaite entre la chaleur du bois sculpté et les senteurs envoûtantes de nos créations artisanales. Chaque pièce raconte une histoire de passion et de nature.</p>
+            <p>Découvrez l'harmonie parfaite entre la chaleur du bois sculpté et les senteurs envoûtantes de nos créations artisanales.</p>
             <a href="/bougies" class="btn">Découvrir les Bougies</a> 
         </div>
     </section>
 
     <section id="atelier">
         <div class="container">
-            <div class="section-top-image"><Image src={atelierImg} alt="Atelier" width={600} height={800} /></div>
+            <div class="section-top-image">
+                <Image src={atelierImg} alt="Atelier" width={600} height={800} />
+            </div>
             <h2>Notre Atelier : Là où la Magie Opère</h2>
             <p>Situé à Chasseradès, au cœur de la Lozère, notre atelier est le lieu de rencontre entre la matière brute et notre savoir-faire ancestral.</p>
             <a href="/atelier" class="btn">Visiter l'Atelier</a>
@@ -44,9 +48,11 @@ import aproposImg from "../assets/images/accueil-h2-3.webp";
 
     <section id="apropos">
         <div class="container">
-            <div class="section-top-image"><Image src={aproposImg} alt="Jean-François BARON" width={600} height={669} /></div>
+            <div class="section-top-image">
+                <Image src={aproposImg} alt="Jean-François BARON" width={600} height={669} />
+            </div>
             <h2>À Propos de l'Artisan et Notre Histoire</h2>
-            <p>Artisans passionnés, Jean François & Aniuta se consacrent au travail du bois depuis de nombreuses années. Nous privilégions les essences locales.</p>
+            <p>Artisans passionnés, Jean François & Aniuta se consacrent au travail du bois depuis de nombreuses années.</p>
             <a href="/apropos" class="btn">En Savoir Plus sur Nous</a> 
         </div>
     </section>
