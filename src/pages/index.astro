@@ -3,7 +3,7 @@ export const prerender = false;
 import MainLayout from '../layouts/MainLayout.astro';
 import { Image } from 'astro:assets';
 
-// Imports d'images avec le chemin exact vers ton dossier assets
+// Vérifie bien que ces noms de fichiers sont exacts dans ton dossier src/assets/images/
 import heroHome from "../assets/images/hero-home.webp";
 import accueilImg from "../assets/images/accueil-h2-1.webp";
 import atelierImg from "../assets/images/accueil-h2-2.webp";
@@ -16,7 +16,14 @@ import aproposImg from "../assets/images/accueil-h2-3.webp";
     holidayMessage="Que l'année 2026 s'illumine de mille feux... Meilleurs Voeux !"
 >
     <section id="hero">
-        <Image src={heroHome} alt="Atelier" class="hero-background-image" loading="eager" width={1435} height={708} />
+        <Image 
+            src={heroHome} 
+            alt="Scènes d'atelier de sculptures et bougies" 
+            class="hero-background-image" 
+            loading="eager" 
+            width={1435} 
+            height={708} 
+        />
         <div class="container">
             <h1>L'Héritage Lozérien : Maîtres Sculpteurs et Créateurs de Bougies Artisanales.</h1> 
             <p>Chaleur du bois sculpté, réconfort de la flamme parfumée. L'artisanat conçu pour enrichir votre intérieur.</p>
