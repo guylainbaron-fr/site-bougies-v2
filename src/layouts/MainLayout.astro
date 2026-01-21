@@ -15,60 +15,74 @@ const { title, description, holidayMessage } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app");
 const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel.app");
 
-// --- LOGIQUE DE COMPTAGE CENTRALISÉE ---
+// --- LOGIQUE DE COMPTAGE ANTI-DOUBLON (COOKIES) ---
 if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
     try {
-        const url = new URL(Astro.request.url);
-        const ua = Astro.request.headers.get('user-agent') || '';
-        
-        const userIP = Astro.request.headers.get('x-real-ip') || 
-                       Astro.request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
-                       "Anonyme";
+        // On vérifie si l'utilisateur a déjà été compté récemment (cookie de 30 min)
+        const hasVisited = Astro.cookies.has('site_session_active');
 
-        // --- NOUVEAU : RÉCUPÉRATION GÉO ---
-        let country = "France"; // Par défaut
-        let flag = "fr";        // Par défaut
-        
-        if (userIP !== "Anonyme" && userIP !== "127.0.0.1") {
-            try {
-                // On interroge l'API de géo (timeout de 2s pour ne pas bloquer le site)
-                const geoRes = await fetch(`http://ip-api.com/json/${userIP}?fields=status,country,countryCode`, { signal: AbortSignal.timeout(2000) });
-                const geoData = await geoRes.json();
-                
-                if (geoData.status === 'success') {
-                    country = geoData.country;
-                    flag = geoData.countryCode.toLowerCase();
+        if (!hasVisited) {
+            const url = new URL(Astro.request.url);
+            const ua = Astro.request.headers.get('user-agent') || '';
+            
+            const userIP = Astro.request.headers.get('x-real-ip') || 
+                           Astro.request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
+                           "Anonyme";
+
+            // 1. Pose du cookie de session (Expire après 30 minutes)
+            Astro.cookies.set('site_session_active', 'true', { 
+                maxAge: 60 * 30, 
+                path: '/',
+                httpOnly: true,
+                secure: true
+            });
+
+            // 2. Récupération Géo-localisation
+            let country = "France";
+            let flag = "fr";
+            
+            if (userIP !== "Anonyme" && userIP !== "127.0.0.1") {
+                try {
+                    const geoRes = await fetch(`http://ip-api.com/json/${userIP}?fields=status,country,countryCode`, { signal: AbortSignal.timeout(2000) });
+                    const geoData = await geoRes.json();
+                    
+                    if (geoData.status === 'success') {
+                        country = geoData.country;
+                        flag = geoData.countryCode.toLowerCase();
+                    }
+                } catch (e) {
+                    // Erreur API : on garde les valeurs par défaut
                 }
-            } catch (e) {
-                // En cas d'erreur API, on reste sur France/fr
             }
+
+            // 3. Détection Appareil & Navigateur
+            let dev = "PC";
+            if (/android/i.test(ua)) dev = "Android";
+            else if (/iPad|iPhone|iPod/i.test(ua)) dev = "iOS";
+
+            let br = "Autre";
+            if (ua.includes('Chrome')) br = "Chrome";
+            else if (ua.includes('Safari') && !ua.includes('Chrome')) br = "Safari";
+            else if (ua.includes('Firefox')) br = "Firefox";
+
+            const now = new Date();
+            const simpleDate = now.toLocaleString('fr-FR', { timeZone: 'Europe/Paris' });
+
+            const log = {
+                date: simpleDate,
+                device: dev,
+                browser: br,
+                ip: userIP,
+                country: country,
+                flag_code: flag,
+                isQR: url.searchParams.get('ref') === 'qr'
+            };
+
+            // 4. Enregistrement unique dans la base KV
+            await kv.incr('visites_totales');
+            await kv.lpush('journal_visites', JSON.stringify(log));
+            await kv.ltrim('journal_visites', 0, 49);
         }
-
-        let dev = "PC";
-        if (/android/i.test(ua)) dev = "Android";
-        else if (/iPad|iPhone|iPod/i.test(ua)) dev = "iOS";
-
-        let br = "Autre";
-        if (ua.includes('Chrome')) br = "Chrome";
-        else if (ua.includes('Safari') && !ua.includes('Chrome')) br = "Safari";
-        else if (ua.includes('Firefox')) br = "Firefox";
-
-        const now = new Date();
-        const simpleDate = now.toLocaleString('fr-FR', { timeZone: 'Europe/Paris' });
-
-        const log = {
-            date: simpleDate,
-            device: dev,
-            browser: br,
-            ip: userIP,
-            country: country,    // Ajouté
-            flag_code: flag,     // Ajouté
-            isQR: url.searchParams.get('ref') === 'qr'
-        };
-
-        await kv.incr('visites_totales');
-        await kv.lpush('journal_visites', JSON.stringify(log));
-        await kv.ltrim('journal_visites', 0, 49);
         
     } catch (e) {
         console.error("Erreur de suivi KV:", e);
