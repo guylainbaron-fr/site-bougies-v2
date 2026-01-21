@@ -4,38 +4,13 @@ export const prerender = false;
 import MainLayout from '../layouts/MainLayout.astro';
 import { Image } from 'astro:assets';
 
-// On force l'ignorance si TS fait encore des caprices, 
-// mais Vercel le verra car ton 'npm install' a réussi.
-// @ts-ignore
-import { kv } from '@vercel/kv';
-
 // Imports d'images
 import heroHome from "../assets/images/hero-home.webp";
 import accueilImg from "../assets/images/accueil-h2-1.webp";
 import atelierImg from "../assets/images/accueil-h2-2.webp";
 import aproposImg from "../assets/images/accueil-h2-3.webp";
 
-// --- LOGIQUE SIMPLIFIÉE ---
-const ua = Astro.request.headers.get("user-agent") || "";
-let device = "PC";
-if (/android/i.test(ua)) device = "Android";
-else if (/iPad|iPhone|iPod/i.test(ua)) device = "iOS";
-
-if (import.meta.env.PROD) {
-    try {
-        await kv.incr('visites_totales');
-        await kv.lpush('journal_visites', JSON.stringify({
-            date: new Date().toLocaleString('fr-FR'),
-            device: device,
-            isQR: Astro.url.searchParams.get('ref') === 'qr'
-        }));
-        await kv.ltrim('journal_visites', 0, 49);
-    } catch (e) {
-        console.error("KV Error");
-    }
-}
-
-// --- 4. DONNÉES STRUCTURÉES ---
+// --- DONNÉES STRUCTURÉES (On garde uniquement le SEO ici) ---
 const schemaData = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
@@ -83,7 +58,7 @@ const schemaData = JSON.stringify({
 ---
 
 <MainLayout 
-    title="Jean Francois &amp; ANIUTA Artisans Sculpteurs Lozere 48"
+    title="Jean Francois & ANIUTA Artisans Sculpteurs Lozere 48"
     description="Artisanat du bois et de la bougie de J.F. et Aniuta. Sculptures sur bois local et bougies naturelles a Chasserades."
     holidayMessage="Que l'annee 2026 s'illumine de mille feux... Meilleurs Voeux !"
 >

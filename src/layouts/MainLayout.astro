@@ -7,6 +7,7 @@ import '@fontsource/poppins/300.css';
 import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
+
 // @ts-ignore
 import { kv } from '@vercel/kv';
 
@@ -14,38 +15,47 @@ const { title, description, holidayMessage } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app");
 const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel.app");
 
-// On simplifie au maximum le bloc KV pour éviter l'erreur de "string"
-if (import.meta.env.PROD) {
+// --- LOGIQUE DE COMPTAGE CENTRALISÉE ---
+if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
     try {
         const url = new URL(Astro.request.url);
         const ua = Astro.request.headers.get('user-agent') || '';
         
-        await kv.incr('visites_totales');
+        // RÉCUPÉRATION IP VERCEL
+        // On teste x-real-ip d'abord, puis x-forwarded-for
+        const userIP = Astro.request.headers.get('x-real-ip') || 
+                       Astro.request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
+                       "Anonyme";
 
-        let dev = "Ordinateur";
-        if (ua.includes('Android')) dev = "Android";
-        else if (ua.includes('iPhone') || ua.includes('iPad')) dev = "iOS";
+        // Détection Appareil
+        let dev = "PC";
+        if (/android/i.test(ua)) dev = "Android";
+        else if (/iPad|iPhone|iPod/i.test(ua)) dev = "iOS";
 
+        // Détection Navigateur
         let br = "Autre";
         if (ua.includes('Chrome')) br = "Chrome";
-        else if (ua.includes('Safari')) br = "Safari";
+        else if (ua.includes('Safari') && !ua.includes('Chrome')) br = "Safari";
         else if (ua.includes('Firefox')) br = "Firefox";
 
-        // On utilise un format de date ultra-simple sans caractères spéciaux complexes
         const now = new Date();
-        const simpleDate = `${now.toLocaleDateString('fr-FR')} ${now.toLocaleTimeString('fr-FR')}`;
+        const simpleDate = now.toLocaleString('fr-FR', { timeZone: 'Europe/Paris' });
 
         const log = {
             date: simpleDate,
             device: dev,
             browser: br,
+            ip: userIP, // On enregistre enfin la vraie IP
             isQR: url.searchParams.get('ref') === 'qr'
         };
 
+        // On incrémente et on log
+        await kv.incr('visites_totales');
         await kv.lpush('journal_visites', JSON.stringify(log));
         await kv.ltrim('journal_visites', 0, 49);
+        
     } catch (e) {
-        // Silencieux en prod pour ne pas bloquer le rendu
+        console.error("Erreur de suivi KV:", e);
     }
 }
 ---
