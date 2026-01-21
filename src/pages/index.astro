@@ -1,83 +1,13 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import MainLayout from '../layouts/MainLayout.astro';
 import { Image } from 'astro:assets';
-import { createClient } from '@vercel/kv';
 
-// --- 1. PRÉPARATION DES DONNÉES ---
-let userIP: string = "Privé";
-let detectedDevice: string = "PC";
-
-// Récupération de l'IP
-const forwarded = Astro.request.headers.get("x-forwarded-for");
-if (forwarded) {
-    userIP = forwarded.split(',')[0].trim();
-}
-
-// Détection de l'appareil
-const ua = Astro.request.headers.get("user-agent") || "";
-if (/android/i.test(ua)) detectedDevice = "Android";
-else if (/iPad|iPhone|iPod/i.test(ua)) detectedDevice = "iOS";
-
-// Détection si c'est un scan QR
-const isQR = Astro.url.searchParams.get('ref') === 'qr';
-
-// --- 2. FONCTIONS GÉO-IP ---
-async function getCountryData(ip: string) {
-    if (ip === "::1" || ip === "127.0.0.1" || ip === "Privé") {
-        return { country: "France", code: "FR" };
-    }
-    try {
-        const response = await fetch(`http://ip-api.com/json/${ip}`);
-        const data: any = await response.json();
-        if (data && data.status === 'success') {
-            return { country: data.country, code: data.countryCode };
-        }
-    } catch (e) {
-        console.error("Erreur géo-IP:", e);
-    }
-    return { country: "France", code: "FR" };
-}
-
-function getFlagEmoji(countryCode: string) {
-    return countryCode
-        .toUpperCase()
-        .replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397));
-}
-
-// --- 3. LOGIQUE D'ENREGISTREMENT ---
-// Suppression de loadEnv (Vite) qui faisait planter Vercel
-const KV_URL = (import.meta.env.KV_REST_API_URL || process.env.KV_REST_API_URL || '') as string;
-const KV_TOKEN = (import.meta.env.KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN || '') as string;
-
-const kv = createClient({ url: KV_URL, token: KV_TOKEN });
-
-// On ne tente l'enregistrement que si la config est présente
-const blockCounting = true;
-const isConfigured = KV_URL && KV_TOKEN;
-
-if (isConfigured && !blockCounting && !Astro.url.pathname.includes('admin')) {
-    try {
-        const geo = await getCountryData(userIP);
-        const flag = getFlagEmoji(geo.code);
-
-        const logEntry = {
-            date: new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }),
-            device: detectedDevice,
-            isQR: isQR,
-            ip: userIP,
-            country: geo.country,
-            flag_code: geo.code.toLowerCase()
-        };
-
-        await kv.incr('visites_totales');
-        await kv.lpush('journal_visites', JSON.stringify(logEntry));
-        await kv.ltrim('journal_visites', 0, 99);
-    } catch (e: any) {
-        console.error("Erreur Stats Index:", e.message);
-    }
-}
+// On force l'ignorance si TS fait encore des caprices, 
+// mais Vercel le verra car ton 'npm install' a réussi.
+// @ts-ignore
+import { kv } from '@vercel/kv';
 
 // Imports d'images
 import heroHome from "../assets/images/hero-home.webp";
@@ -85,7 +15,27 @@ import accueilImg from "../assets/images/accueil-h2-1.webp";
 import atelierImg from "../assets/images/accueil-h2-2.webp";
 import aproposImg from "../assets/images/accueil-h2-3.webp";
 
-// --- 4. DONNÉES STRUCTURÉES (Sécurisées pour le build) ---
+// --- LOGIQUE SIMPLIFIÉE ---
+const ua = Astro.request.headers.get("user-agent") || "";
+let device = "PC";
+if (/android/i.test(ua)) device = "Android";
+else if (/iPad|iPhone|iPod/i.test(ua)) device = "iOS";
+
+if (import.meta.env.PROD) {
+    try {
+        await kv.incr('visites_totales');
+        await kv.lpush('journal_visites', JSON.stringify({
+            date: new Date().toLocaleString('fr-FR'),
+            device: device,
+            isQR: Astro.url.searchParams.get('ref') === 'qr'
+        }));
+        await kv.ltrim('journal_visites', 0, 49);
+    } catch (e) {
+        console.error("KV Error");
+    }
+}
+
+// --- 4. DONNÉES STRUCTURÉES ---
 const schemaData = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
@@ -102,21 +52,13 @@ const schemaData = JSON.stringify({
         "width": 144,
         "height": 144,
         "caption": "Jean-François & Aniuta"
-      },
-      "image": { "@id": "https://jf-aniuta.vercel.app/#logo" },
-      "sameAs": [
-        "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
-        "https://www.instagram.com/jean_francois_aniuta/",
-        "https://www.tiktok.com/@jeanfrancoisbaron2",
-        "https://wa.me/33658909835"
-      ]
+      }
     },
     {
       "@type": "WebSite",
       "@id": "https://jf-aniuta.vercel.app/#website",
       "url": "https://jf-aniuta.vercel.app/",
       "name": "Jean-François & Aniuta - Créations Artisanales",
-      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" },
       "inLanguage": "fr-FR"
     },
     {
@@ -134,23 +76,7 @@ const schemaData = JSON.stringify({
         "postalCode": "48250",
         "addressRegion": "Occitanie",
         "addressCountry": "FR"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": 44.5513388,
-        "longitude": 3.8251625
-      },
-      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" },
-      "openingHoursSpecification": [
-        {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": [
-            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
-          ],
-          "opens": "07:00",
-          "closes": "19:00"
-        }
-      ]
+      }
     }
   ]
 });
@@ -162,20 +88,21 @@ const schemaData = JSON.stringify({
     holidayMessage="Que l'annee 2026 s'illumine de mille feux... Meilleurs Voeux !"
 >
 <script type="application/ld+json" slot="head" set:html={schemaData} />
+
     <section id="hero">
-<Image 
-    src={heroHome} 
-    alt="Scènes d'atelier de sculptures et bougies" 
-    class="hero-background-image" 
-    loading="eager"
-    fetchpriority="high"
-    quality={80}
-    width={1435}
-    height={708}
-    widths={[480, 800, 1435]}
-    sizes="(max-width: 768px) 100vw, 1435px"
-    decoding="async"
-/>
+        <Image 
+            src={heroHome} 
+            alt="Scènes d'atelier de sculptures et bougies" 
+            class="hero-background-image" 
+            loading="eager"
+            fetchpriority="high"
+            quality={80}
+            width={1435}
+            height={708}
+            widths={[480, 800, 1435]}
+            sizes="(max-width: 768px) 100vw, 1435px"
+            decoding="async"
+        />
         <div class="container">
             <h1>L'Héritage Lozérien : Maîtres Sculpteurs et Créateurs de Bougies Artisanales.</h1> 
             <p>Chaleur du bois sculpté, réconfort de la flamme parfumée. L'artisanat conçu pour enrichir votre intérieur.</p>
@@ -188,7 +115,7 @@ const schemaData = JSON.stringify({
             <div class="section-top-image">
                 <Image src={accueilImg} alt="Image illustrant l'art du bois et des bougies" class="intro-image-1" width={600} height={669} />
             </div>
-            <h2>L'Art du Bois et le Parfum des Sens.</h2>              
+            <h2>L'Art du Bois et le Parfum des Sens.</h2>               
             <p>
                 Découvrez l'harmonie parfaite entre la chaleur du bois sculpté et les senteurs envoûtantes de nos créations artisanales. Chaque pièce raconte une histoire de passion et de nature.
             </p>

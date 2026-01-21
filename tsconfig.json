@@ -17,6 +17,9 @@
       "@assets/*": ["src/assets/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*",
+    ".astro/types.d.ts" 
+  ],
   "exclude": ["dist", "node_modules"]
 }

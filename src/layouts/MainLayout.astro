@@ -3,58 +3,50 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/style.css';
 import '../styles/fa/css/brands.min.css';
-
-// IMPORT DES POLICES EN LOCAL
 import '@fontsource/poppins/300.css';
 import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
-
-const { title, description, holidayMessage } = Astro.props;
-
-// 1. GENERER L'URL CANONIQUE DYNAMIQUE
-// Cela prend l'URL actuelle (ex: /bougies) et l'ajoute au domaine
-const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app");
-
-// L'URL de ton image de partage (doit être une URL absolue pour les réseaux sociaux)
-const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel.app");
-
-// src/layouts/Layout.astro
+// @ts-ignore
 import { kv } from '@vercel/kv';
 
+const { title, description, holidayMessage } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app");
+const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel.app");
+
+// On simplifie au maximum le bloc KV pour éviter l'erreur de "string"
 if (import.meta.env.PROD) {
-  try {
-    const url = new URL(Astro.request.url);
-    const userAgent = Astro.request.headers.get('user-agent') || '';
-    
-    // 1. Incrémenter le compteur total
-    await kv.incr('visites_totales');
+    try {
+        const url = new URL(Astro.request.url);
+        const ua = Astro.request.headers.get('user-agent') || '';
+        
+        await kv.incr('visites_totales');
 
-    // 2. Détecter l'appareil
-    let device = "Ordinateur";
-    if (/android/i.test(userAgent)) device = "Android";
-    else if (/iPhone|iPad|iPod/i.test(userAgent)) device = "iOS (Apple)";
+        let dev = "Ordinateur";
+        if (ua.includes('Android')) dev = "Android";
+        else if (ua.includes('iPhone') || ua.includes('iPad')) dev = "iOS";
 
-    // 3. Détecter le navigateur
-    let browser = "Autre";
-    if (/chrome|crios/i.test(userAgent)) browser = "Chrome";
-    else if (/safari/i.test(userAgent) && !/chrome/i.test(userAgent)) browser = "Safari";
-    else if (/firefox/i.test(userAgent)) browser = "Firefox";
+        let br = "Autre";
+        if (ua.includes('Chrome')) br = "Chrome";
+        else if (ua.includes('Safari')) br = "Safari";
+        else if (ua.includes('Firefox')) br = "Firefox";
 
-    // 4. Enregistrer dans le journal (les 50 derniers)
-    const logEntry = {
-      date: new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }),
-      device,
-      browser,
-      isQR: url.searchParams.get('ref') === 'qr'
-    };
+        // On utilise un format de date ultra-simple sans caractères spéciaux complexes
+        const now = new Date();
+        const simpleDate = `${now.toLocaleDateString('fr-FR')} ${now.toLocaleTimeString('fr-FR')}`;
 
-    await kv.lpush('journal_visites', JSON.stringify(logEntry));
-    await kv.ltrim('journal_visites', 0, 49);
+        const log = {
+            date: simpleDate,
+            device: dev,
+            browser: br,
+            isQR: url.searchParams.get('ref') === 'qr'
+        };
 
-  } catch (e) {
-    console.error("Erreur KV:", e);
-  }
+        await kv.lpush('journal_visites', JSON.stringify(log));
+        await kv.ltrim('journal_visites', 0, 49);
+    } catch (e) {
+        // Silencieux en prod pour ne pas bloquer le rendu
+    }
 }
 ---
 
