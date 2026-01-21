@@ -95,8 +95,8 @@ const directPct = 100 - qrPct;
     .nav-right { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
     .social-mini-nav { display: flex; gap: 12px; border-right: 1px solid var(--sable-dore); padding-right: 15px; }
     .social-mini-nav a { color: var(--brun-coco); font-size: 1rem; text-decoration: none; }
-    
-    .btn-group { display: flex; gap: 8px; }
+
+    .btn-group { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
     .btn { padding: 8px 12px; border-radius: 4px; text-decoration: none; font-weight: 700; text-transform: uppercase; font-size: 0.6rem; cursor: pointer; border: 1px solid var(--sable-dore); display: flex; align-items: center; gap: 6px; color: var(--brun-coco); background: white; white-space: nowrap; }
     .btn-gold { background: var(--vanille-pure); }
 
@@ -172,13 +172,49 @@ const directPct = 100 - qrPct;
         .logs-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
+/* MEDIA QUERIES FUSIONNÉE */
     @media (max-width: 650px) {
-        .header-flex { flex-direction: column; align-items: flex-start; }
-        .nav-right { width: 100%; justify-content: space-between; }
+        .header-flex { 
+            flex-direction: column; 
+            align-items: center; /* Centré pour un look plus propre sur mobile */
+            text-align: center;
+        }
+
+        .nav-right { 
+            width: 100%; 
+            flex-direction: column; /* Empile les réseaux sociaux et les boutons */
+            gap: 15px;
+            align-items: center;
+        }
+
+        .social-mini-nav { 
+            border-right: none; 
+            padding-right: 0; 
+            padding-bottom: 5px;
+            justify-content: center;
+        }
+
+        .btn-group { 
+            display: flex;
+            flex-wrap: wrap; /* Les boutons passent à la ligne si besoin */
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn { 
+            font-size: 0.55rem; 
+            padding: 8px 10px;
+            flex: 1 1 auto; /* Les boutons s'étirent pour remplir la largeur proprement */
+            justify-content: center;
+        }
+
         .stats-row { grid-template-columns: repeat(2, 1fr); }
         .logs-grid { grid-template-columns: 1fr; }
+        
         .actions-row { flex-direction: column; align-items: stretch; }
         .actions-row .btn { justify-content: center; }
+        
         .filter-bar { margin-left: -5px; padding-left: 5px; }
     }
 
