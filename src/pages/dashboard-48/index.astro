@@ -138,14 +138,14 @@ const directPct = 100 - qrPct;
     .log-cell-num { background: var(--vanille-pure); height: 100%; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--sable-dore); font-weight: 900; font-family: monospace; font-size: 0.8rem; }
     .log-cell-right { border-left: 1px solid var(--sable-dore); height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--fond-ecume); font-size: 0.65rem; font-weight: 800; }
 
-    /* FILTRES */
-/* FILTRES : Version auto-ajustable (Wrap) */
+/* FILTRES : Alignés sur PC, passage à la ligne sur Mobile */
     .filter-bar { 
         display: flex; 
         gap: 8px; 
         margin-bottom: 20px; 
-        flex-wrap: wrap; /* Les boutons passent à la ligne si pas assez de place */
-        padding: 5px 2px; 
+        flex-wrap: wrap; /* Permet le passage à la ligne sur mobile */
+        padding: 5px 2px;
+        overflow: visible; /* On enlève le scroll horizontal */
     }
 
     .filter-btn { 
@@ -164,10 +164,15 @@ const directPct = 100 - qrPct;
         gap: 8px; 
         white-space: nowrap; 
         transition: all 0.2s ease;
-        flex: 1 1 auto; /* Les boutons s'étirent pour remplir toute la largeur */
-        justify-content: center; /* Centre le texte dans le bouton étiré */
+        /* CONFIGURATION CLÉ */
+        flex: 0 1 auto; /* Garde la taille naturelle du bouton, ne force pas l'étirement */
     }
-    .filter-btn.active { background: var(--brun-coco) !important; color: var(--vanille-pure) !important; border-color: var(--brun-coco) !important; }
+
+    .filter-btn.active { 
+        background: var(--brun-coco) !important; 
+        color: var(--vanille-pure) !important; 
+        border-color: var(--brun-coco) !important; 
+    }
 
     .badge { background: var(--vanille-pure); color: var(--brun-coco); padding: 2px 6px; border-radius: 3px; font-size: 0.6rem; font-family: monospace; font-weight: 900; }
     .filter-btn.active .badge { background: white !important; color: var(--brun-coco) !important; }
@@ -341,26 +346,30 @@ const directPct = 100 - qrPct;
         </div>
 
         <div class="logs-section">
-    <div style="font-weight:900; text-transform:uppercase; font-size:0.65rem; margin-bottom:12px; border-bottom:1px solid var(--vanille-pure); padding-bottom:8px; color: var(--brun-coco);">Journal des passages (100 DERNIERS)</div>
-    <div class="filter-bar"></div>
-    <button class="filter-btn active" onclick="filterLogs('all')">
-        Tous <span class="badge" id="count-all">0</span>
-    </button>
-    <button class="filter-btn" onclick="filterLogs('qr')">
-        <i class="fa-solid fa-qrcode"></i> QR <span class="badge" id="count-qr">0</span>
-    </button>
-    <button class="filter-btn" onclick="filterLogs('mobile')">
-        <i class="fa-solid fa-mobile-screen"></i> Mobiles <span class="badge" id="count-mobile">0</span>
-    </button>
-    <button class="filter-btn" onclick="filterLogs('pc')">
-        <i class="fa-solid fa-desktop"></i> PC <span class="badge" id="count-pc">0</span>
-    </button>
-    <button class="filter-btn" onclick="filterLogs('france')">France <span class="badge" id="count-france">0</span>
-    </button>
-    <button class="filter-btn" onclick="filterLogs('international')">
-        <i class="fa-solid fa-earth-americas"></i> Hors France <span class="badge" id="count-intl">0</span>
-    </button>
-</div>
+            <div style="font-weight:900; text-transform:uppercase; font-size:0.65rem; margin-bottom:12px; border-bottom:1px solid var(--vanille-pure); padding-bottom:8px; color: var(--brun-coco);">
+                Journal des passages (100 DERNIERS)
+            </div>
+
+            <div class="filter-bar">
+                <button class="filter-btn active" onclick="filterLogs('all')">
+                    Tous <span class="badge" id="count-all">0</span>
+                </button>
+                <button class="filter-btn" onclick="filterLogs('qr')">
+                    <i class="fa-solid fa-qrcode"></i> QR <span class="badge" id="count-qr">0</span>
+                </button>
+                <button class="filter-btn" onclick="filterLogs('mobile')">
+                    <i class="fa-solid fa-mobile-screen"></i> Mobiles <span class="badge" id="count-mobile">0</span>
+                </button>
+                <button class="filter-btn" onclick="filterLogs('pc')">
+                    <i class="fa-solid fa-desktop"></i> PC <span class="badge" id="count-pc">0</span>
+                </button>
+                <button class="filter-btn" onclick="filterLogs('france')">
+                    France <span class="badge" id="count-france">0</span>
+                </button>
+                <button class="filter-btn" onclick="filterLogs('international')">
+                    <i class="fa-solid fa-earth-americas"></i> Hors France <span class="badge" id="count-intl">0</span>
+                </button>
+            </div>
     <div class="logs-grid">
         {logs.map((log, index) => {
             const [dateS, timeS] = (log.date || " - ").split(' ');
