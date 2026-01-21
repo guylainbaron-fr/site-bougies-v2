@@ -139,10 +139,34 @@ const directPct = 100 - qrPct;
     .log-cell-right { border-left: 1px solid var(--sable-dore); height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--fond-ecume); font-size: 0.65rem; font-weight: 800; }
 
     /* FILTRES */
-    .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding: 5px 2px 10px 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-    .filter-bar::-webkit-scrollbar { display: none; }
+/* FILTRES : Version auto-ajustable (Wrap) */
+    .filter-bar { 
+        display: flex; 
+        gap: 8px; 
+        margin-bottom: 20px; 
+        flex-wrap: wrap; /* Les boutons passent à la ligne si pas assez de place */
+        padding: 5px 2px; 
+    }
 
-    .filter-btn { background: white; border: 1px solid var(--sable-dore); padding: 7px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--brun-coco); cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; transition: all 0.2s ease; }
+    .filter-btn { 
+        background: white; 
+        border: 1px solid var(--sable-dore); 
+        padding: 7px 12px; 
+        border-radius: 4px; 
+        font-size: 0.65rem; 
+        font-weight: 800; 
+        text-transform: uppercase; 
+        letter-spacing: 0.5px; 
+        color: var(--brun-coco); 
+        cursor: pointer; 
+        display: flex; 
+        align-items: center; 
+        gap: 8px; 
+        white-space: nowrap; 
+        transition: all 0.2s ease;
+        flex: 1 1 auto; /* Les boutons s'étirent pour remplir toute la largeur */
+        justify-content: center; /* Centre le texte dans le bouton étiré */
+    }
     .filter-btn.active { background: var(--brun-coco) !important; color: var(--vanille-pure) !important; border-color: var(--brun-coco) !important; }
 
     .badge { background: var(--vanille-pure); color: var(--brun-coco); padding: 2px 6px; border-radius: 3px; font-size: 0.6rem; font-family: monospace; font-weight: 900; }
@@ -318,7 +342,7 @@ const directPct = 100 - qrPct;
 
         <div class="logs-section">
     <div style="font-weight:900; text-transform:uppercase; font-size:0.65rem; margin-bottom:12px; border-bottom:1px solid var(--vanille-pure); padding-bottom:8px; color: var(--brun-coco);">Journal des passages (100 DERNIERS)</div>
-    <div class="filter-bar" style="display:flex; gap:8px; margin-bottom:15px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 8px;">
+    <div class="filter-bar"></div>
     <button class="filter-btn active" onclick="filterLogs('all')">
         Tous <span class="badge" id="count-all">0</span>
     </button>
