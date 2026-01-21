@@ -21,18 +21,33 @@ if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
         const url = new URL(Astro.request.url);
         const ua = Astro.request.headers.get('user-agent') || '';
         
-        // RÉCUPÉRATION IP VERCEL
-        // On teste x-real-ip d'abord, puis x-forwarded-for
         const userIP = Astro.request.headers.get('x-real-ip') || 
                        Astro.request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
                        "Anonyme";
 
-        // Détection Appareil
+        // --- NOUVEAU : RÉCUPÉRATION GÉO ---
+        let country = "France"; // Par défaut
+        let flag = "fr";        // Par défaut
+        
+        if (userIP !== "Anonyme" && userIP !== "127.0.0.1") {
+            try {
+                // On interroge l'API de géo (timeout de 2s pour ne pas bloquer le site)
+                const geoRes = await fetch(`http://ip-api.com/json/${userIP}?fields=status,country,countryCode`, { signal: AbortSignal.timeout(2000) });
+                const geoData = await geoRes.json();
+                
+                if (geoData.status === 'success') {
+                    country = geoData.country;
+                    flag = geoData.countryCode.toLowerCase();
+                }
+            } catch (e) {
+                // En cas d'erreur API, on reste sur France/fr
+            }
+        }
+
         let dev = "PC";
         if (/android/i.test(ua)) dev = "Android";
         else if (/iPad|iPhone|iPod/i.test(ua)) dev = "iOS";
 
-        // Détection Navigateur
         let br = "Autre";
         if (ua.includes('Chrome')) br = "Chrome";
         else if (ua.includes('Safari') && !ua.includes('Chrome')) br = "Safari";
@@ -45,11 +60,12 @@ if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
             date: simpleDate,
             device: dev,
             browser: br,
-            ip: userIP, // On enregistre enfin la vraie IP
+            ip: userIP,
+            country: country,    // Ajouté
+            flag_code: flag,     // Ajouté
             isQR: url.searchParams.get('ref') === 'qr'
         };
 
-        // On incrémente et on log
         await kv.incr('visites_totales');
         await kv.lpush('journal_visites', JSON.stringify(log));
         await kv.ltrim('journal_visites', 0, 49);
