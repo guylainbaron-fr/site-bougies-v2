@@ -57,8 +57,17 @@ if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
 
             // 3. Détection Appareil & Navigateur
             let dev = "PC";
-            if (/android/i.test(ua)) dev = "Android";
-            else if (/iPad|iPhone|iPod/i.test(ua)) dev = "iOS";
+
+            // On détecte les robots en priorité
+            const isBot = /(googlebot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|ia_archiver|robot|bot|spider)/i.test(ua);
+
+            if (isBot) {
+               dev = "Bot";
+            } else if (/android/i.test(ua)) {
+               dev = "Android";
+            } else if (/iPad|iPhone|iPod/i.test(ua)) {
+               dev = "iOS";
+            }
 
             let br = "Autre";
             if (ua.includes('Chrome')) br = "Chrome";
@@ -77,6 +86,9 @@ if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
                 flag_code: flag,
                 isQR: url.searchParams.get('ref') === 'qr'
             };
+
+            // Si c'est un bot, on définit aussi le navigateur comme "Robot"
+            if (isBot) br = "Robot";
 
             // 4. Enregistrement unique dans la base KV
             await kv.incr('visites_totales');

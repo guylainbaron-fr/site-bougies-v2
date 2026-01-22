@@ -1,6 +1,5 @@
 ---
 const currentYear = new Date().getFullYear();
-
 export const prerender = false;
 
 // @ts-ignore
@@ -34,20 +33,22 @@ let logs: LogEntry[] = [];
 let iosCount = 0;
 let androidCount = 0;
 let pcCount = 0;
+let botCount = 0; // <--- AJOUTÉ
 let qrCount = 0;
 
 try {
-    // Avec @vercel/kv, l'objet 'kv' est déjà initialisé via les variables d'environnement Vercel
     totalVisites = (await kv.get<number>('visites_totales')) || 0;
     const rawLogs = (await kv.lrange('journal_visites', 0, 99)) || []; 
     
     logs = rawLogs.map((item: any) => {
         const log: LogEntry = typeof item === 'string' ? JSON.parse(item) : item;
-        if (log.device === "iOS") iosCount++;
+        
+        // --- MISE À JOUR DES COMPTEURS ---
+        if (log.device === "Bot") botCount++; // <--- AJOUTÉ
+        else if (log.device === "iOS") iosCount++;
         else if (log.device === "Android") androidCount++;
         else if (log.device === "Ordinateur" || log.device === "PC") pcCount++;
         
-        // Vérification robuste du booléen QR
         if (log.isQR === true || String(log.isQR) === 'true') qrCount++;
         return log;
     });
@@ -55,10 +56,13 @@ try {
     console.error("Erreur de récupération KV sur le Dashboard:", e);
 }
 
-const totalForDevices = iosCount + androidCount + pcCount;
+// On inclut les bots dans le total pour que les % soient cohérents
+const totalForDevices = iosCount + androidCount + pcCount + botCount; 
+
 const iosPct = totalForDevices > 0 ? Math.round((iosCount / totalForDevices) * 100) : 0;
 const androidPct = totalForDevices > 0 ? Math.round((androidCount / totalForDevices) * 100) : 0;
 const pcPct = totalForDevices > 0 ? Math.round((pcCount / totalForDevices) * 100) : 0;
+const botPct = totalForDevices > 0 ? Math.round((botCount / totalForDevices) * 100) : 0; // <--- AJOUTÉ
 
 const qrPct = totalVisites > 0 ? Math.round((qrCount / totalVisites) * 100) : 0;
 const directPct = 100 - qrPct;
@@ -93,8 +97,8 @@ const directPct = 100 - qrPct;
     .header-flex h1 { margin: 0; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; color: var(--brun-coco); display: flex; align-items: center; gap: 10px; }
     
     .nav-right { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-    .social-mini-nav { display: flex; gap: 12px; border-right: 1px solid var(--sable-dore); padding-right: 15px; }
-    .social-mini-nav a { color: var(--brun-coco); font-size: 1rem; text-decoration: none; }
+    .social-mini-nav { display: flex; gap: 20px; border-right: 1px solid var(--sable-dore); padding-right: 15px; }
+    .social-mini-nav a { color: var(--brun-coco); font-size: 1.5rem; text-decoration: none; }
 
     .btn-group { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
     .btn { padding: 8px 12px; border-radius: 4px; text-decoration: none; font-weight: 700; text-transform: uppercase; font-size: 0.6rem; cursor: pointer; border: 1px solid var(--sable-dore); display: flex; align-items: center; gap: 6px; color: var(--brun-coco); background: white; white-space: nowrap; }
@@ -308,19 +312,21 @@ const directPct = 100 - qrPct;
             </div>
         </div>
 
-        <div class="dist-section">
-            <div class="dist-header">Technologie</div>
-            <div class="distribution-bar">
-                {iosCount > 0 && <div class="segment bg-ios" style={`width: ${iosPct}%`}>{iosPct}%</div>}
-                {androidCount > 0 && <div class="segment bg-android" style={`width: ${androidPct}%`}>{androidPct}%</div>}
-                {pcCount > 0 && <div class="segment bg-pc" style={`width: ${pcPct}%`}>{pcPct}%</div>}
-            </div>
-            <div class="bar-legend">
-                <span class="legend-item"><span class="dot bg-ios"></span> Apple</span>
-                <span class="legend-item"><span class="dot bg-android"></span> Android</span>
-                <span class="legend-item"><span class="dot bg-pc"></span> Ordinateur</span>
-            </div>
-        </div>
+<div class="dist-section">
+    <div class="dist-header">Technologie</div>
+    <div class="distribution-bar">
+        {iosCount > 0 && <div class="segment bg-ios" style={`width: ${iosPct}%`}>{iosPct}%</div>}
+        {androidCount > 0 && <div class="segment bg-android" style={`width: ${androidPct}%`}>{androidPct}%</div>}
+        {pcCount > 0 && <div class="segment bg-pc" style={`width: ${pcPct}%`}>{pcPct}%</div>}
+        {botCount > 0 && <div class="segment" style={`width: ${botPct}%; background-color: #9b59b6;`}>{botPct}%</div>}
+    </div>
+    <div class="bar-legend">
+        <span class="legend-item"><span class="dot bg-ios"></span> Apple</span>
+        <span class="legend-item"><span class="dot bg-android"></span> Android</span>
+        <span class="legend-item"><span class="dot bg-pc"></span> Ordinateur</span>
+        <span class="legend-item"><span class="dot" style="background-color: #9b59b6;"></span> Robots</span>
+    </div>
+</div>
 
         <div class="dist-section">
             <div class="dist-header">Origine</div>
@@ -363,6 +369,9 @@ const directPct = 100 - qrPct;
                 <button class="filter-btn" onclick="filterLogs('pc')">
                     <i class="fa-solid fa-desktop"></i> PC <span class="badge" id="count-pc">0</span>
                 </button>
+                <button class="filter-btn" onclick="filterLogs('bot')">
+                    <i class="fa-solid fa-robot"></i> Bots <span class="badge" id="count-bot">0</span>
+                </button>
                 <button class="filter-btn" onclick="filterLogs('france')">
                     France <span class="badge" id="count-france">0</span>
                 </button>
@@ -394,10 +403,13 @@ const directPct = 100 - qrPct;
                     <div style="padding:0 8px; overflow: hidden;">
                         <div style="display:flex; align-items:center; gap:8px; white-space: nowrap;">
                             <span style="font-size:1rem;">
-                                {log.device === 'iOS' && <i class="fa-brands fa-apple"></i>}
-                                {log.device === 'Android' && <i class="fa-brands fa-android"></i>}
-                                {(log.device === 'Ordinateur' || log.device === 'PC') && <i class="fa-solid fa-desktop"></i>}
-                            </span>
+    {log.device === 'iOS' && <i class="fa-brands fa-apple"></i>}
+    {log.device === 'Android' && <i class="fa-brands fa-android"></i>}
+    {(log.device === 'Ordinateur' || log.device === 'PC') && <i class="fa-solid fa-desktop"></i>}
+    {(log.device === 'Bot' || log.device === 'Robot') && <i class="fa-solid fa-robot" style="color: #9b59b6;"></i>}
+</span>
+
+{log.device === 'Bot' && <span style="font-size:0.6rem; font-weight:900; color:#9b59b6; margin-left:-4px; margin-right:4px;">BOT</span>}
                             
                             <i class={`fa-solid ${connectionIcon}`} style="font-size:0.75rem; color: var(--sable-dore);"></i>
                             
@@ -482,27 +494,35 @@ function logout() {
 // Fonction pour calculer les badges au chargement
 function updateBadges() {
     const entries = document.querySelectorAll('.log-entry');
-    let counts = { all: 0, qr: 0, mobile: 0, pc: 0, france: 0, intl: 0 };
+    let counts = { all: 0, qr: 0, mobile: 0, pc: 0, france: 0, intl: 0, bot: 0 };
 
     entries.forEach(entry => {
         const isQR = entry.getAttribute('data-qr') === 'true';
         const device = entry.getAttribute('data-device');
         const country = entry.getAttribute('data-country');
+        const isBot = (device === 'Bot' || device === 'Robot');
 
         counts.all++;
         if (isQR) counts.qr++;
-        if (device === 'iOS' || device === 'Android') counts.mobile++;
-        if (device === 'PC' || device === 'Ordinateur') counts.pc++;
+        
+        if (isBot) {
+            counts.bot++;
+        } else {
+            if (device === 'iOS' || device === 'Android') counts.mobile++;
+            if (device === 'PC' || device === 'Ordinateur') counts.pc++;
+        }
+
         if (country === 'FRANCE') counts.france++;
         else counts.intl++;
     });
 
-    document.getElementById('count-all').innerText = counts.all;
-    document.getElementById('count-qr').innerText = counts.qr;
-    document.getElementById('count-mobile').innerText = counts.mobile;
-    document.getElementById('count-pc').innerText = counts.pc;
-    document.getElementById('count-france').innerText = counts.france;
-    document.getElementById('count-intl').innerText = counts.intl;
+    if(document.getElementById('count-all')) document.getElementById('count-all').innerText = counts.all;
+    if(document.getElementById('count-qr')) document.getElementById('count-qr').innerText = counts.qr;
+    if(document.getElementById('count-mobile')) document.getElementById('count-mobile').innerText = counts.mobile;
+    if(document.getElementById('count-pc')) document.getElementById('count-pc').innerText = counts.pc;
+    if(document.getElementById('count-france')) document.getElementById('count-france').innerText = counts.france;
+    if(document.getElementById('count-intl')) document.getElementById('count-intl').innerText = counts.intl;
+    if(document.getElementById('count-bot')) document.getElementById('count-bot').innerText = counts.bot;
 }
 
 // Fonction de filtrage
@@ -517,12 +537,15 @@ function filterLogs(type) {
         const isQR = entry.getAttribute('data-qr') === 'true';
         const device = entry.getAttribute('data-device');
         const country = entry.getAttribute('data-country');
+        const isBot = (device === 'Bot' || device === 'Robot');
 
         let show = false;
         if (type === 'all') show = true;
         else if (type === 'qr' && isQR) show = true;
-        else if (type === 'mobile' && (device === 'iOS' || device === 'Android')) show = true;
-        else if (type === 'pc' && (device === 'PC' || device === 'Ordinateur')) show = true;
+        else if (type === 'bot' && isBot) show = true;
+        // On affiche mobile/pc seulement si ce n'est PAS un bot
+        else if (type === 'mobile' && !isBot && (device === 'iOS' || device === 'Android')) show = true;
+        else if (type === 'pc' && !isBot && (device === 'PC' || device === 'Ordinateur')) show = true;
         else if (type === 'france' && country === 'FRANCE') show = true;
         else if (type === 'international' && country !== 'FRANCE') show = true;
 
