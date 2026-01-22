@@ -56,16 +56,17 @@ try {
     console.error("Erreur de récupération KV sur le Dashboard:", e);
 }
 
-// On inclut les bots dans le total pour que les % soient cohérents
+// 1. Calcul du total "Humains" (pour les chiffres clés en haut)
+const totalVisitesHumaines = iosCount + androidCount + pcCount;
+// 2. Calcul pour la barre de Technologie (on garde les bots ici)
 const totalForDevices = iosCount + androidCount + pcCount + botCount; 
-
 const iosPct = totalForDevices > 0 ? Math.round((iosCount / totalForDevices) * 100) : 0;
 const androidPct = totalForDevices > 0 ? Math.round((androidCount / totalForDevices) * 100) : 0;
 const pcPct = totalForDevices > 0 ? Math.round((pcCount / totalForDevices) * 100) : 0;
-const botPct = totalForDevices > 0 ? Math.round((botCount / totalForDevices) * 100) : 0; // <--- AJOUTÉ
-
-const qrPct = totalVisites > 0 ? Math.round((qrCount / totalVisites) * 100) : 0;
-const directPct = 100 - qrPct;
+const botPct = totalForDevices > 0 ? Math.round((botCount / totalForDevices) * 100) : 0;
+// 3. Calcul pour la barre d'Origine
+const qrPct = totalVisitesHumaines > 0 ? Math.round((qrCount / totalVisitesHumaines) * 100) : 0;
+const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
 ---
 
 <html lang="fr">
@@ -301,7 +302,7 @@ const directPct = 100 - qrPct;
         </header>
 
         <div class="stats-row">
-            <div class="stat-card-mini card-total"><span class="val">{totalVisites}</span><span class="label">Visites</span></div>
+            <div class="stat-card-mini card-total"><span class="val">{totalVisitesHumaines}</span><span class="label">Visites</span></div>
             <div class="stat-card-mini card-qr"><span class="val">{qrCount}</span><span class="label">Scans QR</span></div>
             <div class="stat-card-mini card-ios"><span class="val">{iosCount}</span><span class="label">iOS</span></div>
             <div class="stat-card-mini card-android"><span class="val">{androidCount}</span><span class="label">Android</span></div>
@@ -408,8 +409,6 @@ const directPct = 100 - qrPct;
     {(log.device === 'Ordinateur' || log.device === 'PC') && <i class="fa-solid fa-desktop"></i>}
     {(log.device === 'Bot' || log.device === 'Robot') && <i class="fa-solid fa-robot" style="color: #9b59b6;"></i>}
 </span>
-
-{log.device === 'Bot' && <span style="font-size:0.6rem; font-weight:900; color:#9b59b6; margin-left:-4px; margin-right:4px;">BOT</span>}
                             
                             <i class={`fa-solid ${connectionIcon}`} style="font-size:0.75rem; color: var(--sable-dore);"></i>
                             
