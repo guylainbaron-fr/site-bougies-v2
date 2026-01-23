@@ -99,28 +99,25 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
         }
     </script>
     <script is:inline>
-  (async () => {
-    if (window.location.pathname.includes('dashboard')) return;
-    
-    const ua = navigator.userAgent;
-    if (ua.includes('Lighthouse') || ua.includes('Chrome-Lighthouse')) return;
+      (async () => {
+        if (window.location.pathname.includes('dashboard')) return;
+        if (sessionStorage.getItem('site_visited')) return;
 
-    if (sessionStorage.getItem('site_visited')) return;
-    sessionStorage.setItem('site_visited', 'true');
-
-    const isQR = new URLSearchParams(window.location.search).get('ref') === 'qr';
-    
-    try {
-      await fetch('/api/log-visit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ua: ua,
-          isQR: isQR
-        })
-      });
-    } catch (err) {}
-  })();
-</script>
+        sessionStorage.setItem('site_visited', 'true');
+        const isQR = new URLSearchParams(window.location.search).get('ref') === 'qr';
+        
+        try {
+          // On appelle notre API demain
+          await fetch('/api/log-visit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ua: navigator.userAgent,
+              isQR: isQR
+            })
+          });
+        } catch (err) {}
+      })();
+    </script>
 </body>
 </html>
