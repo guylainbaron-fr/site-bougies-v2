@@ -20,24 +20,25 @@ if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
     try {
         const ua = Astro.request.headers.get('user-agent') || '';
         const url = new URL(Astro.request.url);
-        
-        // 1. Détection Bot
+
+        // 1. DÉTECTION BOT IMMÉDIATE
+        // Ajout de chrome-lighthouse et headless pour capter les outils de test Google
         const isBot = /(googlebot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|ia_archiver|robot|bot|spider|headless|chrome-lighthouse)/i.test(ua);
 
-        // 2. Vérification du cookie (on essaie de lire 'site_session_active')
-        const sessionCookie = Astro.cookies.get('site_session_active');
+        // 2. VÉRIFICATION DU COOKIE (Seulement pour les humains)
+        const hasVisited = Astro.cookies.has('site_session_active');
 
-        // On n'enregistre que si c'est un BOT OU si le cookie n'existe pas
-        if (isBot || !sessionCookie) {
+        // On log si : C'est un nouveau visiteur (pas de cookie) OU si c'est un Bot
+        if (!hasVisited || isBot) {
             
             const userIP = Astro.request.headers.get('x-real-ip') || 
                            Astro.request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
                            "Anonyme";
 
+            // 3. GÉO-LOCALISATION
             let country = "France";
             let flag = "fr";
             
-            // ... (ton code de Géolocalisation reste le même ici) ...
             if (userIP !== "Anonyme" && userIP !== "127.0.0.1") {
                 try {
                     const geoRes = await fetch(`http://ip-api.com/json/${userIP}?fields=status,country,countryCode`, { signal: AbortSignal.timeout(2000) });
@@ -46,13 +47,25 @@ if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
                         country = geoData.country;
                         flag = geoData.countryCode.toLowerCase();
                     }
-                } catch (e) {}
+                } catch (e) { /* On garde FR par défaut */ }
             }
 
-            let dev = isBot ? "Bot" : "PC";
+            // 4. DÉTERMINATION DU DEVICE
+            let dev = "PC";
+            if (isBot) {
+                dev = "Bot";
+            } else if (/android/i.test(ua)) {
+                dev = "Android";
+            } else if (/iPad|iPhone|iPod/i.test(ua)) {
+                dev = "iOS";
+            }
+
+            // 5. NAVIGATEUR
+            let br = isBot ? "Robot" : "Autre";
             if (!isBot) {
-                if (/android/i.test(ua)) dev = "Android";
-                else if (/iPad|iPhone|iPod/i.test(ua)) dev = "iOS";
+                if (ua.includes('Chrome')) br = "Chrome";
+                else if (ua.includes('Safari') && !ua.includes('Chrome')) br = "Safari";
+                else if (ua.includes('Firefox')) br = "Firefox";
             }
 
             const now = new Date();
@@ -61,29 +74,30 @@ if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
             const log = {
                 date: simpleDate,
                 device: dev,
+                browser: br,
                 ip: userIP,
                 country: country,
                 flag_code: flag,
                 isQR: url.searchParams.get('ref') === 'qr'
             };
 
+            // 6. ENREGISTREMENT KV
             await kv.incr('visites_totales');
             await kv.lpush('journal_visites', JSON.stringify(log));
             await kv.ltrim('journal_visites', 0, 99);
 
-            // 3. FIX DU COOKIE : On force l'écriture avec des options simples
+            // 7. POSE DU COOKIE (Uniquement si c'est un humain)
             if (!isBot) {
                 Astro.cookies.set('site_session_active', 'true', { 
+                    maxAge: 60 * 30, 
                     path: '/',
-                    maxAge: 1800, // 30 minutes
-                    httpOnly: false, // On passe à false pour faciliter la lecture
-                    secure: true,
-                    sameSite: 'strict'
+                    httpOnly: true,
+                    secure: true
                 });
             }
         }
     } catch (e) {
-        console.error("Erreur KV:", e);
+        console.error("Erreur de suivi KV:", e);
     }
 }
 ---
