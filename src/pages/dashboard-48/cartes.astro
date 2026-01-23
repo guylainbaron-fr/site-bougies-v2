@@ -38,16 +38,23 @@ const currentYear = new Date().getFullYear();
       
       .header-prive { 
           background: white; 
-          padding: 15px 20px;
+          padding: 12px 15px;
           display: flex;
           justify-content: space-between;
           align-items: center;
           border-bottom: 2px solid var(--sable-dore);
           flex-shrink: 0;
+          gap: 10px;
       }
 
-      .header-prive h1 { margin: 0; font-size: 0.9rem; text-transform: uppercase; }
-      .nav-right { display: flex; align-items: center; gap: 10px; }
+      .header-prive h1 { 
+          margin: 0; 
+          font-size: 0.85rem; 
+          text-transform: uppercase; 
+          white-space: nowrap;
+      }
+
+      .nav-right { display: flex; align-items: center; gap: 8px; }
 
       .btn { 
           padding: 8px 12px; border-radius: 4px; text-decoration: none; 
@@ -57,13 +64,14 @@ const currentYear = new Date().getFullYear();
       }
       .btn-gold { background: var(--vanille-pure); }
 
+      /* ZONE DE PREVIEW */
       .preview-container {
           width: 100%;
           flex-grow: 1; 
           display: flex;
           justify-content: center;
           align-items: center; 
-          padding: 10px 0;
+          padding: 20px 0;
       }
 
       .page-a4 {
@@ -73,14 +81,17 @@ const currentYear = new Date().getFullYear();
           display: flex;
           flex-direction: column;
           box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+          transform-origin: center center;
       }
 
+      /* MOBILE AJUSTEMENTS */
       @media (max-width: 768px) {
           .page-a4 { zoom: 0.4; }
           .btn-text { display: none; }
       }
 
       @media (max-width: 480px) {
+          .header-prive h1 span { display: none; } /* Cache "Impression" pour laisser place aux boutons */
           .page-a4 { zoom: 0.35; }
       }
 
@@ -107,31 +118,46 @@ const currentYear = new Date().getFullYear();
           width: 100%;
       }
 
-      /* --- FIX IMPRESSION MOBILE (PAGE BLANCHE) --- */
+      /* --- MÉTHODE RADICALE POUR L'IMPRESSION --- */
       @media print {
-          @page { size: A4 portrait; margin: 0; }
+          @page { 
+              size: A4 portrait; 
+              margin: 0 !important; 
+          }
           
-          html, body { 
-              height: 100% !important; 
-              overflow: hidden !important; 
+          /* On cache tout le site */
+          body * { visibility: hidden; }
+          
+          /* On ne rend visible que la carte et son contenu */
+          .preview-container, .preview-container *, .page-a4, .page-a4 * { 
+              visibility: visible; 
+          }
+
+          .preview-container {
+              position: absolute !important;
+              top: 0 !important;
+              left: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+              padding: 0 !important;
+              margin: 0 !important;
+              display: block !important;
+          }
+
+          .page-a4 { 
+              position: absolute !important;
+              top: 0 !important;
+              left: 0 !important;
+              width: 210mm !important;
+              height: 296mm !important; /* On réduit de 1mm pour être 100% sûr d'éviter la page 2 */
+              zoom: 1 !important;
+              box-shadow: none !important;
+              border: none !important;
+              page-break-after: avoid !important;
+              page-break-inside: avoid !important;
           }
 
           .header-prive, .dashboard-footer { display: none !important; }
-          
-          .preview-container { 
-              padding: 0 !important; 
-              margin: 0 !important; 
-              display: block !important; 
-          }
-          
-          .page-a4 { 
-              zoom: 1 !important; 
-              width: 210mm !important;
-              height: 296.5mm !important; /* Marge de sécurité de 0.5mm */
-              box-shadow: none !important; 
-              margin: 0 !important;
-              page-break-after: avoid !important;
-          }
       }
     </style>
   </head>
