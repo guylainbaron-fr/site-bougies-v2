@@ -10,11 +10,12 @@ import '@fontsource/poppins/700.css';
 
 const { title, description, holidayMessage } = Astro.props;
 
-// --- AJOUT POUR LES ROBOTS (Version corrigée) ---
+// --- DÉTECTION BOT + PROTECTION LOCAL ---
 const ua = Astro.request.headers.get('user-agent') || '';
 const isBot = /(googlebot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|ia_archiver|robot|bot|spider|headless|chrome-lighthouse)/i.test(ua);
 
-if (isBot && !Astro.url.pathname.includes('dashboard')) {
+// On n'envoie les logs de bots QUE si on n'est pas en local (DEV)
+if (isBot && !Astro.url.pathname.includes('dashboard') && !import.meta.env.DEV) {
     const apiUrl = new URL('/api/log-visit', Astro.url.origin).href;
     
     fetch(apiUrl, {
@@ -63,14 +64,10 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
 
     <link rel="icon" href="/favicon.ico" sizes="16x16" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
     <link rel="icon" type="image/png" sizes="16x16" href="/images/logo_16.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/images/logo_32.png" />
-
     <link rel="icon" type="image/png" sizes="144x144" href="/images/logo_144.png" />
-
     <link rel="icon" type="image/png" sizes="192x192" href="/images/logo_192.png" />
-
     <link rel="apple-touch-icon" href="/images/logo_192.png" />
 
     <link rel="manifest" href="/manifest.json">
@@ -95,8 +92,15 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
             });
         }
     </script>
-    <script is:inline>
+
+    <script is:inline define:vars={{ isDev: import.meta.env.DEV }}>
       (async () => {
+        // Neutralisation en mode local
+        if (isDev) {
+            console.log("🛠️ Mode Local détecté : Log désactivé.");
+            return;
+        }
+
         if (window.location.pathname.includes('dashboard')) return;
         if (sessionStorage.getItem('site_visited')) return;
 
@@ -104,7 +108,6 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
         const isQR = new URLSearchParams(window.location.search).get('ref') === 'qr';
         
         try {
-          // On appelle notre API demain
           await fetch('/api/log-visit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
