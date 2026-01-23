@@ -430,21 +430,23 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
                             
                             { (log.isQR === true || String(log.isQR) === 'true') && <i class="fa-solid fa-qrcode" style="color:var(--color-qr); font-size:0.7rem;"></i> }
                         </div>
+<div style="font-size:0.55rem; font-weight:900; opacity:0.8; margin-top:2px; display:flex; align-items:center; gap:5px;">
+    <div style="position: relative; width: 16px; height: 12px; flex-shrink: 0; overflow: hidden;">
+        {/* On affiche le drapeau normalement */}
+        {log.flag_code && (
+            <img 
+                src={`https://flagcdn.com/${log.flag_code}.svg`} 
+                width="16" 
+                height="12" 
+                style="display: block; object-fit: cover;"
+            />
+        )}
 
-                        <div style="font-size:0.55rem; font-weight:900; opacity:0.8; margin-top:2px; display:flex; align-items:center; gap:5px;">
-    {log.flag_code ? (
-        <img 
-            src={`https://flagcdn.com/${log.flag_code}.svg`} 
-            width="16" 
-            height="12" 
-            alt={log.country}
-            style="border-radius: 1px; box-shadow: 0 0 1px rgba(0,0,0,0.5); object-fit: cover;"
-        />
-    ) : (
-        <div style="width: 16px; height: 12px; background: #ddd; border-radius: 1px; display: flex; align-items: center; justify-content: center;">
-             <div style="width: 8px; height: 8px; background: #999; border-radius: 50%;"></div>
-        </div>
-    )}
+        {/* LE CACHE-MISÈRE : Si c'est le drapeau 'un' ou si le pays est 'LOCAL' / 'INCONNU' */}
+        {(!log.flag_code || log.flag_code === 'un' || log.country === 'INCONNU' || log.ip === '::1') && (
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #f2e1a6; border: 1px solid var(--sable-dore); z-index: 10;"></div>
+        )}
+    </div>
     <span>{log.country ? log.country.toUpperCase() : 'INCONNU'}</span>
 </div>
                     </div>

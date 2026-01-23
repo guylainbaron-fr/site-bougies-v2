@@ -8,15 +8,12 @@ const currentYear = new Date().getFullYear();
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow">
     <title>Gestion des Cartes | J.F. & Aniuta</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="icon" type="image/png" sizes="32x32" href="/images/icon-dashboard.png" />
-    <link rel="apple-touch-icon" href="/images/icon-dashboard.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/images/icon-dashboard.png" />
-    <meta name="theme-color" content="#fdfaf7">
     
     <style>
       :root { 
@@ -34,80 +31,63 @@ const currentYear = new Date().getFullYear();
           background-color: var(--fond-ecume); 
           font-family: var(--font-principale); 
           color: var(--brun-coco);
-          overflow-x: hidden; /* Empêche le scroll horizontal parasite */
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
       }
       
       .header-prive { 
           background: white; 
           padding: 15px 20px;
-          max-width: 1200px;
-          margin: 0 auto 25px auto;
           display: flex;
           justify-content: space-between;
           align-items: center;
           border-bottom: 2px solid var(--sable-dore);
-          flex-wrap: wrap;
-          gap: 15px;
+          flex-shrink: 0;
       }
 
-      .header-prive h1 {
-          margin: 0;
-          font-size: 0.9rem;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-      }
-
+      .header-prive h1 { margin: 0; font-size: 0.9rem; text-transform: uppercase; }
       .nav-right { display: flex; align-items: center; gap: 10px; }
 
       .btn { 
           padding: 8px 12px; border-radius: 4px; text-decoration: none; 
           font-weight: 700; text-transform: uppercase; font-size: 0.6rem; 
-          cursor: pointer; border: 1px solid var(--sable-dore); 
-          display: flex; align-items: center; gap: 6px; 
-          color: var(--brun-coco); background: white;
-          white-space: nowrap;
+          border: 1px solid var(--sable-dore); color: var(--brun-coco); background: white;
+          display: flex; align-items: center; gap: 6px;
       }
       .btn-gold { background: var(--vanille-pure); }
 
-      /* --- BLINDAGE MOBILE : Le conteneur de prévisualisation --- */
-      .preview-container {
+      /* --- ZONE DE PREVIEW --- */
+.preview-container {
           width: 100%;
-          overflow-x: auto; /* Permet de voir la carte si elle dépasse */
-          padding: 10px;
+          flex-grow: 1; /* Remplit tout le vide entre le header et le footer */
           display: flex;
           justify-content: center;
-          -webkit-overflow-scrolling: touch;
+          align-items: center; /* CENTRE la carte verticalement dans le vide du Pixel 7 */
+          padding: 10px 0;
       }
 
-      /* --- MISE EN PAGE A4 --- */
       .page-a4 {
           width: 210mm;
           height: 297mm;
-          min-width: 210mm; /* Force la largeur A4 même sur mobile */
           background: white;
           display: flex;
           flex-direction: column;
           box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-          position: relative;
-          transform-origin: top center;
       }
 
-      /* Zoom automatique pour mobile */
-      @media (max-width: 210mm) {
-          .preview-container { justify-content: flex-start; }
-          /* On réduit visuellement la taille pour que ça tienne dans l'écran */
-          .page-a4 { 
-              transform: scale(0.4); /* Ajuste selon ton écran, ou laisse le scroll */
-              margin: -30% 0; /* Compense le vide créé par le scale */
+      /* MOBILE : Utilisation du ZOOM au lieu du SCALE */
+      @media (max-width: 768px) {
+          .page-a4 {
+              zoom: 0.4; /* Réduit la taille ET l'encombrement */
           }
+          .btn-text { display: none; }
       }
 
-      /* Désactive le zoom sur mobile pour que le scroll soit propre si tu préfères */
-      @media (max-width: 600px) {
-          .page-a4 { transform: scale(0.35); margin: -50% 0; }
+      @media (max-width: 480px) {
+          .page-a4 {
+              zoom: 0.35; /* Ajustement pour Pixel 7 */
+          }
       }
 
       .half {
@@ -116,47 +96,47 @@ const currentYear = new Date().getFullYear();
           justify-content: center;
           align-items: center;
           position: relative;
-          overflow: hidden;
       }
 
       .cut-line {
           position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
+          bottom: 0; left: 0; right: 0;
           border-bottom: 1px dashed #eee;
       }
 
-      .dashboard-footer {
-          margin-top: 40px;
+.dashboard-footer {
           padding: 20px 0;
           border-top: 1px solid var(--sable-dore);
           text-align: center;
+          background: white;
+          margin-top: auto; /* Aimant vers le bas */
+          width: 100%;
       }
 
+      /* IMPRESSION */
       @media print {
-          .header-prive, .dashboard-footer, .preview-container { padding: 0 !important; margin: 0 !important; }
+          @page { size: A4 portrait; margin: 0; }
           .header-prive, .dashboard-footer { display: none !important; }
-          body { background: white !important; }
-          .preview-container { overflow: visible !important; display: block !important; }
+          .preview-container { padding: 0 !important; display: block !important; }
           .page-a4 { 
-              transform: none !important; 
-              margin: 0 !important; 
+              zoom: 1 !important; 
+              width: 210mm !important;
+              height: 297mm !important;
               box-shadow: none !important; 
-              border: none !important; 
           }
-          .cut-line { border-bottom: 1px dashed #ccc !important; }
       }
     </style>
   </head>
   <body>
 
     <header class="header-prive">
-      <h1><i class="fa-solid fa-id-card" style="color: var(--sable-dore);"></i> Cartes</h1>
+      <h1><i class="fa-solid fa-id-card" style="color: var(--sable-dore);"></i> <span>Impression</span></h1>
       <div class="nav-right">
-          <a href="/dashboard-48" class="btn"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+          <a href="/dashboard-48" class="btn">
+            <i class="fa-solid fa-arrow-left"></i> <span class="btn-text">Retour</span>
+          </a>
           <button class="btn btn-gold" onclick="window.print()">
-            <i class="fa-solid fa-print"></i> Imprimer
+            <i class="fa-solid fa-print"></i> <span class="btn-text">Imprimer</span>
           </button>
       </div>
     </header>
@@ -174,7 +154,7 @@ const currentYear = new Date().getFullYear();
     </div>
 
     <footer class="dashboard-footer">
-      <p>&copy; {currentYear} J.F. & Aniuta</p>
+      <p>&copy; {currentYear} Jean François & Aniuta — Dashboard Atelier</p>
     </footer>
 
   </body>
