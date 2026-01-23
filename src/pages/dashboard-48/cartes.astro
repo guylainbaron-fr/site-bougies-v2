@@ -57,13 +57,12 @@ const currentYear = new Date().getFullYear();
       }
       .btn-gold { background: var(--vanille-pure); }
 
-      /* --- ZONE DE PREVIEW --- */
-.preview-container {
+      .preview-container {
           width: 100%;
-          flex-grow: 1; /* Remplit tout le vide entre le header et le footer */
+          flex-grow: 1; 
           display: flex;
           justify-content: center;
-          align-items: center; /* CENTRE la carte verticalement dans le vide du Pixel 7 */
+          align-items: center; 
           padding: 10px 0;
       }
 
@@ -76,18 +75,13 @@ const currentYear = new Date().getFullYear();
           box-shadow: 0 10px 30px rgba(0,0,0,0.1);
       }
 
-      /* MOBILE : Utilisation du ZOOM au lieu du SCALE */
       @media (max-width: 768px) {
-          .page-a4 {
-              zoom: 0.4; /* Réduit la taille ET l'encombrement */
-          }
+          .page-a4 { zoom: 0.4; }
           .btn-text { display: none; }
       }
 
       @media (max-width: 480px) {
-          .page-a4 {
-              zoom: 0.35; /* Ajustement pour Pixel 7 */
-          }
+          .page-a4 { zoom: 0.35; }
       }
 
       .half {
@@ -104,25 +98,39 @@ const currentYear = new Date().getFullYear();
           border-bottom: 1px dashed #eee;
       }
 
-.dashboard-footer {
+      .dashboard-footer {
           padding: 20px 0;
           border-top: 1px solid var(--sable-dore);
           text-align: center;
           background: white;
-          margin-top: auto; /* Aimant vers le bas */
+          margin-top: auto; 
           width: 100%;
       }
 
-      /* IMPRESSION */
+      /* --- FIX IMPRESSION MOBILE (PAGE BLANCHE) --- */
       @media print {
           @page { size: A4 portrait; margin: 0; }
+          
+          html, body { 
+              height: 100% !important; 
+              overflow: hidden !important; 
+          }
+
           .header-prive, .dashboard-footer { display: none !important; }
-          .preview-container { padding: 0 !important; display: block !important; }
+          
+          .preview-container { 
+              padding: 0 !important; 
+              margin: 0 !important; 
+              display: block !important; 
+          }
+          
           .page-a4 { 
               zoom: 1 !important; 
               width: 210mm !important;
-              height: 297mm !important;
+              height: 296.5mm !important; /* Marge de sécurité de 0.5mm */
               box-shadow: none !important; 
+              margin: 0 !important;
+              page-break-after: avoid !important;
           }
       }
     </style>
