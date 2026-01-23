@@ -1,20 +1,23 @@
-import type { APIRoute } from 'astro';
+// @ts-ignore
 import { kv } from '@vercel/kv';
+import type { APIRoute } from 'astro';
 
 export const POST: APIRoute = async ({ request }) => {
     try {
         const data = await request.json();
-        const ua = data.ua || '';
+        const ua = data.ua || request.headers.get('user-agent') || '';
         
-        // 1. Détection device simplifiée
+        // Détection Robot
+        const isBot = /(googlebot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|ia_archiver|robot|bot|spider|headless|chrome-lighthouse)/i.test(ua);
+
+        // Détection Device pour les humains
         let dev = "PC";
-        if (/android/i.test(ua)) dev = "Android";
+        if (isBot) dev = "Bot";
+        else if (/android/i.test(ua)) dev = "Android";
         else if (/iPad|iPhone|iPod/i.test(ua)) dev = "iOS";
 
-        // 2. Préparation du log
-        const now = new Date();
         const log = {
-            date: now.toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }),
+            date: new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }),
             device: dev,
             ip: request.headers.get('x-real-ip') || "Anonyme",
             country: data.country || "France",
@@ -22,13 +25,17 @@ export const POST: APIRoute = async ({ request }) => {
             isQR: data.isQR || false
         };
 
-        // 3. Enregistrement (Humain confirmé par le JS)
-        await kv.incr('visites_totales');
+        // RÈGLE : On incrémente le compteur TOTAL uniquement si ce n'est PAS un bot
+        if (!isBot) {
+            await kv.incr('visites_totales');
+        }
+
+        // On ajoute quand même le log dans le journal pour le voir
         await kv.lpush('journal_visites', JSON.stringify(log));
         await kv.ltrim('journal_visites', 0, 99);
 
         return new Response(JSON.stringify({ success: true }), { status: 200 });
     } catch (e) {
-        return new Response(JSON.stringify({ error: e.message }), { status: 500 });
+        return new Response(JSON.stringify({ error: e }), { status: 500 });
     }
 }

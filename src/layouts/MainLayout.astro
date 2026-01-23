@@ -8,10 +8,21 @@ import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 
-// @ts-ignore
-import { kv } from '@vercel/kv';
-
 const { title, description, holidayMessage } = Astro.props;
+
+// --- AJOUT POUR LES ROBOTS ---
+const ua = Astro.request.headers.get('user-agent') || '';
+const isBot = /(googlebot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|ia_archiver|robot|bot|spider|headless|chrome-lighthouse)/i.test(ua);
+
+// Si c'est un bot, on envoie le log tout de suite depuis le serveur
+if (isBot && !Astro.url.pathname.includes('dashboard')) {
+    fetch(new URL('/api/log-visit', Astro.url.origin), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ua: ua, isBot: true })
+    }).catch(() => {});
+}
+
 const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app");
 const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel.app");
 ---

@@ -56,15 +56,18 @@ try {
     console.error("Erreur de récupération KV sur le Dashboard:", e);
 }
 
-// 1. Calcul du total "Humains" (pour les chiffres clés en haut)
+// --- 1. CALCULS DES TOTAUX ---
 const totalVisitesHumaines = iosCount + androidCount + pcCount;
-// 2. Calcul pour la barre de Technologie (on garde les bots ici)
-const totalForDevices = iosCount + androidCount + pcCount + botCount; 
-const iosPct = totalForDevices > 0 ? Math.round((iosCount / totalForDevices) * 100) : 0;
-const androidPct = totalForDevices > 0 ? Math.round((androidCount / totalForDevices) * 100) : 0;
-const pcPct = totalForDevices > 0 ? Math.round((pcCount / totalForDevices) * 100) : 0;
-const botPct = totalForDevices > 0 ? Math.round((botCount / totalForDevices) * 100) : 0;
-// 3. Calcul pour la barre d'Origine
+const totalAvecBots = totalVisitesHumaines + botCount;
+
+// --- 2. CALCULS POUR LA BARRE TECHNOLOGIE (Humains + Bots) ---
+const iosPct = totalAvecBots > 0 ? Math.round((iosCount / totalAvecBots) * 100) : 0;
+const androidPct = totalAvecBots > 0 ? Math.round((androidCount / totalAvecBots) * 100) : 0;
+const pcPct = totalAvecBots > 0 ? Math.round((pcCount / totalAvecBots) * 100) : 0;
+const botPct = totalAvecBots > 0 ? Math.round((botCount / totalAvecBots) * 100) : 0;
+
+// --- 3. CALCULS POUR LA BARRE ORIGINE (Humains uniquement) ---
+// C'est ce bloc qui te manque et qui cause les erreurs !
 const qrPct = totalVisitesHumaines > 0 ? Math.round((qrCount / totalVisitesHumaines) * 100) : 0;
 const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
 ---
