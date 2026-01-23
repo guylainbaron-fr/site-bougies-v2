@@ -20,22 +20,21 @@ if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
     try {
         const ua = Astro.request.headers.get('user-agent') || '';
         const url = new URL(Astro.request.url);
-
-        // 1. DÉTECTION BOT IMMÉDIATE
-        // Ajout de chrome-lighthouse et headless pour capter les outils de test Google
+        
+        // 1. Détection Bot
         const isBot = /(googlebot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|ia_archiver|robot|bot|spider|headless|chrome-lighthouse)/i.test(ua);
 
-        // 2. VÉRIFICATION DU COOKIE (Seulement pour les humains)
+        // 2. Vérification du cookie
         const hasVisited = Astro.cookies.has('site_session_active');
 
-        // On log si : C'est un nouveau visiteur (pas de cookie) OU si c'est un Bot
-        if (!hasVisited || isBot) {
+        // CONDITION : On n'enregistre que si c'est un BOT (toujours) 
+        // OU si c'est un HUMAIN qui n'a pas encore de cookie
+        if (isBot || !hasVisited) {
             
             const userIP = Astro.request.headers.get('x-real-ip') || 
                            Astro.request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
                            "Anonyme";
 
-            // 3. GÉO-LOCALISATION
             let country = "France";
             let flag = "fr";
             
@@ -47,20 +46,15 @@ if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
                         country = geoData.country;
                         flag = geoData.countryCode.toLowerCase();
                     }
-                } catch (e) { /* On garde FR par défaut */ }
+                } catch (e) {}
             }
 
-            // 4. DÉTERMINATION DU DEVICE
-            let dev = "PC";
-            if (isBot) {
-                dev = "Bot";
-            } else if (/android/i.test(ua)) {
-                dev = "Android";
-            } else if (/iPad|iPhone|iPod/i.test(ua)) {
-                dev = "iOS";
+            let dev = isBot ? "Bot" : "PC";
+            if (!isBot) {
+                if (/android/i.test(ua)) dev = "Android";
+                else if (/iPad|iPhone|iPod/i.test(ua)) dev = "iOS";
             }
 
-            // 5. NAVIGATEUR
             let br = isBot ? "Robot" : "Autre";
             if (!isBot) {
                 if (ua.includes('Chrome')) br = "Chrome";
@@ -81,18 +75,19 @@ if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
                 isQR: url.searchParams.get('ref') === 'qr'
             };
 
-            // 6. ENREGISTREMENT KV
+            // Enregistrement
             await kv.incr('visites_totales');
             await kv.lpush('journal_visites', JSON.stringify(log));
             await kv.ltrim('journal_visites', 0, 99);
 
-            // 7. POSE DU COOKIE (Uniquement si c'est un humain)
+            // 3. ON POSE LE COOKIE (Uniquement pour les humains)
             if (!isBot) {
                 Astro.cookies.set('site_session_active', 'true', { 
-                    maxAge: 60 * 30, 
+                    maxAge: 60 * 30, // 30 minutes
                     path: '/',
                     httpOnly: true,
-                    secure: true
+                    secure: true,
+                    sameSite: 'lax' // Ajouté pour une meilleure compatibilité
                 });
             }
         }
