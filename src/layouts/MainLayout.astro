@@ -15,7 +15,6 @@ const ua = Astro.request.headers.get('user-agent') || '';
 const isBot = /(googlebot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|ia_archiver|robot|bot|spider|headless|chrome-lighthouse)/i.test(ua);
 
 if (isBot && !Astro.url.pathname.includes('dashboard')) {
-    // On utilise l'URL absolue complète pour éviter l'erreur de Vercel
     const apiUrl = new URL('/api/log-visit', Astro.url.origin).href;
     
     fetch(apiUrl, {
@@ -23,9 +22,7 @@ if (isBot && !Astro.url.pathname.includes('dashboard')) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
             ua: ua, 
-            isBot: true,
-            country: 'France', // Valeur par défaut pour les bots
-            flag: 'fr'
+            isBot: true 
         })
     }).catch((e) => console.error("Erreur log bot:", e));
 }

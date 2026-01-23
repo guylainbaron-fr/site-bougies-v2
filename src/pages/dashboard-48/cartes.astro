@@ -13,13 +13,9 @@ const currentYear = new Date().getFullYear();
     <title>Gestion des Cartes | J.F. & Aniuta</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
     <link rel="icon" type="image/png" sizes="32x32" href="/images/icon-dashboard.png" />
-
     <link rel="apple-touch-icon" href="/images/icon-dashboard.png" />
-
     <link rel="icon" type="image/png" sizes="192x192" href="/images/icon-dashboard.png" />
-
     <meta name="theme-color" content="#fdfaf7">
     
     <style>
@@ -38,12 +34,12 @@ const currentYear = new Date().getFullYear();
           background-color: var(--fond-ecume); 
           font-family: var(--font-principale); 
           color: var(--brun-coco);
+          overflow-x: hidden; /* Empêche le scroll horizontal parasite */
       }
       
-      /* --- HEADER HARMONISÉ (Style Dashboard) --- */
       .header-prive { 
           background: white; 
-          padding: 15px 20px; /* Aligné sur le padding du container dashboard */
+          padding: 15px 20px;
           max-width: 1200px;
           margin: 0 auto 25px auto;
           display: flex;
@@ -56,18 +52,16 @@ const currentYear = new Date().getFullYear();
 
       .header-prive h1 {
           margin: 0;
-          font-size: 0.9rem; /* Taille identique dashboard */
+          font-size: 0.9rem;
           text-transform: uppercase;
           letter-spacing: 1px;
           display: flex;
           align-items: center;
           gap: 10px;
-          color: var(--brun-coco);
       }
 
-      .nav-right { display: flex; align-items: center; gap: 15px; }
+      .nav-right { display: flex; align-items: center; gap: 10px; }
 
-      /* --- BOUTONS (Style Dashboard) --- */
       .btn { 
           padding: 8px 12px; border-radius: 4px; text-decoration: none; 
           font-weight: 700; text-transform: uppercase; font-size: 0.6rem; 
@@ -78,38 +72,42 @@ const currentYear = new Date().getFullYear();
       }
       .btn-gold { background: var(--vanille-pure); }
 
-      /* --- FOOTER HARMONISÉ --- */
-      .dashboard-footer {
-          margin-top: 40px;
-          padding: 20px 0;
-          border-top: 1px solid var(--sable-dore);
-          text-align: center;
-          max-width: 1200px;
-          margin-left: auto;
-          margin-right: auto;
-      }
-      .dashboard-footer p {
-          margin: 0;
-          font-size: 0.65rem;
-          text-transform: uppercase;
-          letter-spacing: 1.2px;
-          font-weight: 700;
-          color: var(--brun-coco);
-          opacity: 0.8;
+      /* --- BLINDAGE MOBILE : Le conteneur de prévisualisation --- */
+      .preview-container {
+          width: 100%;
+          overflow-x: auto; /* Permet de voir la carte si elle dépasse */
+          padding: 10px;
+          display: flex;
+          justify-content: center;
+          -webkit-overflow-scrolling: touch;
       }
 
-      /* --- MISE EN PAGE A4 (Inchangée) --- */
-      @page { size: A4 portrait; margin: 0; }
-      
+      /* --- MISE EN PAGE A4 --- */
       .page-a4 {
           width: 210mm;
           height: 297mm;
+          min-width: 210mm; /* Force la largeur A4 même sur mobile */
           background: white;
-          margin: 20px auto;
           display: flex;
           flex-direction: column;
           box-shadow: 0 10px 30px rgba(0,0,0,0.1);
           position: relative;
+          transform-origin: top center;
+      }
+
+      /* Zoom automatique pour mobile */
+      @media (max-width: 210mm) {
+          .preview-container { justify-content: flex-start; }
+          /* On réduit visuellement la taille pour que ça tienne dans l'écran */
+          .page-a4 { 
+              transform: scale(0.4); /* Ajuste selon ton écran, ou laisse le scroll */
+              margin: -30% 0; /* Compense le vide créé par le scale */
+          }
+      }
+
+      /* Désactive le zoom sur mobile pour que le scroll soit propre si tu préfères */
+      @media (max-width: 600px) {
+          .page-a4 { transform: scale(0.35); margin: -50% 0; }
       }
 
       .half {
@@ -118,6 +116,7 @@ const currentYear = new Date().getFullYear();
           justify-content: center;
           align-items: center;
           position: relative;
+          overflow: hidden;
       }
 
       .cut-line {
@@ -128,11 +127,24 @@ const currentYear = new Date().getFullYear();
           border-bottom: 1px dashed #eee;
       }
 
-      /* GESTION DE L'IMPRESSION */
+      .dashboard-footer {
+          margin-top: 40px;
+          padding: 20px 0;
+          border-top: 1px solid var(--sable-dore);
+          text-align: center;
+      }
+
       @media print {
+          .header-prive, .dashboard-footer, .preview-container { padding: 0 !important; margin: 0 !important; }
           .header-prive, .dashboard-footer { display: none !important; }
-          body { background: white !important; padding: 0 !important; }
-          .page-a4 { margin: 0 !important; box-shadow: none !important; border: none !important; }
+          body { background: white !important; }
+          .preview-container { overflow: visible !important; display: block !important; }
+          .page-a4 { 
+              transform: none !important; 
+              margin: 0 !important; 
+              box-shadow: none !important; 
+              border: none !important; 
+          }
           .cut-line { border-bottom: 1px dashed #ccc !important; }
       }
     </style>
@@ -140,28 +152,29 @@ const currentYear = new Date().getFullYear();
   <body>
 
     <header class="header-prive">
-      <h1><i class="fa-solid fa-id-card" style="color: var(--sable-dore);"></i> Impression des Cartes</h1>
-      
+      <h1><i class="fa-solid fa-id-card" style="color: var(--sable-dore);"></i> Cartes</h1>
       <div class="nav-right">
           <a href="/dashboard-48" class="btn"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
           <button class="btn btn-gold" onclick="window.print()">
-            <i class="fa-solid fa-print"></i> Lancer l'impression
+            <i class="fa-solid fa-print"></i> Imprimer
           </button>
       </div>
     </header>
 
-    <div class="page-a4">
-      <div class="half">
-        <ThankYouCard />
-        <div class="cut-line"></div> 
-      </div>
-      <div class="half">
-        <ThankYouCard />
-      </div>
+    <div class="preview-container">
+        <div class="page-a4">
+          <div class="half">
+            <ThankYouCard />
+            <div class="cut-line"></div> 
+          </div>
+          <div class="half">
+            <ThankYouCard />
+          </div>
+        </div>
     </div>
 
     <footer class="dashboard-footer">
-      <p>&copy; {currentYear} Jean François & Aniuta — Dashboard Atelier</p>
+      <p>&copy; {currentYear} J.F. & Aniuta</p>
     </footer>
 
   </body>
