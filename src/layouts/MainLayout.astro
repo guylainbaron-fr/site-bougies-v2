@@ -24,12 +24,11 @@ if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
         // 1. Détection Bot
         const isBot = /(googlebot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|ia_archiver|robot|bot|spider|headless|chrome-lighthouse)/i.test(ua);
 
-        // 2. Vérification du cookie
-        const hasVisited = Astro.cookies.has('site_session_active');
+        // 2. Vérification du cookie (on essaie de lire 'site_session_active')
+        const sessionCookie = Astro.cookies.get('site_session_active');
 
-        // CONDITION : On n'enregistre que si c'est un BOT (toujours) 
-        // OU si c'est un HUMAIN qui n'a pas encore de cookie
-        if (isBot || !hasVisited) {
+        // On n'enregistre que si c'est un BOT OU si le cookie n'existe pas
+        if (isBot || !sessionCookie) {
             
             const userIP = Astro.request.headers.get('x-real-ip') || 
                            Astro.request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
@@ -38,6 +37,7 @@ if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
             let country = "France";
             let flag = "fr";
             
+            // ... (ton code de Géolocalisation reste le même ici) ...
             if (userIP !== "Anonyme" && userIP !== "127.0.0.1") {
                 try {
                     const geoRes = await fetch(`http://ip-api.com/json/${userIP}?fields=status,country,countryCode`, { signal: AbortSignal.timeout(2000) });
@@ -55,44 +55,35 @@ if (import.meta.env.PROD && !Astro.url.pathname.includes('dashboard')) {
                 else if (/iPad|iPhone|iPod/i.test(ua)) dev = "iOS";
             }
 
-            let br = isBot ? "Robot" : "Autre";
-            if (!isBot) {
-                if (ua.includes('Chrome')) br = "Chrome";
-                else if (ua.includes('Safari') && !ua.includes('Chrome')) br = "Safari";
-                else if (ua.includes('Firefox')) br = "Firefox";
-            }
-
             const now = new Date();
             const simpleDate = now.toLocaleString('fr-FR', { timeZone: 'Europe/Paris' });
 
             const log = {
                 date: simpleDate,
                 device: dev,
-                browser: br,
                 ip: userIP,
                 country: country,
                 flag_code: flag,
                 isQR: url.searchParams.get('ref') === 'qr'
             };
 
-            // Enregistrement
             await kv.incr('visites_totales');
             await kv.lpush('journal_visites', JSON.stringify(log));
             await kv.ltrim('journal_visites', 0, 99);
 
-            // 3. ON POSE LE COOKIE (Uniquement pour les humains)
+            // 3. FIX DU COOKIE : On force l'écriture avec des options simples
             if (!isBot) {
                 Astro.cookies.set('site_session_active', 'true', { 
-                    maxAge: 60 * 30, // 30 minutes
                     path: '/',
-                    httpOnly: true,
+                    maxAge: 1800, // 30 minutes
+                    httpOnly: false, // On passe à false pour faciliter la lecture
                     secure: true,
-                    sameSite: 'lax' // Ajouté pour une meilleure compatibilité
+                    sameSite: 'strict'
                 });
             }
         }
     } catch (e) {
-        console.error("Erreur de suivi KV:", e);
+        console.error("Erreur KV:", e);
     }
 }
 ---
