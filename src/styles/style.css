@@ -2347,7 +2347,7 @@ h2::after {
     color: var(--texte-galet);
 }
 
-/* --- VIDÉOS CORRIGÉES --- */
+/* --- VIDÉOS CORRIGÉES (Alignement parfait) --- */
 .video-gallery {
     display: flex;
     flex-wrap: wrap;
@@ -2364,21 +2364,28 @@ h2::after {
     padding: 20px;
     box-shadow: 0 10px 20px rgba(45, 34, 26, 0.05);
     display: flex;
-    flex-direction: column; /* Aligne titre, vidéo et texte verticalement */
+    flex-direction: column;
 }
 
+/* FIX: Alignement des titres */
 .video-item h4 {
     margin-bottom: 15px;
     font-size: 1.1rem;
     color: var(--brun-coco);
+    
+    /* On force une hauteur minimale pour que même un titre court prenne la place de 2 lignes */
+    min-height: 2.4em; 
+    display: flex;
+    align-items: center; /* Centre le texte verticalement dans l'espace réservé */
+    justify-content: center;
+    text-align: center;
 }
 
 /* LE CADRE QUI NE BOUGE JAMAIS */
 .video-responsive {
     width: 100%;
-    /* On force un format Carré pour que les 3 miniatures soient identiques */
     aspect-ratio: 1 / 1; 
-    background-color: #000; /* Fond noir pour combler si la vidéo est portrait */
+    background-color: #000; 
     border-radius: 8px;
     overflow: hidden;
     position: relative;
@@ -2386,9 +2393,9 @@ h2::after {
 
 .video-responsive video {
     width: 100%;
-    height: 100%; /* Ne s'adapte plus à la source, mais au cadre .video-responsive */
+    height: 100%; 
     display: block;
-    object-fit: contain; /* Magique : garde les proportions sans déformer ni agrandir le bloc */
+    object-fit: contain; 
     position: absolute;
     top: 0;
     left: 0;
@@ -2399,7 +2406,9 @@ h2::after {
     margin-top: 15px !important;
     font-weight: 500;
     color: var(--brun-coco);
+    text-align: center; /* Harmonise avec le titre */
 }
+
 /* ==========================================================================
    MENTIONS LÉGALES : ÉLÉGANCE ET CLARTÉ
    ========================================================================== */
