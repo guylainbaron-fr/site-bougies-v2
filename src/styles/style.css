@@ -1322,7 +1322,7 @@ h2::after {
 }
 
 /* ==========================================================================
-   SECTION DÉDICACE : VERSION ÉVASION CARAÏBES
+   SECTION DÉDICACE : VERSION ÉVASION CARAÏBES (CORRIGÉE)
    ========================================================================== */
 
 /* Le conteneur parent */
@@ -1334,7 +1334,6 @@ h2::after {
 
 .section-dedicace h3 {
     font-family: var(--font-principale);
-    /* Ton marron coco remplace le vin-rubis */
     color: var(--brun-coco); 
     margin-bottom: 30px;
     text-transform: uppercase;
@@ -1351,12 +1350,10 @@ h2::after {
     position: relative;
     
     background-color: var(--fond-ecume); 
-    /* Bordures dorées comme le sable fin */
     border-top: 2px solid var(--sable-dore);
     border-bottom: 2px solid var(--sable-dore);
     color: var(--texte-galet);
     
-    /* Ombre douce couleur coco */
     box-shadow: 0 10px 30px rgba(74, 55, 40, 0.08);
     
     line-height: 1.8;
@@ -1368,28 +1365,34 @@ h2::after {
 .dedicace::before {
     content: "“";
     font-size: 5rem;
-    /* Couleur soleil pour illuminer ton message */
     color: var(--vanille-eclat); 
     position: absolute;
     top: -25px;
     left: 20px;
-    opacity: 0.5; /* Un peu plus visible qu'avant car le jaune est clair */
+    opacity: 0.5;
 }
 
-/* La photo souvenir (Style Polaroid des îles) */
+/* La photo souvenir (Style Polaroid des îles) - CENTRAGE FORCÉ */
 .concepteur-photo {
     margin-top: 40px;
+    display: flex;           /* Active le mode Flex pour le centrage */
+    justify-content: center; /* Centre horizontalement l'image */
+    align-items: center;     /* Aligne verticalement */
+    width: 100%;             /* Utilise toute la largeur disponible */
 }
 
 .photo-souvenir {
     max-width: 320px;
     width: 100%;
     height: auto;
-    border-radius: 4px; /* Plus carré pour le look Polaroid */
-    border: 10px solid #ffffff; /* Bordure blanche plus large pour l'effet photo */
-    /* Ombre portée plus marquée pour le relief */
+    display: block;          /* Supprime les marges fantômes sous l'image */
+    border-radius: 4px; 
+    border: 10px solid #ffffff; 
     box-shadow: 0 15px 35px rgba(45, 34, 26, 0.2);
+    
+    /* On garde ton inclinaison Polaroid */
     transform: rotate(-2deg);
+    transform-origin: center; /* Assure que la rotation se fait sur le centre */
     transition: transform 0.5s ease;
 }
 
@@ -1406,6 +1409,7 @@ h2::after {
     color: var(--texte-galet); 
     opacity: 0.8;
 }
+
 /* ==========================================================================
    ARTICLES ET FICHES PRODUITS : LOOK CARAÏBES
    ========================================================================== */
