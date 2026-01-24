@@ -8,13 +8,20 @@ import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 
-const { title, description, holidayMessage } = Astro.props;
+// --- OPTIMISATION DES MOTS-CLÉS (Injectés dans ta structure) ---
+const defaultTitle = "Bougies Artisanales & Sculpture Bois Lozère | JF & Aniuta";
+const defaultDesc = "Artisanat d'art en Lozère : bougies naturelles parfumées et sculptures sur bois local. Créations fait main à Chasseradès (48).";
+
+const { 
+    title = defaultTitle, 
+    description = defaultDesc, 
+    holidayMessage 
+} = Astro.props;
 
 // --- DÉTECTION BOT + PROTECTION LOCAL ---
 const ua = Astro.request.headers.get('user-agent') || '';
 const isBot = /(googlebot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|ia_archiver|robot|bot|spider|headless|chrome-lighthouse)/i.test(ua);
 
-// On n'envoie les logs de bots QUE si on n'est pas en local (DEV)
 if (isBot && !Astro.url.pathname.includes('dashboard') && !import.meta.env.DEV) {
     const apiUrl = new URL('/api/log-visit', Astro.url.origin).href;
     
@@ -39,19 +46,19 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta property="og:locale" content="fr_FR">
-    <meta property="og:title" content={title || "JF & A"}>
+    <meta property="og:title" content={title}>
     <meta property="og:site_name" content="JF & A">
     <meta property="og:url" content={canonicalURL.href}>
     <meta property="og:type" content="website">
     <meta property="og:image" content={socialImageURL.href}>
     
-    <meta property="og:description" content={description || "JF & A — Sculptures uniques sur bois local et bougies naturelles parfumées."}>
+    <meta property="og:description" content={description}>
     
     <meta name="google-site-verification" content="googleca94fc0ed3c52975" />
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content={title || "JF & A"}>
-    <meta name="twitter:description" content={description || "JF & A — Sculptures uniques sur bois local et bougies naturelles parfumées."}>
+    <meta name="twitter:title" content={title}>
+    <meta name="twitter:description" content={description}>
     <meta property="og:image:width" content="512">
     <meta property="og:image:height" content="512">
     <meta name="twitter:image:alt" content="Logo JF & ANIUTA">
@@ -64,10 +71,12 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
 
     <link rel="icon" href="/favicon.ico" sizes="16x16" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
     <link rel="icon" type="image/png" sizes="16x16" href="/images/logo_16.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/images/logo_32.png" />
     <link rel="icon" type="image/png" sizes="144x144" href="/images/logo_144.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/images/logo_192.png" />
+
     <link rel="apple-touch-icon" href="/images/logo_192.png" />
 
     <link rel="manifest" href="/manifest.json">
@@ -92,15 +101,9 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
             });
         }
     </script>
-
     <script is:inline define:vars={{ isDev: import.meta.env.DEV }}>
       (async () => {
-        // Neutralisation en mode local
-        if (isDev) {
-            console.log("🛠️ Mode Local détecté : Log désactivé.");
-            return;
-        }
-
+        if (isDev) return;
         if (window.location.pathname.includes('dashboard')) return;
         if (sessionStorage.getItem('site_visited')) return;
 
