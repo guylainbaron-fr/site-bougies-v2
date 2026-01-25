@@ -10,10 +10,9 @@ const currentYear = new Date().getFullYear();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow">
-    <title>Gestion des Cartes | J.F. & Aniuta</title>
+    <title>Impression Cartes | Atelier</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/icon-dashboard.png" />
     
     <style>
       :root { 
@@ -27,7 +26,7 @@ const currentYear = new Date().getFullYear();
       * { box-sizing: border-box; }
 
       body { 
-          margin: 0; padding: 0; 
+          margin: 0; padding: 15px; 
           background-color: var(--fond-ecume); 
           font-family: var(--font-principale); 
           color: var(--brun-coco);
@@ -35,34 +34,43 @@ const currentYear = new Date().getFullYear();
           flex-direction: column;
           min-height: 100vh;
       }
+
+      .dashboard-container { max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; flex-grow: 1; }
       
-      .header-prive { 
-          background: white; 
-          padding: 12px 15px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          border-bottom: 2px solid var(--sable-dore);
-          flex-shrink: 0;
-          gap: 10px;
+      /* HEADER HARMONISÉ */
+      .header-flex { 
+          display: flex; 
+          justify-content: space-between; 
+          align-items: center; 
+          margin-bottom: 25px; 
+          border-bottom: 2px solid var(--sable-dore); 
+          padding-bottom: 15px; 
+          background: transparent;
+          flex-wrap: wrap;
+          gap: 15px;
       }
 
-      .header-prive h1 { 
+      .header-flex h1 { 
           margin: 0; 
-          font-size: 0.85rem; 
           text-transform: uppercase; 
-          white-space: nowrap;
+          letter-spacing: 1px; 
+          font-size: 0.9rem; 
+          display: flex; 
+          align-items: center; 
+          gap: 10px; 
       }
 
-      .nav-right { display: flex; align-items: center; gap: 8px; }
+      .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
 
       .btn { 
           padding: 8px 12px; border-radius: 4px; text-decoration: none; 
           font-weight: 700; text-transform: uppercase; font-size: 0.6rem; 
-          border: 1px solid var(--sable-dore); color: var(--brun-coco); background: white;
-          display: flex; align-items: center; gap: 6px;
+          cursor: pointer; border: 1px solid var(--sable-dore); 
+          display: flex; align-items: center; gap: 6px; 
+          color: var(--brun-coco); background: white;
       }
       .btn-gold { background: var(--vanille-pure); }
+      .btn-print { background: var(--brun-coco); color: white; border: none; }
 
       /* ZONE DE PREVIEW */
       .preview-container {
@@ -70,8 +78,9 @@ const currentYear = new Date().getFullYear();
           flex-grow: 1; 
           display: flex;
           justify-content: center;
-          align-items: center; 
+          align-items: flex-start; 
           padding: 20px 0;
+          overflow-x: auto;
       }
 
       .page-a4 {
@@ -81,18 +90,13 @@ const currentYear = new Date().getFullYear();
           display: flex;
           flex-direction: column;
           box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-          transform-origin: center center;
+          transform-origin: top center;
       }
 
       /* MOBILE AJUSTEMENTS */
-      @media (max-width: 768px) {
-          .page-a4 { zoom: 0.4; }
+      @media (max-width: 850px) {
+          .page-a4 { transform: scale(0.4); margin-bottom: -150mm; }
           .btn-text { display: none; }
-      }
-
-      @media (max-width: 480px) {
-          .header-prive h1 span { display: none; } /* Cache "Impression" pour laisser place aux boutons */
-          .page-a4 { zoom: 0.35; }
       }
 
       .half {
@@ -109,87 +113,63 @@ const currentYear = new Date().getFullYear();
           border-bottom: 1px dashed #eee;
       }
 
+      /* FOOTER HARMONISÉ */
       .dashboard-footer {
+          margin-top: 30px;
           padding: 20px 0;
           border-top: 1px solid var(--sable-dore);
           text-align: center;
-          background: white;
-          margin-top: auto; 
-          width: 100%;
       }
 
-      /* --- MÉTHODE RADICALE POUR L'IMPRESSION --- */
+      .dashboard-footer p {
+          margin: 0;
+          font-size: 0.6rem;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-weight: 800;
+          color: var(--brun-coco);
+          opacity: 0.6;
+      }
+
+      /* --- MÉTHODE IMPRESSION --- */
       @media print {
-          @page { 
-              size: A4 portrait; 
-              margin: 0 !important; 
-          }
-          
-          /* On cache tout le site */
-          body * { visibility: hidden; }
-          
-          /* On ne rend visible que la carte et son contenu */
-          .preview-container, .preview-container *, .page-a4, .page-a4 * { 
-              visibility: visible; 
-          }
-
-          .preview-container {
-              position: absolute !important;
-              top: 0 !important;
-              left: 0 !important;
-              width: 100% !important;
-              height: 100% !important;
-              padding: 0 !important;
-              margin: 0 !important;
-              display: block !important;
-          }
-
-          .page-a4 { 
-              position: absolute !important;
-              top: 0 !important;
-              left: 0 !important;
-              width: 210mm !important;
-              height: 296mm !important; /* On réduit de 1mm pour être 100% sûr d'éviter la page 2 */
-              zoom: 1 !important;
-              box-shadow: none !important;
-              border: none !important;
-              page-break-after: avoid !important;
-              page-break-inside: avoid !important;
-          }
-
-          .header-prive, .dashboard-footer { display: none !important; }
+          @page { size: A4 portrait; margin: 0 !important; }
+          body { padding: 0; background: white; }
+          .header-flex, .dashboard-footer { display: none !important; }
+          .dashboard-container { max-width: none; margin: 0; }
+          .preview-container { padding: 0; overflow: hidden; display: block; }
+          .page-a4 { transform: none !important; box-shadow: none !important; margin: 0 !important; width: 210mm !important; height: 297mm !important; }
       }
     </style>
   </head>
   <body>
+    <div class="dashboard-container">
+        <header class="header-flex">
+            <h1><i class="fa-solid fa-id-card" style="color: var(--sable-dore);"></i> Impression Cartes</h1>
+            <div class="btn-group">
+                <a href="/dashboard-48" class="btn btn-gold"><i class="fa-solid fa-gauge-high"></i> <span class="btn-text">Stats</span></a>
+                <a href="/dashboard-48/marches" class="btn btn-gold"><i class="fa-solid fa-store"></i> <span class="btn-text">Marchés</span></a>
+                <button class="btn btn-print" onclick="window.print()">
+                    <i class="fa-solid fa-print"></i> <strong>Imprimer les cartes</strong>
+                </button>
+            </div>
+        </header>
 
-    <header class="header-prive">
-      <h1><i class="fa-solid fa-id-card" style="color: var(--sable-dore);"></i> <span>Impression</span></h1>
-      <div class="nav-right">
-          <a href="/dashboard-48" class="btn">
-            <i class="fa-solid fa-arrow-left"></i> <span class="btn-text">Retour</span>
-          </a>
-          <button class="btn btn-gold" onclick="window.print()">
-            <i class="fa-solid fa-print"></i> <span class="btn-text">Imprimer</span>
-          </button>
-      </div>
-    </header>
-
-    <div class="preview-container">
-        <div class="page-a4">
-          <div class="half">
-            <ThankYouCard />
-            <div class="cut-line"></div> 
-          </div>
-          <div class="half">
-            <ThankYouCard />
-          </div>
+        <div class="preview-container">
+            <div class="page-a4">
+              <div class="half">
+                <ThankYouCard />
+                <div class="cut-line"></div> 
+              </div>
+              <div class="half">
+                <ThankYouCard />
+              </div>
+            </div>
         </div>
+
+        <footer class="dashboard-footer">
+            <p>&copy; {currentYear} Jean François & Aniuta — Dashboard Atelier</p>
+        </footer>
     </div>
-
-    <footer class="dashboard-footer">
-      <p>&copy; {currentYear} Jean François & Aniuta — Dashboard Atelier</p>
-    </footer>
-
   </body>
 </html>

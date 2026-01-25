@@ -1,7 +1,49 @@
 ---
+export const prerender = false;
 import MainLayout from '../layouts/MainLayout.astro';
 import VideoItem from '../components/VideoItem.astro'; 
 import { Image } from 'astro:assets';
+import { kv } from '@vercel/kv';
+
+// 1. Définition des types
+interface EventData {
+  titre_annonce: string;
+  dates: string;
+  horaires: string[];
+  description: string;
+  map_url: string;
+  map_iframe: string;
+}
+
+// 2. Modèle de secours mis à jour
+const mendeFallback: EventData = {
+    titre_annonce: "Marché Couvert de Mende",
+    dates: "Du 23 au 26 Janvier",
+    horaires: [
+        "Ven. : 08h00 - 13h00",
+        "Sam. & Dim. : 09h00 - 19h00",
+        "Lun. : 08h00 - 13h00"
+    ],
+    description: "Retrouvez-nous au cœur du marché couvert de Mende pour découvrir nos dernières sculptures sur bois et nos bougies artisanales.",
+    map_url: "https://maps.app.goo.gl/pSesTFPPLNPwGptb7",
+    map_iframe: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2844.9865659534867!2d3.4955737760506964!3d44.515428571074295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12b36de0792c499d%3A0xca92c4b3a1a2ef3e!2sMarch%C3%A9%20Couvert%20De%20Mende!5e0!3m2!1sfr!2sfr!4v1769263957380!5m2!1sfr!2sfr"
+};
+
+// 3. Récupération des données dynamiques
+const eventStatus = await kv.get<string>('event_status') || 'attente';
+const savedData = await kv.get<EventData>('event_data');
+
+// Sécurité : On fusionne pour éviter les cases horaires vides si tu n'en saisis qu'une seule
+const eventData = (savedData && savedData.titre_annonce) ? {
+    ...savedData,
+    horaires: [
+        savedData.horaires?.[0] || mendeFallback.horaires[0],
+        savedData.horaires?.[1] || mendeFallback.horaires[1],
+        savedData.horaires?.[2] || mendeFallback.horaires[2]
+    ]
+} : mendeFallback;
+
+const pastMarkets = await kv.get<EventData[]>('past_markets') || [];
 
 // Imports des images fixes
 import afficheMende from '../assets/images/marches/marche_noel_mende_750.webp';
@@ -60,13 +102,14 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
     }
     </script>
 
-    <section id="evenements-page">
-        <div class="container">
-            <h2>🗓️ Nos Événements & Marchés</h2>
-            <p class="intro-evenements">
-                Retrouvez Jean-François et Aniuta sur les foires et marchés de la région pour découvrir nos créations artisanales en direct.
-            </p>
+<section id="evenements-page">
+    <div class="container">
+        <h2 class="section-title">🗓️ Nos Événements & Marchés</h2>
+        <p class="intro-evenements">
+            Retrouvez Jean-François et Aniuta sur les foires et marchés de la région pour découvrir nos créations artisanales en direct.
+        </p>
 
+        {eventStatus !== 'actif' ? (
             <div id="attente-date"> 
                 <div class="event-empty">
                     <div class="event-empty-icon">
@@ -77,83 +120,137 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
                     <a href="/contact" class="btn-contact-simple">Nous contacter</a>
                 </div>
             </div>
-
-            <div id="prochain-evenement" class="hidden"> 
-            </div>
-        </div>
-    </section>
-
-    <section id="autres-dates">
-        <div class="container">
-            <h2>Nos Prochaines Dates de Marché</h2>
-            <div class="events-grid">
-                <div class="event-card event-past">
-                    <div class="event-date">
-                        <span class="day">12-14</span>
-                        <span class="month">Déc.</span>
+        ) : (
+            <div id="prochain-evenement"> 
+                <div class="luxe-market-card">
+                    <div class="luxe-info">
+                        <span class="luxe-label">Prochain Rendez-vous</span>
+                        <h3>{eventData.titre_annonce}</h3>
+                        
+                        <div class="luxe-meta">
+                            <div class="meta-row date">
+                                <strong>Dates :</strong> {eventData.dates}
+                            </div>
+                            {eventData.horaires && eventData.horaires.length > 0 && (
+                                <div class="meta-row time">
+                                    <strong>Horaires :</strong> {eventData.horaires.join(' • ')}
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div class="luxe-divider"></div>
+                        
+                        <p class="luxe-description">
+                            {eventData.description}
+                        </p>
+                        
+                        <a href={eventData.map_url} target="_blank" rel="noopener noreferrer" class="luxe-btn">
+                            Voir l'itinéraire
+                        </a>
                     </div>
-                    <div class="event-details">
-                        <h3>Marché de Noël de Mende (48)</h3>
-                        <p><strong>Lieu :</strong> Place et halle au Blé & chapelle des pénitents</p>
-                        <p><strong>Horaires :</strong> Terminé (2025)</p>
+
+                    <div class="luxe-map">
+                        <iframe 
+                            src={eventData.map_iframe} 
+                            loading="lazy"
+                            allowfullscreen="">
+                        </iframe>
                     </div>
                 </div>
             </div>
+        )}
+    </div>
+</section>
+
+<section id="autres-dates">
+    <div class="container">
+        <h2>Nos Derniers Marchés</h2>
+<div class="events-grid">
+    {pastMarkets.map((market) => (
+        <div class="event-card event-past">
+            <div class="event-details">
+                <div class="event-past-date-full">
+                    <i class="fa-regular fa-calendar-days"></i>
+                    {market.dates}
+                </div>
+                
+                <h3>{market.titre_annonce}</h3>
+                <p>{market.description}</p>
+                
+                <div class="status-done">
+                    <i class="fa-solid fa-check-circle"></i> Terminé
+                </div>
+            </div>
         </div>
-    </section>
-    
-    <section id="souvenirs">
-        <div class="container">
-            <h2>📸 Souvenirs de Nos Stands et Marchés</h2>
-            <div class="affiche-container">
-                <div class="photo-presentation">
+    ))}
+
+    <div class="event-card event-past">
+        <div class="event-details">
+            <div class="event-past-date-full">
+                <i class="fa-regular fa-calendar-days"></i> Du 12 au 14 Décembre
+            </div>
+            <h3>Marché de Noël de Mende (48)</h3>
+            <p>Place et halle au Blé & chapelle des pénitents</p>
+            <div class="status-done">Terminé</div>
+        </div>
+    </div>
+</div>
+    </div>
+</section>
+
+<section id="souvenirs">
+    <div class="container">
+        <h2>📸 Souvenirs de Nos Stands et Marchés</h2>
+        <div class="affiche-container">
+            <div class="photo-presentation">
+                <Image 
+                    src={afficheMende} 
+                    alt="Affiche Marché de Noël de Mende - Édition 2025" 
+                    width={350} 
+                    height={500}
+                    loading="eager"
+                    fetchpriority="high"
+                    decoding="async"
+                    quality={80}
+                />
+                <h3>Affiche du Marché de Noël de Mende</h3>
+            </div>
+        </div>
+
+        <div class="photo-gallery"> 
+            {galleryImages.map((img, index) => (
+                <div class="photo-item">
                     <Image 
-                        src={afficheMende} 
-                        alt="Affiche Marché de Noël de Mende - Édition 2025" 
-                        width={350} 
-                        height={500}
-                        loading="eager"
-                        fetchpriority="high"
+                        src={img.default} 
+                        alt={`Photo de notre stand artisanal numéro ${index + 1}`} 
+                        width={380}
+                        height={285}
+                        loading="lazy"
                         decoding="async"
                         quality={80}
                     />
-                    <h3>Affiche du Marché de Noël de Mende</h3>
                 </div>
-            </div>
-
-            <div class="photo-gallery"> 
-                {galleryImages.map((img, index) => (
-                    <div class="photo-item">
-                        <Image 
-                            src={img.default} 
-                            alt={`Photo de notre stand artisanal numéro ${index + 1}`} 
-                            width={380}
-                            height={285}
-                            loading="lazy"
-                            decoding="async"
-                            quality={80}
-                        />
-                    </div>
-                ))}
-            </div> 
+            ))}
         </div> 
-    </section> 
+    </div> 
+</section> 
 
-    <section id="evenements-videos">
-        <div class="container">
-            <h2>Nos Événements en Vidéo</h2>
-            <div class="video-gallery">
-                <VideoItem 
-                    title="L'Ambiance de Notre Stand de Noël"
-                    videoSrc="/videos/video-evenement-1.mp4"
-                    posterImg={miniature1}
-                />
-                <VideoItem 
-                    title="Immersion : Stand Artisanat à Mende"
-                    videoSrc="/videos/video-evenement-2.mp4"
-                    posterImg={miniature2}
-                />
-            </div>
+<section id="evenements-videos">
+    <div class="container">
+        <h2>Nos Événements en Vidéo</h2>
+        <div class="video-gallery">
+            <VideoItem 
+                title="L'Ambiance de Notre Stand de Noël"
+                videoSrc="/videos/video-evenement-1.mp4"
+                posterImg={miniature1}
+            />
+            <VideoItem 
+                title="Immersion : Stand Artisanat à Mende"
+                videoSrc="/videos/video-evenement-2.mp4"
+                posterImg={miniature2}
+            />
         </div>
-    </section>
+    </div>
+</section>
+
 </MainLayout>

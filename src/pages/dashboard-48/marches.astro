@@ -1,0 +1,423 @@
+---
+export const prerender = false;
+import { kv } from '@vercel/kv';
+
+// 1. MODÈLE RÉEL PAR DÉFAUT (Mende avec ses 3 créneaux)
+const mendeModel = {
+    titre_annonce: "Marché Couvert de Mende",
+    dates: "Du 23 au 26 Janvier",
+    horaires: [
+        "Ven. : 08h00 - 13h00",       // Case 1
+        "Sam. & Dim. : 09h00 - 19h00", // Case 2
+        "Lun. : 08h00 - 13h00"         // Case 3
+    ],
+    description: "Retrouvez-nous au cœur du marché couvert de Mende pour découvrir nos dernières sculptures sur bois et nos bougies artisanales.",
+    map_url: "https://maps.app.goo.gl/pSesTFPPLNPwGptb7",
+    map_iframe: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2844.9865659534867!2d3.4955737760506964!3d44.515428571074295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12b36de0792c499d%3A0xca92c4b3a1a2ef3e!2sMarch%C3%A9%20Couvert%20De%20Mende!5e0!3m2!1sfr!2sfr!4v1769263957380!5m2!1sfr!2sfr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>'
+};
+
+// --- LOGIQUE DE TRAITEMENT DES FORMULAIRES ---
+if (Astro.request.method === "POST") {
+    try {
+        const formData = await Astro.request.formData();
+        const action = formData.get("action");
+
+        // 1. ACTION : MISE À JOUR OU ENREGISTREMENT
+        if (action === "update_market") {
+            const status = formData.get("status");
+            const newTitle = formData.get("titre_annonce")?.toString();
+            
+            const oldMarket: any = await kv.get('event_data');
+            const pastMarkets: any[] = await kv.get('past_markets') || [];
+
+            if (oldMarket && oldMarket.titre_annonce && oldMarket.titre_annonce !== newTitle) {
+                pastMarkets.unshift(oldMarket);
+                await kv.set('past_markets', pastMarkets.slice(0, 3));
+            }
+
+            let rawInput = formData.get("map_iframe")?.toString() || "";
+            let finalUrl = rawInput;
+            if (rawInput.includes('src="')) {
+                finalUrl = rawInput.split('src="')[1].split('"')[0];
+            } else {
+                finalUrl = rawInput.replace(/"/g, '').trim();
+            }
+
+            const eventData = {
+                titre_annonce: newTitle,
+                dates: formData.get("dates"),
+                horaires: [
+                    formData.get("h1"),
+                    formData.get("h2"),
+                    formData.get("h3")
+                ].filter(h => h),
+                description: formData.get("description"),
+                map_url: formData.get("map_url"),
+                map_iframe: finalUrl
+            };
+
+            await kv.set('event_status', status);
+            await kv.set('event_data', eventData);
+        }
+
+        // 2. ACTION : ARCHIVAGE MANUEL (Remet Mende par défaut)
+        if (action === "archive_market") {
+            const currentData: any = await kv.get('event_data');
+            const pastMarkets: any[] = await kv.get('past_markets') || [];
+            
+            if (currentData && currentData.titre_annonce) {
+                pastMarkets.unshift(currentData);
+                await kv.set('past_markets', pastMarkets.slice(0, 3));
+            }
+            
+            await kv.set('event_data', mendeModel); 
+            await kv.set('event_status', 'attente');
+        }
+
+        // 3. ACTION : SUPPRESSION DE L'HISTORIQUE
+        if (action === "delete_history") {
+            await kv.del('past_markets');
+        }
+
+    } catch (e) {
+        console.error("Erreur critique Dashboard:", e);
+    }
+}
+
+// --- RÉCUPÉRATION DES DONNÉES ET FUSION POUR L'AFFICHAGE ---
+const currentStatus = await kv.get<string>('event_status') || 'attente';
+const savedData: any = await kv.get('event_data');
+
+// Fusion intelligente : si une donnée manque en base, on utilise Mende
+const currentData = {
+    titre_annonce: savedData?.titre_annonce || mendeModel.titre_annonce,
+    dates: savedData?.dates || mendeModel.dates,
+    horaires: [
+        savedData?.horaires?.[0] || mendeModel.horaires[0],
+        savedData?.horaires?.[1] || mendeModel.horaires[1],
+        savedData?.horaires?.[2] || mendeModel.horaires[2]
+    ],
+    description: savedData?.description || mendeModel.description,
+    map_url: savedData?.map_url || mendeModel.map_url,
+    map_iframe: savedData?.map_iframe || mendeModel.map_iframe
+};
+
+const pastMarkets: any[] = await kv.get('past_markets') || [];
+---
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow">
+    <title>Gestion Marchés | Atelier</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        :root { 
+            --sable-dore: #e0c297; 
+            --vanille-pure: #fcf4dd; 
+            --brun-coco: #4a3728; 
+            --fond-ecume: #fdfaf7;
+            --font-principale: "Poppins", sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        body { 
+            font-family: var(--font-principale); 
+            background-color: var(--fond-ecume); 
+            color: var(--brun-coco); 
+            margin: 0; 
+            padding: 15px; 
+        }
+
+        .dashboard-container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 4px; 
+            border: 1px solid var(--sable-dore); 
+        }
+
+        .header-flex { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 25px; 
+            border-bottom: 2px solid var(--sable-dore); 
+            padding-bottom: 15px; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+        }
+
+        .header-flex h1 { 
+            margin: 0; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            font-size: 0.9rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+
+        .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        .btn { 
+            padding: 8px 12px; 
+            border-radius: 4px; 
+            text-decoration: none; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            font-size: 0.6rem; 
+            cursor: pointer; 
+            border: 1px solid var(--sable-dore); 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            color: var(--brun-coco); 
+            background: white; 
+        }
+
+        .btn-gold { background: var(--vanille-pure); }
+
+        .market-form-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+            margin-top: 20px; 
+        }
+
+        @media (max-width: 768px) { 
+            .market-form-grid { grid-template-columns: 1fr; } 
+        }
+
+        .form-section { 
+            background: #fff; 
+            border: 1px solid var(--sable-dore); 
+            padding: 20px; 
+            border-radius: 4px; 
+        }
+
+        .form-group { margin-bottom: 15px; }
+
+        label { 
+            display: block; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            font-size: 0.6rem; 
+            margin-bottom: 5px; 
+            color: var(--brun-coco); 
+        }
+
+        input, textarea, select { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid var(--sable-dore); 
+            border-radius: 4px; 
+            font-family: inherit; 
+            font-size: 0.8rem; 
+            color: #000; 
+        }
+
+        .status-banner { 
+            padding: 10px; 
+            border-radius: 4px; 
+            margin-bottom: 20px; 
+            text-align: center; 
+            font-weight: 900; 
+            font-size: 0.7rem; 
+            text-transform: uppercase; 
+        }
+
+        .bg-actif { background: #27ae60; color: white; }
+        .bg-attente { background: var(--sable-dore); color: var(--brun-coco); }
+
+        .action-buttons { 
+            display: flex; 
+            gap: 10px; 
+            margin-top: 20px; 
+        }
+
+        .btn-save { 
+            background: var(--brun-coco); 
+            color: white; 
+            border: none; 
+            padding: 15px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            font-size: 0.8rem; 
+            flex: 2; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+        }
+
+        .btn-archive { 
+            background: white; 
+            color: var(--brun-coco); 
+            border: 1px dashed var(--brun-coco); 
+            padding: 15px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            font-size: 0.8rem; 
+            flex: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+        }
+
+        .archive-list { 
+            margin-top: 30px; 
+            padding: 15px; 
+            background: #f9f9f9; 
+            border-radius: 4px; 
+            border: 1px dashed var(--sable-dore); 
+        }
+
+        .archive-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 10px; 
+        }
+
+        .archive-item { 
+            font-size: 0.7rem; 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 8px 0; 
+            border-bottom: 1px solid #eee; 
+        }
+
+        .btn-delete-history { 
+            background: none; 
+            border: none; 
+            color: #c0392b; 
+            cursor: pointer; 
+            font-size: 0.6rem; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            text-decoration: underline; 
+        }
+
+        .dashboard-footer { 
+            margin-top: 30px; 
+            padding: 20px 0; 
+            border-top: 1px solid var(--sable-dore); 
+            text-align: center; 
+        }
+
+        .dashboard-footer p { 
+            margin: 0; 
+            font-size: 0.6rem; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            font-weight: 800; 
+            color: var(--brun-coco); 
+            opacity: 0.6; 
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="header-flex">
+            <h1><i class="fa-solid fa-store" style="color: var(--sable-dore);"></i> Gestion Événements</h1>
+            <div class="btn-group">
+                <a href="/dashboard-48" class="btn btn-gold"><i class="fa-solid fa-gauge-high"></i> Stats</a>
+                <a href="/dashboard-48/cartes" class="btn btn-gold"><i class="fa-solid fa-id-card"></i> Cartes</a>
+                <a href="/evenements" target="_blank" class="btn btn-gold" style="background: var(--brun-coco); color: white; border: none;"><i class="fa-solid fa-eye"></i> Voir le site</a>
+            </div>
+        </header>
+
+        <div class={`status-banner ${currentStatus === 'actif' ? 'bg-actif' : 'bg-attente'}`}>
+            Statut actuel : {currentStatus === 'actif' ? 'Événement en ligne' : 'Mode attente (Cœur affiché)'}
+        </div>
+
+        <form method="POST">
+            <div class="market-form-grid">
+                <div class="form-section">
+                    <div class="form-group">
+                        <label>Visibilité sur le site</label>
+                        <select name="status">
+                            <option value="attente" selected={currentStatus === 'attente'}>Désactivé (Affiche "Bientôt")</option>
+                            <option value="actif" selected={currentStatus === 'actif'}>Activé (Affiche les détails)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Titre de l'annonce</label>
+                        <input type="text" name="titre_annonce" value={currentData.titre_annonce} placeholder="Ex: Marché de Mende" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Dates</label>
+                        <input type="text" name="dates" value={currentData.dates} placeholder="Ex: 14 & 15 Janvier" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Horaires</label>
+                        <input type="text" name="h1" value={currentData.horaires?.[0] || ""} placeholder="Jour 1" style="margin-bottom:5px" />
+                        <input type="text" name="h2" value={currentData.horaires?.[1] || ""} placeholder="Jour 2" style="margin-bottom:5px" />
+                        <input type="text" name="h3" value={currentData.horaires?.[2] || ""} placeholder="Jour 3" />
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-group">
+                        <label>Description (Étiquette)</label>
+                        <textarea name="description" rows="3">{currentData.description}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Lien Bouton GPS</label>
+                        <input type="text" name="map_url" value={currentData.map_url} placeholder="https://goo.gl/maps/..." />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Code Carte (Iframe Google Maps)</label>
+                        <textarea name="map_iframe" rows="4">{currentData.map_iframe}</textarea>
+                    </div>
+                    
+                    {pastMarkets.length > 0 && (
+                        <div class="archive-list">
+                            <div class="archive-header">
+                                <label style="margin:0">Derniers marchés terminés</label>
+                                <button type="submit" name="action" value="delete_history" class="btn-delete-history" onclick="return confirm('Effacer tout l\'historique ?');">
+                                    Effacer tout
+                                </button>
+                            </div>
+                            {pastMarkets.map(m => (
+                                <div class="archive-item">
+                                    <span>{m.titre_annonce}</span>
+                                    <span style="opacity:0.5">{m.dates}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="submit" name="action" value="update_market" class="btn-save">
+                    <i class="fa-solid fa-floppy-disk"></i> Enregistrer et mettre à jour
+                </button>
+                <button type="submit" name="action" value="archive_market" class="btn-archive" onclick="return confirm('Archiver ce marché et réinitialiser ?');">
+                    <i class="fa-solid fa-box-archive"></i> Archiver le marché
+                </button>
+            </div>
+        </form>
+
+        <footer class="dashboard-footer">
+            <p>© {new Date().getFullYear()} Jean François & Aniuta — Dashboard Atelier</p>
+        </footer>
+    </div>
+</body>
+</html>
