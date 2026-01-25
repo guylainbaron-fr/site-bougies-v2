@@ -2,6 +2,15 @@
 import MainLayout from '../layouts/MainLayout.astro';
 import { Image } from 'astro:assets';
 
+// Nouveautés 2026
+import tarifsGamme2026 from '../assets/images/bougie-gamme-2026.webp'; 
+import petiteMorille from '../assets/images/morille-petite.webp';
+import moyenneMorille from '../assets/images/morille-moyenne.webp';
+import enormeCepe from '../assets/images/cepe-enorme.webp';
+import familleCepes from '../assets/images/famille-cepes.webp';
+import duoMorilles from '../assets/images/duo-morilles.webp';
+
+// Gamme existante
 import tarifsImg from '../assets/images/bougie-tarifs.webp';
 import petiteImg from '../assets/images/bougie-petite.webp';
 import moyenneImg from '../assets/images/bougie-moyenne.webp';
@@ -10,8 +19,8 @@ import allumeesImg from '../assets/images/bougies-allumees.jpg';
 ---
 
 <MainLayout 
-    title="Bougie Artisanale Vanille Gourmande | Cire Végétale - J.F. & ANIUTA"
-    description="Découvrez notre bougie artisanale unique, coulée à la main avec de la cire végétale et le parfum Vanille Gourmande. Commandez en ligne via WhatsApp."
+    title="Bougie Champignon Lozère : Morilles et Grand Cèpe Sublime Vanille"
+    description="Découvrez nos bougies champignons d'exception en Lozère. Morilles réalistes et notre Grand Cèpe Sublime de 1,2kg, parfumés à la Vanille Gourmande."
     holidayMessage="De nouvelles <strong>lueurs</strong> pour une année 2026 chaleureuse."
 >
     <Fragment slot="head">
@@ -22,12 +31,12 @@ import allumeesImg from '../assets/images/bougies-allumees.jpg';
             {
               "@type": "Store",
               "@id": "https://jf-aniuta.vercel.app/#store",
-              "name": "Jean-François & Aniuta - Bougies Artisanales",
+              "name": "Jean-François & Aniuta - Bougie Champignon Lozère",
               "url": "https://jf-aniuta.vercel.app/bougies",
               "image": "https://jf-aniuta.vercel.app/logo-entreprise.webp",
               "telephone": "+33658909835",
               "priceRange": "€€",
-              "description": "Découvrez nos bougies artisanales coulées à la main. Créations uniques et naturelles fabriquées dans notre atelier en Lozère.",
+              "description": "Créateur de bougies champignons réalistes en Lozère. Pièces d'exception : Morilles et Grands Cèpes à la Vanille Gourmande.",
               "address": {
                 "@type": "PostalAddress",
                 "addressLocality": "Chasseradès",
@@ -40,65 +49,91 @@ import allumeesImg from '../assets/images/bougies-allumees.jpg';
                 "https://www.instagram.com/jean_francois_aniuta/",
                 "https://wa.me/33658909835"
               ]
-            },
-            {
-              "@type": "WebPage",
-              "@id": "https://jf-aniuta.vercel.app/bougies#webpage",
-              "url": "https://jf-aniuta.vercel.app/bougies",
-              "name": "Les Bougies Artisanales - Jean-François & Aniuta",
-              "description": "Catalogue de nos bougies artisanales parfumées. Fabrication française et artisanale en Lozère."
             }
           ]
         }
         </script>
     </Fragment>
 
-    <section id="bougies">
+    <section id="nouvelle-gamme" style="background-color: var(--fond-sable);">
         <div class="container">
-            <h2>Découvrez nos Bougies Artisanales</h2>
-            
+            <h2>Collection 2026 : Morilles et Grand Cèpe Sublime</h2>
             <p>
-                Chaque bougie Jean François & Aniuta est une invitation à l'évasion olfactive, conçue avec la plus grande exigence. Coulées à la main dans notre atelier en Lozère, elles incarnent notre engagement envers l'artisanat de qualité, le naturel et le respect de l'environnement.
+                Directement de notre atelier en <strong>Lozère</strong>, découvrez nos pièces d'exception. Cette année est marquée par l'arrivée du <strong>Grand Cèpe Sublime</strong> (une pièce majestueuse de 1,2 kg) et de nos nouvelles <strong>Morilles</strong> au réalisme saisissant. 
+                Chaque création diffuse notre parfum signature : la <strong>Vanille Gourmande</strong>.
+            </p>
+
+            <div class="bougies-wrapper-seo">
+                <div class="tarifs-block">
+                    <Image 
+                        src={tarifsGamme2026} 
+                        alt="Tarifs Bougies Champignons Lozère : Morilles et Grand Cèpe Sublime" 
+                        class="tarifs-image"
+                        width={565}   
+                        height={800}  
+                        loading="eager"
+                        fetchpriority="high"
+                    />
+                </div>
+                <div class="tailles-wrapper">
+                    <Image src={petiteMorille} alt="Bougie Morille Vanille Gourmande Lozère" class="taille-image" width={240} height={268} />
+                    <Image src={moyenneMorille} alt="Bougie champignon Morille artisanale Lozère" class="taille-image" width={240} height={268} />
+                    <Image src={enormeCepe} alt="Bougie Grand Cèpe Sublime Vanille Gourmande 1,2kg" class="taille-image" width={240} height={268} />
+                </div>
+            </div>
+
+            <div class="etiquette-signature">
+                <h3>Nos 6 Bougies Champignons de Lozère</h3>
+                <p>
+                    L'intégralité de notre savoir-faire réuni : <strong>cèpes et morilles</strong> plus vrais que nature. 
+                    Fabriquées artisanalement à Chasseradès, ces bougies sont sculptées pour capturer chaque détail du champignon sauvage. 
+                    Leur signature ? Un parfum de <strong>Vanille Gourmande</strong> intense et envoûtant. 
+                    Le cadeau de prestige pour les amoureux de la nature et de la Lozère.
+                </p>
+            </div>
+
+            <div class="galerie-signature-duo">
+                <Image 
+                    src={familleCepes} 
+                    alt="Collection complète de bougies cèpes vanille gourmande lozère" 
+                    class="img-signature-full" 
+                    width={600} 
+                    height={600} 
+                />
+                <Image 
+                    src={duoMorilles} 
+                    alt="Duo de bougies morilles artisanales parfum vanille lozère" 
+                    class="img-signature-full" 
+                    width={600} 
+                    height={600} 
+                />
+            </div>
+        </div>
+    </section>
+
+    <section id="bougies" style="background-color: var(--fond-ecume);">
+        <div class="container">
+            <h2>L'Art de la Bougie Champignon en Lozère</h2>
+            <p>
+                Chaque <strong>bougie champignon</strong> Jean François & Aniuta est une pièce de collection coulée à la main. 
+                Du petit cèpe de sous-bois au modèle de prestige, nous travaillons chaque texture pour imiter la nature à la perfection. 
+                Retrouvez la douceur sucrée de la <strong>Vanille Gourmande</strong> dans chaque création.
             </p>
 
             <div class="bougies-wrapper-seo">
                 <div class="tarifs-block">
                     <Image 
                         src={tarifsImg} 
-                        alt="Grille des tarifs des bougies artisanales (Petite, Moyenne, Grande)" 
+                        alt="Tarifs bougies cèpes vanille gourmande lozère" 
                         class="tarifs-image"
                         width={565}   
                         height={800}  
-                        loading="eager"     
-                        fetchpriority="high"
                     />
                 </div>
-                
                 <div class="tailles-wrapper">
-                    <Image 
-                        src={petiteImg} 
-                        alt="Bougie artisanale petite taille - Vanille Gourmande" 
-                        class="taille-image"
-                        width={240}   
-                        height={268}  
-                        decoding="async"
-                    />
-                    <Image 
-                        src={moyenneImg} 
-                        alt="Bougie artisanale taille moyenne - Cire végétale" 
-                        class="taille-image"
-                        width={240}   
-                        height={268}  
-                        decoding="async"
-                    />
-                    <Image 
-                        src={grandeImg} 
-                        alt="Bougie artisanale grande taille - Parfum de Grasse" 
-                        class="taille-image"
-                        width={240}   
-                        height={268}  
-                        decoding="async"
-                    />
+                    <Image src={petiteImg} alt="Petite bougie cèpe vanille lozère" class="taille-image" width={240} height={268} />
+                    <Image src={moyenneImg} alt="Bougie cèpe moyen vanille gourmande" class="taille-image" width={240} height={268} />
+                    <Image src={grandeImg} alt="Grande bougie cèpe champignon lozère" class="taille-image" width={240} height={268} />
                 </div>
             </div>
             
@@ -107,37 +142,33 @@ import allumeesImg from '../assets/images/bougies-allumees.jpg';
                 target="_blank" 
                 rel="noopener noreferrer"
                 class="btn large-btn whatsapp-btn main-whatsapp-btn"
-                aria-label="Commander vos bougies artisanales via WhatsApp"
-                title="Ouvrir WhatsApp pour commander"
+                title="Commander vos bougies champignons via WhatsApp"
             >
-                <i class="fab fa-whatsapp" aria-hidden="true"></i> Commander en ligne via WhatsApp
+                <i class="fab fa-whatsapp" aria-hidden="true"></i> Commander vos bougies via WhatsApp
             </a>
             
             <div class="whatsapp-image-container">
                 <Image 
                     src={allumeesImg} 
-                    alt="Ambiance chaleureuse avec nos bougies cèpes allumées" 
+                    alt="Bougies champignons allumées décoration vanille gourmande" 
                     class="image-sous-whatsapp"
                     width={500}
                     height={500}
-                    decoding="async"
                 />
             </div>
         </div>
     </section>
 
-    <section id="conseils" style="background-color: var(--couleur-fond-clair);">
+    <section id="conseils" style="background-color: var(--fond-sable);">
         <div class="container">
-            <h2>Conseils d'Utilisation</h2>
-            <p>Pour profiter au maximum de votre bougie Jean François & Aniuta, suivez cette recommandation :</p>
-            
+            <h2>Conseils pour votre Bougie Vanille</h2>
+            <p>Pour profiter de la longévité de votre <strong>bougie champignon</strong> :</p>
             <ul class="conseils-list">
                 <li class="security-alert">
-                    <span><strong>Sécurité :</strong> Ne laissez jamais une bougie allumée sans surveillance et tenez-la hors de portée des enfants et des animaux.</span>
+                    <span><strong>Sécurité :</strong> Ne laissez jamais vos bougies allumées sans surveillance. Tenir hors de portée des enfants et des courants d'air.</span>
                 </li>
             </ul>
-            
-            <a href="/contact" class="btn" title="Contactez-nous pour plus d'informations">Poser une Question</a>
+            <a href="/contact" class="btn">Contacter l'artisan en Lozère</a>
         </div>
     </section>
 </MainLayout>
