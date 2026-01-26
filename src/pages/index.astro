@@ -7,7 +7,7 @@ import { Image } from 'astro:assets';
 // Imports d'images
 import heroHome from "../assets/images/hero-home.webp";
 import accueilImg from "../assets/images/accueil-h2-1.webp";
-import collection6Img from "../assets/images/bougies-champignons-lozere-collection.webp";
+import imgCollection from '../assets/images/bougies-champignons-lozere-collection.webp';
 import atelierImg from "../assets/images/accueil-h2-2.webp";
 import aproposImg from "../assets/images/accueil-h2-3.webp";
 
@@ -97,17 +97,17 @@ const schemaData = JSON.stringify({
                 Découvrez l'harmonie entre la chaleur du bois sculpté et le réalisme saisissant de nos créations. Nos <strong>bougies champignons</strong>, conçues en <strong>cire 100% naturelle</strong>, se distinguent par une durabilité exceptionnelle et un rendu plus vrai que nature.
             </p>
 
-            <img 
-  src="/_astro/bougies-champignons-lozere-collection.DKW45F_D.webp" 
-  srcset="/_astro/bougies-champignons-lozere-collection.DKW45F_D.webp 800w"
-  sizes="(max-width: 600px) 480px, 800px"
+            <Image 
+  src={imgCollection} 
   alt="Collection de 6 bougies champignons artisanales - Cèpes et Morilles" 
-  loading="lazy" 
-  decoding="async" 
-  width="800" 
-  height="629" 
+  width={800} 
+  height={629} 
   class="img-collection"
->
+  widths={[480, 800]}
+  sizes="(max-width: 600px) 480px, 800px"
+  loading="lazy"
+  decoding="async"
+/>
 
             <p>
                 Chaque pièce est coulée à la main dans notre atelier, garantissant une qualité artisanale unique et une diffusion longue durée de notre parfum signature Vanille Gourmande.
