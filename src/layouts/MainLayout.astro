@@ -8,7 +8,7 @@ import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 
-// --- OPTIMISATION DES MOTS-CLÉS (Injectés dans ta structure) ---
+// --- CONFIGURATION SEO ET MOTS-CLÉS ---
 const defaultTitle = "Bougies Artisanales & Sculpture Bois Lozère | JF & Aniuta";
 const defaultDesc = "Artisanat d'art en Lozère : bougies naturelles parfumées et sculptures sur bois local. Créations fait main à Chasseradès (48).";
 
@@ -17,23 +17,6 @@ const {
     description = defaultDesc, 
     holidayMessage 
 } = Astro.props;
-
-// --- DÉTECTION BOT + PROTECTION LOCAL ---
-const ua = Astro.request.headers.get('user-agent') || '';
-const isBot = /(googlebot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|ia_archiver|robot|bot|spider|headless|chrome-lighthouse)/i.test(ua);
-
-if (isBot && !Astro.url.pathname.includes('dashboard') && !import.meta.env.DEV) {
-    const apiUrl = new URL('/api/log-visit', Astro.url.origin).href;
-    
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            ua: ua, 
-            isBot: true 
-        })
-    }).catch((e) => console.error("Erreur log bot:", e));
-}
 
 const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app");
 const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel.app");
@@ -51,7 +34,6 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
     <meta property="og:url" content={canonicalURL.href}>
     <meta property="og:type" content="website">
     <meta property="og:image" content={socialImageURL.href}>
-    
     <meta property="og:description" content={description}>
     
     <meta name="google-site-verification" content="googleca94fc0ed3c52975" />
@@ -71,14 +53,12 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
 
     <link rel="icon" href="/favicon.ico" sizes="16x16" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
     <link rel="icon" type="image/png" sizes="16x16" href="/images/logo_16.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/images/logo_32.png" />
     <link rel="icon" type="image/png" sizes="144x144" href="/images/logo_144.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/images/logo_192.png" />
 
     <link rel="apple-touch-icon" href="/images/logo_192.png" />
-
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#fdfaf7">
 
@@ -99,25 +79,42 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
             });
         }
     </script>
+
     <script is:inline define:vars={{ isDev: import.meta.env.DEV }}>
       (async () => {
+        // On ne logue pas en mode développement ou sur le dashboard
         if (isDev) return;
         if (window.location.pathname.includes('dashboard')) return;
+        
+        // Sécurité : une seule fois par session
         if (sessionStorage.getItem('site_visited')) return;
 
-        sessionStorage.setItem('site_visited', 'true');
-        const isQR = new URLSearchParams(window.location.search).get('ref') === 'qr';
+        const sendLog = async () => {
+            if (sessionStorage.getItem('site_visited')) return;
+            sessionStorage.setItem('site_visited', 'true');
+            
+            const isQR = new URLSearchParams(window.location.search).get('ref') === 'qr';
+            
+            try {
+              await fetch('/api/log-visit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  ua: navigator.userAgent,
+                  isQR: isQR
+                })
+              });
+            } catch (err) {
+                // Erreur silencieuse
+            }
+        };
+
+        // On écoute les vraies actions humaines
+        const triggerEvents = ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll'];
         
-        try {
-          await fetch('/api/log-visit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              ua: navigator.userAgent,
-              isQR: isQR
-            })
-          });
-        } catch (err) {}
+        triggerEvents.forEach(event => {
+            window.addEventListener(event, sendLog, { once: true, passive: true });
+        });
       })();
     </script>
 </body>
