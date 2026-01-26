@@ -9,8 +9,8 @@ import poster3 from '../assets/images/miniature-cadeau-3.webp';
 ---
 
 <MainLayout 
-  title="L'Atelier en Vidéo : Bougies Artisanales | JF & A"
-  description="Découvrez le savoir-faire de Jean-François & Aniuta à travers nos présentations vidéo. Collection Vanille Gourmande en Lozère."
+  title="Vidéos des Bougies Cèpes | Artisanat Lozère JF & A"
+  description="Découvrez nos bougies cèpes en vidéo : un réalisme saisissant en cire 100% naturelle, parfum Vanille Gourmande. Savoir-faire artisanal de Lozère."
   holidayMessage="<strong>Éclats de 2026 :</strong> découvrez nos créations prendre vie en vidéo."
 >
     <script type="application/ld+json" slot="head">
@@ -21,32 +21,32 @@ import poster3 from '../assets/images/miniature-cadeau-3.webp';
           "@type": "CollectionPage",
           "@id": "https://jf-aniuta.vercel.app/videos/#webpage",
           "url": "https://jf-aniuta.vercel.app/videos",
-          "name": "L'Atelier en Vidéo : Collection Vanille Gourmande | JF & A",
-          "description": "Découvrez le savoir-faire de Jean-François & Aniuta à travers nos présentations vidéo.",
+          "name": "Collection Vidéo : Bougies Cèpes Artisanales | JF & A",
+          "description": "Démonstration visuelle du réalisme de nos bougies cèpes en cire naturelle. Savoir-faire de Lozère.",
           "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
           "about": { "@id": "https://jf-aniuta.vercel.app/#organization" },
           "inLanguage": "fr-FR"
         },
         {
           "@type": "VideoObject",
-          "name": "Vanille Gourmande - Présentation 1",
-          "description": "Découverte de la collection de bougies artisanales Vanille Gourmande par JF & Aniuta.",
+          "name": "Bougie Cèpe Artisanale - Présentation 1",
+          "description": "Zoom sur la bougie cèpe artisanale, cire naturelle et parfum vanille gourmande.",
           "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-1.webp",
           "uploadDate": "2026-01-11",
           "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-1.mp4"
         },
         {
           "@type": "VideoObject",
-          "name": "Vanille Gourmande - Présentation 2",
-          "description": "Le rendu visuel de nos bougies artisanales Vanille Gourmande.",
+          "name": "Réalisme de la Bougie Cèpe - Présentation 2",
+          "description": "Focus sur les détails et le réalisme de nos bougies cèpes faites main.",
           "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-2.webp",
           "uploadDate": "2026-01-11",
           "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-2.mp4"
         },
         {
           "@type": "VideoObject",
-          "name": "Vanille Gourmande - Présentation 3",
-          "description": "Détails et finitions de la collection Vanille.",
+          "name": "Ambiance Vanille Gourmande - Présentation 3",
+          "description": "Mise en situation d'une bougie cèpe pour une décoration naturelle.",
           "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-3.webp",
           "uploadDate": "2026-01-11",
           "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-3.mp4"
@@ -59,37 +59,47 @@ import poster3 from '../assets/images/miniature-cadeau-3.webp';
         <div class="container">
             <h2 class="titre-noel">
                 <span class="scintillement"></span> 
-                L'Atelier en Vidéo : Collection Vanille
+                L'Atelier en Vidéo : Collection Cèpes
                 <span class="scintillement"></span>
             </h2>
             
-            <p style="text-align: center; margin-bottom: 30px;">
-                Découvrez notre collection Vanille Gourmande.
-            </p>
+            <div class="video-intro-text">
+                <p>
+                    Plongez dans l'univers de l'atelier <strong>Jean-François & Aniuta</strong> à travers nos présentations vidéos. 
+                    Découvrez le <strong>réalisme saisissant</strong> de notre création phare : la <strong>bougie cèpe de Lozère</strong>.
+                </p>
+                <p>
+                    Chaque vidéo vous présente la texture unique et les finitions détaillées de notre collection <strong>Vanille Gourmande</strong>. 
+                    Fabriquées en <strong>cire 100% naturelle</strong>, ces pièces artisanales capturent l'essence de la forêt pour sublimer votre décoration d'intérieur.
+                </p>
+            </div>
 
             <div class="video-gallery">
                 <VideoItem 
-                    title="Vanille Gourmande (Présentation 1)"
+                    title="La Bougie Cèpe (Présentation 1)"
                     videoSrc="/videos/video-noel-1.mp4"
                     posterImg={poster1}
                 />
 
                 <VideoItem 
-                    title="Vanille Gourmande (Présentation 2)"
+                    title="Détails & Réalisme (Présentation 2)"
                     videoSrc="/videos/video-noel-2.mp4"
                     posterImg={poster2}
                 />
 
                 <VideoItem 
-                    title="Vanille Gourmande (Présentation 3)"
+                    title="Ambiance Vanille Gourmande (Présentation 3)"
                     videoSrc="/videos/video-noel-3.mp4"
                     posterImg={poster3}
                 />
             </div>
             
-            <div class="cta-wrapper" style="margin-top: 50px; margin-bottom: 50px;">
+            <div class="cta-wrapper">
+                <p class="etiquette-signature">
+                    Vous avez eu un coup de cœur pour l'une de nos bougies en vidéo ? 
+                </p>
                 <a href="https://wa.me/33658909835" target="_blank" class="btn large-btn whatsapp-btn main-whatsapp-btn" title="Commander via WhatsApp">
-                    <i class="fab fa-whatsapp"></i> Commander en ligne via WhatsApp
+                    <i class="fab fa-whatsapp"></i> Commander votre bougie via WhatsApp
                 </a>
             </div>
         </div>

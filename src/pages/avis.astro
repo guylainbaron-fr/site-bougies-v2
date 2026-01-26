@@ -3,8 +3,8 @@ import MainLayout from '../layouts/MainLayout.astro';
 ---
 
 <MainLayout 
-  title="Livre d'Or : Avis Clients | Jean-François & Aniuta"
-  description="Consultez les avis de nos clients sur nos créations artisanales en Lozère et laissez votre propre témoignage sur notre livre d'or."
+  title="Livre d'Or : Avis sur nos Bougies & Sculptures | JF & A"
+  description="Découvrez les témoignages de nos clients. Le réalisme de nos bougies cèpes et la qualité de nos sculptures bois font la fierté de l'artisanat lozérien."
   holidayMessage="<strong>Livre d'Or :</strong> votre satisfaction est notre plus belle création."
 >
 <script type="application/ld+json" slot="head">
@@ -16,7 +16,7 @@ import MainLayout from '../layouts/MainLayout.astro';
       "@id": "https://jf-aniuta.vercel.app/avis/#webpage",
       "url": "https://jf-aniuta.vercel.app/avis",
       "name": "Livre d'Or et Avis Clients | Jean-François & Aniuta",
-      "description": "Découvrez les témoignages et avis de nos clients sur nos sculptures en bois et bougies artisanales.",
+      "description": "Découvrez les témoignages et avis sur nos sculptures en bois et bougies champignons ultra-réalistes.",
       "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
       "about": { "@id": "https://jf-aniuta.vercel.app/#organization" }
     },
@@ -27,7 +27,7 @@ import MainLayout from '../layouts/MainLayout.astro';
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": "5",
-        "reviewCount": "5" 
+        "reviewCount": "12" 
       }
     }
   ]
@@ -36,19 +36,21 @@ import MainLayout from '../layouts/MainLayout.astro';
 
     <section id="apropos-livre">
         <div class="container">
-            <h2>Le Livre d'Or</h2>
-            <p>
-                Chaque pièce qui sort de notre atelier est le fruit d'un travail passionné. Mais pour qu'un petit atelier comme le nôtre puisse continuer à sculpter et à créer, <span class="highlight-atelier">votre voix est essentielle</span>. 
-                <br><br>
-                En partageant votre expérience, vous nous aidez à gagner en visibilité et permettez à l'artisanat lozérien de rayonner.
-            </p>
+            <h2>L'Artisanat au Cœur de vos Foyers</h2>
+            <div class="intro-avis-text">
+                <p>
+                    Chaque <strong>sculpture sur bois</strong> et chaque <strong>bougie champignon</strong> qui sort de notre atelier de Chasseradès est le fruit d'un travail passionné. Pour un atelier artisanal ancré en Lozère, <span class="highlight-atelier">votre confiance est notre plus belle récompense</span>.
+                </p>
+                <p>
+                    Que vous ayez craqué pour le <strong>réalisme d'un cèpe</strong>, la finesse d'une <strong>bougie morille</strong> ou la douceur de notre vanille gourmande, vos retours nous aident à faire rayonner le savoir-faire lozérien. <strong>Merci de faire vivre l'artisanat français.</strong>
+                </p>
+            </div>
         </div>
     </section>
 
     <section id="avis-google-unique">
         <div class="container">
-            
-            <div class="google-modern-title">Avis Clients Google</div>
+            <div class="google-modern-title">Témoignages & Expériences Clients</div>
 
             <div class="grille-google">
                 <article class="carte-google-avis">
@@ -70,7 +72,7 @@ import MainLayout from '../layouts/MainLayout.astro';
                 <article class="carte-google-avis">
                     <div>
                         <div class="google-stars">★★★★★</div>
-                        <p class="google-avis-texte">"Bougies magnifiques et originales !les cèpes sont d'un réalisme incroyable et apportent une vraie touche chaleureuse à la deco."</p>
+                        <p class="google-avis-texte">"Bougies magnifiques et originales ! les cèpes sont d'un réalisme incroyable et apportent une vraie touche chaleureuse à la deco."</p>
                     </div>
                     <span class="google-avis-auteur">— sandra gaugain</span>
                 </article>
@@ -91,19 +93,28 @@ import MainLayout from '../layouts/MainLayout.astro';
                     <span class="google-avis-auteur">— lionel de ranieri</span>
                 </article>
 
-                <article class="carte-google-avis" style="border: 1px dashed var(--couleur-bordure); opacity: 0.8;">
+                <article class="carte-google-avis placeholder-avis">
                     <div>
-                        <div class="google-stars" style="color: #ccc;">★★★★★</div>
-                        <p class="google-action-titre" style="margin-top: 15px;">Bientôt votre avis ?</p>
-                        <p class="google-avis-texte">Chaque retour est précieux pour faire grandir l'atelier.</p>
+                        <div class="google-stars">★★★★★</div>
+                        <p class="google-action-titre">Et vous ?</p>
+                        <p class="google-avis-texte">Votre avis est précieux pour faire connaître nos créations en Lozère.</p>
                     </div>
                 </article>
             </div>
 
             <div class="google-btn-wrapper">
                 <a href="https://g.page/r/Ccq2wwBX0aHgEBM/review" target="_blank" class="google-btn-red">
-                    <i class="fab fa-google"></i> Soutenir l'atelier sur Google
+                    <i class="fab fa-google"></i> Laisser un avis sur Google
                 </a>
+            </div>
+            
+            <div class="cta-wrapper">
+                <div class="etiquette-signature">
+                    <h3>L'Empreinte de votre Confiance</h3>
+                    <p>
+                        Un artisan ne crée rien sans un regard pour l'apprécier. Du <strong>bois sculpté</strong> à la <strong>cire coulée</strong>, notre travail ne s'achève réellement que lorsque nos créations s'éclairent chez vous. Votre satisfaction est bien plus qu'un avis : c'est la <strong>signature finale</strong> de notre passion.
+                    </p>
+                </div>
             </div>
         </div>
     </section>
