@@ -3498,6 +3498,16 @@ h2::after {
     }
 }
 
+/* Classe pour l'image de collection - plus large mais maîtrisée */
+.img-collection {
+    width: 100%;
+    max-width: 800px; /* Taille réduite pour ne pas être trop envahissante */
+    height: auto;
+    display: block;
+    margin: 2rem auto; /* Centre l'image et ajoute de l'espace autour */
+    border-radius: 8px;
+}
+
 /* ==========================================================================
     RESPONSIVE GLOBAL & FIX TABLETTES (IPAD, SURFACE, MOBILE)
    ========================================================================== */

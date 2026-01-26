@@ -7,6 +7,7 @@ import { Image } from 'astro:assets';
 // Imports d'images
 import heroHome from "../assets/images/hero-home.webp";
 import accueilImg from "../assets/images/accueil-h2-1.webp";
+import collection6Img from "../assets/images/bougies-champignons-lozere-collection.webp";
 import atelierImg from "../assets/images/accueil-h2-2.webp";
 import aproposImg from "../assets/images/accueil-h2-3.webp";
 
@@ -59,7 +60,7 @@ const schemaData = JSON.stringify({
 
 <MainLayout 
     title="Jean Francois & ANIUTA Artisans Sculpteurs Lozere 48"
-    description="Artisanat du bois et de la bougie de J.F. et Aniuta. Sculptures sur bois local et bougies naturelles a Chasserades."
+    description="Artisanat du bois et de la bougie de J.F. et Aniuta. Sculptures sur bois local et bougies naturelles ultra-réalistes à Chasseradès."
     holidayMessage="Que l'annee 2026 s'illumine de mille feux... Meilleurs Voeux !"
 >
 <script type="application/ld+json" slot="head" set:html={schemaData} />
@@ -86,15 +87,29 @@ const schemaData = JSON.stringify({
     </section>
 
     <section id="accueil">
-        <div class="container">
-            <div class="section-top-image">
-                <Image src={accueilImg} alt="Image illustrant l'art du bois et des bougies" class="intro-image-1" width={600} height={669} />
+        <div class="container text-center"> <div class="section-top-image">
+                <Image src={accueilImg} alt="Artisanat Lozère" class="intro-image-1" width={600} height={669} />
             </div>
+            
             <h2>L'Art du Bois et le Parfum des Sens.</h2>               
+            
             <p>
-                Découvrez l'harmonie parfaite entre la chaleur du bois sculpté et les senteurs envoûtantes de nos créations artisanales. Chaque pièce raconte une histoire de passion et de nature.
+                Découvrez l'harmonie entre la chaleur du bois sculpté et le réalisme saisissant de nos créations. Nos <strong>bougies champignons</strong>, conçues en <strong>cire 100% naturelle</strong>, se distinguent par une durabilité exceptionnelle et un rendu plus vrai que nature.
             </p>
-            <a href="/bougies" class="btn">Découvrir les Bougies</a> 
+
+            <Image 
+                src={collection6Img} 
+                alt="Collection de 6 bougies champignons artisanales - Cèpes et Morilles" 
+                class="img-collection" 
+                width={1196} 
+                height={940} 
+            />
+
+            <p>
+                Chaque pièce est coulée à la main dans notre atelier, garantissant une qualité artisanale unique et une diffusion longue durée de notre parfum signature Vanille Gourmande.
+            </p>
+
+            <a href="/bougies" class="btn">Découvrir les Bougies et Tarifs</a> 
         </div>
     </section>
 
@@ -105,7 +120,7 @@ const schemaData = JSON.stringify({
             </div>
             <h2>Notre Atelier : Là où la Magie Opère</h2>
             <p>
-                Situé à Chasseradès, au cœur de la Lozère, notre atelier est le lieu de rencontre entre la matière brute (bois locaux) et notre savoir-faire ancestral. Venez découvrir notre processus de création, de la première découpe à la dernière finition.
+                Situé à Chasseradès, au cœur de la Lozère, notre atelier est le lieu de rencontre entre le bois brut et la cire artisanale. Loin des produits industriels, nous façonnons des objets durables, du cèpe sculpté à la <strong>bougie champignon plus vraie que nature</strong>, avec un savoir-faire authentique.
             </p>
             <a href="/atelier" class="btn">Visiter l'Atelier</a>
         </div>
@@ -118,7 +133,7 @@ const schemaData = JSON.stringify({
             </div>
             <h2>À Propos de l'Artisan et Notre Histoire</h2>
             <p>
-                Artisans passionnés, Jean François & Aniuta se consacrent au travail du bois depuis de nombreuses années. Chaque pièce est le fruit d'une démarche respectueuse du matériau et d'une recherche d'esthétisme unique. Nous privilégions les essences locales et les finitions naturelles.
+                Artisans passionnés, Jean François & Aniuta se consacrent à la matière noble. Nous privilégions les essences locales pour le bois et des finitions naturelles pour nos bougies. Chaque création est le fruit d'une démarche exigeante pour vous offrir une qualité et un esthétisme unique, reflets de notre terroir.
             </p>
             <a href="/apropos" class="btn">En Savoir Plus sur Nous</a> 
         </div>
