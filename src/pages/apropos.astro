@@ -1,5 +1,7 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+const pageId = "apropos";
+
 import { Image } from 'astro:assets';
 
 // Importation des images
@@ -10,7 +12,7 @@ import souvenirsImg from '../assets/images/guylain-et-jeanfrancois.webp';
 <MainLayout 
     title="Histoire de l'Atelier | J.F. & ANIUTA Artisans en Lozère"
     description="Découvrez l'histoire de Jean-François et Aniuta, sculpteurs sur bois et créateurs de bougies champignons en cire 100% naturelle à Chasseradès, Lozère."
-    holidayMessage="Partageons une année <strong>2026</strong> riche en créations uniques."
+    pageId={pageId}
 >
     <script type="application/ld+json" slot="head">
     {

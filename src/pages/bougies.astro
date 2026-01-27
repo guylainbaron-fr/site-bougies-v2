@@ -1,5 +1,7 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+const pageId = "bougies";
+
 import { Image } from 'astro:assets';
 
 // Nouveautés 2026
@@ -21,7 +23,7 @@ import allumeesImg from '../assets/images/bougies-allumees.jpg';
 <MainLayout 
     title="Bougie Champignon Lozère : Morilles et Grand Cèpe Sublime Vanille"
     description="Découvrez nos bougies champignons d'exception en Lozère. Morilles réalistes et notre Grand Cèpe Sublime de 1,2kg, parfumés à la Vanille Gourmande."
-    holidayMessage="De nouvelles <strong>lueurs</strong> pour une année 2026 chaleureuse."
+    pageId={pageId}
 >
     <Fragment slot="head">
         <script type="application/ld+json">

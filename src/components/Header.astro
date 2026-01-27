@@ -1,14 +1,14 @@
 ---
 import HolidayBar from './HolidayBar.astro';
 import { Image } from 'astro:assets';
-// On importe le logo depuis le dossier assets
 import logoEntreprise from '../assets/images/logo-entreprise.webp';
 
-const { holidayMessage } = Astro.props;
+// On reçoit le pageId envoyé par le Layout
+const { pageId } = Astro.props; 
 ---
 
 <div class="header-wrapper">
-    <HolidayBar message={holidayMessage} />
+    <HolidayBar currentPage={pageId} />
 
     <header class="site-header">
         <div class="container">

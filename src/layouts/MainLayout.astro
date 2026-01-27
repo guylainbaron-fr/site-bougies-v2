@@ -8,6 +8,8 @@ import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 
+import HolidayBar from '../components/HolidayBar.astro'
+
 // --- CONFIGURATION SEO ET MOTS-CLÉS ---
 const defaultTitle = "Bougies Artisanales & Sculpture Bois Lozère | JF & Aniuta";
 const defaultDesc = "Artisanat d'art en Lozère : bougies naturelles parfumées et sculptures sur bois local. Créations fait main à Chasseradès (48).";
@@ -15,7 +17,7 @@ const defaultDesc = "Artisanat d'art en Lozère : bougies naturelles parfumées 
 const { 
     title = defaultTitle, 
     description = defaultDesc, 
-    holidayMessage 
+    pageId = "default",
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app");
@@ -65,10 +67,13 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
     <slot name="head" />
 </head>
 <body>
-    <Header holidayMessage={holidayMessage} />
+
+    <Header pageId={pageId} />
+
     <main>
         <slot />
     </main>
+    
     <Footer />
 
     <script>

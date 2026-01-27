@@ -1,6 +1,8 @@
 ---
 export const prerender = false;
 import MainLayout from '../layouts/MainLayout.astro';
+const pageId = "evenements";
+
 import VideoItem from '../components/VideoItem.astro'; 
 import { Image } from 'astro:assets';
 import { kv } from '@vercel/kv';
@@ -57,7 +59,7 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
 <MainLayout 
   title="Jean François & ANIUTA | Artisans Sculpteurs et Créateurs de Bougies en Lozère (48)"
   description="Découvrez l'artisanat du bois et de la bougie de J.F. & Aniuta. Sculptures uniques sur bois local et bougies naturelles parfumées à Chasseradès (Lozère)."
-  holidayMessage="Célébrons ensemble les <strong>instants magiques</strong> de 2026."
+  pageId={pageId}
 >
     <script type="application/ld+json" slot="head">
     {

@@ -1,5 +1,7 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+const pageId = "contact";
+
 import EmailProtect from '../components/EmailProtect.astro';
 import PhoneProtect from '../components/PhoneProtect.astro';
 import { Image } from 'astro:assets';
@@ -11,7 +13,7 @@ import imageAtelier from '../assets/images/image-contact-atelier.webp';
 <MainLayout 
   title="Contactez les Artisans du Bois et Bougie | Atelier Lozère - J.F. & ANIUTA"
   description="Vous avez une question sur nos sculptures ou nos bougies ? Contactez-nous par téléphone, e-mail, ou visitez notre atelier à Chasseradès (48)."
-  holidayMessage="Projetez vos <strong>envies de lumière</strong> pour cette nouvelle année."
+  pageId={pageId}
 >
     <script type="application/ld+json" slot="head">
     {

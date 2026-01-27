@@ -1,5 +1,7 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+const pageId = "videos";
+
 import VideoItem from '../components/VideoItem.astro';
 
 // Importation des miniatures
@@ -11,7 +13,7 @@ import poster3 from '../assets/images/miniature-cadeau-3.webp';
 <MainLayout 
   title="Vidéos des Bougies Cèpes | Artisanat Lozère JF & A"
   description="Découvrez nos bougies cèpes en vidéo : un réalisme saisissant en cire 100% naturelle, parfum Vanille Gourmande. Savoir-faire artisanal de Lozère."
-  holidayMessage="<strong>Éclats de 2026 :</strong> découvrez nos créations prendre vie en vidéo."
+  pageId={pageId}
 >
     <script type="application/ld+json" slot="head">
     {

@@ -1,0 +1,182 @@
+[
+  {
+    "id": "new-year",
+    "name": "Voeux 2026",
+    "start": "2026-01-01",
+    "end": "2026-01-15",
+    "pages": {
+      "index": "Que l'annee 2026 s'illumine de mille feux... Meilleurs Voeux !",
+      "bougies": "De nouvelles <strong>lueurs</strong> pour une année 2026 chaleureuse.",
+      "evenements": "Célébrons ensemble les <strong>instants magiques</strong> de 2026.",
+      "atelier": "En <strong>2026</strong>, la passion et l'artisanat continuent de briller.",
+      "apropos": "Partageons une année <strong>2026</strong> riche en créations uniques.",
+      "videos": "<strong>Éclats de 2026 :</strong> découvrez nos créations prendre vie en vidéo.",
+      "avis": "<strong>Livre d'Or :</strong> votre satisfaction est notre plus belle création.",
+      "contact": "Projetez vos <strong>envies de lumière</strong> pour cette nouvelle année.",
+      "merci": "<strong>2026 :</strong> un nouveau chapitre s’écrit... Bienvenue !",
+      "au-revoir": "La flamme reste <strong>allumée</strong> pour vous en 2026... À bientôt !",
+      "mentions-legales": "Une année <strong>2026</strong> placée sous le signe de la confiance.",
+      "default": "✨ Meilleurs Voeux pour une année 2026 lumineuse et créative !"
+    }
+  },
+{
+    "id": "jf-birthday",
+    "name": "Anniversaire JF",
+    "start": "2026-01-29",
+    "end": "2026-01-29",
+    "pages": {
+      "index": "🎂 Aujourd'hui, nous fêtons l'anniversaire de <strong>Jean-François</strong>, le créateur !",
+      "bougies": "Des <strong>lueurs d'anniversaire</strong> pour célébrer le savoir-faire de Jean-François.",
+      "evenements": "Un moment spécial : c'est l'anniversaire de notre <strong>artisan sculpteur</strong> !",
+      "atelier": "La passion au cœur de l'établi... <strong>Joyeux Anniversaire</strong> Jean-François !",
+      "apropos": "L'histoire continue... Bel anniversaire à <strong>Jean-François</strong>, l'âme de l'Atelier.",
+      "videos": "Découvrez les gestes précis du créateur en ce jour d'<strong>anniversaire</strong>.",
+      "avis": "Vos témoignages sont le plus beau cadeau pour l'<strong>anniversaire de JF</strong> !",
+      "contact": "Envoyez vos vœux ou vos projets à <strong>Jean-François</strong> pour son anniversaire.",
+      "merci": "Bienvenue ! Vous arrivez un jour spécial : c'est l'<strong>anniversaire du créateur</strong>.",
+      "au-revoir": "Merci de votre visite en ce jour de fête pour <strong>Jean-François</strong> !",
+      "mentions-legales": "Célébrons l'artisanat et la passion en ce <strong>29 janvier</strong>.",
+      "default": "🎂 Joyeux Anniversaire à <strong>Jean-François</strong> !"
+    }
+  },
+  {
+    "id": "valentines-day",
+    "name": "Saint-Valentin",
+    "start": "2026-02-01",
+    "end": "2026-02-14",
+    "pages": {
+      "index": "❤️ Célébrez l'amour avec des créations artisanales uniques et chaleureuses.",
+      "bougies": "Déclarez votre flamme avec nos <strong>bougies parfumées</strong> ultra-réalistes.",
+      "evenements": "Offrez un moment d'exception pour la <strong>Saint-Valentin</strong>.",
+      "atelier": "L'art de sculpter l'amour : découvrez nos pièces uniques en bois.",
+      "apropos": "Deux artisans, une passion commune... Joyeuse <strong>Saint-Valentin</strong>.",
+      "videos": "Voyez comment naissent nos <strong>duos de sculptures</strong> en vidéo.",
+      "avis": "Le plus beau message d'amour, c'est votre fidélité !",
+      "contact": "Commandez un cadeau <strong>personnalisé</strong> pour votre moitié.",
+      "merci": "Bienvenue dans notre univers de douceur et de création.",
+      "au-revoir": "Que la magie de la Saint-Valentin vous accompagne...",
+      "mentions-legales": "La passion de l'artisanat en toute transparence.",
+      "default": "❤️ Un cadeau unique pour une personne unique."
+    }
+},
+{
+    "id": "easter",
+    "name": "Pâques",
+    "start": "2026-03-25",
+    "end": "2026-04-06",
+    "pages": {
+      "index": "🐣 Célébrez le printemps avec nos créations artisanales de Pâques.",
+      "bougies": "Une lumière printanière pour vos tablées de <strong>Pâques</strong>.",
+      "evenements": "Découvrez nos rendez-vous et créations spéciales pour le <strong>printemps</strong>.",
+      "atelier": "Le bois prend vie : découvrez nos sculptures printanières.",
+      "apropos": "L'artisanat au rythme des saisons : bienvenue à l'Atelier.",
+      "videos": "Voyez éclore nos dernières créations en vidéo.",
+      "avis": "Vos retours nous font grandir, merci de votre confiance !",
+      "contact": "Préparez vos cadeaux de Pâques avec des pièces uniques.",
+      "merci": "Merci de votre visite printanière à l'Atelier !",
+      "au-revoir": "À bientôt pour de nouvelles découvertes artisanales.",
+      "mentions-legales": "Transparence et artisanat en Lozère.",
+      "default": "🐣 Joyeuses Fêtes de Pâques !"
+    }
+  },
+  {
+    "id": "mothers-day",
+    "name": "Fête des Mères",
+    "start": "2026-05-15",
+    "end": "2026-05-31",
+    "pages": {
+      "index": "🌸 Offrez-lui l'exceptionnel : des cadeaux faits main avec amour.",
+      "bougies": "Une <strong>douce fragrance</strong> pour dire je t'aime à votre maman.",
+      "evenements": "Trouvez le cadeau idéal parmi nos événements de mai.",
+      "atelier": "Des gestes précis pour des cadeaux uniques : l'art de la sculpture.",
+      "apropos": "L'histoire de notre passion à offrir à celles que vous aimez.",
+      "videos": "Découvrez la fabrication des cadeaux de la <strong>Fête des Mères</strong>.",
+      "avis": "Partagez la joie d'offrir nos créations artisanales.",
+      "contact": "Une commande spéciale pour maman ? Contactez-nous.",
+      "merci": "Bienvenue ! Trouvez ici le cadeau qui viendra du cœur.",
+      "au-revoir": "Merci de soutenir l'artisanat local pour vos cadeaux.",
+      "mentions-legales": "La confiance au cœur de notre métier.",
+      "default": "🌸 Un cadeau artisanal pour une maman unique."
+    }
+  },
+  {
+    "id": "fathers-day",
+    "name": "Fête des Pères",
+    "start": "2026-06-07",
+    "end": "2026-06-21",
+    "pages": {
+      "index": "🪵 Le caractère du bois, la force du geste : spécial Fête des Pères.",
+      "bougies": "Des senteurs boisées et authentiques pour la <strong>Fête des Pères</strong>.",
+      "evenements": "Célébrons le savoir-faire au masculin en ce mois de juin.",
+      "atelier": "Dans l'antre du sculpteur... Trouvez un cadeau de caractère.",
+      "apropos": "Jean-François partage son amour du bois pour tous les papas.",
+      "videos": "Le travail brut du bois : découvrez l'art de la sculpture.",
+      "avis": "Fiers de ravir les amateurs de bel artisanat.",
+      "contact": "Personnalisez votre cadeau pour la Fête des Pères.",
+      "merci": "Merci de porter de l'intérêt au travail de la main.",
+      "au-revoir": "À bientôt à l'établi !",
+      "mentions-legales": "Artisanat d'art et respect des traditions.",
+      "default": "🪵 Bonne Fête à tous les Papas !"
+    }
+  },
+  {
+    "id": "halloween",
+    "name": "Halloween",
+    "start": "2026-10-15",
+    "end": "2026-10-31",
+    "pages": {
+      "index": "🎃 Une ambiance mystérieuse s'installe à l'Atelier... Bienvenue !",
+      "bougies": "Éclairez vos soirées d'automne d'une <strong>lueur ensorcelante</strong>.",
+      "evenements": "Des créations frissonnantes pour célébrer <strong>Halloween</strong>.",
+      "atelier": "Quand le bois sculpte l'étrange... Entrez dans notre univers.",
+      "apropos": "L'Atelier se pare de ses couleurs d'automne les plus sombres.",
+      "videos": "Les ombres dansent à l'Atelier : découvrez nos vidéos.",
+      "avis": "Merci de partager votre passion pour nos ambiances d'automne.",
+      "contact": "Une envie de décoration thématique ? Écrivez-nous.",
+      "merci": "Entrez... si vous l'osez ! Bienvenue dans notre antre.",
+      "au-revoir": "Repartez avec une part de magie... À bientôt !",
+      "mentions-legales": "Savoir-faire et transparence, même dans le mystère.",
+      "default": "🎃 Joyeux Halloween à tous !"
+    }
+  },
+  {
+    "id": "christmas",
+    "name": "Noël",
+    "start": "2026-11-20",
+    "end": "2026-12-31",
+    "pages": {
+      "index": "🎄 La magie de Noël commence ici : des cadeaux qui ont une âme.",
+      "bougies": "Illuminez vos fêtes avec nos <strong>bougies artisanales</strong> parfumées.",
+      "evenements": "Retrouvez-nous sur les <strong>marchés de Noël</strong> de Lozère !",
+      "atelier": "L'atelier du Père Noël ? Presque ! Découvrez nos sculptures de fête.",
+      "apropos": "Un Noël authentique sous le signe de l'artisanat français.",
+      "videos": "La fabrication de vos cadeaux de Noël en images.",
+      "avis": "Merci de faire briller notre Noël par vos gentils messages.",
+      "contact": "Commandez vos cadeaux avant le grand jour !",
+      "merci": "Que la chaleur de l'artisanat vous accompagne pour ces fêtes.",
+      "au-revoir": "Joyeuses fêtes de fin d'année à vous et vos proches !",
+      "mentions-legales": "Des fêtes sereines en toute confiance.",
+      "default": "🎄 Joyeux Noël et bonnes fêtes de fin d'année !"
+    }
+  },
+  {
+    "id": "aniuta-birthday",
+    "name": "Anniversaire Aniuta",
+    "start": "2026-11-24",
+    "end": "2026-11-24",
+    "pages": {
+      "index": "🎂 Aujourd'hui, nous fêtons l'anniversaire d'<strong>Aniuta</strong>, la créatrice !",
+      "bougies": "Une lueur spéciale pour l'anniversaire d'<strong>Aniuta</strong>, notre experte cirier.",
+      "evenements": "Un jour de fête à l'Atelier : c'est l'anniversaire d'<strong>Aniuta</strong> !",
+      "atelier": "La magie des senteurs est à l'honneur pour l'anniversaire d'<strong>Aniuta</strong>.",
+      "apropos": "Célébrons l'âme créative de l'Atelier : Bon anniversaire <strong>Aniuta</strong> !",
+      "videos": "Découvrez l'univers d'<strong>Aniuta</strong> en ce jour d'anniversaire.",
+      "avis": "Vos messages sont le plus beau cadeau pour l'anniversaire d'<strong>Aniuta</strong>.",
+      "contact": "Envoyez vos vœux à <strong>Aniuta</strong> pour sa journée spéciale.",
+      "merci": "Bienvenue ! Vous arrivez pour l'anniversaire d'<strong>Aniuta</strong>.",
+      "au-revoir": "Merci de votre visite pour l'anniversaire d'<strong>Aniuta</strong> !",
+      "mentions-legales": "Célébrons l'artisanat au féminin en ce <strong>24 novembre</strong>.",
+      "default": "🎂 Joyeux Anniversaire à <strong>Aniuta</strong> !"
+    }
+}
+]

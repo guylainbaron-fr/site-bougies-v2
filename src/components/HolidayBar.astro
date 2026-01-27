@@ -1,16 +1,36 @@
 ---
-// 1. L'INTERRUPTEUR (true = affiché, false = masqué)
-const showHolidayBar = false; 
+const eventsData = await Astro.glob('../data/holiday-events.json');
+const events = eventsData[0].default;
 
-// 2. On récupère le message envoyé par le Layout
-const { message } = Astro.props;
+// On reçoit le nom de la page (ex: "index", "bougies", "contact")
+const { currentPage } = Astro.props;
+
+const showHolidayBar = true;
+const today = new Date().toISOString().split('T')[0];
+
+// 1. Trouver l'événement actif
+const activeEvent = events
+  .filter(e => today >= e.start && today <= e.end)
+  .sort((a, b) => {
+    // Calcul de la durée en millisecondes
+    const durationA = new Date(a.end).getTime() - new Date(a.start).getTime();
+    const durationB = new Date(b.end).getTime() - new Date(b.start).getTime();
+    
+    // Si un événement est plus court (ex: 1 jour vs 30 jours), il passe devant
+    return durationA - durationB;
+  })[0];
+// 2. Récupérer le message spécifique à la page
+let displayMessage = "";
+if (activeEvent) {
+    // On cherche le message de la page, sinon un message "default", sinon le premier dispo
+    displayMessage = activeEvent.pages[currentPage] || activeEvent.pages["default"] || Object.values(activeEvent.pages)[0];
+}
 ---
 
-{showHolidayBar && (
-    <div class="holiday-bar glow" role="complementary" aria-label="Vœux de la Nouvelle Année 2026">
-        {/* Flocons retirés pour cohérence, on garde juste le texte */}
+{showHolidayBar && activeEvent && displayMessage && (
+    <div class="holiday-bar glow">
         <span class="holiday-text">
-            <Fragment set:html={message} />
+            <Fragment set:html={displayMessage} />
         </span>
     </div>
 )}

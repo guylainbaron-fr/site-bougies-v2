@@ -2,6 +2,8 @@
 export const prerender = false;
 
 import MainLayout from '../layouts/MainLayout.astro';
+const pageId = "index";
+
 import { Image } from 'astro:assets';
 
 // Imports d'images
@@ -61,8 +63,7 @@ const schemaData = JSON.stringify({
 <MainLayout 
     title="Jean Francois & ANIUTA Artisans Sculpteurs Lozere 48"
     description="Artisanat du bois et de la bougie de J.F. et Aniuta. Sculptures sur bois local et bougies naturelles ultra-réalistes à Chasseradès."
-    holidayMessage="Que l'annee 2026 s'illumine de mille feux... Meilleurs Voeux !"
->
+    pageId={pageId}  >
 <script type="application/ld+json" slot="head" set:html={schemaData} />
 
     <section id="hero">

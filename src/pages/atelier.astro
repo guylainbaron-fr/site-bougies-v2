@@ -1,5 +1,7 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+const pageId = "atelier";
+
 import { Image } from 'astro:assets';
 
 // Importation des images pour l'optimisation automatique
@@ -11,7 +13,7 @@ import vitrineProduits from '../assets/images/vitrine-produits.webp';
 <MainLayout 
   title="Atelier Sculpture Bois & Bougies Lozère | J.F. & ANIUTA à Chasseradès"
   description="Découvrez l'atelier de Jean-François et Aniuta en Lozère (48). Sculpture sur bois local et fabrication de bougies champignons en cire 100% naturelle parfum vanille gourmande."
-  holidayMessage="En <strong>2026</strong>, la passion et l'artisanat continuent de briller."
+  pageId={pageId}
 >
     <script type="application/ld+json" slot="head">
     {

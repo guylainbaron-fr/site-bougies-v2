@@ -1,5 +1,6 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+const pageId = "mentions-legales";
 import EmailProtect from '../components/EmailProtect.astro';
 import PhoneProtect from '../components/PhoneProtect.astro';
 ---
@@ -7,7 +8,7 @@ import PhoneProtect from '../components/PhoneProtect.astro';
 <MainLayout 
   title="Mentions Légales et Politique de Confidentialité | Jean François & ANIUTA"
   description="Consultez les mentions légales, les conditions générales de vente (CGV) et la politique de confidentialité du site Jean François & ANIUTA."
-  holidayMessage="Une année <strong>2026</strong> placée sous le signe de la confiance."
+  pageId={pageId}
 >
 <script type="application/ld+json" slot="head">
 {
