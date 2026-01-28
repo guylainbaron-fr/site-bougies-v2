@@ -8,8 +8,6 @@ import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 
-import HolidayBar from '../components/HolidayBar.astro'
-
 // --- CONFIGURATION SEO ET MOTS-CLÉS ---
 const defaultTitle = "Bougies Artisanales & Sculpture Bois Lozère | JF & Aniuta";
 const defaultDesc = "Artisanat d'art en Lozère : bougies naturelles parfumées et sculptures sur bois local. Créations fait main à Chasseradès (48).";
@@ -85,42 +83,55 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
         }
     </script>
 
-    <script is:inline define:vars={{ isDev: import.meta.env.DEV }}>
-      (async () => {
-        // On ne logue pas en mode développement ou sur le dashboard
-        if (isDev) return;
-        if (window.location.pathname.includes('dashboard')) return;
-        
-        // Sécurité : une seule fois par session
+<script is:inline define:vars={{ isDev: import.meta.env.DEV }}>
+  (async () => {
+    // 1. On ne logue pas en mode dev ou sur le dashboard
+    if (isDev || window.location.pathname.includes('dashboard')) return;
+    
+    // 2. Sécurité : une seule fois par session
+    if (sessionStorage.getItem('site_visited')) return;
+
+    // 3. Filtre Anti-Bot immédiat (User-Agent)
+    const botPatterns = /bot|spider|crawl|slurp|facebookexternalhit|facebookcatalog|bingpreview|adsbot|lighthouse|twitterbot|linkedinbot|pinterest|slackbot/i;
+    if (botPatterns.test(navigator.userAgent)) return;
+
+    const sendLog = async () => {
         if (sessionStorage.getItem('site_visited')) return;
-
-        const sendLog = async () => {
-            if (sessionStorage.getItem('site_visited')) return;
-            sessionStorage.setItem('site_visited', 'true');
-            
-            const isQR = new URLSearchParams(window.location.search).get('ref') === 'qr';
-            
-            try {
-              await fetch('/api/log-visit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  ua: navigator.userAgent,
-                  isQR: isQR
-                })
-              });
-            } catch (err) {
-                // Erreur silencieuse
-            }
-        };
-
-        // On écoute les vraies actions humaines
-        const triggerEvents = ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll'];
+        sessionStorage.setItem('site_visited', 'true');
         
+        const isQR = new URLSearchParams(window.location.search).get('ref') === 'qr';
+        
+        try {
+          await fetch('/api/log-visit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ua: navigator.userAgent,
+              isQR: isQR
+            })
+          });
+        } catch (err) {
+          // Erreur silencieuse
+        }
+    };
+
+    // 4. Délai de réflexion de 2 secondes avant d'écouter les humains
+    const triggerEvents = ['mousedown', 'keydown', 'touchstart', 'scroll'];
+    
+    const setupTrigger = () => {
+      setTimeout(() => {
         triggerEvents.forEach(event => {
-            window.addEventListener(event, sendLog, { once: true, passive: true });
+          window.addEventListener(event, sendLog, { once: true, passive: true });
         });
-      })();
-    </script>
+      }, 2000); // 2 secondes
+    };
+
+    if (document.readyState === 'complete') {
+      setupTrigger();
+    } else {
+      window.addEventListener('load', setupTrigger);
+    }
+  })();
+</script>
 </body>
 </html>
