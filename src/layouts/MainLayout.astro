@@ -85,15 +85,12 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
 
 <script is:inline define:vars={{ isDev: import.meta.env.DEV }}>
   (async () => {
-    // 1. On ne logue pas en mode dev ou sur le dashboard
     if (isDev || window.location.pathname.includes('dashboard')) return;
-    
-    // 2. Sécurité : une seule fois par session
     if (sessionStorage.getItem('site_visited')) return;
 
-    // 3. Filtre Anti-Bot immédiat (User-Agent)
+    // 1. On identifie le bot mais on ne bloque plus avec "return"
     const botPatterns = /bot|spider|crawl|slurp|facebookexternalhit|facebookcatalog|bingpreview|adsbot|lighthouse|twitterbot|linkedinbot|pinterest|slackbot/i;
-    if (botPatterns.test(navigator.userAgent)) return;
+    const isBot = botPatterns.test(navigator.userAgent);
 
     const sendLog = async () => {
         if (sessionStorage.getItem('site_visited')) return;
@@ -106,24 +103,29 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              ua: navigator.userAgent,
+              // Si c'est un bot, on envoie "Bot" au lieu du UserAgent complet
+              ua: isBot ? "Bot" : navigator.userAgent,
               isQR: isQR
             })
           });
-        } catch (err) {
-          // Erreur silencieuse
-        }
+        } catch (err) {}
     };
 
-    // 4. Délai de réflexion de 2 secondes avant d'écouter les humains
+    // 2. Gestion du délai et des déclencheurs
     const triggerEvents = ['mousedown', 'keydown', 'touchstart', 'scroll'];
     
     const setupTrigger = () => {
-      setTimeout(() => {
-        triggerEvents.forEach(event => {
-          window.addEventListener(event, sendLog, { once: true, passive: true });
-        });
-      }, 2000); // 2 secondes
+      // Si c'est un BOT, on envoie le log immédiatement sans attendre l'humain
+      if (isBot) {
+        sendLog();
+      } else {
+        // Si c'est un HUMAIN, on garde tes sécurités (2s + action)
+        setTimeout(() => {
+          triggerEvents.forEach(event => {
+            window.addEventListener(event, sendLog, { once: true, passive: true });
+          });
+        }, 2000);
+      }
     };
 
     if (document.readyState === 'complete') {
