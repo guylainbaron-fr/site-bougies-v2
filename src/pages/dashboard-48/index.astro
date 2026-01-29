@@ -36,6 +36,15 @@ if (Astro.request.method === "POST") {
         if (formData.get("action") === "reset") {
             await kv.set('visites_totales', 0);
             await kv.del('journal_visites');
+            
+            // --- AJOUT : On enregistre la date et l'heure du reset ---
+            const dateAction = new Date().toLocaleString('fr-FR', { 
+                timeZone: 'Europe/Paris',
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+            await kv.set('date_dernier_reset', dateAction);
+            
             return Astro.redirect('/dashboard-48'); 
         }
     } catch (e) {
@@ -50,9 +59,11 @@ let androidCount = 0;
 let pcCount = 0;
 let botCount = 0; // <--- AJOUTÉ
 let qrCount = 0;
+let lastResetDate = "";
 
 try {
     totalVisites = (await kv.get<number>('visites_totales')) || 0;
+    lastResetDate = await kv.get<string>('date_dernier_reset') || "Inconnue";
     const rawLogs = (await kv.lrange('journal_visites', 0, 99)) || []; 
     
     logs = rawLogs.map((item: any) => {
@@ -373,13 +384,21 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
 
         <div class="actions-row">
             <button onclick="window.print()" class="btn btn-gold"><i class="fa-solid fa-file-pdf"></i> Rapport</button>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <input type="text" id="confirmReset" placeholder="RESET" style="width:60px; padding:6px; border:1px solid var(--sable-dore); border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold;" />
-                <form method="POST">
-                    <input type="hidden" name="action" value="reset" />
-                    <button type="submit" id="resetBtn" disabled style="background: var(--brun-coco); color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">EFFACER</button>
-                </form>
-            </div>
+<div style="display:flex; align-items:center; gap:12px;">
+    <div style="display:flex; align-items:center; gap:8px;">
+        <input type="text" id="confirmReset" placeholder="RESET" style="width:60px; padding:6px; border:1px solid var(--sable-dore); border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold;" />
+        <form method="POST" style="margin:0;">
+            <input type="hidden" name="action" value="reset" />
+            <button type="submit" id="resetBtn" disabled style="background: var(--brun-coco); color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">EFFACER</button>
+        </form>
+    </div>
+
+    {/* Affichage de la date du dernier reset */}
+    <div style="display: flex; flex-direction: column; border-left: 1px solid var(--sable-dore); padding-left: 12px;">
+        <span style="font-size: 0.5rem; text-transform: uppercase; font-weight: 800; opacity: 0.5; letter-spacing: 0.5px;">Dernier Reset</span>
+        <span style="font-size: 0.65rem; font-weight: 700; color: var(--brun-coco);">{lastResetDate}</span>
+    </div>
+</div>
         </div>
 
         <div class="logs-section">
