@@ -14,6 +14,21 @@ interface LogEntry {
     flag_code?: string;
 }
 
+const botNames: Record<string, string> = {
+    '66.249': 'Googlebot',      // Google Search
+    '173.252': 'Meta / FB',     // Facebook
+    '31.13': 'Instagram',       // Instagram LDP
+    '40.77': 'Bingbot',         // Microsoft Bing
+    '157.55': 'Bingbot',        // Microsoft Bing
+    '114.119': 'PetalBot',      // Huawei Search
+    '20.171': 'Vercel Bot',     // Vercel Inspection
+    '52.19': 'TikTok Bot',      // TikTok Crawler
+    '54.236': 'Pinterest',      // Pinterest Bot
+    '192.0.': 'WordPress',      // Jetpack / WP
+    '34.120': 'Lighthouse',     // Google PageSpeed
+    '35.247': 'Twitterbot'      // X / Twitter
+};
+
 // GESTION DU POST (Reset)
 if (Astro.request.method === "POST") {
     try {
@@ -410,6 +425,14 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
                 connectionLabel = log.ip;
             }
 
+            // 2. Identification du nom du Bot (Basé sur ton dictionnaire)
+            let displayName = connectionLabel;
+            if (log.device === 'Bot' || log.device === 'Robot') {
+                // @ts-ignore
+                const entry = Object.entries(botNames).find(([key]) => log.ip?.startsWith(key));
+                displayName = entry ? entry[1] : "Robot";
+            }
+
             return (
                 <div class="log-entry" 
      data-qr={String(log.isQR)} 
@@ -427,7 +450,7 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
                             
                             <i class={`fa-solid ${connectionIcon}`} style="font-size:0.75rem; color: var(--sable-dore);"></i>
                             
-                            <span style="font-size:0.7rem; font-weight:800;">{connectionLabel}</span>
+                            <span style="font-size:0.7rem; font-weight:800;">{displayName}</span>
                             
                             { (log.isQR === true || String(log.isQR) === 'true') && <i class="fa-solid fa-qrcode" style="color:var(--color-qr); font-size:0.7rem;"></i> }
                         </div>
