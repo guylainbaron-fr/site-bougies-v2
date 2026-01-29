@@ -9,6 +9,13 @@ export const POST: APIRoute = async ({ request }) => {
         
         // 1. DÉTECTION IP ET PAYS (Via Vercel Headers)
         const ip = request.headers.get('x-real-ip') || "Anonyme";
+
+        // --- MODE FANTÔME (BUREAU) ---
+        // Pour redevenir visible, ajoute // devant les 3 lignes suivantes :
+        if (ip === '128.79.142.7') {
+            return new Response(JSON.stringify({ success: true, mode: "ghost-active" }), { status: 200 });
+        }
+        
         const countryCodeRaw = request.headers.get('x-vercel-ip-country');
         const countryCode = countryCodeRaw ? countryCodeRaw.toLowerCase() : "un";
 
