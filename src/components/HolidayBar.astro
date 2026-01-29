@@ -5,17 +5,22 @@ const events = eventsData[0].default;
 const { currentPage } = Astro.props;
 
 const showHolidayBar = true;
-const now = new Date();
+
+/** * CORRECTION FUSEAU HORAIRE & ANNÉE DYNAMIQUE
+ * On force l'heure de Paris pour éviter le décalage Vercel
+ * et on récupère l'année pour le remplacement automatique.
+ */
+const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Paris" }));
 const currentYear = now.getFullYear();
 
 // 1. Trouver l'événement actif
 const activeEvent = events
   .filter(e => {
-    // On recrée des dates complètes pour l'année en cours
+    // On recrée des dates complètes basées sur l'heure française
     const startDate = new Date(`${currentYear}-${e.start}T00:00:00`);
     const endDate = new Date(`${currentYear}-${e.end}T23:59:59`);
     
-    // Cas spécial pour Noël/Nouvel An qui chevauchent deux années (ex: 12-20 au 01-05)
+    // Cas spécial pour Noël/Nouvel An qui chevauchent deux années
     if (startDate > endDate) {
         endDate.setFullYear(currentYear + 1);
     }
@@ -23,7 +28,7 @@ const activeEvent = events
     return now >= startDate && now <= endDate;
   })
   .sort((a, b) => {
-    // Les événements plus courts (ex: anniversaire de 1 jour) restent prioritaires
+    // Priorité aux événements les plus courts (ex: anniversaire de 1 jour)
     const durationA = new Date(`2000-${a.end}`).getTime() - new Date(`2000-${a.start}`).getTime();
     const durationB = new Date(`2000-${b.end}`).getTime() - new Date(`2000-${b.start}`).getTime();
     return durationA - durationB;
@@ -33,6 +38,12 @@ const activeEvent = events
 let displayMessage = "";
 if (activeEvent) {
     displayMessage = activeEvent.pages[currentPage] || activeEvent.pages["default"] || Object.values(activeEvent.pages)[0];
+    
+    // --- REMPLACEMENT DYNAMIQUE DE L'ANNÉE ---
+    // Remplace {{year}} par 2026 (ou l'année actuelle) dans le texte du JSON
+    if (displayMessage && displayMessage.includes("{{year}}")) {
+        displayMessage = displayMessage.replaceAll("{{year}}", currentYear.toString());
+    }
 }
 ---
 
