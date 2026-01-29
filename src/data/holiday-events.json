@@ -9,7 +9,7 @@
       "bougies": "De nouvelles <strong>lueurs artisanales</strong> pour une année {{year}} chaleureuse.",
       "evenements": "Célébrons ensemble les instants magiques à venir en {{year}}.",
       "atelier": "La passion et l'artisanat français continuent de briller cette année.",
-      "apropos": "Partageons une nouvelle année riche en créations uniques.",
+      "apropos": "Partageons une nouvelle année {{year}} riche en créations uniques.",
       "videos": "<strong>Éclats de création :</strong> découvrez nos pièces prendre vie.",
       "avis": "<strong>Livre d'Or :</strong> votre satisfaction est notre plus belle création.",
       "contact": "Projetez vos <strong>envies de lumière</strong> pour cette année {{year}}.",
@@ -35,7 +35,7 @@
       "contact": "Envoyez vos vœux ou vos projets à Jean-François pour son anniversaire.",
       "merci": "Bienvenue ! Vous arrivez pour l'anniversaire du créateur en ce 29 janvier.",
       "au-revoir": "Merci de votre visite en ce jour de fête !",
-      "mentions-legales": "Célébrons l'artisanat et la passion en ce {{year}}.",
+      "mentions-legales": "Célébrons l'artisanat et la passion en ce 29 janvier.",
       "default": "Joyeux Anniversaire à <strong>Jean-François</strong> !"
     }
   },
@@ -46,8 +46,8 @@
     "end": "02-14",
     "pages": {
       "index": "Saint-Valentin {{year}} : célébrez l'amour avec des créations artisanales uniques.",
-      "bougies": "Déclarez votre flamme avec nos <strong>bougies parfumées</strong> à la vanille.",
-      "evenements": "Offrez un moment d'exception pour la Saint-Valentin.",
+      "bougies": "Déclarez votre flamme avec nos <strong>bougies parfumées</strong>.",
+      "evenements": "Offrez un moment d'exception pour la Saint-Valentin {{year}}.",
       "atelier": "L'art de sculpter l'amour : découvrez nos pièces uniques.",
       "apropos": "Deux artisans, une passion commune... Joyeuse Saint-Valentin.",
       "videos": "Voyez comment naissent nos <strong>duos de sculptures</strong>.",
@@ -55,7 +55,7 @@
       "contact": "Commandez un cadeau personnalisé pour cette Saint-Valentin {{year}}.",
       "merci": "Bienvenue dans notre univers de douceur et de création.",
       "au-revoir": "Que la magie de la Saint-Valentin vous accompagne...",
-      "mentions-legales": "La passion de l'artisanat en toute transparence.",
+      "mentions-legales": "La passion de l'artisanat français en cette année {{year}}.",
       "default": "Un cadeau unique pour une personne unique en {{year}}."
     }
   },
@@ -75,7 +75,7 @@
       "contact": "Préparez vos cadeaux de Pâques avec des pièces originales.",
       "merci": "Merci de votre visite printanière à l'Atelier !",
       "au-revoir": "À bientôt pour de nouvelles découvertes.",
-      "mentions-legales": "Transparence et artisanat local.",
+      "mentions-legales": "Transparence et artisanat local en {{year}}.",
       "default": "Joyeuses Fêtes de Pâques {{year}} !"
     }
   },
@@ -116,7 +116,7 @@
       "merci": "Merci de porter de l'intérêt au travail de la main.",
       "au-revoir": "À bientôt à l'établi !",
       "mentions-legales": "Artisanat d'art et respect des traditions.",
-      "default": "Bonne Fête à tous les Papas en ce {{year}} !"
+      "default": "Bonne Fête à tous les Papas !"
     }
   },
   {
@@ -127,7 +127,7 @@
     "pages": {
       "index": "Une ambiance mystérieuse s'installe à l'Atelier pour cet automne {{year}}.",
       "bougies": "Éclairez vos soirées d'octobre d'une <strong>lueur ensorcelante</strong>.",
-      "evenements": "Des créations frissonnantes pour célébrer Halloween.",
+      "evenements": "Des créations frissonnantes pour célébrer Halloween {{year}}.",
       "atelier": "Quand le bois sculpte l'étrange... Entrez dans notre univers.",
       "apropos": "L'Atelier se pare de ses couleurs d'automne.",
       "videos": "Les ombres dansent à l'Atelier : découvrez nos vidéos.",
@@ -149,7 +149,7 @@
       "bougies": "Illuminez vos fêtes avec nos <strong>bougies artisanales</strong>.",
       "evenements": "Retrouvez-nous sur les <strong>marchés de Noël {{year}}</strong> !",
       "atelier": "L'atelier du Père Noël ? Presque ! Découvrez nos sculptures de fête.",
-      "apropos": "Un Noël authentique sous le signe de l'artisanat français.",
+      "apropos": "Un Noël {{year}} authentique sous le signe de l'artisanat français.",
       "videos": "La fabrication de vos cadeaux de Noël en images.",
       "avis": "Merci de faire briller notre Noël par vos gentils messages.",
       "contact": "Commandez vos cadeaux avant le grand jour !",
@@ -165,7 +165,7 @@
     "start": "11-24",
     "end": "11-24",
     "pages": {
-      "index": "Aujourd'hui, nous fêtons l'anniversaire d'<strong>Aniuta</strong>, la créatrice de l'Atelier.",
+      "index": "Aujourd'hui, nous fêtons l'anniversaire d'<strong>Aniuta</strong>, la créatrice de l'Atelier !",
       "bougies": "Une lueur spéciale pour l'anniversaire d'Aniuta, notre experte cirier.",
       "evenements": "Un jour de fête à l'Atelier : c'est l'anniversaire d'Aniuta !",
       "atelier": "La magie des senteurs est à l'honneur pour l'anniversaire d'Aniuta.",
@@ -175,7 +175,7 @@
       "contact": "Envoyez vos vœux à Aniuta pour sa journée spéciale.",
       "merci": "Bienvenue ! Vous arrivez pour l'anniversaire d'Aniuta.",
       "au-revoir": "Merci de votre visite !",
-      "mentions-legales": "Célébrons l'artisanat au féminin en ce {{year}}.",
+      "mentions-legales": "Célébrons l'artisanat au féminin en ce 24 novembre.",
       "default": "Joyeux Anniversaire à <strong>Aniuta</strong> !"
     }
   }
