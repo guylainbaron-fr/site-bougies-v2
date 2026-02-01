@@ -1,6 +1,9 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
 const pageId = "avis";
+
+import { Image } from 'astro:assets';
+import avisHeroImg from "../assets/images/avis-Img.webp";
 ---
 
 <MainLayout 
@@ -48,6 +51,24 @@ const pageId = "avis";
             </div>
         </div>
     </section>
+
+<section id="hero-signature-sculpture">
+    <div class="container"> 
+        <div class="avis-hero-header">
+            <div class="etiquette-luxe">Livre d'Or</div>
+            
+            <div class="cepes-container">
+                <Image 
+                    src={avisHeroImg} 
+                    alt="Sculpture de branche en bois et cèpes - Artisanat Lozère" 
+                    class="img-cepes-hero" 
+                    loading="eager" 
+                    fetchpriority="high"
+                />
+            </div>
+        </div>
+    </div>
+</section>
 
     <section id="avis-google-unique">
         <div class="container">

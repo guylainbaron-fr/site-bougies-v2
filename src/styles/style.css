@@ -3586,3 +3586,84 @@ h2::after {
         height: 300px !important;
     }
 }
+
+/* --- SECTION HERO SIGNATURE : STYLE LIGNE GOOGLE --- */
+
+#hero-signature-sculpture {
+    background-color: var(--fond-page);
+    padding: 3rem 0 5rem 0;
+    width: 100%;
+}
+
+.avis-hero-header {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* L'Étiquette : Devient une ligne de séparation élégante */
+.etiquette-luxe {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px; /* Largeur de la ligne */
+    margin-bottom: 50px;
+    
+    color: #ea4335;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+/* La ligne rouge à gauche et à droite du texte */
+.etiquette-luxe::before,
+.etiquette-luxe::after {
+    content: "";
+    flex: 1;
+    height: 2px;
+    background-color: #ea4335;
+}
+
+/* Espacement entre les lignes et le texte */
+.etiquette-luxe::before { margin-right: 25px; }
+.etiquette-luxe::after { margin-left: 25px; }
+
+/* Le conteneur Photo (Option 3 conservée) */
+.cepes-container {
+    position: relative;
+    z-index: 2;
+    width: 90%;
+    max-width: 950px;
+    background: #ffffff;
+    padding: 18px;
+    box-sizing: border-box;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+    transform: rotate(-1deg);
+    border: 1px solid #e0e0e0;
+}
+
+.img-cepes-hero {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* --- MOBILE --- */
+@media (max-width: 768px) {
+    .etiquette-luxe {
+        font-size: 0.85rem;
+        letter-spacing: 4px;
+        max-width: 90%;
+    }
+    .etiquette-luxe::before, .etiquette-luxe::after {
+        height: 1.5px;
+    }
+}
