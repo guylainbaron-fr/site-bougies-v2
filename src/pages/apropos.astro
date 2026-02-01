@@ -5,6 +5,7 @@ const pageId = "apropos";
 import { Image } from 'astro:assets';
 
 // Importation des images
+import troisCepesImg from '../assets/images/trois-cepes-bois.webp';
 import presseImg from '../assets/images/presse.webp';
 import souvenirsImg from '../assets/images/guylain-et-jeanfrancois.webp';
 ---
@@ -77,9 +78,27 @@ import souvenirsImg from '../assets/images/guylain-et-jeanfrancois.webp';
                 Nous nous engageons à privilégier les <strong>circuits courts</strong> et les essences de <strong>bois françaises</strong>. Chaque pièce, qu'elle soit une sculpture détaillée ou une <strong>bougie champignon ultra-réaliste</strong>, est conçue pour durer, allant à l'encontre de la production industrielle. C'est l'âme de l'artisanat lozérien que nous souhaitons partager avec vous.
             </p>
             
-            <div class="cta-container">
-                <a href="/contact" class="btn">Parler de Votre Projet</a>
-            </div>
+<div class="cta-container">
+    <a href="/contact" class="btn">Parler de Votre Projet</a>
+</div>
+
+<div class="sculpture-detail-wrapper">
+    <div class="cepes-photo-archive">
+        <Image 
+            src={troisCepesImg} 
+            alt="Sculpture artisanale en bois de quatre cèpes - Décoration artisanat Lozère" 
+            class="img-archive" 
+            width={1000}
+            height={882}
+            quality={85}
+            format="webp"
+            loading="lazy"
+        />
+        <p class="photo-caption">
+            Sculpture artisanale en bois : quatre cèpes décoratifs façonnés à la main en Lozère, Atelier Chasseradès.
+        </p>
+    </div>
+</div>
 
             <section id="presse-section">
                 <h2>On Parle de Nous dans la Presse !</h2>

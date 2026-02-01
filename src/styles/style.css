@@ -3667,3 +3667,45 @@ h2::after {
         height: 1.5px;
     }
 }
+
+.sculpture-detail-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+.cepes-photo-archive {
+    background: #ffffff;
+    padding: 15px;
+    box-shadow: 0 15px 40px rgba(45, 34, 40, 0.2);
+    border: 1px solid var(--sable-dore);
+    transform: rotate(-1.5deg);
+    max-width: 500px;
+    width: 100%;
+}
+
+.img-archive {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.photo-caption {
+    margin-top: 15px;
+    /* Vanille bien fort en fond */
+    background-color: var(--vanille-pure); 
+    padding: 15px;
+    border-radius: 2px;
+    
+    /* Style du texte : Coco, Gras et Italique */
+    font-family: var(--font-principale);
+    color: var(--brun-coco);
+    font-weight: 700;      /* Bien gras */
+    font-style: italic;    /* Italique */
+    font-size: 1rem;       /* Taille affirmée */
+    
+    text-align: center;
+    line-height: 1.4;
+    border: 1px solid var(--sable-dore); /* Pour finir l'aspect étiquette */
+}
