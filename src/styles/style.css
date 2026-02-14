@@ -884,6 +884,7 @@ footer p {
    IMAGES D'INTRODUCTION (LOOK SABLE & RELIEF)
    ========================================================================== */
 
+/* Ajoute-la ici pour l'ombre et les coins */
 .intro-image-1,
 .intro-image-2,
 .intro-image-3 {
@@ -895,6 +896,7 @@ footer p {
     box-shadow: 0 10px 30px rgba(45, 34, 26, 0.15); 
 }
 
+/* Garde les autres réglages à part car l'img-collection n'est pas un portrait */
 .intro-image-1,
 .intro-image-3 {
     aspect-ratio: 600 / 669;
@@ -904,6 +906,29 @@ footer p {
 .intro-image-2 {
     aspect-ratio: 600 / 800;
     object-fit: cover;
+}
+
+.img-collection-elevate {
+    display: block;
+    margin: 3rem auto;
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    /* On part sur une ombre très douce au repos */
+    box-shadow: 0 5px 15px rgba(45, 34, 26, 0.1);
+    /* Transition fluide pour tout (ombre, zoom, couleur) */
+    transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    filter: grayscale(0.2);
+}
+
+.img-collection-elevate:hover {
+    /* L'image grandit légèrement par l'extérieur */
+    transform: scale(1.03);
+    /* L'ombre s'élargit et devient plus profonde (effet d'élévation) */
+    box-shadow: 0 20px 40px rgba(45, 34, 26, 0.2);
+    /* On retrouve les couleurs vibrantes */
+    filter: grayscale(0);
+    cursor: pointer;
 }
 
 /* ==========================================================================
