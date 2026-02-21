@@ -1,45 +1,77 @@
 ---
 // src/components/PhoneProtect.astro
-const { class: className = "" } = Astro.props;
+interface Props {
+  class?: string;
+  isWhatsApp?: boolean;
+  onlyLink?: boolean;
+}
+
+const { class: className = "", isWhatsApp = false, onlyLink = false } = Astro.props;
 
 const p1 = "MDkgODUgNjA="; 
 const p2 = "NTMgODk=";
+const w1 = "NTMgODkgMDkgODUgNjA="; 
 ---
 
-<span class="phone-placeholder" 
-      data-class={className} 
-      data-p1={p1} 
-      data-p2={p2}>
-    <noscript>
-        <small class="js-warning">Tel protégé</small>
-    </noscript>
-</span>
+{onlyLink ? (
+  <a href="#" 
+     class={`phone-placeholder ${className}`}
+     data-p1={isWhatsApp ? w1 : p1} 
+     data-p2={isWhatsApp ? "" : p2}
+     data-type={isWhatsApp ? "whatsapp" : "tel"}
+     data-onlylink="true"
+     target="_blank"
+     rel="noopener noreferrer"
+  >
+    <slot />
+  </a>
+) : (
+  <span class={`phone-placeholder ${className}`}
+        data-p1={p1} 
+        data-p2={p2}
+        data-type="tel"
+        data-onlylink="false">
+      <noscript><small style="font-size: 0.8em; opacity: 0.6;">Tel protégé</small></noscript>
+  </span>
+)}
 
 <script>
     const revealPhones = () => {
-        const placeholders = document.querySelectorAll('.phone-placeholder');
+        const elements = document.querySelectorAll('.phone-placeholder');
         
-        placeholders.forEach(span => {
-            if (span.getAttribute('data-filled') !== 'true') {
-                const part1 = span.getAttribute('data-p1') || "";
-                const part2 = span.getAttribute('data-p2') || "";
-                const extraClass = span.getAttribute('data-class') || "";
-                
-                if (part1 !== "" && part2 !== "") {
-                    const start = atob(part1).split('').reverse().join('');
-                    const end = atob(part2).split('').reverse().join('');
-                    const fullPhone = `${start} ${end}`;
-                    
-                    span.setAttribute('data-filled', 'true');
-                    
-                    setTimeout(() => {
-                        const link = document.createElement('a');
-                        link.href = `tel:${fullPhone.replace(/\s/g, '')}`;
-                        link.className = extraClass;
-                        link.textContent = fullPhone;
-                        span.replaceWith(link);
-                    }, 500);
+        elements.forEach(el => {
+            const htmlEl = el as HTMLElement;
+            if (htmlEl.getAttribute('data-filled') === 'true') return;
+
+            const part1 = htmlEl.getAttribute('data-p1') || "";
+            const part2 = htmlEl.getAttribute('data-p2') || "";
+            const type = htmlEl.getAttribute('data-type');
+            const onlyLink = htmlEl.getAttribute('data-onlylink') === "true";
+
+            try {
+                const start = atob(part1).split('').reverse().join('');
+                const end = (part2 && part2 !== "") ? atob(part2).split('').reverse().join('') : "";
+                const fullPhone = end ? `${start} ${end}` : start;
+                const cleanNumber = fullPhone.replace(/\s/g, '');
+
+                if (type === "whatsapp") {
+                    const anchor = htmlEl as HTMLAnchorElement;
+                    const waNumber = cleanNumber.startsWith('0') ? '33' + cleanNumber.substring(1) : cleanNumber;
+                    anchor.href = `https://wa.me/${waNumber}`;
+                } else if (onlyLink) {
+                    const anchor = htmlEl as HTMLAnchorElement;
+                    anchor.href = `tel:${cleanNumber}`;
+                } else {
+                    const link = document.createElement('a');
+                    link.className = htmlEl.className;
+                    link.href = `tel:${cleanNumber}`;
+                    link.textContent = fullPhone;
+                    htmlEl.replaceWith(link);
+                    return;
                 }
+                htmlEl.setAttribute('data-filled', 'true');
+            } catch (e) {
+                console.error("Erreur PhoneProtect:", e);
             }
         });
     }
@@ -47,15 +79,3 @@ const p2 = "NTMgODk=";
     revealPhones();
     document.addEventListener('astro:page-load', revealPhones);
 </script>
-
-<style>
-    .phone-placeholder {
-        display: inline-block;
-        min-width: 110px; 
-        vertical-align: middle;
-    }
-    .js-warning {
-        font-size: 0.85em;
-        opacity: 0.7;
-    }
-</style>
