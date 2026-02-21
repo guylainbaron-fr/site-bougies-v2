@@ -10,34 +10,37 @@ const p1 = "bm9yYWJzaW9jbmFyZm5hZWo=";
 const p2 = "dGVuLmV0c29wYWw=";
 ---
 
-<a href="#" 
-   class={`email-placeholder ${className}`}
-   data-p1={p1} 
-   data-p2={p2}
->
+<span class={`email-placeholder ${className}`}
+      data-p1={p1} 
+      data-p2={p2}>
     <noscript><small style="font-size: 0.85em; opacity: 0.7;">Email protégé</small></noscript>
-</a>
+</span>
 
 <script>
     const revealEmails = () => {
         const placeholders = document.querySelectorAll('.email-placeholder');
         
         placeholders.forEach(el => {
-            const htmlEl = el as HTMLAnchorElement;
+            const htmlEl = el as HTMLElement;
             if (htmlEl.getAttribute('data-filled') === 'true') return;
 
             const part1 = htmlEl.getAttribute('data-p1') || "";
             const part2 = htmlEl.getAttribute('data-p2') || "";
             
-            if (part1 !== "" && part2 !== "") {
+            if (part1 && part2) {
                 try {
                     const user = atob(part1).split('').reverse().join('');
                     const domain = atob(part2).split('').reverse().join('');
                     const email = `${user}@${domain}`;
                     
-                    htmlEl.href = `mailto:${email}`;
-                    htmlEl.textContent = email;
+                    const link = document.createElement('a');
+                    link.href = `mailto:${email}`;
+                    // On copie toutes les classes sauf le placeholder pour être 100% propre
+                    link.className = htmlEl.className.replace('email-placeholder', '').trim();
+                    link.textContent = email;
+                    
                     htmlEl.setAttribute('data-filled', 'true');
+                    htmlEl.replaceWith(link);
                 } catch (e) {
                     console.error("Erreur EmailProtect:", e);
                 }
@@ -53,7 +56,7 @@ const p2 = "dGVuLmV0c29wYWw=";
     .email-placeholder {
         display: inline-block;
         vertical-align: middle;
-        text-decoration: none;
-        color: inherit;
+        /* On évite que le span vide ne prenne de la place avant le JS */
+        min-width: 0;
     }
 </style>
