@@ -36,7 +36,7 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
     <meta property="og:image" content={socialImageURL.href}>
     <meta property="og:description" content={description}>
     
-    <meta name="google-site-verification" content="googleca94fc0ed3c52975" />
+    <meta name="google-site-verification" content="gDpJX9drtEYHVvvOGbR_7MWrd1sx_G2tLSI-Ti0ntUE" />
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content={title}>
@@ -83,7 +83,7 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
     if (sessionStorage.getItem('site_visited')) return;
 
     // 1. On identifie le bot mais on ne bloque plus avec "return"
-    const botPatterns = /bot|spider|crawl|slurp|facebookexternalhit|facebookcatalog|bingpreview|adsbot|lighthouse|twitterbot|linkedinbot|pinterest|slackbot/i;
+    
     const isBot = botPatterns.test(navigator.userAgent);
 
     const sendLog = async () => {
