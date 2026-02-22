@@ -1,5 +1,6 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import PhoneProtect from '../components/PhoneProtect.astro';
 const pageId = "videos";
 
 import VideoItem from '../components/VideoItem.astro';
@@ -100,9 +101,14 @@ import poster3 from '../assets/images/miniature-cadeau-3.webp';
                 <p class="etiquette-signature">
                     Vous avez eu un coup de cœur pour l'une de nos bougies en vidéo ? 
                 </p>
-                <a href="https://wa.me/33658909835" target="_blank" class="btn large-btn whatsapp-btn main-whatsapp-btn" title="Commander via WhatsApp">
+                <PhoneProtect 
+                        isWhatsApp={true} 
+                        onlyLink={true} 
+                        class="btn large-btn whatsapp-btn main-whatsapp-btn"
+                        title="Commander via WhatsApp"
+                        >
                     <i class="fab fa-whatsapp"></i> Commander votre bougie via WhatsApp
-                </a>
+                </PhoneProtect>
             </div>
         </div>
     </section>

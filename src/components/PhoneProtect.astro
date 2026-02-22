@@ -4,9 +4,11 @@ interface Props {
   class?: string;
   isWhatsApp?: boolean;
   onlyLink?: boolean;
+  title?: string;
+  ariaLabel?: string;
 }
 
-const { class: className = "", isWhatsApp = false, onlyLink = false } = Astro.props;
+const { class: className = "", isWhatsApp = false, onlyLink = false, title = "", ariaLabel = "" } = Astro.props;
 
 const p1 = "MDkgODUgNjA="; 
 const p2 = "NTMgODk=";
@@ -22,6 +24,8 @@ const w1 = "NTMgODkgMDkgODUgNjA=";
      data-onlylink="true"
      target="_blank"
      rel="noopener noreferrer"
+     title={title}
+     aria-label={ariaLabel}
   >
     <slot />
   </a>

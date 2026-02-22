@@ -1,5 +1,6 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import PhoneProtect from '../components/PhoneProtect.astro';
 const pageId = "bougies";
 
 import { Image } from 'astro:assets';
@@ -139,15 +140,14 @@ import allumeesImg from '../assets/images/bougies-allumees.jpg';
                 </div>
             </div>
             
-            <a 
-                href="https://wa.me/33658909835" 
-                target="_blank" 
-                rel="noopener noreferrer"
+            <PhoneProtect 
+                isWhatsApp={true} 
+                onlyLink={true} 
                 class="btn large-btn whatsapp-btn main-whatsapp-btn"
                 title="Commander vos bougies champignons via WhatsApp"
-            >
+                >
                 <i class="fab fa-whatsapp" aria-hidden="true"></i> Commander vos bougies via WhatsApp
-            </a>
+            </PhoneProtect>
             
             <div class="whatsapp-image-container">
                 <Image 

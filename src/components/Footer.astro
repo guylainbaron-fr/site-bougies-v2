@@ -1,6 +1,7 @@
 ---
-// On récupère l'année automatiquement en JS pour ne plus jamais y toucher
+// Footer.astro
 const currentYear = new Date().getFullYear();
+import PhoneProtect from '../components/PhoneProtect.astro';
 ---
 <div class="footer-divider">
     <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
@@ -19,9 +20,9 @@ const currentYear = new Date().getFullYear();
                 <i class="fab fa-instagram" aria-hidden="true"></i>
             </a>
 
-            <a href="https://wa.me/33658909835" target="_blank" class="whatsapp-link" aria-label="Démarrer une conversation sur WhatsApp">
-                <i class="fab fa-whatsapp"></i>
-            </a>
+            <PhoneProtect isWhatsApp={true} onlyLink={true} class="whatsapp-link" ariaLabel="Contacter l'atelier via WhatsApp">
+                 <i class="fab fa-whatsapp"></i>
+            </PhoneProtect>
 
             <a href="https://www.tiktok.com/@jeanfrancoisbaron2" target="_blank" class="tiktok-link" aria-label="Lien vers le profil TikTok">
                 <i class="fab fa-tiktok"></i>
