@@ -22,13 +22,14 @@ const logoSrc = logoEntreprise.src;
       <div style="display: flex; align-items: center; justify-content: center;">
         <img 
           src={logoSrc} 
-          style="width: 70px; height: auto; opacity: 0.15; transform: rotate(-20deg); mix-blend-mode: multiply;" 
+          style="width: 75px; height: auto; opacity: 0.25; transform: rotate(-20deg); mix-blend-mode: multiply; border-radius: 20px; box-shadow: 0 0 10px rgba(255,255,255,0.2);" 
         />
       </div>
     ))}
   </div>
 
   <div 
-    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'); cursor: default;"
+    draggable="false" 
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'); cursor: default; user-select: none;"
   ></div>
 </div>
