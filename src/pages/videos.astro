@@ -16,47 +16,64 @@ import poster3 from '../assets/images/miniature-cadeau-3.webp';
   description="Découvrez nos bougies cèpes en vidéo : un réalisme saisissant en cire 100% naturelle, parfum Vanille Gourmande. Savoir-faire artisanal de Lozère."
   pageId={pageId}
 >
-    <script type="application/ld+json" slot="head">
+<script type="application/ld+json" slot="head">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "CollectionPage",
-          "@id": "https://jf-aniuta.vercel.app/videos/#webpage",
-          "url": "https://jf-aniuta.vercel.app/videos",
-          "name": "Collection Vidéo : Bougies Cèpes Artisanales | JF & A",
-          "description": "Démonstration visuelle du réalisme de nos bougies cèpes en cire naturelle. Savoir-faire de Lozère.",
-          "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
-          "about": { "@id": "https://jf-aniuta.vercel.app/#organization" },
-          "inLanguage": "fr-FR"
-        },
-        {
-          "@type": "VideoObject",
-          "name": "Bougie Cèpe Artisanale - Présentation 1",
-          "description": "Zoom sur la bougie cèpe artisanale, cire naturelle et parfum vanille gourmande.",
-          "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-1.webp",
-          "uploadDate": "2026-01-11",
-          "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-1.mp4"
-        },
-        {
-          "@type": "VideoObject",
-          "name": "Réalisme de la Bougie Cèpe - Présentation 2",
-          "description": "Focus sur les détails et le réalisme de nos bougies cèpes faites main.",
-          "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-2.webp",
-          "uploadDate": "2026-01-11",
-          "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-2.mp4"
-        },
-        {
-          "@type": "VideoObject",
-          "name": "Ambiance Vanille Gourmande - Présentation 3",
-          "description": "Mise en situation d'une bougie cèpe pour une décoration naturelle.",
-          "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-3.webp",
-          "uploadDate": "2026-01-11",
-          "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-3.mp4"
-        }
-      ]
+      "@type": "Organization",
+      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "name": "Jean-François & Aniuta",
+      "url": "https://jf-aniuta.vercel.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://jf-aniuta.vercel.app/#logo",
+        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "width": 512,
+        "height": 512
+      }
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": "https://jf-aniuta.vercel.app/videos/#webpage",
+      "url": "https://jf-aniuta.vercel.app/videos",
+      "name": "Collection Vidéo : Bougies Cèpes Artisanales | JF & A",
+      "description": "Démonstration visuelle du réalisme de nos bougies cèpes en cire naturelle. Savoir-faire de Lozère.",
+      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+      "about": { "@id": "https://jf-aniuta.vercel.app/#organization" },
+      "inLanguage": "fr-FR"
+    },
+    {
+      "@type": "VideoObject",
+      "name": "Bougie Cèpe Artisanale - Présentation 1",
+      "description": "Zoom sur la bougie cèpe artisanale, cire naturelle et parfum vanille gourmande.",
+      "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-1.webp",
+      "uploadDate": "2026-01-11",
+      "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-1.mp4",
+      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+    },
+    {
+      "@type": "VideoObject",
+      "name": "Réalisme de la Bougie Cèpe - Présentation 2",
+      "description": "Focus sur les détails et le réalisme de nos bougies cèpes faites main.",
+      "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-2.webp",
+      "uploadDate": "2026-01-11",
+      "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-2.mp4",
+      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+    },
+    {
+      "@type": "VideoObject",
+      "name": "Ambiance Vanille Gourmande - Présentation 3",
+      "description": "Mise en situation d'une bougie cèpe pour une décoration naturelle.",
+      "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-3.webp",
+      "uploadDate": "2026-01-11",
+      "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-3.mp4",
+      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" }
     }
-    </script>
+  ]
+}
+</script>
 
     <section id="christmas-videos" class="main-content">
         <div class="container">

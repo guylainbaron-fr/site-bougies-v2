@@ -2,11 +2,27 @@
 // 1. Génération de l'année
 const currentYear = new Date().getFullYear();
 
+import PhoneProtect from '../components/PhoneProtect.astro';
+
 // 2. Imports pour la performance
 import '../styles/fa/css/brands.min.css';
 import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
+
+// 3. Schéma simplifié pour la 404 (Mode Forteresse)
+const schemaData = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://jf-aniuta.vercel.app/404#webpage",
+      "url": "https://jf-aniuta.vercel.app/404",
+      "name": "Page non trouvée - Jean-François & Aniuta",
+      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" }
+    }
+  ]
+});
 ---
 <!DOCTYPE html>
 <html lang="fr">
@@ -14,13 +30,15 @@ import '@fontsource/poppins/700.css';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Page non trouvée | Jean François & ANIUTA</title>
+    <title>Page non trouvée | Jean-François & ANIUTA</title>
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/images/logo_192.png" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#fdfaf7">
+
+    <script type="application/ld+json" set:html={schemaData}></script>
 
     <style>
         /* RESET & BASE */
@@ -118,13 +136,29 @@ import '@fontsource/poppins/700.css';
         /* FOOTER */
         footer { padding: 20px 0 40px; text-align: center; flex-shrink: 0; }
         .social-links { margin-bottom: 15px; }
-        .social-links a { 
-            margin: 0 10px; color: var(--marron-artisan) !important; font-size: 1.2rem;
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 44px; height: 44px; border: 1px solid rgba(61, 43, 31, 0.1); 
-            border-radius: 50%; transition: 0.4s;
+
+        /* Styles partagés icônes sociales + WhatsApp */
+        /* On ajoute :global() pour forcer le style sur le composant PhoneProtect */
+        .social-links a, 
+        .social-links :global(.whatsapp-link) { 
+            margin: 0 10px; 
+            color: var(--marron-artisan) !important; 
+            font-size: 1.2rem;
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            width: 44px; 
+            height: 44px; 
+            border: 1px solid rgba(61, 43, 31, 0.1); 
+            border-radius: 50%; 
+            transition: 0.4s;
+            vertical-align: middle; 
+            cursor: pointer;
+            background: transparent; /* Assure que le fond est vide au départ */
         }
-        .social-links a:hover { 
+
+        .social-links a:hover, 
+        .social-links :global(.whatsapp-link:hover) { 
             background-color: var(--or-doux) !important;
             color: #fff !important; 
             border-color: var(--or-doux); 
@@ -132,8 +166,6 @@ import '@fontsource/poppins/700.css';
         }
 
         .copyright { color: var(--texte-gris-fort); font-size: 0.75rem; display: block; margin-top: 15px; }
-        
-        /* LIEN MENTIONS LÉGALES - COULEURS INVERSÉES */
         .legal-link { 
             color: var(--marron-artisan) !important; 
             text-decoration: underline; 
@@ -141,10 +173,7 @@ import '@fontsource/poppins/700.css';
             font-weight: 600;
             transition: all 0.3s ease;
         }
-        .legal-link:hover { 
-            color: var(--or-doux) !important; 
-            text-decoration: none;
-        }
+        .legal-link:hover { color: var(--or-doux) !important; text-decoration: none; }
 
         @keyframes rotate-snow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -174,11 +203,11 @@ import '@fontsource/poppins/700.css';
     <div class="social-links">
         <a href="https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
         <a href="https://www.instagram.com/jean_francois_aniuta/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="https://wa.me/33658909835" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <PhoneProtect isWhatsApp={true} onlyLink={true} class="whatsapp-link" ariaLabel="Contacter l'atelier via WhatsApp"><i class="fab fa-whatsapp"></i></PhoneProtect>
         <a href="https://www.tiktok.com/@jeanfrancoisbaron2" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
     </div>
     <span class="copyright">
-        © <span>{currentYear}</span> Jean François & Aniuta. Gravé dans la cire, protégé par l'hiver.
+        © <span>{currentYear}</span> Jean-François & Aniuta. Gravé dans la cire, protégé par l'hiver.
         | <a href="/mentions-legales" class="legal-link" title="Consulter les Mentions Légales">Mentions Légales & CGV</a>
     </span>
 </footer>

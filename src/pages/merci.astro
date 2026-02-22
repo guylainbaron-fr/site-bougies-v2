@@ -10,33 +10,35 @@ const pageId = "merci";
 >
     <meta name="robots" content="noindex, nofollow" slot="head" />
 
-    <script type="application/ld+json" slot="head">
+<script type="application/ld+json" slot="head">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "WebPage",
-          "@id": "https://jf-aniuta.vercel.app/merci#webpage",
-          "url": "https://jf-aniuta.vercel.app/merci",
-          "name": "Inscription Confirmée - Jean-François & Aniuta",
-          "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
-          "description": "Votre inscription à La Note de l'Atelier est bien confirmée. Bienvenue dans l'univers de Jean-François & Aniuta."
-        },
-        {
-          "@type": "Organization",
-          "@id": "https://jf-aniuta.vercel.app/#organization",
-          "name": "Jean-François & Aniuta",
-          "url": "https://jf-aniuta.vercel.app/",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://jf-aniuta.vercel.app/images/logo_144.png",
-            "width": 144,
-            "height": 144
-          }
-        }
-      ]
+      "@type": "WebPage",
+      "@id": "https://jf-aniuta.vercel.app/merci#webpage",
+      "url": "https://jf-aniuta.vercel.app/merci",
+      "name": "Inscription Confirmée - Jean-François & Aniuta",
+      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+      "description": "Votre inscription à La Note de l'Atelier est bien confirmée. Bienvenue dans l'univers de Jean-François & Aniuta."
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "name": "Jean-François & Aniuta",
+      "url": "https://jf-aniuta.vercel.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://jf-aniuta.vercel.app/#logo",
+        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "width": 512,
+        "height": 512
+      }
     }
-    </script>
+  ]
+}
+</script>
 
     <section id="contact-page" style="padding: 80px 0; min-height: 50vh; display: flex; align-items: center;">
         <div class="container">

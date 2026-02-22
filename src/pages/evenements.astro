@@ -61,48 +61,62 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
   description="Découvrez l'artisanat du bois et de la bougie de J.F. & Aniuta. Sculptures uniques sur bois local et bougies naturelles parfumées à Chasseradès (Lozère)."
   pageId={pageId}
 >
-    <script type="application/ld+json" slot="head">
+<script type="application/ld+json" slot="head">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "EventVenue",
-          "@id": "https://jf-aniuta.vercel.app/evenements#venue",
-          "name": "Jean-François & Aniuta en déplacement",
-          "description": "Retrouvez nos créations artisanales sur les marchés et événements en Occitanie.",
-          "address": {
-            "@type": "PostalAddress",
-            "addressLocality": "Chasseradès",
-            "postalCode": "48250",
-            "addressRegion": "Occitanie",
-            "addressCountry": "FR"
-          }
-        },
-        {
-          "@type": "LocalBusiness",
-          "@id": "https://jf-aniuta.vercel.app/#localbusiness",
-          "name": "Jean-François & Aniuta",
-          "url": "https://jf-aniuta.vercel.app/evenements",
-          "image": "https://jf-aniuta.vercel.app/logo-entreprise.webp",
-          "telephone": "+33658909835",
-          "sameAs": [
-            "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
-            "https://www.instagram.com/jean_francois_aniuta/",
-            "https://www.tiktok.com/@jeanfrancoisbaron2"
-          ],
-          "location": { "@id": "https://jf-aniuta.vercel.app/evenements#venue" }
-        },
-        {
-          "@type": "WebPage",
-          "@id": "https://jf-aniuta.vercel.app/evenements#webpage",
-          "url": "https://jf-aniuta.vercel.app/evenements",
-          "name": "Événements et Marchés - Jean-François & Aniuta",
-          "description": "Photos et vidéos de nos marchés artisanaux et événements autour du Mont Lozère.",
-          "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" }
-        }
-      ]
+      "@type": "Organization",
+      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "name": "Jean-François & Aniuta",
+      "url": "https://jf-aniuta.vercel.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://jf-aniuta.vercel.app/#logo",
+        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "width": 512,
+        "height": 512
+      }
+    },
+    {
+      "@type": "EventVenue",
+      "@id": "https://jf-aniuta.vercel.app/evenements#venue",
+      "name": "Jean-François & Aniuta en déplacement",
+      "description": "Retrouvez nos créations artisanales sur les marchés et événements en Occitanie.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Chasseradès",
+        "postalCode": "48250",
+        "addressRegion": "Occitanie",
+        "addressCountry": "FR"
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+      "name": "Jean-François & Aniuta",
+      "url": "https://jf-aniuta.vercel.app/evenements",
+      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
+        "https://www.instagram.com/jean_francois_aniuta/",
+        "https://www.tiktok.com/@jeanfrancoisbaron2"
+      ],
+      "location": { "@id": "https://jf-aniuta.vercel.app/evenements#venue" },
+      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://jf-aniuta.vercel.app/evenements#webpage",
+      "url": "https://jf-aniuta.vercel.app/evenements",
+      "name": "Événements et Marchés - Jean-François & Aniuta",
+      "description": "Photos et vidéos de nos marchés artisanaux et événements autour du Mont Lozère.",
+      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" }
     }
-    </script>
+  ]
+}
+</script>
 
 <section id="evenements-page">
     <div class="container">

@@ -27,35 +27,48 @@ import allumeesImg from '../assets/images/bougies-allumees.jpg';
     pageId={pageId}
 >
     <Fragment slot="head">
-        <script type="application/ld+json">
-        {
-          "@context": "https://schema.org",
-          "@graph": [
-            {
-              "@type": "Store",
-              "@id": "https://jf-aniuta.vercel.app/#store",
-              "name": "Jean-François & Aniuta - Bougie Champignon Lozère",
-              "url": "https://jf-aniuta.vercel.app/bougies",
-              "image": "https://jf-aniuta.vercel.app/logo-entreprise.webp",
-              "telephone": "+33658909835",
-              "priceRange": "€€",
-              "description": "Créateur de bougies champignons réalistes en Lozère. Pièces d'exception : Morilles et Grands Cèpes à la Vanille Gourmande.",
-              "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "Chasseradès",
-                "postalCode": "48250",
-                "addressRegion": "Occitanie",
-                "addressCountry": "FR"
-              },
-              "sameAs": [
-                "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
-                "https://www.instagram.com/jean_francois_aniuta/",
-                "https://wa.me/33658909835"
-              ]
-            }
-          ]
-        }
-        </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "name": "Jean-François & Aniuta",
+      "url": "https://jf-aniuta.vercel.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://jf-aniuta.vercel.app/#logo",
+        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "width": 512,
+        "height": 512
+      }
+    },
+    {
+      "@type": "Store",
+      "@id": "https://jf-aniuta.vercel.app/#store",
+      "name": "Jean-François & Aniuta - Bougie Champignon Lozère",
+      "url": "https://jf-aniuta.vercel.app/bougies",
+      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
+      "priceRange": "€€",
+      "description": "Créateur de bougies champignons réalistes en Lozère. Pièces d'exception : Morilles et Grands Cèpes à la Vanille Gourmande.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Chasseradès",
+        "postalCode": "48250",
+        "addressRegion": "Occitanie",
+        "addressCountry": "FR"
+      },
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
+        "https://www.instagram.com/jean_francois_aniuta/"
+      ],
+      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+    }
+  ]
+}
+</script>
     </Fragment>
 
     <section id="nouvelle-gamme" style="background-color: var(--fond-sable);">

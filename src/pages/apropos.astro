@@ -15,51 +15,56 @@ import souvenirsImg from '../assets/images/guylain-et-jeanfrancois.webp';
     description="Découvrez l'histoire de Jean-François et Aniuta, sculpteurs sur bois et créateurs de bougies champignons en cire 100% naturelle à Chasseradès, Lozère."
     pageId={pageId}
 >
-    <script type="application/ld+json" slot="head">
+<script type="application/ld+json" slot="head">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "Organization",
-          "@id": "https://jf-aniuta.vercel.app/#organization",
-          "name": "Jean-François & Aniuta",
-          "url": "https://jf-aniuta.vercel.app/",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://jf-aniuta.vercel.app/logo-entreprise.webp"
-          },
-          "sameAs": [
-            "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
-            "https://www.instagram.com/jean_francois_aniuta/",
-            "https://www.tiktok.com/@jeanfrancoisbaron2"
-          ]
-        },
-        {
-          "@type": "LocalBusiness",
-          "@id": "https://jf-aniuta.vercel.app/#localbusiness",
-          "name": "Atelier Jean-François & Aniuta",
-          "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" },
-          "telephone": "+33658909835",
-          "address": {
-            "@type": "PostalAddress",
-            "addressLocality": "Chasseradès",
-            "postalCode": "48250",
-            "addressRegion": "Occitanie",
-            "addressCountry": "FR"
-          }
-        },
-        {
-          "@type": "WebPage",
-          "@id": "https://jf-aniuta.vercel.app/apropos#webpage",
-          "url": "https://jf-aniuta.vercel.app/apropos",
-          "name": "À Propos de l'Artisan et Notre Histoire - Jean-François & Aniuta",
-          "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
-          "about": { "@id": "https://jf-aniuta.vercel.app/#organization" },
-          "description": "L'union de la sculpture sur bois et de la bougie artisanale en Lozère. Découvrez notre passion pour les cèpes et morilles ultra-réalistes."
-        }
+      "@type": "Organization",
+      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "name": "Jean-François & Aniuta",
+      "url": "https://jf-aniuta.vercel.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://jf-aniuta.vercel.app/#logo",
+        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "width": 512,
+        "height": 512,
+        "caption": "Jean-François & Aniuta"
+      },
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
+        "https://www.instagram.com/jean_francois_aniuta/",
+        "https://www.tiktok.com/@jeanfrancoisbaron2"
       ]
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+      "name": "Atelier Jean-François & Aniuta",
+      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" },
+      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Chasseradès",
+        "postalCode": "48250",
+        "addressRegion": "Occitanie",
+        "addressCountry": "FR"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://jf-aniuta.vercel.app/apropos#webpage",
+      "url": "https://jf-aniuta.vercel.app/apropos",
+      "name": "À Propos de l'Artisan et Notre Histoire - Jean-François & Aniuta",
+      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+      "about": { "@id": "https://jf-aniuta.vercel.app/#organization" },
+      "description": "L'union de la sculpture sur bois et de la bougie artisanale en Lozère. Découvrez notre passion pour les cèpes et morilles ultra-réalistes."
     }
-    </script>
+  ]
+}
+</script>
 
     <section id="apropos">
         <div class="container">

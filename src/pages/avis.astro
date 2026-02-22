@@ -16,6 +16,20 @@ import avisHeroImg from "../assets/images/avis-Img.webp";
   "@context": "https://schema.org",
   "@graph": [
     {
+      "@type": "Organization",
+      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "name": "Jean-François & Aniuta",
+      "url": "https://jf-aniuta.vercel.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://jf-aniuta.vercel.app/#logo",
+        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "width": 512,
+        "height": 512
+      }
+    },
+    {
       "@type": "WebPage",
       "@id": "https://jf-aniuta.vercel.app/avis/#webpage",
       "url": "https://jf-aniuta.vercel.app/avis",
@@ -28,11 +42,13 @@ import avisHeroImg from "../assets/images/avis-Img.webp";
       "@type": "LocalBusiness",
       "@id": "https://jf-aniuta.vercel.app/#localbusiness",
       "name": "Jean-François & Aniuta",
+      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": "5",
         "reviewCount": "12" 
-      }
+      },
+      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
     }
   ]
 }

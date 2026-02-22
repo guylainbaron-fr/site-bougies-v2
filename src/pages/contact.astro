@@ -15,33 +15,49 @@ import imageAtelier from '../assets/images/image-contact-atelier.webp';
   description="Vous avez une question sur nos sculptures ou nos bougies ? Contactez-nous par téléphone, e-mail, ou visitez notre atelier à Chasseradès (48)."
   pageId={pageId}
 >
-    <script type="application/ld+json" slot="head">
+<script type="application/ld+json" slot="head">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "ContactPage",
-          "@id": "https://jf-aniuta.vercel.app/contact#webpage",
-          "url": "https://jf-aniuta.vercel.app/contact",
-          "name": "Contactez l'Atelier - Jean-François & Aniuta",
-          "description": "Une question sur nos sculptures ou nos bougies ? Contactez Jean-François & Aniuta. Situés à Chasseradès, au cœur de la Lozère.",
-          "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" }
-        },
-        {
-          "@type": "LocalBusiness",
-          "@id": "https://jf-aniuta.vercel.app/#localbusiness",
-          "name": "Jean-François & Aniuta",
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "Village de Chasseradès",
-            "addressLocality": "Mont Lozère et Goulet",
-            "postalCode": "48250",
-            "addressCountry": "FR"
-          }
-        }
-      ]
+      "@type": "Organization",
+      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "name": "Jean-François & Aniuta",
+      "url": "https://jf-aniuta.vercel.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://jf-aniuta.vercel.app/#logo",
+        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "width": 512,
+        "height": 512
+      }
+    },
+    {
+      "@type": "ContactPage",
+      "@id": "https://jf-aniuta.vercel.app/contact#webpage",
+      "url": "https://jf-aniuta.vercel.app/contact",
+      "name": "Contactez l'Atelier - Jean-François & Aniuta",
+      "description": "Une question sur nos sculptures ou nos bougies ? Contactez Jean-François & Aniuta. Situés à Chasseradès, au cœur de la Lozère.",
+      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+      "name": "Jean-François & Aniuta",
+      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Village de Chasseradès",
+        "addressLocality": "Mont Lozère et Goulet",
+        "postalCode": "48250",
+        "addressCountry": "FR"
+      },
+      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
     }
-    </script>
+  ]
+}
+</script>
 
     <section id="contact-page">
         <div class="container">

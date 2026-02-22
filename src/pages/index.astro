@@ -13,7 +13,7 @@ import imgCollection from '../assets/images/bougies-champignons-lozere-collectio
 import atelierImg from "../assets/images/accueil-h2-2.webp";
 import aproposImg from "../assets/images/accueil-h2-3.webp";
 
-// --- DONNÉES STRUCTURÉES (On garde uniquement le SEO ici) ---
+// --- DONNÉES STRUCTURÉES (Optimisées et Sécurisées) ---
 const schemaData = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
@@ -25,28 +25,29 @@ const schemaData = JSON.stringify({
       "logo": {
         "@type": "ImageObject",
         "@id": "https://jf-aniuta.vercel.app/#logo",
-        "url": "https://jf-aniuta.vercel.app/images/logo_144.png",
-        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_144.png",
-        "width": 144,
-        "height": 144,
+        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "width": 512,
+        "height": 512,
         "caption": "Jean-François & Aniuta"
-      }
+      },
+      "image": { "@id": "https://jf-aniuta.vercel.app/#logo" }
     },
     {
       "@type": "WebSite",
       "@id": "https://jf-aniuta.vercel.app/#website",
       "url": "https://jf-aniuta.vercel.app/",
       "name": "Jean-François & Aniuta - Créations Artisanales",
-      "inLanguage": "fr-FR"
+      "inLanguage": "fr-FR",
+      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" }
     },
     {
       "@type": "LocalBusiness",
       "@id": "https://jf-aniuta.vercel.app/#localbusiness",
       "name": "Jean-François & Aniuta - Atelier Artisanal (Sculpture & Bougies)",
       "url": "https://jf-aniuta.vercel.app/",
-      "telephone": "+33658909835",
-      "priceRange": "$$",
-      "image": "https://jf-aniuta.vercel.app/images/logo_144.png",
+      "priceRange": "€€",
+      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "Village de Chasseradès",
@@ -54,7 +55,8 @@ const schemaData = JSON.stringify({
         "postalCode": "48250",
         "addressRegion": "Occitanie",
         "addressCountry": "FR"
-      }
+      },
+      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
     }
   ]
 });
