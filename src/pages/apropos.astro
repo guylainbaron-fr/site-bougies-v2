@@ -4,6 +4,7 @@ const pageId = "apropos";
 
 import { Image } from 'astro:assets';
 
+import SecureLogoImage from '../components/SecureLogoImage.astro';
 // Importation des images
 import troisCepesImg from '../assets/images/trois-cepes-bois.webp';
 import presseImg from '../assets/images/presse.webp';
@@ -161,17 +162,16 @@ import souvenirsImg from '../assets/images/guylain-et-jeanfrancois.webp';
                     Guylain BARON
                 </p>
 
-                <div class="concepteur-photo">
-                    <Image 
-                        src={souvenirsImg} 
-                        alt="Photo souvenir : Guylain Baron et Jean François Baron" 
-                        title="Guylain sur le tracteur, Jean-François pousse (Souvenir d'enfance)"
-                        class="photo-souvenir"
-                        width={500}
-                        height={375}
-                        quality={80}
-                    />
-                </div>
+<div class="concepteur-photo">
+    <SecureLogoImage 
+        src={souvenirsImg} 
+        alt="Photo souvenir : Guylain Baron et Jean François Baron" 
+        title="Guylain sur le tracteur, Jean-François pousse (Souvenir d'enfance)"
+        class="photo-souvenir"
+        width={500}
+        height={375}
+    />
+</div>
             </div>
             
         </div>
