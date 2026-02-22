@@ -1,0 +1,34 @@
+---
+const { src, alt, title, width, height, class: className } = Astro.props;
+import logoEntreprise from '../assets/images/logo-entreprise.webp';
+
+const imageSrc = src?.src || src;
+const logoSrc = logoEntreprise.src;
+---
+
+<div class={className} title={title} style={`position: relative; display: inline-block; line-height: 0; width: ${width ? width + 'px' : 'auto'};`}>
+  
+  <img 
+    src={imageSrc} 
+    alt={alt} 
+    width={width} 
+    height={height} 
+    draggable="false"
+    style="display: block; width: 100%; height: auto; user-select: none;" 
+  />
+
+  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); z-index: 2; pointer-events: none;">
+    {Array(9).fill(0).map(() => (
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <img 
+          src={logoSrc} 
+          style="width: 70px; height: auto; opacity: 0.15; transform: rotate(-20deg); mix-blend-mode: multiply;" 
+        />
+      </div>
+    ))}
+  </div>
+
+  <div 
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'); cursor: default;"
+  ></div>
+</div>
