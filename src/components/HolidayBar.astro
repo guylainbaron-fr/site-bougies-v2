@@ -1,6 +1,10 @@
 ---
-const eventsData = await Astro.glob('../data/holiday-events.json');
-const events = eventsData[0].default;
+// 1. On récupère le fichier
+const eventsFiles = import.meta.glob('../data/holiday-events.json', { eager: true });
+
+// 2. On extrait les données en précisant le type "any" pour éviter l'erreur TS
+const eventsData = Object.values(eventsFiles)[0] as any;
+const events = eventsData.default;
 
 const { currentPage } = Astro.props;
 

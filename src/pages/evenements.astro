@@ -52,8 +52,11 @@ import afficheMende from '../assets/images/marches/marche_noel_mende_750.webp';
 import miniature1 from '../assets/images/miniature-evenement-1.webp';
 import miniature2 from '../assets/images/miniature-evenement-2.webp';
 
-// Importation dynamique des photos de la galerie
-const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp');
+// 1. On récupère les fichiers (méthode moderne)
+const galleryFiles = import.meta.glob('../assets/images/marches/photo_0*.webp', { eager: true });
+
+// 2. On transforme l'objet en tableau d'images valides
+const galleryImages = Object.values(galleryFiles).map((img: any) => img.default);
 ---
 
 <MainLayout 
@@ -120,7 +123,7 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
 
 <section id="evenements-page">
     <div class="container">
-        <h2 class="section-title">🗓️ Nos Événements & Marchés</h2>
+        <h2 class="section-title">Nos Événements & Marchés</h2>
         <p class="intro-evenements">
             Retrouvez Jean-François et Aniuta sur les foires et marchés de la région pour découvrir nos créations artisanales en direct.
         </p>
@@ -216,7 +219,7 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
 
 <section id="souvenirs">
     <div class="container">
-        <h2>📸 Souvenirs de Nos Stands et Marchés</h2>
+        <h2>Souvenirs de Nos Stands et Marchés</h2>
         <div class="affiche-container">
             <div class="photo-presentation">
                 <Image 
@@ -234,20 +237,20 @@ const galleryImages = await Astro.glob('../assets/images/marches/photo_0*.webp')
         </div>
 
         <div class="photo-gallery"> 
-            {galleryImages.map((img, index) => (
-                <div class="photo-item">
-                    <Image 
-                        src={img.default} 
-                        alt={`Photo de notre stand artisanal numéro ${index + 1}`} 
-                        width={380}
-                        height={285}
-                        loading="lazy"
-                        decoding="async"
-                        quality={80}
-                    />
-                </div>
-            ))}
-        </div> 
+    {galleryImages.map((imgSrc, index) => (
+        <div class="photo-item">
+            <Image 
+                src={imgSrc} 
+                alt={`Photo de notre stand artisanal numéro ${index + 1}`} 
+                width={380}
+                height={285}
+                loading="lazy"
+                decoding="async"
+                quality={80}
+            />
+        </div>
+    ))}
+</div>
     </div> 
 </section> 
 
