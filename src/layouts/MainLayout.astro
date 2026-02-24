@@ -82,8 +82,10 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
     if (isDev || window.location.pathname.includes('dashboard')) return;
     if (sessionStorage.getItem('site_visited')) return;
 
-    // 1. On identifie le bot mais on ne bloque plus avec "return"
+    // --- FIX GOOGLE : Définition de la variable manquante ---
+    const botPatterns = /bot|spider|crawler|lighthouse|inspect|googlebot|bingbot|yandex|baiduspider|facebookexternalhit/i;
     
+    // Maintenant botPatterns existe, donc cette ligne ne plantera plus
     const isBot = botPatterns.test(navigator.userAgent);
 
     const sendLog = async () => {
@@ -97,7 +99,6 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              // Si c'est un bot, on envoie "Bot" au lieu du UserAgent complet
               ua: isBot ? "Bot" : navigator.userAgent,
               isQR: isQR
             })
@@ -105,15 +106,12 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
         } catch (err) {}
     };
 
-    // 2. Gestion du délai et des déclencheurs
     const triggerEvents = ['mousedown', 'keydown', 'touchstart', 'scroll'];
     
     const setupTrigger = () => {
-      // Si c'est un BOT, on envoie le log immédiatement sans attendre l'humain
       if (isBot) {
         sendLog();
       } else {
-        // Si c'est un HUMAIN, on garde tes sécurités (2s + action)
         setTimeout(() => {
           triggerEvents.forEach(event => {
             window.addEventListener(event, sendLog, { once: true, passive: true });
