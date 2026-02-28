@@ -3,10 +3,6 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/style.css';
 import '../styles/fa/css/brands.min.css';
-import '@fontsource/poppins/300.css';
-import '@fontsource/poppins/400.css';
-import '@fontsource/poppins/600.css';
-import '@fontsource/poppins/700.css';
 
 // --- CONFIGURATION SEO ET MOTS-CLÉS ---
 const defaultTitle = "Bougies Artisanales & Sculpture Bois Lozère | JF & Aniuta";
@@ -46,6 +42,8 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
     <meta name="twitter:image:alt" content="Logo JF & ANIUTA">
     <meta name="twitter:image" content={socialImageURL.href}>
 
+    <link rel="preload" href="/webfonts/poppins-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    
     <title>{title}</title>
     <meta name="description" content={description}>
     
