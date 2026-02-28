@@ -3695,16 +3695,19 @@ h2::after {
     align-items: center;
     justify-content: center;
     width: 100%;
-    max-width: 600px; /* Largeur de la ligne */
-    margin-bottom: 50px;
+    max-width: 600px;
+    margin: 0 auto 50px auto; /* Ajout du centrage horizontal */
     
-    color: #ea4335;
+    color: #ea4335; /* On garde ton rouge Google exact */
     font-family: 'Montserrat', sans-serif;
     font-size: 1.1rem;
-    font-weight: 800;
+    font-weight: 900; /* On passe de 800 à 900 pour une meilleure lisibilité */
     letter-spacing: 8px;
     text-transform: uppercase;
     text-align: center;
+
+    /* Astuce Accessibilité : Une ombre légère pour renforcer le contraste sans changer la couleur */
+    text-shadow: 0.5px 0.5px 0px rgba(0,0,0,0.1); 
 }
 
 /* La ligne rouge à gauche et à droite du texte */
@@ -3714,6 +3717,8 @@ h2::after {
     flex: 1;
     height: 2px;
     background-color: #ea4335;
+    /* On ajoute will-change si jamais tu décides de les animer plus tard */
+    will-change: transform;
 }
 
 /* Espacement entre les lignes et le texte */
