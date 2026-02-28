@@ -12,21 +12,22 @@
 :root {
     /* --- LES TEINTES DE SABLE ET DE SOLEIL --- */
     --noir-logo: #1a1a1a;
-    --sable-dore: #e0c297;      /* Ton nouveau Laiton */
-    --vanille-pure: #fcf4dd;    /* Ta couleur star, douce et crémeuse */
-    --vanille-eclat: #e9c46a;   /* Un jaune vanille plus intense pour les accents */
+    --sable-dore: #e0c297;
+    --vanille-pure: #fcf4dd;
+    --vanille-eclat: #e9c46a;
     --vanille-brume: rgba(252, 244, 221, 0.3);
 
     /* --- LES TEINTES DE TERRE ET DE BOIS --- */
-    --brun-coco: #4a3728;       /* Ton marron de footer actuel */
-    --brun-profond: #2d221a;    /* Pour les contrastes forts */
-    --bois-flotte: #967969;     /* Un marron-sable doux (ancien vert) */
-    --bois-ecorce: #6b564a; /* C'est le même ton que ton bois-flotté, mais en version sombre */
+    --brun-coco: #4a3728;
+    --brun-profond: #2d221a; /* Très important pour le titre du site */
+    --bois-flotte: #967969;
+    --bois-ecorce: #6b564a;
 
     /* --- LES FONDS ET TEXTES --- */
-    --fond-ecume: #fdfaf7;      /* Ton blanc dédicace */
-    --fond-sable: #f9f1e7;      /* Ton beige de section */
-    --texte-galet: #2c2424;     /* Ton texte sombre */
+    --fond-ecume: #fdfaf7;
+    --fond-sable: #f9f1e7;
+    --texte-galet: #2c2424;
+    --texte-lumineux: #ffffff; /* ON AJOUTE ÇA : Blanc pur pour le contraste sur marron */
 
     /* --- LES POLICES --- */
     --font-principale: "Poppins", sans-serif;
@@ -364,8 +365,8 @@ section {
 
 .main-nav a:hover, 
 .main-nav a.active {
-    /* Le texte passe en Sable très clair sur le marron foncé */
-    color: var(--fond-sable);
+    /* On utilise le blanc pur au lieu du sable pour valider le 100% Accessibilité */
+    color: var(--texte-lumineux); 
 }
 
 /* --- RESPONSIVE --- */
