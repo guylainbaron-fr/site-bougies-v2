@@ -10,26 +10,22 @@
 }
 
 :root {
-    /* --- LES TEINTES DE SABLE ET DE SOLEIL --- */
+    /* On remet tes vraies couleurs de sable */
     --noir-logo: #1a1a1a;
     --sable-dore: #e0c297;
     --vanille-pure: #fcf4dd;
     --vanille-eclat: #e9c46a;
     --vanille-brume: rgba(252, 244, 221, 0.3);
 
-    /* --- LES TEINTES DE TERRE ET DE BOIS --- */
     --brun-coco: #4a3728;
-    --brun-profond: #2d221a; /* Très important pour le titre du site */
+    --brun-profond: #2d221a;
     --bois-flotte: #967969;
     --bois-ecorce: #6b564a;
 
-    /* --- LES FONDS ET TEXTES --- */
     --fond-ecume: #fdfaf7;
-    --fond-sable: #f9f1e7;
+    --fond-sable: #f9f1e7; /* Ton beige de section fétiche */
     --texte-galet: #2c2424;
-    --texte-lumineux: #ffffff; /* ON AJOUTE ÇA : Blanc pur pour le contraste sur marron */
 
-    /* --- LES POLICES --- */
     --font-principale: "Poppins", sans-serif;
     --font-secondaire: "Georgia", serif;
 }
@@ -344,29 +340,27 @@ section {
     content: '';
     position: absolute;
     top: 50%; left: 50%;
-    /* On fixe une taille de base ronde */
-    width: 40px; 
-    height: 40px;
-    background-color: var(--brun-coco);
+    width: 0; 
+    height: 0;
+    background-color: var(--brun-coco); /* Remplissage chocolat au survol */
     border-radius: 50%;
-    /* On part d'une taille invisible (scale 0) */
-    transform: translate(-50%, -50%) scale(0);
-    /* On anime UNIQUEMENT le transform */
-    transition: transform 1.2s cubic-bezier(0.2, 0, 0.2, 1);
+    transform: translate(-50%, -50%);
+    transition: width 1.2s cubic-bezier(0.2, 0, 0.2, 1), 
+                height 1.2s cubic-bezier(0.2, 0, 0.2, 1);
     z-index: -1;
 }
 
 .main-nav a:hover::before, 
 .main-nav a.active::before {
-    /* On grossit le cercle jusqu'à ce qu'il remplisse tout le rectangle */
-    /* Un scale de 8 ou 10 suffit largement à couvrir la brique */
-    transform: translate(-50%, -50%) scale(10);
+    width: 220%;
+    height: 550%;
+    border-radius: 0;
 }
 
 .main-nav a:hover, 
 .main-nav a.active {
-    /* On utilise le blanc pur au lieu du sable pour valider le 100% Accessibilité */
-    color: var(--texte-lumineux); 
+    /* On oublie le blanc pur, on revient au Sable pour le look authentique */
+    color: var(--fond-sable);
 }
 
 /* --- RESPONSIVE --- */
