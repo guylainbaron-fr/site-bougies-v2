@@ -3696,21 +3696,19 @@ h2::after {
     justify-content: center;
     width: 100%;
     max-width: 600px;
-    margin: 0 auto 50px auto; 
+    margin: 0 auto 50px auto;
     
-    color: #ea4335; /* Rouge Google exact */
+    /* Rouge Google Accessibilité (#d93025) : 
+       Visuellement identique au rouge classique, mais valide le ratio de contraste 4.5:1 */
+    color: #d93025; 
     font-family: 'Montserrat', sans-serif;
     font-size: 1.1rem;
-    font-weight: 900; /* Poids maximal pour l'accessibilité */
+    font-weight: 800; 
     letter-spacing: 8px;
     text-transform: uppercase;
     text-align: center;
-
-    /* ASTUCE 100% ACCESSIBILITÉ : 
-       On ajoute un micro-contour de la même couleur pour épaissir les lettres 
-       et une ombre plus portée pour détacher le rouge du fond blanc. */
-    -webkit-text-stroke: 0.5px #ea4335;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15); 
+    
+    /* Plus besoin d'ombres ou de contours de texte ici */
 }
 
 /* La ligne rouge à gauche et à droite du texte */
@@ -3719,8 +3717,7 @@ h2::after {
     content: "";
     flex: 1;
     height: 2px;
-    background-color: #ea4335;
-    will-change: transform;
+    background-color: #d93025;
 }
 
 /* Espacement entre les lignes et le texte */
@@ -3745,14 +3742,14 @@ h2::after {
     width: 100%;
     height: auto;
     display: block;
-    /* On évite le décalage de mise en page (CLS) */
+    /* Préserve l'espace pour éviter le saut de mise en page (CLS) */
     aspect-ratio: 516 / 245; 
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-/* Correction spécifique pour le titre "Et vous ?" signalé dans le rapport */
+/* Titre "Et vous ?" : aligné sur le même rouge accessible */
 .google-action-titre {
-    color: #d93025 !important; /* Une nuance de rouge Google légèrement plus sombre pour le contraste */
+    color: #d93025;
     font-weight: 800;
 }
 
@@ -3761,13 +3758,13 @@ h2::after {
     .etiquette-luxe {
         font-size: 0.85rem;
         letter-spacing: 4px;
-        max-width: 95%; /* Un peu plus large sur petit écran */
+        max-width: 95%;
     }
     .etiquette-luxe::before, .etiquette-luxe::after {
         height: 1.5px;
     }
     .cepes-container {
-        padding: 10px; /* Plus compact sur mobile */
+        padding: 10px;
         width: 95%;
     }
 }
