@@ -343,20 +343,23 @@ section {
     content: '';
     position: absolute;
     top: 50%; left: 50%;
-    width: 0; height: 0;
-    background-color: var(--brun-coco); /* Remplissage chocolat au survol */
+    /* On fixe une taille de base ronde */
+    width: 40px; 
+    height: 40px;
+    background-color: var(--brun-coco);
     border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 1.2s cubic-bezier(0.2, 0, 0.2, 1), 
-                height 1.2s cubic-bezier(0.2, 0, 0.2, 1);
+    /* On part d'une taille invisible (scale 0) */
+    transform: translate(-50%, -50%) scale(0);
+    /* On anime UNIQUEMENT le transform */
+    transition: transform 1.2s cubic-bezier(0.2, 0, 0.2, 1);
     z-index: -1;
 }
 
 .main-nav a:hover::before, 
 .main-nav a.active::before {
-    width: 220%;
-    height: 550%;
-    border-radius: 0;
+    /* On grossit le cercle jusqu'à ce qu'il remplisse tout le rectangle */
+    /* Un scale de 8 ou 10 suffit largement à couvrir la brique */
+    transform: translate(-50%, -50%) scale(10);
 }
 
 .main-nav a:hover, 
