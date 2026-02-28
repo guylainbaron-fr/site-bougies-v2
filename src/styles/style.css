@@ -1572,9 +1572,9 @@ h2::after {
     line-height: 1.6;
 }
 
-/* --- ALERTE DE SÉCURITÉ --- */
+/* --- ALERTE DE SÉCURITÉ OPTIMISÉE --- */
 .conseils-list li.security-alert {
-    background-color: #fff9f9; /* Rouge très pâle, presque blanc */
+    background-color: #fff9f9; 
     border: 1px solid #fbdada;
     border-radius: 10px;
     padding: 20px;
@@ -1584,8 +1584,11 @@ h2::after {
     display: flex;
     align-items: center;
     gap: 15px;
+    position: relative; /* Nécessaire pour l'onde */
+    overflow: hidden;   /* Évite que l'onde dépasse du cadre */
 }
 
+/* L'icône "!" fixe */
 .conseils-list li.security-alert::before {
     content: "!";
     display: flex;
@@ -1599,13 +1602,46 @@ h2::after {
     font-weight: 700;
     border-radius: 50%;
     flex-shrink: 0;
-    animation: pulse-alert 2s infinite;
+    position: relative;
+    z-index: 2; /* Passe devant l'onde */
+}
+
+/* L'onde de choc (Animation Ultra-Performante GPU) */
+.conseils-list li.security-alert::after {
+    content: "";
+    position: absolute;
+    left: 20px; /* Aligné sur le padding de l'icône */
+    width: 26px;
+    height: 26px;
+    background-color: #d9534f;
+    border-radius: 50%;
+    z-index: 1;
+    animation: pulse-gpu 2s infinite;
+    pointer-events: none; /* Ne gêne pas le clic */
 }
 
 .conseils-list li.security-alert span {
     display: block;
     flex: 1;
     text-align: left;
+    position: relative;
+    z-index: 2;
+}
+
+/* Nouvelle animation qui ne ralentit pas le navigateur */
+@keyframes pulse-gpu {
+    0% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    70% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
 }
 
 /* --- RESPONSIVE IPAD --- */
@@ -1624,17 +1660,6 @@ h2::after {
     }
 }
 
-@keyframes pulse-alert {
-    0% {
-        box-shadow: 0 0 0 0 rgba(217, 83, 79, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(217, 83, 79, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(217, 83, 79, 0);
-    }
-}
 /* ==========================================================================
     PAGE BOUGE : GRILLES & TAILLES (CORRIGÉ POUR MOBILE)
    ========================================================================== */
