@@ -2625,8 +2625,9 @@ h2::after {
         padding: 30px 20px;
     }
 }
+
 /* ==========================================================================
-   ÉCLATS DE SOLEIL (EX-NOËL) & CŒUR TROPICAL
+   ÉCLATS DE SOLEIL (EX-NOËL) & CŒUR TROPICAL - OPTIMISÉ 100/100
    ========================================================================== */
 
 .titre-noel {
@@ -2645,6 +2646,8 @@ h2::after {
     display: flex;
     align-items: center;
     justify-content: center;
+    /* On aide le navigateur à anticiper l'animation */
+    will-change: transform, opacity; 
     animation: eclat-total 2s infinite ease-in-out;
 }
 
@@ -2652,10 +2655,10 @@ h2::after {
 .scintillement::after {
     content: "";
     position: absolute;
-    /* On utilise l'Or (Sable Doré) pour l'éclat solaire */
     background: var(--sable-dore);
     border-radius: 50%;
-    box-shadow: 0 0 5px var(--sable-dore);
+    /* On met l'éclat ici une fois pour toutes au lieu de l'animer avec filter */
+    box-shadow: 0 0 8px var(--sable-dore), 0 0 15px var(--vanille-eclat);
 }
 
 .scintillement::before {
@@ -2674,15 +2677,13 @@ h2::after {
 
 @keyframes eclat-total {
     0%, 100% {
+        /* On ne touche qu'au transform et à l'opacité */
         transform: scale(0.5) rotate(0deg);
         opacity: 0.3;
-        filter: blur(1px);
     }
     50% {
         transform: scale(1.3) rotate(90deg);
         opacity: 1;
-        /* Halo lumineux couleur Vanille/Or */
-        filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px var(--sable-dore)) drop-shadow(0 0 20px var(--vanille-eclat));
     }
 }
 
