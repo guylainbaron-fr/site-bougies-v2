@@ -381,18 +381,19 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
             </div>
         </div>
 
-        <div class="actions-row">
+        <div class="actions-row" style="display:flex; align-items:center; gap:12px;">
     <button onclick="window.print()" class="btn btn-gold"><i class="fa-solid fa-file-pdf"></i> Rapport</button>
 
-    <div style="display:flex; align-items:center; gap:8px; border-left: 1px solid var(--sable-dore); padding-left: 12px; margin-left: 10px;">
-        <input type="text" id="confirmBots" placeholder="BOTS" style="width:50px; padding:6px; border:1px solid #9b59b6; border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold; color: #9b59b6;" />
-        <form method="POST" style="margin:0;">
-            <input type="hidden" name="action" value="clean_bots" />
-            <button type="submit" id="botsBtn" disabled style="background: #9b59b6; color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">NETTOYER</button>
-        </form>
-    </div>
+    <div style="margin-left: auto; display: flex; align-items: center; gap: 20px;">
+        
+        <div style="display:flex; align-items:center; gap:8px; border-right: 1px solid var(--sable-dore); padding-right: 20px;">
+            <input type="text" id="confirmBots" placeholder="BOTS" style="width:50px; padding:6px; border:1px solid #9b59b6; border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold; color: #9b59b6;" />
+            <form method="POST" style="margin:0;">
+                <input type="hidden" name="action" value="clean_bots" />
+                <button type="submit" id="botsBtn" disabled style="background: #9b59b6; color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">NETTOYER</button>
+            </form>
+        </div>
 
-    <div style="display:flex; align-items:center; gap:12px;">
         <div style="display:flex; align-items:center; gap:8px;">
             <input type="text" id="confirmReset" placeholder="RESET" style="width:60px; padding:6px; border:1px solid var(--sable-dore); border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold;" />
             <form method="POST" style="margin:0;">
@@ -401,7 +402,7 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
             </form>
         </div>
 
-        {/* Affichage de la date du dernier reset */}
+        {/* Date du dernier reset */}
         <div style="display: flex; flex-direction: column; border-left: 1px solid var(--sable-dore); padding-left: 12px;">
             <span style="font-size: 0.5rem; text-transform: uppercase; font-weight: 800; opacity: 0.5; letter-spacing: 0.5px;">Dernier Reset</span>
             <span style="font-size: 0.65rem; font-weight: 700; color: var(--brun-coco);">{lastResetDate}</span>
