@@ -23,10 +23,16 @@ export const POST: APIRoute = async ({ request }) => {
         // On cible les bots de crawl, les outils SEO et les scripts automatiques
         const isBot = /(googlebot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|ia_archiver|robot|bot|spider|headless|chrome-lighthouse|lighthouse|inspect|ahrefsbot|semrushbot|dotbot|python|axios|curl|wget|go-http-client|java|php|postman|runtime|insomnia|nimbostratus)/i.test(ua);
 
-        // 3. DÉTERMINATION DE L'APPAREIL
+        // 3. DÉTERMINATION DE L'APPAREIL / IDENTITÉ
         let dev = "PC";
         if (isBot) {
-            dev = "Bot";
+            // On extrait le nom proprement
+            if (/googlebot/i.test(ua)) dev = "Googlebot";
+            else if (/lighthouse|chrome-lighthouse/i.test(ua)) dev = "Lighthouse";
+            else if (/facebookexternalhit|facebook/i.test(ua)) dev = "Meta / FB";
+            else if (/bingbot/i.test(ua)) dev = "Bingbot";
+            else if (/vercel/i.test(ua)) dev = "Vercel Bot";
+            else dev = "Robot"; // Si vraiment inconnu
         } else if (/android/i.test(ua)) {
             dev = "Android";
         } else if (/iPad|iPhone|iPod/i.test(ua)) {

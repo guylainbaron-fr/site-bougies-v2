@@ -100,7 +100,7 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              ua: isBot ? "Bot" : navigator.userAgent,
+              ua: navigator.userAgent,
               isQR: isQR
             })
           });

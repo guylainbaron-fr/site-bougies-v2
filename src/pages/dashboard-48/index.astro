@@ -441,12 +441,13 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
                 connectionLabel = log.ip;
             }
 
-            // 2. Identification du nom du Bot (Basé sur ton dictionnaire)
-            let displayName = connectionLabel;
-            if (log.device === 'Bot' || log.device === 'Robot') {
-                // @ts-ignore
-                const entry = Object.entries(botNames).find(([key]) => log.ip?.startsWith(key));
-                displayName = entry ? entry[1] : "Robot";
+            // 2. Identification simplifiée (Le nom est déjà géré par l'API)
+            let displayName = connectionLabel; // Par défaut, on affiche l'IP
+
+            // Si c'est un bot, on affiche son nom (ex: Googlebot) au lieu de l'IP
+            const isHuman = ['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device);
+            if (!isHuman) {
+                displayName = log.device; 
             }
 
             return (
