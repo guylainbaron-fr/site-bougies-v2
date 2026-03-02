@@ -14,41 +14,42 @@ interface LogEntry {
     flag_code?: string;
 }
 
-const botNames: Record<string, string> = {
-    '66.249': 'Googlebot',      // Google Search
-    '173.252': 'Meta / FB',     // Facebook
-    '31.13': 'Instagram',       // Instagram LDP
-    '40.77': 'Bingbot',         // Microsoft Bing
-    '157.55': 'Bingbot',        // Microsoft Bing
-    '114.119': 'PetalBot',      // Huawei Search
-    '20.171': 'Vercel Bot',     // Vercel Inspection
-    '52.19': 'TikTok Bot',      // TikTok Crawler
-    '54.236': 'Pinterest',      // Pinterest Bot
-    '192.0.': 'WordPress',      // Jetpack / WP
-    '34.120': 'Lighthouse',     // Google PageSpeed
-    '35.247': 'Twitterbot'      // X / Twitter
-};
-
-// GESTION DU POST (Reset)
+// GESTION DES ACTIONS (Reset ou Nettoyage Bots)
 if (Astro.request.method === "POST") {
     try {
         const formData = await Astro.request.formData();
-        if (formData.get("action") === "reset") {
+        const action = formData.get("action");
+
+        if (action === "reset") {
             await kv.set('visites_totales', 0);
             await kv.del('journal_visites');
-            
-            // --- AJOUT : On enregistre la date et l'heure du reset ---
             const dateAction = new Date().toLocaleString('fr-FR', { 
                 timeZone: 'Europe/Paris',
                 day: '2-digit', month: '2-digit', year: 'numeric',
                 hour: '2-digit', minute: '2-digit'
             });
             await kv.set('date_dernier_reset', dateAction);
-            
             return Astro.redirect('/dashboard-48'); 
         }
+
+        if (action === "clean_bots") {
+            const allLogs = (await kv.lrange('journal_visites', 0, -1)) || [];
+            const cleanLogs = allLogs.filter((item: any) => {
+                const log: LogEntry = typeof item === 'string' ? JSON.parse(item) : item;
+                // On garde seulement les humains
+                return ['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device);
+            });
+            await kv.del('journal_visites');
+            if (cleanLogs.length > 0) {
+                const logsToPush = [...cleanLogs].reverse();
+                for (const log of logsToPush) {
+                    await kv.lpush('journal_visites', JSON.stringify(log));
+                }
+            }
+            return Astro.redirect('/dashboard-48');
+        }
     } catch (e) {
-        console.error("Erreur Reset:", e);
+        console.error("Erreur Action:", e);
     }
 }
 
@@ -57,7 +58,7 @@ let logs: LogEntry[] = [];
 let iosCount = 0;
 let androidCount = 0;
 let pcCount = 0;
-let botCount = 0; // <--- AJOUTÉ
+let botCount = 0; 
 let qrCount = 0;
 let lastResetDate = "";
 
@@ -69,8 +70,10 @@ try {
     logs = rawLogs.map((item: any) => {
         const log: LogEntry = typeof item === 'string' ? JSON.parse(item) : item;
         
-        // --- MISE À JOUR DES COMPTEURS ---
-        if (log.device === "Bot") botCount++; // <--- AJOUTÉ
+        // On identifie comme "Bot" tout ce qui n'est pas dans notre liste humaine
+        const isHuman = ['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device);
+        
+        if (!isHuman) botCount++;
         else if (log.device === "iOS") iosCount++;
         else if (log.device === "Android") androidCount++;
         else if (log.device === "Ordinateur" || log.device === "PC") pcCount++;
@@ -79,7 +82,7 @@ try {
         return log;
     });
 } catch (e) {
-    console.error("Erreur de récupération KV sur le Dashboard:", e);
+    console.error("Erreur de récupération KV:", e);
 }
 
 // --- 1. CALCULS DES TOTAUX ---
@@ -93,7 +96,6 @@ const pcPct = totalAvecBots > 0 ? Math.round((pcCount / totalAvecBots) * 100) : 
 const botPct = totalAvecBots > 0 ? Math.round((botCount / totalAvecBots) * 100) : 0;
 
 // --- 3. CALCULS POUR LA BARRE ORIGINE (Humains uniquement) ---
-// C'est ce bloc qui te manque et qui cause les erreurs !
 const qrPct = totalVisitesHumaines > 0 ? Math.round((qrCount / totalVisitesHumaines) * 100) : 0;
 const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
 ---
@@ -380,23 +382,31 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
         </div>
 
         <div class="actions-row">
-            <button onclick="window.print()" class="btn btn-gold"><i class="fa-solid fa-file-pdf"></i> Rapport</button>
-<div style="display:flex; align-items:center; gap:12px;">
-    <div style="display:flex; align-items:center; gap:8px;">
-        <input type="text" id="confirmReset" placeholder="RESET" style="width:60px; padding:6px; border:1px solid var(--sable-dore); border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold;" />
-        <form method="POST" style="margin:0;">
-            <input type="hidden" name="action" value="reset" />
-            <button type="submit" id="resetBtn" disabled style="background: var(--brun-coco); color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">EFFACER</button>
-        </form>
-    </div>
+    <button onclick="window.print()" class="btn btn-gold"><i class="fa-solid fa-file-pdf"></i> Rapport</button>
 
-    {/* Affichage de la date du dernier reset */}
-    <div style="display: flex; flex-direction: column; border-left: 1px solid var(--sable-dore); padding-left: 12px;">
-        <span style="font-size: 0.5rem; text-transform: uppercase; font-weight: 800; opacity: 0.5; letter-spacing: 0.5px;">Dernier Reset</span>
-        <span style="font-size: 0.65rem; font-weight: 700; color: var(--brun-coco);">{lastResetDate}</span>
+    <form method="POST" style="margin:0;">
+        <input type="hidden" name="action" value="clean_bots" />
+        <button type="submit" class="btn" style="background: #9b59b6; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; cursor: pointer;">
+            NETTOYER BOTS
+        </button>
+    </form>
+
+    <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+            <input type="text" id="confirmReset" placeholder="RESET" style="width:60px; padding:6px; border:1px solid var(--sable-dore); border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold;" />
+            <form method="POST" style="margin:0;">
+                <input type="hidden" name="action" value="reset" />
+                <button type="submit" id="resetBtn" disabled style="background: var(--brun-coco); color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">EFFACER</button>
+            </form>
+        </div>
+
+        {/* Affichage de la date du dernier reset */}
+        <div style="display: flex; flex-direction: column; border-left: 1px solid var(--sable-dore); padding-left: 12px;">
+            <span style="font-size: 0.5rem; text-transform: uppercase; font-weight: 800; opacity: 0.5; letter-spacing: 0.5px;">Dernier Reset</span>
+            <span style="font-size: 0.65rem; font-weight: 700; color: var(--brun-coco);">{lastResetDate}</span>
+        </div>
     </div>
 </div>
-        </div>
 
         <div class="logs-section">
             <div style="font-weight:900; text-transform:uppercase; font-size:0.65rem; margin-bottom:12px; border-bottom:1px solid var(--vanille-pure); padding-bottom:8px; color: var(--brun-coco);">
