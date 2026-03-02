@@ -39,6 +39,7 @@ if (Astro.request.method === "POST") {
                 // On garde seulement les humains
                 return ['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device);
             });
+
             await kv.del('journal_visites');
             if (cleanLogs.length > 0) {
                 const logsToPush = [...cleanLogs].reverse();
@@ -46,12 +47,18 @@ if (Astro.request.method === "POST") {
                     await kv.lpush('journal_visites', JSON.stringify(log));
                 }
             }
+
+            // --- LE BOUT QUI MANQUAIT : ON ENREGISTRE LA DATE ---
+            const dateAction = new Date().toLocaleString('fr-FR', { 
+                timeZone: 'Europe/Paris',
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+            await kv.set('date_dernier_clean_bots', dateAction);
+            // ---------------------------------------------------
+
             return Astro.redirect('/dashboard-48');
         }
-    } catch (e) {
-        console.error("Erreur Action:", e);
-    }
-}
 
 let totalVisites = 0;
 let logs: LogEntry[] = [];
@@ -61,10 +68,12 @@ let pcCount = 0;
 let botCount = 0; 
 let qrCount = 0;
 let lastResetDate = "";
+let lastCleanBotsDate = "";
 
 try {
     totalVisites = (await kv.get<number>('visites_totales')) || 0;
     lastResetDate = await kv.get<string>('date_dernier_reset') || "Inconnue";
+    lastCleanBotsDate = await kv.get<string>('date_dernier_clean_bots') || "Jamais";
     const rawLogs = (await kv.lrange('journal_visites', 0, 99)) || []; 
     
     logs = rawLogs.map((item: any) => {
@@ -384,16 +393,22 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
         <div class="actions-row" style="display:flex; align-items:center; gap:12px;">
     <button onclick="window.print()" class="btn btn-gold"><i class="fa-solid fa-file-pdf"></i> Rapport</button>
 
-    <div style="margin-left: auto; display: flex; align-items: center; gap: 20px;">
-        
-        <div style="display:flex; align-items:center; gap:8px; border-right: 1px solid var(--sable-dore); padding-right: 20px;">
+    <div style="margin-left: auto; display:flex; align-items:center; gap:12px; border-right: 1px solid var(--sable-dore); padding-right: 20px;">
+        <div style="display:flex; align-items:center; gap:8px;">
             <input type="text" id="confirmBots" placeholder="BOTS" style="width:50px; padding:6px; border:1px solid #9b59b6; border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold; color: #9b59b6;" />
             <form method="POST" style="margin:0;">
                 <input type="hidden" name="action" value="clean_bots" />
                 <button type="submit" id="botsBtn" disabled style="background: #9b59b6; color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">NETTOYER</button>
             </form>
         </div>
+        
+        <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 0.5rem; text-transform: uppercase; font-weight: 800; opacity: 0.5; letter-spacing: 0.5px; color: #9b59b6;">Dernier Ménage</span>
+            <span style="font-size: 0.65rem; font-weight: 700; color: #9b59b6;">{lastCleanBotsDate}</span>
+        </div>
+    </div>
 
+    <div style="display:flex; align-items:center; gap:12px;">
         <div style="display:flex; align-items:center; gap:8px;">
             <input type="text" id="confirmReset" placeholder="RESET" style="width:60px; padding:6px; border:1px solid var(--sable-dore); border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold;" />
             <form method="POST" style="margin:0;">
@@ -402,7 +417,7 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
             </form>
         </div>
 
-        {/* Date du dernier reset */}
+        {/* Affichage de la date du dernier reset */}
         <div style="display: flex; flex-direction: column; border-left: 1px solid var(--sable-dore); padding-left: 12px;">
             <span style="font-size: 0.5rem; text-transform: uppercase; font-weight: 800; opacity: 0.5; letter-spacing: 0.5px;">Dernier Reset</span>
             <span style="font-size: 0.65rem; font-weight: 700; color: var(--brun-coco);">{lastResetDate}</span>
