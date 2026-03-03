@@ -82,12 +82,16 @@ try {
     logs = rawLogs.map((item: any) => {
         const log: LogEntry = typeof item === 'string' ? JSON.parse(item) : item;
         
+        // Logique : Si c'est dans la liste, c'est humain. Sinon, c'est un Bot.
         const isHuman = ['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device);
         
-        if (!isHuman) botCount++;
-        else if (log.device === "iOS") iosCount++;
-        else if (log.device === "Android") androidCount++;
-        else if (log.device === "Ordinateur" || log.device === "PC") pcCount++;
+        if (!isHuman) {
+            botCount++;
+        } else {
+            if (log.device === "iOS") iosCount++;
+            else if (log.device === "Android") androidCount++;
+            else if (log.device === "Ordinateur" || log.device === "PC") pcCount++;
+        }
         
         if (log.isQR === true || String(log.isQR) === 'true') qrCount++;
         return log;
@@ -487,11 +491,16 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
                     <div class="log-cell-num">{logs.length - index}</div>
                     <div style="padding:0 8px; overflow: hidden;">
                         <div style="display:flex; align-items:center; gap:8px; white-space: nowrap;">
-                            <span style="font-size:1rem;">
-    {log.device === 'iOS' && <i class="fa-brands fa-apple"></i>}
-    {log.device === 'Android' && <i class="fa-brands fa-android"></i>}
-    {(log.device === 'Ordinateur' || log.device === 'PC') && <i class="fa-solid fa-desktop"></i>}
-    {(log.device === 'Bot' || log.device === 'Robot') && <i class="fa-solid fa-robot" style="color: #9b59b6;"></i>}
+<span style="font-size:1rem;">
+    {!['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device) ? (
+        <i class="fa-solid fa-robot" style="color: #9b59b6;"></i>
+    ) : (
+        <>
+            {log.device === 'iOS' && <i class="fa-brands fa-apple"></i>}
+            {log.device === 'Android' && <i class="fa-brands fa-android"></i>}
+            {(log.device === 'Ordinateur' || log.device === 'PC') && <i class="fa-solid fa-desktop"></i>}
+        </>
+    )}
 </span>
                             
                             <i class={`fa-solid ${connectionIcon}`} style="font-size:0.75rem; color: var(--sable-dore);"></i>
@@ -606,7 +615,7 @@ function updateBadges() {
         const isQR = entry.getAttribute('data-qr') === 'true';
         const device = entry.getAttribute('data-device');
         const country = entry.getAttribute('data-country');
-        const isBot = (device === 'Bot' || device === 'Robot');
+        const isBot = !['iOS', 'Android', 'PC', 'Ordinateur'].includes(device);
 
         counts.all++;
         if (isQR) counts.qr++;
@@ -643,7 +652,7 @@ function filterLogs(type) {
         const isQR = entry.getAttribute('data-qr') === 'true';
         const device = entry.getAttribute('data-device');
         const country = entry.getAttribute('data-country');
-        const isBot = (device === 'Bot' || device === 'Robot');
+        const isBot = !['iOS', 'Android', 'PC', 'Ordinateur'].includes(device);
 
         let show = false;
         if (type === 'all') show = true;
