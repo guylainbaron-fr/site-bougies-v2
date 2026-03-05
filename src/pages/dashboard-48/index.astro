@@ -147,6 +147,11 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
     
     .dashboard-container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 4px; border: 1px solid var(--sable-dore); }
 
+    a[href^="https://ipinfo.io/"]:hover {
+    color: var(--sable-dore) !important;
+    cursor: crosshair; /* Un petit viseur pour le côté "investigation" */
+    }
+
     /* HEADER RESPONSIVE */
     .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--sable-dore); padding-bottom: 15px; flex-wrap: wrap; gap: 15px; }
     .header-flex h1 { margin: 0; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; color: var(--brun-coco); display: flex; align-items: center; gap: 10px; }
@@ -505,7 +510,20 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
                             
                             <i class={`fa-solid ${connectionIcon}`} style="font-size:0.75rem; color: var(--sable-dore);"></i>
                             
-                            <span style="font-size:0.7rem; font-weight:800;">{displayName}</span>
+    {isHuman || displayName === log.ip ? (
+    <a 
+        href={`https://ipinfo.io/${log.ip}`} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        style="font-size:0.7rem; font-weight:800; color: inherit; text-decoration: none; border-bottom: 1px dashed var(--sable-dore);"
+        title="Voir les détails de l'IP"
+    >
+        {displayName}
+    </a>
+) : (
+    /* Si c'est un nom de bot (ex: Googlebot), on l'affiche normalement */
+    <span style="font-size:0.7rem; font-weight:800;">{displayName}</span>
+)}
                             
                             { (log.isQR === true || String(log.isQR) === 'true') && <i class="fa-solid fa-qrcode" style="color:var(--color-qr); font-size:0.7rem;"></i> }
                         </div>
