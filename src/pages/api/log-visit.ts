@@ -12,9 +12,9 @@ export const POST: APIRoute = async ({ request }) => {
 
         // --- MODE FANTÔME (BUREAU) ---
         // Pour redevenir visible, ajoute // devant les 3 lignes suivantes :
-        if (ip === '128.79.142.7') {
-            return new Response(JSON.stringify({ success: true, mode: "ghost-active" }), { status: 200 });
-        }
+        // if (ip === '128.79.142.7') {
+        //     return new Response(JSON.stringify({ success: true, mode: "ghost-active" }), { status: 200 });
+        // }
         
         const countryCodeRaw = request.headers.get('x-vercel-ip-country');
         const countryCode = countryCodeRaw ? countryCodeRaw.toLowerCase() : "un";
