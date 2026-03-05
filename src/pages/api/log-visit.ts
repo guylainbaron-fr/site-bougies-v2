@@ -26,13 +26,14 @@ export const POST: APIRoute = async ({ request }) => {
         // 3. DÉTERMINATION DE L'APPAREIL / IDENTITÉ
         let dev = "PC";
         if (isBot) {
-            // On extrait le nom proprement
+            // On cherche d'abord les noms connus
             if (/googlebot/i.test(ua)) dev = "Googlebot";
             else if (/lighthouse|chrome-lighthouse/i.test(ua)) dev = "Lighthouse";
             else if (/facebookexternalhit|facebook/i.test(ua)) dev = "Meta / FB";
             else if (/bingbot/i.test(ua)) dev = "Bingbot";
             else if (/vercel/i.test(ua)) dev = "Vercel Bot";
-            else dev = "Robot"; // Si vraiment inconnu
+            // SI INCONNU : On met juste l'IP à la place du nom
+            else dev = ip; 
         } else if (/android/i.test(ua)) {
             dev = "Android";
         } else if (/iPad|iPhone|iPod/i.test(ua)) {
