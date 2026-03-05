@@ -12,16 +12,16 @@ export const POST: APIRoute = async ({ request }) => {
 
         // --- MODE FANTÔME (BUREAU) ---
         // Pour redevenir visible, ajoute // devant les 3 lignes suivantes :
-        // if (ip === '128.79.142.7') {
-        //     return new Response(JSON.stringify({ success: true, mode: "ghost-active" }), { status: 200 });
-        // }
+        if (ip === '128.79.142.7') {
+            return new Response(JSON.stringify({ success: true, mode: "ghost-active" }), { status: 200 });
+        }
         
         const countryCodeRaw = request.headers.get('x-vercel-ip-country');
         const countryCode = countryCodeRaw ? countryCodeRaw.toLowerCase() : "un";
 
         // 2. LA REGEX MUSCLÉE (Identité du visiteur)
-        // On cible les bots de crawl, les outils SEO et les scripts automatiques
-        const isBot = /(googlebot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|ia_archiver|robot|bot|spider|headless|chrome-lighthouse|lighthouse|inspect|ahrefsbot|semrushbot|dotbot|python|axios|curl|wget|go-http-client|java|php|postman|runtime|insomnia|nimbostratus)/i.test(ua);
+        // On cible les bots de crawl, les réseaux sociaux, les outils SEO et les scripts
+        const isBot = /(googlebot|adsbot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|pinterest|linkedinbot|telegrambot|slackbot|petalbot|ia_archiver|robot|bot|spider|headless|chrome-lighthouse|lighthouse|inspect|ahrefsbot|semrushbot|dotbot|python|axios|curl|wget|go-http-client|java|php|postman|runtime|insomnia|nimbostratus)/i.test(ua);
 
         // 3. DÉTERMINATION DE L'APPAREIL / IDENTITÉ
         let dev = "PC";
@@ -30,6 +30,8 @@ export const POST: APIRoute = async ({ request }) => {
             if (/googlebot/i.test(ua)) dev = "Googlebot";
             else if (/lighthouse|chrome-lighthouse/i.test(ua)) dev = "Lighthouse";
             else if (/facebookexternalhit|facebook/i.test(ua)) dev = "Meta / FB";
+            else if (/pinterest/i.test(ua)) dev = "Pinterest";
+            else if (/linkedinbot/i.test(ua)) dev = "LinkedIn";
             else if (/bingbot/i.test(ua)) dev = "Bingbot";
             else if (/vercel/i.test(ua)) dev = "Vercel Bot";
             // SI INCONNU : On met juste l'IP à la place du nom
