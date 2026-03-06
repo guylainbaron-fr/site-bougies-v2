@@ -838,32 +838,30 @@ entries.forEach(entry => {
 });
 }
 
-// --- FONCTION EXPORT CSV ---
 function exportLogsToCSV() {
     const entries = document.querySelectorAll('.log-entry');
-    let csvContent = "N°;SOURCE_IP;TYPE;PAYS;HEURE_DATE\r\n"; 
+    let csvContent = "N°;SOURCE_IP;TYPE;PAYS;HEURE;DATE\r\n"; 
 
     entries.forEach(entry => {
         if (entry.style.display !== 'none') {
-            // On récupère TOUS les morceaux de texte de la ligne
-            const textNodes = Array.from(entry.querySelectorAll('span, a, strong, em, i'))
-                .map(el => el.innerText.trim())
-                .filter(txt => txt !== ""); // On enlève les vides
-
-            // Selon ta structure :
-            // index 0 = N°
-            // index 1 = IP / SOURCE
-            // index 2 = TYPE (Scan QR / Lien Web)
-            // index 3 = PAYS
-            // index 4 = HEURE / DATE
+            // 1. On cible précisément par les classes de ton dashboard
+            const num = entry.querySelector('.log-cell-num')?.innerText.trim() || "";
             
-            const num = textNodes[0] || "";
-            const sourceIP = textNodes[1] || "";
-            const sourceType = textNodes[2] || "";
-            const pays = textNodes[3] || "";
-            const infos = textNodes[4] || "";
+            // Pour le centre, on sépare l'IP (souvent en gras/lien) du reste
+            const sourceCell = entry.querySelector('.log-cell-num + div, .log-cell-num + span');
+            const sourceIP = sourceCell?.querySelector('a, strong')?.innerText.trim() || "";
+            const sourceType = sourceCell?.querySelector('em, i')?.innerText.trim() || "";
+            
+            // Le pays a souvent son propre span ou un title
+            const pays = entry.querySelector('span[title], .log-cell-num + span + span')?.innerText.trim() || "";
+            
+            // On sépare Heure et Date qui sont dans la cellule de droite
+            const timeDate = entry.querySelector('.log-cell-right')?.innerText.split('\n').map(t => t.trim()) || ["", ""];
+            const heure = timeDate[0] || "";
+            const date = timeDate[1] || "";
 
-            const rowData = [num, sourceIP, sourceType, pays, infos]
+            // On assemble les 6 colonnes pour plus de précision
+            const rowData = [num, sourceIP, sourceType, pays, heure, date]
                 .map(text => `"${text.replace(/"/g, '""')}"`)
                 .join(";");
             
