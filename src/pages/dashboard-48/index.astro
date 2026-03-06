@@ -842,6 +842,16 @@ entries.forEach(entry => {
 // Fonction d'export CSV
 function exportLogsToCSV() {
     const entries = document.querySelectorAll('.log-entry');
+    
+    // --- MODIF 3 : NOM DE FICHIER DYNAMIQUE ---
+    // On récupère le nom du filtre actif (ex: "Robots", "QR", etc.)
+    const activeFilterBtn = document.querySelector('.filter-btn.active');
+    let filterName = "Tous";
+    if (activeFilterBtn) {
+        // On nettoie le texte pour enlever les chiffres du badge et les icônes
+        filterName = activeFilterBtn.innerText.replace(/[0-9]/g, '').trim();
+    }
+
     // On définit les colonnes : N°, IP, TYPE (Scan/Robot), PAYS, HEURE, DATE
     let csvContent = "N°;SOURCE_IP;TYPE;PAYS;HEURE;DATE\r\n"; 
 
@@ -857,12 +867,10 @@ function exportLogsToCSV() {
             const sourceIP = centerCell?.querySelector('a')?.innerText.trim() || "Privé";
             
             // LIGNE 2 : Le TYPE (Scan QR, Lien Web, ou Nom du Robot)
-            // On prend le texte du div qui contient le texte en majuscules (Ligne 2)
             const typeDiv = centerCell?.querySelector('div[style*="font-size:0.6rem"]');
             const sourceType = typeDiv?.innerText.trim() || "";
             
-            // 3. Le PAYS (C'est le 3ème bloc, souvent juste avant la cellule de droite)
-            // Dans ton code Astro, le pays est après la cellule centrale
+            // 3. Le PAYS
             const pays = entry.querySelector('div:not(.log-cell-num):not(.log-cell-right) span[title], .log-entry > span:nth-of-type(2)')?.innerText.trim() 
                          || entry.getAttribute('data-country') || "Inconnu";
             
@@ -888,8 +896,10 @@ function exportLogsToCSV() {
     const link = document.createElement("a");
     const dateFile = new Date().toLocaleDateString('fr-FR').replace(/\//g, '-');
 
+    // Nom de fichier auto-ajusté (ex: logs_Robots_07-03-2026.csv)
     link.setAttribute("href", url);
-    link.setAttribute("download", `logs_atelier_${dateFile}.csv`);
+    link.setAttribute("download", `logs_${filterName}_${dateFile}.csv`);
+    
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
