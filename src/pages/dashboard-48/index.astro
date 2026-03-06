@@ -203,6 +203,8 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
     .logs-section { background: white; border: 1px solid var(--sable-dore); padding: 15px; border-radius: 4px; width: 100%; }
     .logs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
     .log-entry { display: grid; grid-template-columns: 40px 1fr 80px; align-items: center; border: 1px solid var(--sable-dore); background: #fff; height: 65px; border-radius: 3px; overflow: hidden; }
+    /* SÉCURITÉ ÉCRAN : Si le JS dit de cacher, on cache vraiment */
+    .log-entry[style*="display: none"] { display: none !important; }
     .log-cell-num { background: var(--vanille-pure); height: 100%; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--sable-dore); font-weight: 900; font-family: monospace; font-size: 0.8rem; }
     .log-cell-right { border-left: 1px solid var(--sable-dore); height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--fond-ecume); font-size: 0.65rem; font-weight: 800; }
 
