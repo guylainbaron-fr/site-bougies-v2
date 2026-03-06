@@ -597,42 +597,55 @@ return (
     </div>
 
     {/* LIGNE 2 : PROVENANCE */}
-    <div style="font-size:0.6rem; font-weight:900; display:flex; align-items:center; gap:5px; text-transform: uppercase;">
-        {!['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device) ? (
-            /* Cas ROBOT : SERVEUR + NOM DU ROBOT en VIOLET */
-            <>
-                <i class="fa-solid fa-server" style="color: #9b59b6;"></i>
-                <span style="color: #9b59b6;">{log.device}</span>
-            </>
-        ) : (
-            /* Cas HUMAIN : QR, Social ou Lien Web */
-            <>
-                {(log.isQR === true || String(log.isQR) === 'true') ? (
-                    <>
-                        <i class="fa-solid fa-qrcode" style="color: var(--color-qr);"></i>
-                        <span style="color: var(--color-qr);">Scan QR</span>
-                    </>
-                ) : (
-                    <>
-                        {log.source === 'Instagram' && <i class="fa-brands fa-instagram" style="color: #E1306C;"></i>}
-                        {log.source === 'Facebook' && <i class="fa-brands fa-facebook" style="color: #1877F2;"></i>}
-                        {log.source === 'WhatsApp' && <i class="fa-brands fa-whatsapp" style="color: #25D366;"></i>}
-                        
-                        {(!log.source || log.source === 'Direct' || log.source === 'Inconnue') && (
-                            <>
-                                <i class="fa-solid fa-link" style="color: var(--color-direct);"></i>
-                                <span style="color: var(--color-direct);">LIEN WEB</span>
-                            </>
-                        )}
+<div style="font-size:0.6rem; font-weight:900; display:flex; align-items:center; gap:5px; text-transform: uppercase;">
+    {!['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device) ? (
+        /* Cas ROBOT : SERVEUR + NOM DU ROBOT en VIOLET */
+        <>
+            <i class="fa-solid fa-server" style="color: #9b59b6;"></i>
+            <span style="color: #9b59b6;">{log.device}</span>
+        </>
+    ) : (
+        /* Cas HUMAIN : QR, Social ou Lien Web */
+        <>
+            {(log.isQR === true || String(log.isQR) === 'true') ? (
+                <>
+                    <i class="fa-solid fa-qrcode" style="color: var(--color-qr);"></i>
+                    <span style="color: var(--color-qr);">Scan QR</span>
+                </>
+            ) : (
+                <>
+                    {log.source === 'Instagram' && <i class="fa-brands fa-instagram" style="color: #E1306C;"></i>}
+                    {log.source === 'Facebook' && <i class="fa-brands fa-facebook" style="color: #1877F2;"></i>}
+                    {log.source === 'WhatsApp' && <i class="fa-brands fa-whatsapp" style="color: #25D366;"></i>}
+                    {log.source === 'TikTok' && <i class="fa-brands fa-tiktok" style="color: #000000;"></i>}
+                    {log.source === 'Pinterest' && <i class="fa-brands fa-pinterest" style="color: #E60023;"></i>}
+                    
+                    {(!log.source || log.source === 'Direct' || log.source === 'Inconnue') && (
+                        <>
+                            <i class="fa-solid fa-link" style="color: var(--color-direct);"></i>
+                            <span style="color: var(--color-direct);">LIEN WEB</span>
+                        </>
+                    )}
 
-                        {log.source && !['Instagram', 'Facebook', 'WhatsApp', 'Direct', 'Inconnue'].includes(log.source) && (
-                            <span>{log.source}</span>
-                        )}
-                    </>
-                )}
-            </>
-        )}
-    </div>
+                    {/* Affichage du texte pour les réseaux (Insta, FB, WA, TikTok, Pinterest) */}
+                    {log.source && ['Instagram', 'Facebook', 'WhatsApp', 'TikTok', 'Pinterest'].includes(log.source) && (
+                        <span style={`color: ${
+                            log.source === 'Instagram' ? '#E1306C' : 
+                            log.source === 'Facebook' ? '#1877F2' : 
+                            log.source === 'WhatsApp' ? '#25D366' : 
+                            log.source === 'TikTok' ? '#000000' : 
+                            '#E60023' // Pinterest
+                        };`}>{log.source}</span>
+                    )}
+
+                    {log.source && !['Instagram', 'Facebook', 'WhatsApp', 'TikTok', 'Pinterest', 'Direct', 'Inconnue'].includes(log.source) && (
+                        <span>{log.source}</span>
+                    )}
+                </>
+            )}
+        </>
+    )}
+</div>
 
     {/* LIGNE 3 : PAYS */}
     <div style="font-size:0.55rem; font-weight:900; opacity:0.8; display:flex; align-items:center; gap:5px;">
