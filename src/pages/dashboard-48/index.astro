@@ -555,9 +555,9 @@ if (log.isQR === true || String(log.isQR) === 'true') {
 return (
     <div class="log-entry" 
      data-qr={String(log.isQR === true || String(log.isQR) === 'true')} 
-     data-device={log.device} 
-     data-source={log.source || 'Direct'}
-     data-country={log.country?.toUpperCase() || 'INCONNU'}>
+     data-device={log.device || 'Robot Inconnu'} 
+     data-source={log.source || 'Lien Web'}
+     data-country={log.country?.toUpperCase() || 'IP NON LOCALISÉE'}>
         
         <div class="log-cell-num">{logs.length - index}</div>
         
