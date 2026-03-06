@@ -428,30 +428,30 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
 <div class="dist-section">
     <div class="dist-header">Technologie</div>
     <div class="distribution-bar">
-        {iosCount > 0 && <div class="segment bg-ios" style={`width: ${iosPct}%`}>{iosPct}%</div>}
-        {androidCount > 0 && <div class="segment bg-android" style={`width: ${androidPct}%`}>{androidPct}%</div>}
-        {pcCount > 0 && <div class="segment bg-pc" style={`width: ${pcPct}%`}>{pcPct}%</div>}
-        {botCount > 0 && <div class="segment" style={`width: ${botPct}%; background-color: #9b59b6;`}>{botPct}%</div>}
+        {iosCount > 0 && <div class="segment bg-ios" style={`width: ${iosPct}%`}>{iosPct > 5 ? `${iosPct}%` : ''}</div>}
+        {androidCount > 0 && <div class="segment bg-android" style={`width: ${androidPct}%`}>{androidPct > 5 ? `${androidPct}%` : ''}</div>}
+        {pcCount > 0 && <div class="segment bg-pc" style={`width: ${pcPct}%`}>{pcPct > 5 ? `${pcPct}%` : ''}</div>}
+        {botCount > 0 && <div class="segment" style={`width: ${botPct}%; background-color: #9b59b6;`}>{botPct > 5 ? `${botPct}%` : ''}</div>}
     </div>
     <div class="bar-legend">
-        <span class="legend-item"><span class="dot bg-ios"></span> Apple</span>
-        <span class="legend-item"><span class="dot bg-android"></span> Android</span>
-        <span class="legend-item"><span class="dot bg-pc"></span> Ordinateur</span>
-        <span class="legend-item"><span class="dot" style="background-color: #9b59b6;"></span> Robots</span>
+        <span class="legend-item"><span class="dot bg-ios"></span> Apple ({iosPct}%)</span>
+        <span class="legend-item"><span class="dot bg-android"></span> Android ({androidPct}%)</span>
+        <span class="legend-item"><span class="dot bg-pc"></span> Ordinateur ({pcPct}%)</span>
+        <span class="legend-item"><span class="dot" style="background-color: #9b59b6;"></span> Robots ({botPct}%)</span>
     </div>
 </div>
 
-        <div class="dist-section">
-            <div class="dist-header">Origine</div>
-            <div class="distribution-bar">
-                {qrCount > 0 && <div class="segment bg-qr" style={`width: ${qrPct}%`}>{qrPct}%</div>}
-                {directPct > 0 && <div class="segment bg-direct" style={`width: ${directPct}%`}>{directPct}%</div>}
-            </div>
-            <div class="bar-legend">
-                <span class="legend-item"><span class="dot bg-qr"></span> Scan QR</span>
-                <span class="legend-item"><span class="dot bg-direct"></span> Navigation Directe</span>
-            </div>
-        </div>
+<div class="dist-section">
+    <div class="dist-header">Origine</div>
+    <div class="distribution-bar">
+        {qrCount > 0 && <div class="segment bg-qr" style={`width: ${qrPct}%`}>{qrPct > 5 ? `${qrPct}%` : ''}</div>}
+        {directPct > 0 && <div class="segment bg-direct" style={`width: ${directPct}%`}>{directPct > 5 ? `${directPct}%` : ''}</div>}
+    </div>
+    <div class="bar-legend">
+        <span class="legend-item"><span class="dot bg-qr"></span> Scan QR ({qrPct}%)</span>
+        <span class="legend-item"><span class="dot bg-direct"></span> Lien Web ({directPct}%)</span>
+    </div>
+</div>
 
         <div class="actions-row" style="display:flex; align-items:center; gap:12px;">
     <button onclick="window.print()" class="btn btn-gold"><i class="fa-solid fa-file-pdf"></i> Rapport</button>
