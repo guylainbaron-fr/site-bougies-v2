@@ -841,29 +841,29 @@ entries.forEach(entry => {
 // --- FONCTION EXPORT CSV ---
 function exportLogsToCSV() {
     const entries = document.querySelectorAll('.log-entry');
-    // On définit les 5 colonnes pour correspondre aux données extraites
+    // On définit exactement 5 colonnes
     let csvContent = "N°;SOURCE_IP;TYPE;PAYS;HEURE_DATE\r\n"; 
 
     entries.forEach(entry => {
         if (entry.style.display !== 'none') {
-            // 1. Le numéro (Cellule de gauche)
+            // 1. Numéro du log
             const num = entry.querySelector('.log-cell-num')?.innerText.trim() || "";
             
-            // 2. La cellule centrale (contient l'IP/Nom ET le Type juste en dessous)
-            // On récupère le texte global et on le sépare par le retour à la ligne
-            const centralCell = entry.querySelector('.log-cell-num + div, .log-cell-num + span');
-            const lines = centralCell ? centralCell.innerText.split('\n').map(l => l.trim()).filter(l => l !== "") : ["", ""];
+            // 2. IP / Nom (c'est le premier lien ou span important après le numéro)
+            const sourceIP = entry.querySelector('a, .log-cell-num + span strong, .log-cell-num + div strong')?.innerText.trim() 
+                             || entry.querySelector('.log-cell-num + span')?.innerText.split('\n')[0].trim() || "";
             
-            const sourceIP = lines[0] || ""; // Première ligne : l'IP ou le Nom du Robot
-            const sourceType = lines[1] || ""; // Deuxième ligne : Scan QR, Lien Web, etc.
+            // 3. Type (Scan QR, Robot, etc. - souvent en italique ou 2ème ligne)
+            const sourceType = entry.querySelector('em, i')?.innerText.trim() 
+                               || entry.querySelector('.log-cell-num + span')?.innerText.split('\n')[1]?.trim() || "";
             
-            // 3. Le pays (Cellule avec l'icône)
-            const pays = entry.querySelector('.log-cell-num + span + span, .log-cell-num + div + span')?.innerText.trim() || "";
+            // 4. Pays
+            const pays = entry.querySelector('span[title], .log-cell-num + span + span')?.innerText.trim() || "";
             
-            // 4. L'horodatage (Cellule de droite)
+            // 5. Date et Heure (Cellule de droite)
             const infos = entry.querySelector('.log-cell-right')?.innerText.replace(/\n/g, ' ').trim() || "";
 
-            // On assemble les 5 éléments dans l'ordre des titres
+            // On s'assure d'avoir nos 5 colonnes bien remplies
             const rowData = [num, sourceIP, sourceType, pays, infos]
                 .map(text => `"${text.replace(/"/g, '""')}"`)
                 .join(";");
