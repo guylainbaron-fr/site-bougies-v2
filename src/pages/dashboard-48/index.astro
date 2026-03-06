@@ -599,15 +599,18 @@ return (
     {/* LIGNE 2 : PROVENANCE */}
     <div style="font-size:0.6rem; font-weight:900; display:flex; align-items:center; gap:5px; text-transform: uppercase;">
         {!['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device) ? (
-            /* Cas ROBOT : on affiche juste son nom en violet */
-            <span style="color: #9b59b6;">{log.device}</span>
+            /* Cas ROBOT : Icône Robot + Nom du robot en VIOLET */
+            <>
+                <i class="fa-solid fa-robot" style="color: #9b59b6;"></i>
+                <span style="color: #9b59b6;">{log.device}</span>
+            </>
         ) : (
             /* Cas HUMAIN : QR, Social ou Lien Web */
             <>
                 {(log.isQR === true || String(log.isQR) === 'true') ? (
                     <>
-                        <i class="fa-solid fa-qrcode" style="color: #ff8c00;"></i>
-                        <span>Scan QR</span>
+                        <i class="fa-solid fa-qrcode" style="color: var(--color-qr);"></i>
+                        <span style="color: var(--color-qr);">Scan QR</span>
                     </>
                 ) : (
                     <>
@@ -617,12 +620,11 @@ return (
                         
                         {(!log.source || log.source === 'Direct' || log.source === 'Inconnue') && (
                             <>
-                                <i class="fa-solid fa-link" style="color: #95a5a6;"></i>
-                                <span>LIEN WEB</span>
+                                <i class="fa-solid fa-link" style="color: var(--color-direct);"></i>
+                                <span style="color: var(--color-direct);">LIEN WEB</span>
                             </>
                         )}
 
-                        {/* Sources spécifiques autres que les standards */}
                         {log.source && !['Instagram', 'Facebook', 'WhatsApp', 'Direct', 'Inconnue'].includes(log.source) && (
                             <span>{log.source}</span>
                         )}
