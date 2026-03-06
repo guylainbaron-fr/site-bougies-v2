@@ -471,18 +471,24 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
             </div>
     <div class="logs-grid">
         {logs.map((log, index) => {
-            const [dateS, timeS] = (log.date || " - ").split(' ');
-            
-            // Logique des icônes de connexion (Prise / Globe / Masque)
-            let connectionIcon = "fa-user-secret";
-            let connectionLabel = "Privé";
-            if (log.ip === '::1' || log.ip === '127.0.0.1') {
-                connectionIcon = "fa-plug";
-                connectionLabel = "Local";
-            } else if (log.ip && log.ip !== 'Privé' && log.ip !== 'IP Inconnue') {
-                connectionIcon = "fa-globe";
-                connectionLabel = log.ip;
-            }
+    const [dateS, timeS] = (log.date || " - ").split(' ');
+    
+// --- LOGIQUE DE L'ICÔNE (QR / Globe / Plug / Secret) ---
+let connectionIcon = "fa-user-secret";
+let connectionLabel = "Privé";
+let iconColor = "var(--sable-dore)"; // Couleur dorée par défaut
+
+if (log.isQR === true || String(log.isQR) === 'true') {
+    connectionIcon = "fa-qrcode";
+    connectionLabel = "Scan QR";
+    iconColor = "#ff8c00"; // Orange pour le QR <--- BIEN VÉRIFIER CECI
+} else if (log.ip === '::1' || log.ip === '127.0.0.1') {
+    connectionIcon = "fa-plug";
+    connectionLabel = "Local";
+} else if (log.ip && log.ip !== 'Privé' && log.ip !== 'IP Inconnue') {
+    connectionIcon = "fa-globe";
+    connectionLabel = log.ip;
+}
 
             // 2. Identification simplifiée (Le nom est déjà géré par l'API)
             let displayName = connectionLabel; // Par défaut, on affiche l'IP
@@ -495,51 +501,59 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
 
 return (
     <div class="log-entry" 
-         data-qr={String(log.isQR)} 
-         data-device={log.device} 
-         data-source={log.source || 'Direct'}
-         data-country={log.country?.toUpperCase() || 'INCONNU'}>
+     data-qr={String(log.isQR === true || String(log.isQR) === 'true')} 
+     data-device={log.device} 
+     data-source={log.source || 'Direct'}
+     data-country={log.country?.toUpperCase() || 'INCONNU'}>
         
         <div class="log-cell-num">{logs.length - index}</div>
         
         <div style="padding:0 8px; overflow: hidden; display: flex; flex-direction: column; justify-content: center;">
             {/* LIGNE 1 : APPAREIL + IP */}
-            <div style="display:flex; align-items:center; gap:8px; white-space: nowrap;">
-                <span style="font-size:0.9rem;">
-                    {!['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device) ? (
-                        <i class="fa-solid fa-robot" style="color: #9b59b6;"></i>
-                    ) : (
-                        <>
-                            {log.device === 'iOS' && <i class="fa-brands fa-apple"></i>}
-                            {log.device === 'Android' && <i class="fa-brands fa-android"></i>}
-                            {(log.device === 'Ordinateur' || log.device === 'PC') && <i class="fa-solid fa-desktop"></i>}
-                        </>
-                    )}
-                </span>
-                <i class={`fa-solid ${connectionIcon}`} style="font-size:0.75rem; color: var(--sable-dore);"></i>
-                <a href={`https://ipinfo.io/${log.ip}`} target="_blank" style="font-size:0.7rem; font-weight:800; color: inherit; text-decoration: none; border-bottom: 1px dashed var(--sable-dore);">
-                    {displayName}
-                </a>
-            </div>
+<div style="display:flex; align-items:center; gap:8px; white-space: nowrap;">
+    <span style="font-size:0.9rem;">
+        {!['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device) ? (
+            <i class="fa-solid fa-robot" style="color: #9b59b6;"></i>
+        ) : (
+            <>
+                {log.device === 'iOS' && <i class="fa-brands fa-apple"></i>}
+                {log.device === 'Android' && <i class="fa-brands fa-android"></i>}
+                {(log.device === 'Ordinateur' || log.device === 'PC') && <i class="fa-solid fa-desktop"></i>}
+            </>
+        )}
+    </span>
+    
+    <i class={`fa-solid ${connectionIcon}`} style={`font-size:0.75rem; color: ${iconColor};`}></i>
+    
+    <a href={`https://ipinfo.io/${log.ip}`} target="_blank" style="font-size:0.7rem; font-weight:800; color: inherit; text-decoration: none; border-bottom: 1px dashed var(--sable-dore);">
+        {displayName}
+    </a>
+</div>
 
             {/* LIGNE 2 : PROVENANCE (LA NOUVEAUTÉ) */}
-            <div style="font-size:0.6rem; font-weight:900; margin-top:2px; display:flex; align-items:center; gap:5px; text-transform: uppercase;">
-                {log.source === 'Instagram' && <i class="fa-brands fa-instagram" style="color: #E1306C;"></i>}
-                {log.source === 'Facebook' && <i class="fa-brands fa-facebook" style="color: #1877F2;"></i>}
-                {log.source === 'WhatsApp' && <i class="fa-brands fa-whatsapp" style="color: #25D366;"></i>}
-                {log.source === 'TikTok' && <i class="fa-brands fa-tiktok"></i>}
-                {log.source === 'Google' && <i class="fa-brands fa-google" style="color: #4285F4;"></i>}
-                {(!log.source || log.source === 'Direct') && (log.isQR ? <i class="fa-solid fa-qrcode" style="color:var(--color-qr);"></i> : <i class="fa-solid fa-link" style="opacity:0.5;"></i>)}
-                
-                <span style={`color: ${
-                    log.source === 'Instagram' ? '#E1306C' : 
-                    log.source === 'Facebook' ? '#1877F2' : 
-                    log.source === 'WhatsApp' ? '#25D366' : 
-                    log.source === 'Google' ? '#4285F4' : 'inherit'
-                }`}>
-                    {log.source || (log.isQR ? "Scan QR" : "Direct")}
-                </span>
-            </div>
+<div style="font-size:0.6rem; font-weight:900; margin-top:2px; display:flex; align-items:center; gap:5px; text-transform: uppercase;">
+    {/* 1. Affichage systématique de l'icône QR si c'est un scan */}
+    {(log.isQR === true || String(log.isQR) === 'true') && (
+        <i class="fa-solid fa-qrcode" style="color:var(--color-qr);"></i>
+    )}
+
+    {/* 2. Affichage de l'icône du réseau social si présent */}
+    {log.source === 'Instagram' && <i class="fa-brands fa-instagram" style="color: #E1306C;"></i>}
+    {log.source === 'Facebook' && <i class="fa-brands fa-facebook" style="color: #1877F2;"></i>}
+    {log.source === 'WhatsApp' && <i class="fa-brands fa-whatsapp" style="color: #25D366;"></i>}
+    {log.source === 'TikTok' && <i class="fa-brands fa-tiktok"></i>}
+    {log.source === 'Google' && <i class="fa-brands fa-google" style="color: #4285F4;"></i>}
+    
+    {/* 3. Texte de la source */}
+    <span style={`color: ${
+        log.source === 'Instagram' ? '#E1306C' : 
+        log.source === 'Facebook' ? '#1877F2' : 
+        log.source === 'WhatsApp' ? '#25D366' : 
+        log.source === 'Google' ? '#4285F4' : 'inherit'
+    }`}>
+        {log.source || ( (log.isQR === true || String(log.isQR) === 'true') ? "Scan QR" : "Direct")}
+    </span>
+</div>
 
             {/* LIGNE 3 : PAYS */}
             <div style="font-size:0.55rem; font-weight:900; opacity:0.8; margin-top:1px; display:flex; align-items:center; gap:5px;">
@@ -612,42 +626,37 @@ return (
 <script is:inline>
 // Fonction de déconnexion
 function logout() {
-    // 1. On crée une requête HTTP synchrone vers une page protégée
-    // avec des identifiants invalides
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", "/dashboard-48", true, "logout", "logout");
-    
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4) {
-            // 2. Une fois que le navigateur a reçu la réponse (401)
-            // avec les mauvais identifiants, on le redirige
             window.location.href = "/";
         }
     };
-    
     xmlhttp.send();
 }
 
 // Fonction pour calculer les badges au chargement
 function updateBadges() {
     const entries = document.querySelectorAll('.log-entry');
-    // On ajoute 'social' dans l'objet des compteurs
     let counts = { all: 0, qr: 0, social: 0, mobile: 0, pc: 0, france: 0, intl: 0, bot: 0 };
 
     entries.forEach(entry => {
-        const isQR = entry.getAttribute('data-qr') === 'true';
-        const device = entry.getAttribute('data-device');
-        const country = entry.getAttribute('data-country');
-        const source = entry.getAttribute('data-source') || 'Direct'; // On récupère la source
+        // 1. RÉCUPÉRATION DES DONNÉES (Ordre corrigé pour éviter l'erreur de variable)
+        const source = entry.getAttribute('data-source') || 'Direct'; 
+        const isQR = entry.getAttribute('data-qr') === 'true' || source.toLowerCase() === 'qr';
+        const device = entry.getAttribute('data-device') || 'Inconnu';
+        const country = entry.getAttribute('data-country') || 'INCONNU';
         
+        // 2. DÉFINITION DES GROUPES
         const isBot = !['iOS', 'Android', 'PC', 'Ordinateur'].includes(device);
         const isSocial = ['Instagram', 'Facebook', 'WhatsApp', 'TikTok', 'Twitter'].includes(source);
 
         counts.all++;
         
-        // Priorité aux compteurs spécifiques
+        // 3. INC RÉMENTATION DES COMPTEURS
         if (isQR) counts.qr++;
-        if (isSocial) counts.social++; // Incrémente le badge Social
+        if (isSocial) counts.social++;
         
         if (isBot) {
             counts.bot++;
@@ -656,11 +665,11 @@ function updateBadges() {
             if (device === 'PC' || device === 'Ordinateur') counts.pc++;
         }
 
-        if (country === 'FRANCE') counts.france++;
+        if (country.toUpperCase() === 'FRANCE') counts.france++;
         else counts.intl++;
     });
 
-    // Mise à jour visuelle des badges (avec sécurité si l'élément n'existe pas)
+    // Mise à jour visuelle des badges
     const setBadge = (id, value) => {
         const el = document.getElementById(id);
         if (el) el.innerText = value;
@@ -668,7 +677,7 @@ function updateBadges() {
 
     setBadge('count-all', counts.all);
     setBadge('count-qr', counts.qr);
-    setBadge('count-social', counts.social); // <--- Nouveau !
+    setBadge('count-social', counts.social);
     setBadge('count-mobile', counts.mobile);
     setBadge('count-pc', counts.pc);
     setBadge('count-france', counts.france);
@@ -683,18 +692,17 @@ function filterLogs(type) {
 
     // Gestion de l'état actif des boutons
     buttons.forEach(btn => btn.classList.remove('active'));
-    if (event && event.currentTarget) {
-        event.currentTarget.classList.add('active');
+    if (window.event && window.event.currentTarget) {
+        window.event.currentTarget.classList.add('active');
     }
 
     entries.forEach(entry => {
-        // 1. RÉCUPÉRATION DES DONNÉES DE LA LIGNE
-        const isQR = entry.getAttribute('data-qr') === 'true';
-        const device = entry.getAttribute('data-device');
-        const country = entry.getAttribute('data-country');
+        // 1. RÉCUPÉRATION DES DONNÉES
         const source = entry.getAttribute('data-source') || 'Direct';
+        const isQR = entry.getAttribute('data-qr') === 'true' || source.toLowerCase() === 'qr';
+        const device = entry.getAttribute('data-device') || 'Inconnu';
+        const country = entry.getAttribute('data-country') || 'INCONNU';
         
-        // Définition des groupes
         const isBot = !['iOS', 'Android', 'PC', 'Ordinateur'].includes(device);
         const isSocial = ['Instagram', 'Facebook', 'WhatsApp', 'TikTok', 'Twitter'].includes(source);
 
@@ -719,26 +727,25 @@ function filterLogs(type) {
         else if (type === 'pc' && !isBot && (device === 'PC' || device === 'Ordinateur')) {
             show = true;
         } 
-        else if (type === 'france' && country === 'FRANCE') {
+        else if (type === 'france' && country.toUpperCase() === 'FRANCE' && !isBot) {
             show = true;
         } 
-        else if (type === 'international' && country !== 'FRANCE') {
+        else if (type === 'international' && country.toUpperCase() !== 'FRANCE' && !isBot) {
             show = true;
         }
 
-        // 3. AFFICHAGE (On garde le 'grid' pour ton design)
+        // 3. AFFICHAGE
         entry.style.display = show ? 'grid' : 'none';
     });
 }
 
-// --- NOUVELLE FONCTION : EXPORT CSV ---
+// --- FONCTION EXPORT CSV ---
 function exportLogsToCSV() {
     const entries = document.querySelectorAll('.log-entry');
-    let csvContent = "Données extraites\r\n"; // En-tête simplifié car tes spans sont multiples
+    let csvContent = "Données extraites\r\n"; 
 
     entries.forEach(entry => {
         if (entry.style.display !== 'none') {
-            // On récupère tous les spans de la ligne
             const cells = entry.querySelectorAll('span');
             const rowData = Array.from(cells)
                 .map(cell => `"${cell.innerText.trim().replace(/"/g, '""')}"`)
@@ -760,10 +767,9 @@ function exportLogsToCSV() {
     document.body.removeChild(link);
 }
 
-// ON LANCE TOUT AU CHARGEMENT DE MANIÈRE PROPRE
+// LANCEMENT AU CHARGEMENT
 window.addEventListener('load', () => {
     if (typeof updateBadges === 'function') updateBadges();
-    // Si tu as une fonction d'horloge, elle se lancera ici aussi via tes autres scripts
 });
 </script>
 </body>
