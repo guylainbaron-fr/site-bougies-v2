@@ -7,11 +7,11 @@ export const POST: APIRoute = async ({ request }) => {
         const data = await request.json();
         const ua = data.ua || request.headers.get('user-agent') || '';
         
-        // 1. DÉTECTION IP ET PAYS (Via Vercel Headers)
+        // 1. RÉCUPÉRATION IP, PAYS ET REFERRER (LA SOURCE)
         const ip = request.headers.get('x-real-ip') || "Anonyme";
+        const referrer = request.headers.get('referer') || ""; // <--- C'est ici qu'on voit d'où ils viennent
 
         // --- MODE FANTÔME (BUREAU) ---
-        // Pour redevenir visible, ajoute // devant les 3 lignes suivantes :
         if (ip === '128.79.142.7') {
             return new Response(JSON.stringify({ success: true, mode: "ghost-active" }), { status: 200 });
         }
@@ -19,48 +19,64 @@ export const POST: APIRoute = async ({ request }) => {
         const countryCodeRaw = request.headers.get('x-vercel-ip-country');
         const countryCode = countryCodeRaw ? countryCodeRaw.toLowerCase() : "un";
 
-        // 2. LA REGEX MUSCLÉE (Identité du visiteur)
-        // On cible les bots de crawl, les réseaux sociaux, les outils SEO et les scripts
-        const isBot = /(googlebot|adsbot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|pinterest|linkedinbot|telegrambot|slackbot|petalbot|ia_archiver|robot|bot|spider|headless|chrome-lighthouse|lighthouse|inspect|ahrefsbot|semrushbot|dotbot|python|axios|curl|wget|go-http-client|java|php|postman|runtime|insomnia|nimbostratus)/i.test(ua);
+        // 2. LOGIQUE DE DÉTECTION DE LA SOURCE (Version Définitive)
+        let sourceName = "Direct";
+        const refLower = referrer.toLowerCase();
 
-        // 3. DÉTERMINATION DE L'APPAREIL / IDENTITÉ
+        // PRIORITÉ 1 : Paramètre manuel (ex: lien dans la bio Instagram ou test)
+        if (data && data.testSource) {
+            // On met la première lettre en majuscule (ex: instagram -> Instagram)
+            sourceName = data.testSource.charAt(0).toUpperCase() + data.testSource.slice(1);
+        } 
+        // PRIORITÉ 2 : Détection automatique via le Referrer
+        else if (refLower.includes('instagram.com')) sourceName = "Instagram";
+        else if (refLower.includes('facebook.com') || refLower.includes('fb.me')) sourceName = "Facebook";
+        else if (refLower.includes('whatsapp.com')) sourceName = "WhatsApp";
+        else if (refLower.includes('tiktok.com')) sourceName = "TikTok";
+        else if (refLower.includes('google.')) sourceName = "Google";
+        else if (referrer) {
+            try {
+                sourceName = new URL(referrer).hostname.replace('www.', '');
+            } catch {
+                sourceName = "Lien Externe";
+            }
+        }
+
+        // 3. LA REGEX MUSCLÉE (Bots)
+        const isBot = /(googlebot|google-favicon|adsbot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|pinterest|linkedinbot|telegrambot|slackbot|petalbot|ia_archiver|robot|bot|spider|headless|chrome-lighthouse|lighthouse|inspect|ahrefsbot|semrushbot|dotbot|python|axios|curl|wget|go-http-client|java|php|postman|runtime|insomnia|nimbostratus)/i.test(ua);
+
+        // 4. DÉTERMINATION DE L'APPAREIL
         let dev = "PC";
         if (isBot) {
-            // On cherche d'abord les noms connus
-            if (/googlebot/i.test(ua)) dev = "Googlebot";
+            if (/google-favicon/i.test(ua)) dev = "Google (Favicon)";
+            else if (/googlebot/i.test(ua)) dev = "Googlebot";
             else if (/lighthouse|chrome-lighthouse/i.test(ua)) dev = "Lighthouse";
-            else if (/facebookexternalhit|facebook/i.test(ua)) dev = "Meta / FB";
-            else if (/pinterest/i.test(ua)) dev = "Pinterest";
-            else if (/linkedinbot/i.test(ua)) dev = "LinkedIn";
+            else if (/facebookexternalhit|facebook/i.test(ua)) dev = "Meta / FB Bot";
             else if (/bingbot/i.test(ua)) dev = "Bingbot";
-            else if (/vercel/i.test(ua)) dev = "Vercel Bot";
-            // SI INCONNU : On met juste l'IP à la place du nom
-            else dev = ip; 
+            else dev = "Robot"; 
         } else if (/android/i.test(ua)) {
             dev = "Android";
         } else if (/iPad|iPhone|iPod/i.test(ua)) {
             dev = "iOS";
         }
 
-        // 4. PRÉPARATION DU LOG POUR LE JOURNAL
+        // 5. PRÉPARATION DU LOG
         const log = {
             date: new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }),
             device: dev,
             ip: ip,
-            // Formatage propre pour ton Dashboard
+            source: sourceName, // <--- NOUVEAU : On enregistre la source
             country: countryCode === "fr" ? "FRANCE" : countryCode.toUpperCase(),
             flag_code: countryCode, 
             isQR: data.isQR || false
         };
 
-        // --- RÈGLE D'OR POUR TES STATS ---
-        // On n'incrémente 'visites_totales' que si ce n'est PAS un bot
+        // On n'incrémente les visites totales que si ce n'est PAS un bot
         if (!isBot) {
             await kv.incr('visites_totales');
         }
 
-        // On sauvegarde quand même l'entrée dans le journal (les 100 derniers)
-        // Cela te permet de voir les bots passer dans l'onglet "Bots" de ton dashboard
+        // Sauvegarde dans le journal
         await kv.lpush('journal_visites', JSON.stringify(log));
         await kv.ltrim('journal_visites', 0, 99);
 
