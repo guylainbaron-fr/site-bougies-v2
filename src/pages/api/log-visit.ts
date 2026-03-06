@@ -7,9 +7,9 @@ export const POST: APIRoute = async ({ request }) => {
         const data = await request.json();
         const ua = data.ua || request.headers.get('user-agent') || '';
         
-        // 1. RÉCUPÉRATION IP, PAYS ET REFERRER (LA SOURCE)
+        // 1. RÉCUPÉRATION IP, PAYS ET REFERRER
         const ip = request.headers.get('x-real-ip') || "Anonyme";
-        const referrer = request.headers.get('referer') || ""; // <--- C'est ici qu'on voit d'où ils viennent
+        const referrer = request.headers.get('referer') || ""; 
 
         // --- MODE FANTÔME (BUREAU) ---
         if (ip === '128.79.142.7') {
@@ -19,14 +19,20 @@ export const POST: APIRoute = async ({ request }) => {
         const countryCodeRaw = request.headers.get('x-vercel-ip-country');
         const countryCode = countryCodeRaw ? countryCodeRaw.toLowerCase() : "un";
 
-        // 2. LOGIQUE DE DÉTECTION DE LA SOURCE (Version Définitive)
+        // 2. LOGIQUE DE DÉTECTION DE LA SOURCE + FIX QR CODE
         let sourceName = "Direct";
         const refLower = referrer.toLowerCase();
+        
+        // On récupère la source envoyée par le script du front (testSource ou utm_source)
+        const manualSource = data.testSource || data.utmSource;
 
-        // PRIORITÉ 1 : Paramètre manuel (ex: lien dans la bio Instagram ou test)
-        if (data && data.testSource) {
-            // On met la première lettre en majuscule (ex: instagram -> Instagram)
-            sourceName = data.testSource.charAt(0).toUpperCase() + data.testSource.slice(1);
+        // PRIORITÉ 1 : Paramètre manuel (ex: ?ref=qr ou ?utm_source=instagram)
+        if (manualSource) {
+            if (manualSource.toLowerCase() === 'qr') {
+                sourceName = "Scan QR";
+            } else {
+                sourceName = manualSource.charAt(0).toUpperCase() + manualSource.slice(1);
+            }
         } 
         // PRIORITÉ 2 : Détection automatique via le Referrer
         else if (refLower.includes('instagram.com')) sourceName = "Instagram";
@@ -61,19 +67,25 @@ export const POST: APIRoute = async ({ request }) => {
         }
 
         // 5. PRÉPARATION DU LOG
+        // On force isQR à true si la source est "Scan QR"
+        const finalIsQR = data.isQR || sourceName === "Scan QR";
+
         const log = {
             date: new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }),
             device: dev,
             ip: ip,
-            source: sourceName, // <--- NOUVEAU : On enregistre la source
+            source: sourceName,
             country: countryCode === "fr" ? "FRANCE" : countryCode.toUpperCase(),
             flag_code: countryCode, 
-            isQR: data.isQR || false
+            isQR: finalIsQR
         };
 
-        // On n'incrémente les visites totales que si ce n'est PAS un bot
+        // Incrémentations KV
         if (!isBot) {
             await kv.incr('visites_totales');
+            if (finalIsQR) {
+                await kv.incr('visites_qr'); // On incrémente aussi le compteur global QR
+            }
         }
 
         // Sauvegarde dans le journal
