@@ -23,28 +23,32 @@ export const POST: APIRoute = async ({ request }) => {
         let sourceName = "Direct";
         const refLower = referrer.toLowerCase();
         
-        // On récupère la source envoyée par le script du front (testSource ou utm_source)
+        // On récupère la source envoyée par le script du front
         const manualSource = data.testSource || data.utmSource;
 
-        // PRIORITÉ 1 : Paramètre manuel (ex: ?ref=qr ou ?utm_source=instagram)
-        if (manualSource) {
-            if (manualSource.toLowerCase() === 'qr') {
+        // PRIORITÉ 1 : Paramètre manuel (QR Code, Instagram Bio, etc.)
+        if (manualSource && manualSource !== "") {
+            const s = manualSource.toLowerCase();
+            if (s === 'qr') {
                 sourceName = "Scan QR";
             } else {
-                sourceName = manualSource.charAt(0).toUpperCase() + manualSource.slice(1);
+                sourceName = s.charAt(0).toUpperCase() + s.slice(1);
             }
         } 
         // PRIORITÉ 2 : Détection automatique via le Referrer
-        else if (refLower.includes('instagram.com')) sourceName = "Instagram";
-        else if (refLower.includes('facebook.com') || refLower.includes('fb.me')) sourceName = "Facebook";
-        else if (refLower.includes('whatsapp.com')) sourceName = "WhatsApp";
-        else if (refLower.includes('tiktok.com')) sourceName = "TikTok";
-        else if (refLower.includes('google.')) sourceName = "Google";
-        else if (referrer) {
-            try {
-                sourceName = new URL(referrer).hostname.replace('www.', '');
-            } catch {
-                sourceName = "Lien Externe";
+        // On n'analyse le referrer QUE si ce n'est pas ton propre site (évite les logs "jf-aniuta.vercel.app")
+        else if (referrer && !refLower.includes('jf-aniuta.vercel.app')) {
+            if (refLower.includes('instagram.com')) sourceName = "Instagram";
+            else if (refLower.includes('facebook.com') || refLower.includes('fb.me')) sourceName = "Facebook";
+            else if (refLower.includes('whatsapp.com')) sourceName = "WhatsApp";
+            else if (refLower.includes('tiktok.com')) sourceName = "TikTok";
+            else if (refLower.includes('google.')) sourceName = "Google";
+            else {
+                try {
+                    sourceName = new URL(referrer).hostname.replace('www.', '');
+                } catch {
+                    sourceName = "Lien Externe";
+                }
             }
         }
 
