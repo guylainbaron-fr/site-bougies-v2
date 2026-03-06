@@ -320,6 +320,10 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
 
 /* --- IMPRESSION OPTIMISÉE (3 COLONNES = ÉCONOMIE DE PAPIER) --- */
     @media print {
+        /* SÉCURITÉ IMPRESSION : On ne sort pas sur le papier ce qui est filtré */
+    .log-entry[style*="display: none"] {
+        display: none !important;
+    }
         @page { 
             margin: 8mm; 
             size: portrait; 
@@ -339,7 +343,7 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
         }
         
         /* Cacher l'inutile */
-        .nav-right, .actions-row, .social-mini-nav, .filter-bar, #confirmReset, .dashboard-footer, .btn-group { 
+        .nav-right, .actions-row, .social-mini-nav, #confirmReset, .dashboard-footer, .btn-group { 
             display: none !important; 
         }
 
