@@ -366,9 +366,9 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
         <div class="stats-row">
             <div class="stat-card-mini card-total"><span class="val">{totalVisitesHumaines}</span><span class="label">Visites</span></div>
             <div class="stat-card-mini card-qr"><span class="val">{qrCount}</span><span class="label">Scans QR</span></div>
-            <div class="stat-card-mini card-ios"><span class="val">{iosCount}</span><span class="label">iOS</span></div>
+            <div class="stat-card-mini card-ios"><span class="val">{iosCount}</span><span class="label">Apple</span></div>
             <div class="stat-card-mini card-android"><span class="val">{androidCount}</span><span class="label">Android</span></div>
-            <div class="stat-card-mini card-pc"><span class="val">{pcCount}</span><span class="label">PC</span></div>
+            <div class="stat-card-mini card-pc"><span class="val">{pcCount}</span><span class="label">Ordinateur</span></div>
             <div class="stat-card-mini card-clock">
                 <span id="live-clock" style="font-size: 1.1rem; font-weight: 800; font-family: monospace;">00:00:00</span>
                 <span id="live-date" style="font-size: 0.5rem; text-transform: uppercase; font-weight:bold;">...</span>
@@ -408,7 +408,7 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
 
     <div style="margin-left: auto; display:flex; align-items:center; gap:12px; border-right: 1px solid var(--sable-dore); padding-right: 20px;">
         <div style="display:flex; align-items:center; gap:8px;">
-            <input type="text" id="confirmBots" placeholder="BOTS" style="width:50px; padding:6px; border:1px solid #9b59b6; border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold; color: #9b59b6;" />
+            <input type="text" id="confirmBots" placeholder="ROBOTS" style="width:70px; padding:6px; border:1px solid #9b59b6; border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold; color: #9b59b6;" />
             <form method="POST" style="margin:0;">
                 <input type="hidden" name="action" value="clean_bots" />
                 <button type="submit" id="botsBtn" disabled style="background: #9b59b6; color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">NETTOYER</button>
@@ -619,7 +619,7 @@ return (
 
     inputBots?.addEventListener('input', (e) => {
         const target = e.target as HTMLInputElement;
-        if (target.value.toUpperCase() === 'BOTS') {
+        if (target.value.toUpperCase() === 'ROBOTS') {
             btnBots.disabled = false;
             btnBots.style.opacity = '1';
             btnBots.style.cursor = 'pointer';
