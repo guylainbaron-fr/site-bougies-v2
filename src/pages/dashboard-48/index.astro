@@ -106,14 +106,17 @@ const totalVisitesHumaines = iosCount + androidCount + pcCount;
 const totalAvecBots = totalVisitesHumaines + botCount;
 
 // --- 2. CALCULS POUR LA BARRE TECHNOLOGIE (Humains + Bots) ---
-const iosPct = totalAvecBots > 0 ? Math.round((iosCount / totalAvecBots) * 100) : 0;
-const androidPct = totalAvecBots > 0 ? Math.round((androidCount / totalAvecBots) * 100) : 0;
-const pcPct = totalAvecBots > 0 ? Math.round((pcCount / totalAvecBots) * 100) : 0;
-const botPct = totalAvecBots > 0 ? Math.round((botCount / totalAvecBots) * 100) : 0;
+// On calcule les % bruts
+let iosPct = totalAvecBots > 0 ? Math.round((iosCount / totalAvecBots) * 100) : 0;
+let androidPct = totalAvecBots > 0 ? Math.round((androidCount / totalAvecBots) * 100) : 0;
+let pcPct = totalAvecBots > 0 ? Math.round((pcCount / totalAvecBots) * 100) : 0;
+// Le dernier segment (Bots) prend le reste pour toujours arriver à pile 100%
+let botPct = totalAvecBots > 0 ? (100 - iosPct - androidPct - pcPct) : 0;
+if (botPct < 0) botPct = 0; // Sécurité
 
 // --- 3. CALCULS POUR LA BARRE ORIGINE (Humains uniquement) ---
-const qrPct = totalVisitesHumaines > 0 ? Math.round((qrCount / totalVisitesHumaines) * 100) : 0;
-const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
+let qrPct = totalVisitesHumaines > 0 ? Math.round((qrCount / totalVisitesHumaines) * 100) : 0;
+let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
 ---
 
 <!DOCTYPE html>
@@ -427,11 +430,11 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
 
 <div class="dist-section">
     <div class="dist-header">Technologie</div>
-    <div class="distribution-bar">
-        {iosCount > 0 && <div class="segment bg-ios" style={`width: ${iosPct}%`}>{iosPct > 5 ? `${iosPct}%` : ''}</div>}
-        {androidCount > 0 && <div class="segment bg-android" style={`width: ${androidPct}%`}>{androidPct > 5 ? `${androidPct}%` : ''}</div>}
-        {pcCount > 0 && <div class="segment bg-pc" style={`width: ${pcPct}%`}>{pcPct > 5 ? `${pcPct}%` : ''}</div>}
-        {botCount > 0 && <div class="segment" style={`width: ${botPct}%; background-color: #9b59b6;`}>{botPct > 5 ? `${botPct}%` : ''}</div>}
+    <div class="distribution-bar" style="display: flex; width: 100%; height: 20px; background: #eee; border-radius: 4px; overflow: hidden;">
+        {iosCount > 0 && <div class="segment bg-ios" style={`width: ${iosPct}%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap;`}>{iosPct > 10 ? `${iosPct}%` : ''}</div>}
+        {androidCount > 0 && <div class="segment bg-android" style={`width: ${androidPct}%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap;`}>{androidPct > 10 ? `${androidPct}%` : ''}</div>}
+        {pcCount > 0 && <div class="segment bg-pc" style={`width: ${pcPct}%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap;`}>{pcPct > 10 ? `${pcPct}%` : ''}</div>}
+        {botCount > 0 && <div class="segment" style={`width: ${botPct}%; background-color: #9b59b6; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap;`}>{botPct > 10 ? `${botPct}%` : ''}</div>}
     </div>
     <div class="bar-legend">
         <span class="legend-item"><span class="dot bg-ios"></span> Apple ({iosPct}%)</span>
@@ -443,9 +446,9 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
 
 <div class="dist-section">
     <div class="dist-header">Origine</div>
-    <div class="distribution-bar">
-        {qrCount > 0 && <div class="segment bg-qr" style={`width: ${qrPct}%`}>{qrPct > 5 ? `${qrPct}%` : ''}</div>}
-        {directPct > 0 && <div class="segment bg-direct" style={`width: ${directPct}%`}>{directPct > 5 ? `${directPct}%` : ''}</div>}
+    <div class="distribution-bar" style="display: flex; width: 100%; height: 20px; background: #eee; border-radius: 4px; overflow: hidden;">
+        {qrCount > 0 && <div class="segment bg-qr" style={`width: ${qrPct}%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap;`}>{qrPct > 10 ? `${qrPct}%` : ''}</div>}
+        {directPct > 0 && <div class="segment bg-direct" style={`width: ${directPct}%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap;`}>{directPct > 10 ? `${directPct}%` : ''}</div>}
     </div>
     <div class="bar-legend">
         <span class="legend-item"><span class="dot bg-qr"></span> Scan QR ({qrPct}%)</span>
