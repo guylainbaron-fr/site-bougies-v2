@@ -841,29 +841,28 @@ entries.forEach(entry => {
 // --- FONCTION EXPORT CSV ---
 function exportLogsToCSV() {
     const entries = document.querySelectorAll('.log-entry');
-    // On définit exactement 5 colonnes
     let csvContent = "N°;SOURCE_IP;TYPE;PAYS;HEURE_DATE\r\n"; 
 
     entries.forEach(entry => {
         if (entry.style.display !== 'none') {
-            // 1. Numéro du log
-            const num = entry.querySelector('.log-cell-num')?.innerText.trim() || "";
-            
-            // 2. IP / Nom (c'est le premier lien ou span important après le numéro)
-            const sourceIP = entry.querySelector('a, .log-cell-num + span strong, .log-cell-num + div strong')?.innerText.trim() 
-                             || entry.querySelector('.log-cell-num + span')?.innerText.split('\n')[0].trim() || "";
-            
-            // 3. Type (Scan QR, Robot, etc. - souvent en italique ou 2ème ligne)
-            const sourceType = entry.querySelector('em, i')?.innerText.trim() 
-                               || entry.querySelector('.log-cell-num + span')?.innerText.split('\n')[1]?.trim() || "";
-            
-            // 4. Pays
-            const pays = entry.querySelector('span[title], .log-cell-num + span + span')?.innerText.trim() || "";
-            
-            // 5. Date et Heure (Cellule de droite)
-            const infos = entry.querySelector('.log-cell-right')?.innerText.replace(/\n/g, ' ').trim() || "";
+            // On récupère TOUS les morceaux de texte de la ligne
+            const textNodes = Array.from(entry.querySelectorAll('span, a, strong, em, i'))
+                .map(el => el.innerText.trim())
+                .filter(txt => txt !== ""); // On enlève les vides
 
-            // On s'assure d'avoir nos 5 colonnes bien remplies
+            // Selon ta structure :
+            // index 0 = N°
+            // index 1 = IP / SOURCE
+            // index 2 = TYPE (Scan QR / Lien Web)
+            // index 3 = PAYS
+            // index 4 = HEURE / DATE
+            
+            const num = textNodes[0] || "";
+            const sourceIP = textNodes[1] || "";
+            const sourceType = textNodes[2] || "";
+            const pays = textNodes[3] || "";
+            const infos = textNodes[4] || "";
+
             const rowData = [num, sourceIP, sourceType, pays, infos]
                 .map(text => `"${text.replace(/"/g, '""')}"`)
                 .join(";");
