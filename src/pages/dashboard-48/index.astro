@@ -841,19 +841,30 @@ entries.forEach(entry => {
 // --- FONCTION EXPORT CSV ---
 function exportLogsToCSV() {
     const entries = document.querySelectorAll('.log-entry');
-    let csvContent = "Données extraites\r\n"; 
+    
+    // On remplace "Données extraites" par des vrais titres de colonnes
+    // N° | SOURCE/IP | PAYS | INFOS (Heure/Date)
+    let csvContent = "N°;SOURCE_IP;PAYS;HORODATAGE\r\n"; 
 
     entries.forEach(entry => {
         if (entry.style.display !== 'none') {
+            // On récupère tous les spans de la ligne
             const cells = entry.querySelectorAll('span');
+            
             const rowData = Array.from(cells)
-                .map(cell => `"${cell.innerText.trim().replace(/"/g, '""')}"`)
-                .join(";");
+                .map(cell => {
+                    // On nettoie le texte (enlève les retours à la ligne et les doubles espaces)
+                    let text = cell.innerText.replace(/\s+/g, ' ').trim();
+                    // On échappe les guillemets pour ne pas casser le CSV
+                    return `"${text.replace(/"/g, '""')}"`;
+                })
+                .join(";"); // Point-virgule pour Excel FR
+            
             csvContent += rowData + "\r\n";
         }
     });
 
-    const BOM = "\uFEFF";
+    const BOM = "\uFEFF"; // Force l'encodage UTF-8 pour les accents et icônes dans Excel
     const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
