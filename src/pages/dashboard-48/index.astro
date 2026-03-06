@@ -315,42 +315,77 @@ const directPct = totalVisitesHumaines > 0 ? 100 - qrPct : 0;
 
 /* --- IMPRESSION OPTIMISÉE (3 COLONNES = ÉCONOMIE DE PAPIER) --- */
     @media print {
-        @page { margin: 8mm; size: portrait; }
-        body { padding: 0 !important; background: white !important; font-size: 9pt; }
+        @page { 
+            margin: 8mm; 
+            size: portrait; 
+        }
+        body { 
+            padding: 0 !important; 
+            background: white !important; 
+            font-size: 9pt; 
+        }
         
-        /* On utilise 100% pour l'impression */
-        .dashboard-container { border: none !important; width: 100% !important; max-width: none !important; padding: 0 !important; }
+        /* Conteneur pleine largeur */
+        .dashboard-container { 
+            border: none !important; 
+            width: 100% !important; 
+            max-width: none !important; 
+            padding: 0 !important; 
+        }
         
-        /* On cache les éléments inutiles sur papier */
+        /* Cacher l'inutile */
         .nav-right, .actions-row, .social-mini-nav, .filter-bar, #confirmReset, .dashboard-footer, .btn-group { 
             display: none !important; 
         }
 
-        .logs-section { border: none !important; padding: 0 !important; width: 100% !important; }
+        .logs-section { 
+            border: none !important; 
+            padding: 0 !important; 
+            width: 100% !important; 
+        }
         
-        /* CORRECTION : On force 3 colonnes à l'impression au lieu du BLOCK */
+        /* Grille en 3 colonnes */
         .logs-grid { 
             display: grid !important; 
             grid-template-columns: repeat(3, 1fr) !important; 
-            gap: 8px !important; 
+            gap: 5px !important; /* Gap réduit pour gagner de la place */
             width: 100% !important; 
         }
         
         .log-entry { 
             display: grid !important; 
-            grid-template-columns: 30px 1fr 70px !important; /* Colonnes IP réduites pour le papier */
+            /* On réduit les côtés (25px et 65px) pour donner le max à l'IP au milieu */
+            grid-template-columns: 25px 1fr 65px !important; 
             width: 100% !important; 
-            height: 65px !important; /* Hauteur pour bien voir les 3 lignes (IP, Source, Pays) */
+            height: 65px !important; 
             margin-bottom: 0px !important; 
-            border: 1px solid #ccc !important; 
+            border: 1px solid #ddd !important; 
             page-break-inside: avoid; 
             break-inside: avoid; 
         }
 
-        /* Réduction des textes pour que ça tienne bien en 3 colonnes */
-        .log-cell-num { font-size: 0.7rem !important; }
-        .log-cell-right { font-size: 0.55rem !important; }
-        .log-entry a { font-size: 0.65rem !important; }
+        /* Optimisation de l'affichage de l'IP pour éviter les coupures */
+        .log-entry a { 
+            font-size: 0.6rem !important; /* Plus petit pour que ça tienne */
+            letter-spacing: -0.3px !important; /* Resserre les chiffres de l'IP */
+            display: inline-block !important;
+            word-break: break-all !important; /* Sécurité si vraiment trop long */
+        }
+
+        /* Réduction des icônes pour libérer de la largeur */
+        .log-entry i {
+            font-size: 0.7rem !important;
+        }
+
+        /* Petits ajustements des cellules gauche et droite */
+        .log-cell-num { 
+            font-size: 0.6rem !important; 
+            border-right: 1px solid #ddd !important;
+        }
+        .log-cell-right { 
+            font-size: 0.5rem !important; 
+            border-left: 1px solid #ddd !important;
+        }
 
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
