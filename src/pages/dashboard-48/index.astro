@@ -563,7 +563,7 @@ return (
         
 <div style="padding:0 8px; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 1px;">
     
-    {/* LIGNE 1 : APPAREIL + GLOBE/SERVEUR + IP */}
+    {/* LIGNE 1 : APPAREIL + GLOBE + IP */}
     <div style="display:flex; align-items:center; gap:8px; white-space: nowrap;">
         <span style="font-size:0.9rem;">
             {!['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device) ? (
@@ -577,9 +577,9 @@ return (
             )}
         </span>
         
-        {/* SI ROBOT -> SERVEUR VIOLET | SI HUMAIN -> GLOBE DORE */}
+        {/* TOUJOURS LE GLOBE EN L1 : VIOLET POUR ROBOT | DORE POUR HUMAIN */}
         {!['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device) ? (
-            <i class="fa-solid fa-server" style="font-size:0.75rem; color: #9b59b6;"></i>
+            <i class="fa-solid fa-globe" style="font-size:0.75rem; color: #9b59b6;"></i>
         ) : (
             <i class="fa-solid fa-globe" style="font-size:0.75rem; color: var(--sable-dore);"></i>
         )}
@@ -599,9 +599,9 @@ return (
     {/* LIGNE 2 : PROVENANCE */}
     <div style="font-size:0.6rem; font-weight:900; display:flex; align-items:center; gap:5px; text-transform: uppercase;">
         {!['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device) ? (
-            /* Cas ROBOT : Icône Robot + Nom du robot en VIOLET */
+            /* Cas ROBOT : SERVEUR + NOM DU ROBOT en VIOLET */
             <>
-                <i class="fa-solid fa-robot" style="color: #9b59b6;"></i>
+                <i class="fa-solid fa-server" style="color: #9b59b6;"></i>
                 <span style="color: #9b59b6;">{log.device}</span>
             </>
         ) : (
