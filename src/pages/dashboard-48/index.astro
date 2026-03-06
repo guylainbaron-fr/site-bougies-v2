@@ -838,29 +838,41 @@ entries.forEach(entry => {
 });
 }
 
+
+// Fonction d'export CSV
 function exportLogsToCSV() {
     const entries = document.querySelectorAll('.log-entry');
+    // On définit les colonnes : N°, IP, TYPE (Scan/Robot), PAYS, HEURE, DATE
     let csvContent = "N°;SOURCE_IP;TYPE;PAYS;HEURE;DATE\r\n"; 
 
     entries.forEach(entry => {
         if (entry.style.display !== 'none') {
-            // 1. On cible précisément par les classes de ton dashboard
+            // 1. Le Numéro (log-cell-num)
             const num = entry.querySelector('.log-cell-num')?.innerText.trim() || "";
             
-            // Pour le centre, on sépare l'IP (souvent en gras/lien) du reste
-            const sourceCell = entry.querySelector('.log-cell-num + div, .log-cell-num + span');
-            const sourceIP = sourceCell?.querySelector('a, strong')?.innerText.trim() || "";
-            const sourceType = sourceCell?.querySelector('em, i')?.innerText.trim() || "";
+            // 2. La cellule centrale (le div qui contient les 2 lignes)
+            const centerCell = entry.querySelector('div[style*="flex-direction: column"]');
             
-            // Le pays a souvent son propre span ou un title
-            const pays = entry.querySelector('span[title], .log-cell-num + span + span')?.innerText.trim() || "";
+            // LIGNE 1 : L'IP (on la prend dans la balise <a>)
+            const sourceIP = centerCell?.querySelector('a')?.innerText.trim() || "Privé";
             
-            // On sépare Heure et Date qui sont dans la cellule de droite
-            const timeDate = entry.querySelector('.log-cell-right')?.innerText.split('\n').map(t => t.trim()) || ["", ""];
+            // LIGNE 2 : Le TYPE (Scan QR, Lien Web, ou Nom du Robot)
+            // On prend le texte du div qui contient le texte en majuscules (Ligne 2)
+            const typeDiv = centerCell?.querySelector('div[style*="font-size:0.6rem"]');
+            const sourceType = typeDiv?.innerText.trim() || "";
+            
+            // 3. Le PAYS (C'est le 3ème bloc, souvent juste avant la cellule de droite)
+            // Dans ton code Astro, le pays est après la cellule centrale
+            const pays = entry.querySelector('div:not(.log-cell-num):not(.log-cell-right) span[title], .log-entry > span:nth-of-type(2)')?.innerText.trim() 
+                         || entry.getAttribute('data-country') || "Inconnu";
+            
+            // 4. HEURE & DATE (log-cell-right)
+            const rightCell = entry.querySelector('.log-cell-right');
+            const timeDate = rightCell ? rightCell.innerText.split('\n').map(t => t.trim()) : ["", ""];
             const heure = timeDate[0] || "";
             const date = timeDate[1] || "";
 
-            // On assemble les 6 colonnes pour plus de précision
+            // On assemble tout proprement
             const rowData = [num, sourceIP, sourceType, pays, heure, date]
                 .map(text => `"${text.replace(/"/g, '""')}"`)
                 .join(";");
@@ -869,6 +881,7 @@ function exportLogsToCSV() {
         }
     });
 
+    // Génération du fichier
     const BOM = "\uFEFF";
     const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
