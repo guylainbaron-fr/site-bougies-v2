@@ -788,47 +788,48 @@ function filterLogs(type) {
         window.event.currentTarget.classList.add('active');
     }
 
-    entries.forEach(entry => {
-        // 1. RÉCUPÉRATION DES DONNÉES
-        const source = entry.getAttribute('data-source') || 'Direct';
-        const isQR = entry.getAttribute('data-qr') === 'true' || source.toLowerCase() === 'qr';
-        const device = entry.getAttribute('data-device') || 'Inconnu';
-        const country = entry.getAttribute('data-country') || 'INCONNU';
-        
-        const isBot = !['iOS', 'Android', 'PC', 'Ordinateur'].includes(device);
-        const isSocial = ['Instagram', 'Facebook', 'WhatsApp', 'TikTok', 'Twitter'].includes(source);
+entries.forEach(entry => {
+    // 1. RÉCUPÉRATION DES DONNÉES (Inchangé)
+    const source = entry.getAttribute('data-source') || 'Direct';
+    const isQR = entry.getAttribute('data-qr') === 'true' || source.toLowerCase() === 'qr';
+    const device = entry.getAttribute('data-device') || 'Inconnu';
+    const country = entry.getAttribute('data-country') || 'INCONNU';
+    
+    const isBot = !['iOS', 'Android', 'PC', 'Ordinateur'].includes(device);
+    const isSocial = ['Instagram', 'Facebook', 'WhatsApp', 'TikTok', 'Twitter'].includes(source);
 
-        // 2. LOGIQUE DE FILTRAGE
-        let show = false;
+    // 2. LOGIQUE DE FILTRAGE
+    let show = false;
 
-        if (type === 'all') {
-            show = true;
-        } 
-        else if (type === 'qr' && isQR) {
-            show = true;
-        } 
-        else if (type === 'social' && isSocial) {
-            show = true;
-        } 
-        else if (type === 'bot' && isBot) {
-            show = true;
-        } 
-        else if (type === 'mobile' && !isBot && (device === 'iOS' || device === 'Android')) {
-            show = true;
-        } 
-        else if (type === 'pc' && !isBot && (device === 'PC' || device === 'Ordinateur')) {
-            show = true;
-        } 
-        else if (type === 'france' && country.toUpperCase() === 'FRANCE' && !isBot) {
-            show = true;
-        } 
-        else if (type === 'international' && country.toUpperCase() !== 'FRANCE' && !isBot) {
-            show = true;
-        }
+    if (type === 'all') {
+        show = true;
+    } 
+    else if (type === 'qr' && isQR) {
+        show = true;
+    } 
+    else if (type === 'social' && isSocial) {
+        show = true;
+    } 
+    else if (type === 'bot' && isBot) {
+        show = true;
+    } 
+    else if (type === 'mobile' && !isBot && (device === 'iOS' || device === 'Android')) {
+        show = true;
+    } 
+    else if (type === 'pc' && !isBot && (device === 'PC' || device === 'Ordinateur')) {
+        show = true;
+    } 
+    // MODIFICATION ICI : On enlève le !isBot pour la France et l'International
+    else if (type === 'france' && country.toUpperCase() === 'FRANCE') {
+        show = true;
+    } 
+    else if (type === 'international' && country.toUpperCase() !== 'FRANCE') {
+        show = true;
+    }
 
-        // 3. AFFICHAGE
-        entry.style.display = show ? 'grid' : 'none';
-    });
+    // 3. AFFICHAGE
+    entry.style.display = show ? 'grid' : 'none';
+});
 }
 
 // --- FONCTION EXPORT CSV ---
