@@ -841,25 +841,30 @@ entries.forEach(entry => {
 // --- FONCTION EXPORT CSV ---
 function exportLogsToCSV() {
     const entries = document.querySelectorAll('.log-entry');
-    // Titres de colonnes bien clairs
+    // On définit les 5 colonnes pour correspondre aux données extraites
     let csvContent = "N°;SOURCE_IP;TYPE;PAYS;HEURE_DATE\r\n"; 
 
     entries.forEach(entry => {
         if (entry.style.display !== 'none') {
-            // On va chercher chaque info précisément par sa classe
+            // 1. Le numéro (Cellule de gauche)
             const num = entry.querySelector('.log-cell-num')?.innerText.trim() || "";
             
-            // On prend l'IP ou le nom (le lien ou le span principal)
-            const source = entry.querySelector('a, .log-entry span:nth-child(2)')?.innerText.trim() || "";
+            // 2. La cellule centrale (contient l'IP/Nom ET le Type juste en dessous)
+            // On récupère le texte global et on le sépare par le retour à la ligne
+            const centralCell = entry.querySelector('.log-cell-num + div, .log-cell-num + span');
+            const lines = centralCell ? centralCell.innerText.split('\n').map(l => l.trim()).filter(l => l !== "") : ["", ""];
             
-            // On cherche le pays (souvent le 3ème span ou avec une classe pays)
-            const pays = entry.querySelector('.log-cell-num + span + span')?.innerText.trim() || "";
+            const sourceIP = lines[0] || ""; // Première ligne : l'IP ou le Nom du Robot
+            const sourceType = lines[1] || ""; // Deuxième ligne : Scan QR, Lien Web, etc.
             
-            // La cellule de droite (Heure/Date)
+            // 3. Le pays (Cellule avec l'icône)
+            const pays = entry.querySelector('.log-cell-num + span + span, .log-cell-num + div + span')?.innerText.trim() || "";
+            
+            // 4. L'horodatage (Cellule de droite)
             const infos = entry.querySelector('.log-cell-right')?.innerText.replace(/\n/g, ' ').trim() || "";
 
-            // On assemble la ligne proprement avec des points-virgules
-            const rowData = [num, source, pays, infos]
+            // On assemble les 5 éléments dans l'ordre des titres
+            const rowData = [num, sourceIP, sourceType, pays, infos]
                 .map(text => `"${text.replace(/"/g, '""')}"`)
                 .join(";");
             
