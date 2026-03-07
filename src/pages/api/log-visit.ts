@@ -7,34 +7,36 @@ export const POST: APIRoute = async ({ request }) => {
         const data = await request.json();
         const ua = data.ua || request.headers.get('user-agent') || '';
         
-        // 1. RÉCUPÉRATION IP
+        // 1. RÉCUPÉRATION IP, PAYS ET REFERRER
         const ip = request.headers.get('x-real-ip') || "Anonyme";
-
-        // --- SÉCURITÉ : VÉRIFICATION BLACKLIST ---
-        // On vérifie si l'IP est dans l'ensemble 'banned_ips' sur Upstash/Vercel KV
-        const isBanned = await kv.sismember('banned_ips', ip);
-        if (isBanned) {
-            return new Response(JSON.stringify({ success: false, message: "Blocked" }), { status: 403 });
-        }
+        const referrer = request.headers.get('referer') || ""; 
 
         // --- MODE FANTÔME (BUREAU) ---
         if (ip === '128.79.142.7') {
             return new Response(JSON.stringify({ success: true, mode: "ghost-active" }), { status: 200 });
         }
         
-        const referrer = request.headers.get('referer') || ""; 
         const countryCodeRaw = request.headers.get('x-vercel-ip-country');
         const countryCode = countryCodeRaw ? countryCodeRaw.toLowerCase() : "un";
 
-        // 2. LOGIQUE DE DÉTECTION DE LA SOURCE
+        // 2. LOGIQUE DE DÉTECTION DE LA SOURCE + FIX QR CODE
         let sourceName = "Direct";
         const refLower = referrer.toLowerCase();
+        
+        // On récupère la source envoyée par le script du front
         const manualSource = data.testSource || data.utmSource;
 
+        // PRIORITÉ 1 : Paramètre manuel (QR Code, Instagram Bio, etc.)
         if (manualSource && manualSource !== "") {
             const s = manualSource.toLowerCase();
-            sourceName = s === 'qr' ? "Scan QR" : s.charAt(0).toUpperCase() + s.slice(1);
+            if (s === 'qr') {
+                sourceName = "Scan QR";
+            } else {
+                sourceName = s.charAt(0).toUpperCase() + s.slice(1);
+            }
         } 
+        // PRIORITÉ 2 : Détection automatique via le Referrer
+        // On n'analyse le referrer QUE si ce n'est pas ton propre site (évite les logs "jf-aniuta.vercel.app")
         else if (referrer && !refLower.includes('jf-aniuta.vercel.app')) {
             if (refLower.includes('instagram.com')) sourceName = "Instagram";
             else if (refLower.includes('facebook.com') || refLower.includes('fb.me')) sourceName = "Facebook";
@@ -50,11 +52,11 @@ export const POST: APIRoute = async ({ request }) => {
             }
         }
 
-        // 3. DÉTECTION ROBOTS
+        // On ne garde que les robots "légitimes" qui ont survécu au blocage Vercel
         const isBot = /(googlebot|google-favicon|adsbot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|linkedinbot|telegrambot|slackbot|ia_archiver|chrome-lighthouse|lighthouse)/i.test(ua);
 
         // 4. DÉTERMINATION DE L'APPAREIL
-        let dev = "Ordinateur"; 
+        let dev = "PC";
         if (isBot) {
             if (/google-favicon/i.test(ua)) dev = "Google (Favicon)";
             else if (/googlebot/i.test(ua)) dev = "Googlebot";
@@ -66,11 +68,10 @@ export const POST: APIRoute = async ({ request }) => {
             dev = "Android";
         } else if (/iPad|iPhone|iPod/i.test(ua)) {
             dev = "iOS";
-        } else if (/Windows|Macintosh|Linux|PC|Ordinateur/i.test(ua)) {
-            dev = "Ordinateur";
         }
 
         // 5. PRÉPARATION DU LOG
+        // On force isQR à true si la source est "Scan QR"
         const finalIsQR = data.isQR || sourceName === "Scan QR";
 
         const log = {
@@ -83,16 +84,15 @@ export const POST: APIRoute = async ({ request }) => {
             isQR: finalIsQR
         };
 
-        // 6. SAUVEGARDE ET COMPTEURS
-        // On n'incrémente les compteurs globaux QUE pour les humains
+        // Incrémentations KV
         if (!isBot) {
             await kv.incr('visites_totales');
             if (finalIsQR) {
-                await kv.incr('visites_qr');
+                await kv.incr('visites_qr'); // On incrémente aussi le compteur global QR
             }
         }
 
-        // Sauvegarde dans le journal (les 100 derniers logs)
+        // Sauvegarde dans le journal
         await kv.lpush('journal_visites', JSON.stringify(log));
         await kv.ltrim('journal_visites', 0, 99);
 

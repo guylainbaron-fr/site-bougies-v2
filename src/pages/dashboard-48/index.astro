@@ -601,16 +601,6 @@ return (
         >
             {log.ip && log.ip !== 'Privé' ? log.ip : "Privé"}
         </a>
-        {/* BOUTON BAN : Uniquement si l'IP n'est pas "Privé" */}
-        {log.ip && log.ip !== 'Privé' && (
-            <button 
-                onclick={`banIP('${log.ip}')`}
-                title="Bannir cette IP"
-                style="background:none; border:none; color:#e63946; cursor:pointer; padding:0; margin-left:4px; display:flex; align-items:center;"
-                >
-                <i class="fa-solid fa-hand" style="font-size: 0.65rem;"></i>
-            </button>
-        )}
     </div>
 
     {/* LIGNE 2 : PROVENANCE */}
@@ -914,33 +904,6 @@ function exportLogsToCSV() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-}
-
-// Fonction pour bannir une IP
-async function banIP(ip) {
-    if (!confirm(`Voulez-vous vraiment bannir l'IP ${ip} ?\nElle ne pourra plus accéder au site.`)) return;
-
-    try {
-        const response = await fetch('/api/ban', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ip: ip })
-        });
-
-        if (response.ok) {
-            alert(`L'IP ${ip} a été bannie avec succès.`);
-            // Optionnel : on cache les entrées de cette IP immédiatement
-            document.querySelectorAll(`.log-entry[data-ip="${ip}"]`).forEach(el => {
-                el.style.opacity = '0.3';
-                el.style.pointerEvents = 'none';
-            });
-        } else {
-            alert("Erreur lors du bannissement.");
-        }
-    } catch (error) {
-        console.error("Erreur:", error);
-        alert("Impossible de contacter le serveur.");
-    }
 }
 
 // LANCEMENT AU CHARGEMENT
