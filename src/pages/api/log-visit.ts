@@ -26,7 +26,7 @@ export const POST: APIRoute = async ({ request }) => {
         // On récupère la source envoyée par le script du front
         const manualSource = data.testSource || data.utmSource;
 
-        // PRIORITÉ 1 : Paramètre manuel (QR Code, Instagram Bio, etc.)
+        // PRIORITÉ 1 : Paramètre manuel ou détection automatique via URL (fbclid, igshid)
         if (manualSource && manualSource !== "") {
             const s = manualSource.toLowerCase();
             if (s === 'qr') {
@@ -35,8 +35,14 @@ export const POST: APIRoute = async ({ request }) => {
                 sourceName = s.charAt(0).toUpperCase() + s.slice(1);
             }
         } 
-        // PRIORITÉ 2 : Détection automatique via le Referrer
-        // On n'analyse le referrer QUE si ce n'est pas ton propre site (évite les logs "jf-aniuta.vercel.app")
+        // --- NOUVEAU : Détection auto si l'URL contient un ID Facebook ou Insta ---
+        else if (data.currentUrl && (data.currentUrl.includes('fbclid') || data.currentUrl.includes('facebook.com'))) {
+            sourceName = "Facebook";
+        }
+        else if (data.currentUrl && (data.currentUrl.includes('igshid') || data.currentUrl.includes('instagram.com'))) {
+            sourceName = "Instagram";
+        }
+        // PRIORITÉ 2 : Détection classique via le Referrer
         else if (referrer && !refLower.includes('jf-aniuta.vercel.app')) {
             if (refLower.includes('instagram.com')) sourceName = "Instagram";
             else if (refLower.includes('facebook.com') || refLower.includes('fb.me')) sourceName = "Facebook";

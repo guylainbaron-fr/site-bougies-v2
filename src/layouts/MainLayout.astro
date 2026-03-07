@@ -92,11 +92,14 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
         
         // --- CAPTURE DES PARAMÈTRES ---
         const urlParams = new URLSearchParams(window.location.search);
-        const refParam = urlParams.get('ref'); // ex: 'qr'
-        const utmParam = urlParams.get('utm_source'); // ex: 'instagram'
+        const utmParam = urlParams.get('utm_source'); 
+        const refParam = urlParams.get('ref');
         
-        const isQR = refParam === 'qr' || urlParams.get('qr') === 'true';
-        const source = refParam || utmParam || ""; // On récupère 'qr' ou 'instagram'
+        // On détecte si c'est un QR Code
+        const isQR = refParam === 'qr' || utmParam === 'qr' || urlParams.get('qr') === 'true';
+        
+        // On prépare la source (priorité à utm_source, puis ref)
+        const source = utmParam || refParam || ""; 
         
         try {
           await fetch('/api/log-visit', {
@@ -105,10 +108,13 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
             body: JSON.stringify({
               ua: navigator.userAgent,
               isQR: isQR,
-              testSource: source // <--- TRÈS IMPORTANT : On envoie la source ici !
+              utmSource: source, // On utilise utmSource pour être raccord avec l'API
+              currentUrl: window.location.href // <--- ENVOIE L'URL AVEC LE FBCLID DE FACEBOOK
             })
           });
-        } catch (err) {}
+        } catch (err) {
+          console.error('Erreur log:', err);
+        }
     };
 
     const triggerEvents = ['mousedown', 'keydown', 'touchstart', 'scroll'];
@@ -117,7 +123,7 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
       if (isBot) {
         sendLog();
       } else {
-        // Délai de 2s pour être sûr que ce n'est pas un faux clic
+        // Délai de 2s pour éviter les faux rebonds
         setTimeout(() => {
           triggerEvents.forEach(event => {
             window.addEventListener(event, sendLog, { once: true, passive: true });
