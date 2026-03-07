@@ -52,8 +52,8 @@ export const POST: APIRoute = async ({ request }) => {
             }
         }
 
-        // 3. LA REGEX MUSCLÉE (Bots)
-        const isBot = /(googlebot|google-favicon|adsbot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|pinterest|linkedinbot|telegrambot|slackbot|petalbot|ia_archiver|robot|bot|spider|headless|chrome-lighthouse|lighthouse|inspect|ahrefsbot|semrushbot|dotbot|python|axios|curl|wget|go-http-client|java|php|postman|runtime|insomnia|nimbostratus)/i.test(ua);
+        // On ne garde que les robots "légitimes" qui ont survécu au blocage Vercel
+        const isBot = /(googlebot|google-favicon|adsbot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|linkedinbot|telegrambot|slackbot|ia_archiver|chrome-lighthouse|lighthouse)/i.test(ua);
 
         // 4. DÉTERMINATION DE L'APPAREIL
         let dev = "PC";
