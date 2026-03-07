@@ -467,30 +467,6 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
     <button onclick="window.print()" class="btn btn-gold"><i class="fa-solid fa-file-pdf"></i> Rapport</button>
 
     <div style="margin-left: auto; display:flex; align-items:center; gap:12px; border-right: 1px solid var(--sable-dore); padding-right: 20px;">
-<div style="display:flex; align-items:center; gap:8px; border-right: 1px solid var(--sable-dore); padding-right: 15px; margin-right: 10px;">
-    <input 
-        type="text" 
-        id="ipToManage" 
-        placeholder="0.0.0.0" 
-        style="width:70px; padding:6px; border:1px solid #e74c3c; border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold; color: #e74c3c; background: transparent;" 
-    />
-    <div style="display: flex; gap: 4px;">
-        <button 
-            id="banBtn" 
-            disabled 
-            onclick="manageIP('ban')" 
-            style="background: #e74c3c; color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">
-            BAN
-        </button>
-        <button 
-            id="debanBtn" 
-            disabled 
-            onclick="manageIP('unban')" 
-            style="background: #2ecc71; color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">
-            DEBAN
-        </button>
-    </div>
-</div>
         <div style="display:flex; align-items:center; gap:8px;">
             <input type="text" id="confirmBots" placeholder="ROBOTS" style="width:70px; padding:6px; border:1px solid #9b59b6; border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold; color: #9b59b6;" />
             <form method="POST" style="margin:0;">
@@ -744,57 +720,6 @@ return (
             btnBots.style.cursor = 'not-allowed';
         }
     });
-</script>
-<script>
-    // 1. Sélection des éléments
-    const inputSec = document.getElementById('ipToManage') as HTMLInputElement;
-    const btnBan = document.getElementById('banBtn') as HTMLButtonElement;
-    const btnDeban = document.getElementById('debanBtn') as HTMLButtonElement;
-
-    // 2. Écouteur pour déverrouiller les boutons
-    inputSec?.addEventListener('input', () => {
-        const isMatch = inputSec.value === '0.0.0.0';
-        
-        [btnBan, btnDeban].forEach(btn => {
-            if (btn) {
-                btn.disabled = !isMatch;
-                btn.style.opacity = isMatch ? '1' : '0.4';
-                btn.style.cursor = isMatch ? 'pointer' : 'not-allowed';
-            }
-        });
-    });
-
-    // 3. Fonction d'action (Appelée par onclick)
-    async function manageIP(action: 'ban' | 'unban') {
-        const targetIP = prompt(`Entrez l'IP à ${action === 'ban' ? 'BANNIR' : 'DÉBLOQUER'} :`);
-        
-        if (!targetIP || targetIP.trim() === "") return;
-
-        try {
-            const response = await fetch('/api/manage-access', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ip: targetIP.trim(), action })
-            });
-
-            if (response.ok) {
-                alert(`Opération réussie pour l'IP : ${targetIP}`);
-                // On vide le champ et on force le reverrouillage
-                if (inputSec) {
-                    inputSec.value = '';
-                    const event = new Event('input');
-                    inputSec.dispatchEvent(event);
-                }
-            } else {
-                alert("Erreur lors de l'envoi au serveur.");
-            }
-        } catch (e) {
-            alert("Erreur de connexion.");
-        }
-    }
-
-    // 4. Rendre la fonction disponible pour le onclick du HTML
-    (window as any).manageIP = manageIP;
 </script>
 <script is:inline>
 // Fonction de déconnexion

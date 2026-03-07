@@ -11,10 +11,6 @@ export const POST: APIRoute = async ({ request }) => {
         const ip = request.headers.get('x-real-ip') || "Anonyme";
         const referrer = request.headers.get('referer') || ""; 
 
-        // Vérification blacklist
-        const isBanned = await kv.sismember('banned_ips', ip);
-        if (isBanned) return new Response(null, { status: 403 });
-
         // --- MODE FANTÔME (BUREAU) ---
         if (ip === '128.79.142.7') {
             return new Response(JSON.stringify({ success: true, mode: "ghost-active" }), { status: 200 });
