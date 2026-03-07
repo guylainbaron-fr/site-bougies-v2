@@ -472,13 +472,14 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
         type="text" 
         id="ipToManage" 
         placeholder="0.0.0.0" 
+        oninput="checkSecurityLock(this.value)"
         style="width:90px; padding:6px; border:1px solid #e74c3c; border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold; color: #e74c3c; background: transparent;" 
     />
     <div style="display: flex; gap: 4px;">
-        <button onclick="manageIP('ban')" style="background: #e74c3c; color: white; border:none; padding:6px 10px; border-radius:3px; font-size:0.6rem; font-weight:900; cursor:pointer;">
+        <button id="banBtn" disabled onclick="manageIP('ban')" style="background: #e74c3c; color: white; opacity: 0.4; border:none; padding:6px 10px; border-radius:3px; font-size:0.6rem; font-weight:900; cursor:not-allowed;">
             BAN
         </button>
-        <button onclick="manageIP('unban')" style="background: #2ecc71; color: white; border:none; padding:6px 10px; border-radius:3px; font-size:0.6rem; font-weight:900; cursor:pointer;">
+        <button id="debanBtn" disabled onclick="manageIP('unban')" style="background: #2ecc71; color: white; opacity: 0.4; border:none; padding:6px 10px; border-radius:3px; font-size:0.6rem; font-weight:900; cursor:not-allowed;">
             DEBAN
         </button>
     </div>
@@ -737,7 +738,59 @@ return (
         }
     });
 </script>
+<script>
+    // Bloc TypeScript (Gestion du bouton Sécurité / Accès)
+    const inputSec = document.getElementById('ipToManage') as HTMLInputElement;
+    const btnBan = document.getElementById('banBtn') as HTMLButtonElement;
+    const btnDeban = document.getElementById('debanBtn') as HTMLButtonElement;
 
+    inputSec?.addEventListener('input', (e) => {
+        const target = e.target as HTMLInputElement;
+        if (target.value === '0.0.0.0') {
+            [btnBan, btnDeban].forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            });
+        } else {
+            [btnBan, btnDeban].forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.4';
+                btn.style.cursor = 'not-allowed';
+            });
+        }
+    });
+
+    // Fonction d'action pour Ban/Deban
+    async function manageIP(action: 'ban' | 'unban') {
+        const targetIP = prompt(`Entrez l'IP à ${action === 'ban' ? 'bannir' : 'débloquer'} :`);
+        if (!targetIP) return;
+
+        try {
+            const response = await fetch('/api/manage-access', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ip: targetIP, action })
+            });
+
+            if (response.ok) {
+                alert("Action effectuée avec succès !");
+                if (inputSec) {
+                    inputSec.value = '';
+                    // On simule un événement input pour reverrouiller les boutons
+                    inputSec.dispatchEvent(new Event('input'));
+                }
+            } else {
+                alert("Erreur lors de l'opération.");
+            }
+        } catch (e) {
+            alert("Erreur de connexion au serveur.");
+        }
+    }
+
+    // On attache les fonctions au window pour qu'elles soient accessibles via onclick=""
+    (window as any).manageIP = manageIP;
+</script>
 <script is:inline>
 // Fonction de déconnexion
 function logout() {
