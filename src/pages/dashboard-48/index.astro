@@ -905,36 +905,6 @@ function exportLogsToCSV() {
     document.body.removeChild(link);
 }
 
-// Fonction de gestion des IP (Ban/Unban)
-async function manageIP(action) {
-    const ip = document.getElementById('ipToManage').value.trim();
-    if (!ip) return alert("Veuillez saisir une IP.");
-
-    const confirmMsg = action === 'ban' 
-        ? `Bloquer définitivement l'IP ${ip} ?` 
-        : `Débloquer l'IP ${ip} ?`;
-
-    if (!confirm(confirmMsg)) return;
-
-    try {
-        const response = await fetch('/api/manage-access', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ip, action })
-        });
-
-        const result = await response.json();
-        if (response.ok) {
-            alert(result.message);
-            document.getElementById('ipToManage').value = ''; // On vide le champ
-        } else {
-            alert("Erreur : " + result.error);
-        }
-    } catch (e) {
-        alert("Erreur de connexion au serveur.");
-    }
-}
-
 // LANCEMENT AU CHARGEMENT
 window.addEventListener('load', () => {
     if (typeof updateBadges === 'function') updateBadges();
