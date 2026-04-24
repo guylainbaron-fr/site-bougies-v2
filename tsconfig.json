@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
@@ -11,10 +11,11 @@
     "allowJs": true,
     "checkJs": false,
     "strict": false,
-    "baseUrl": ".",
+    /* On retire baseUrl qui est déconseillé */
+    /* On garde les paths mais avec une syntaxe plus propre */
     "paths": {
-      "@/*": ["src/*"],
-      "@assets/*": ["src/assets/*"]
+      "@/*": ["./src/*"],
+      "@assets/*": ["./src/assets/*"]
     }
   },
   "include": [
