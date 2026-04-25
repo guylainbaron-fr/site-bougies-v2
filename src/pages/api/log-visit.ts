@@ -1,4 +1,3 @@
-// @ts-ignore
 import { kv } from '@vercel/kv';
 import type { APIRoute } from 'astro';
 
@@ -28,6 +27,10 @@ function sanitizeString(input: string | undefined | null, maxLength: number = 25
     }
     return sanitized;
 }
+
+// Supprimer le ts-ignore si le problème est résolu ou si les types sont corrects
+// Si le problème persiste, il peut être lié à la configuration TypeScript ou à la version de @vercel/kv
+// Pour l'instant, on le laisse si nécessaire, mais l'objectif est de le supprimer.
 
 export const POST: APIRoute = async ({ request }) => {
     try {

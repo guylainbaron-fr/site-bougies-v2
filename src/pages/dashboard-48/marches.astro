@@ -5,18 +5,47 @@ import { kv } from "../../lib/kv";
 // Helper pour assainir les entrées
 function sanitize(str: any, max: number = 500) {
     if (!str) return "";
-    return str.toString()
-        .replace(/[\x00-\x1F\x7F-\x9F]/g, '')
-        .trim()
-        .substring(0, max);
+    
+    let sanitized = str.toString().replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+    
+    // Échappement des caractères HTML (XSS Protection)
+    const map: Record<string, string> = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#x27;',
+        "/": '&#x2F;',
+    };
+    sanitized = sanitized.replace(/[&<>"'/]/g, (m: string) => map[m]);
+    
+    return sanitized.trim().substring(0, max);
 }
 
 // Validation stricte de l'URL Google Maps
 function validateMapUrl(url: string) {
-    if (!url) return "";
-    // On vérifie que c'est bien un lien d'intégration Google (com ou fr)
-    const isGoogle = url.includes('google.com/maps/embed') || url.includes('google.fr/maps/embed');
-    return isGoogle ? url : "";
+    try {
+        if (!url) return "";
+        const parsed = new URL(url);
+        const isSecure = parsed.protocol === "https:";
+        const isGoogle = parsed.hostname.endsWith('google.com') || parsed.hostname.endsWith('google.fr');
+        const isEmbed = parsed.pathname.startsWith('/maps/embed');
+        
+        return (isSecure && isGoogle && isEmbed) ? url : "";
+    } catch {
+        return "";
+    }
+}
+
+// Validation pour les liens externes (Bouton GPS)
+function validateExternalLink(url: string) {
+    try {
+        if (!url) return "";
+        const parsed = new URL(url);
+        return (parsed.protocol === "https:" || parsed.protocol === "http:") ? url : "";
+    } catch {
+        return "";
+    }
 }
 
 // 1. MODÈLE RÉEL PAR DÉFAUT (Mende avec ses 3 créneaux)
@@ -69,7 +98,7 @@ if (Astro.request.method === "POST") {
                     sanitize(formData.get("h3"), 50)
                 ].filter(h => h !== ""),
                 description: sanitize(formData.get("description"), 500),
-                map_url: sanitize(formData.get("map_url"), 200),
+                map_url: validateExternalLink(formData.get("map_url")?.toString() || ""),
                 map_iframe: validateMapUrl(finalUrl) || mendeModel.map_iframe
             };
 

@@ -1,6 +1,16 @@
 import type { MiddlewareHandler } from "astro";
 import { kv } from "./lib/kv";
 
+// Comparaison sécurisée contre les attaques temporelles
+function safeCompare(a: string, b: string) {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+}
+
 export const onRequest: MiddlewareHandler = async (context, next) => {
   // On cible uniquement les routes du dashboard
   if (context.url.pathname.startsWith("/dashboard-48")) {
@@ -44,23 +54,29 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
       const auth = context.request.headers.get("Authorization");
 
       if (auth) {
-        const base64 = auth.split(" ")[1];
-        const decoded = Buffer.from(base64, 'base64').toString('utf-8');
-        const [user, pass] = decoded.split(":");
-
-        if (user === USER_OK && pass === PASS_OK) {
-          // Succès : on nettoie les tentatives de l'IP
-          await kv.del(`failed_attempts:${userIP}`);
-          return next();
-        } else {
-          // ÉCHEC : On incrémente le compteur
-          const attempts = (await kv.incr(`failed_attempts:${userIP}`)) as number;
+        try {
+          const parts = auth.split(" ");
+          if (parts.length !== 2) throw new Error("Format d'authentification invalide");
           
-          // Au bout de 5 erreurs, blocage 15 min (900 sec)
-          if (attempts >= 5) {
-            await kv.set(lockKey, "true", { ex: 900 }); 
+          const decoded = Buffer.from(parts[1], 'base64').toString('utf-8');
+          const [user, pass] = decoded.split(":");
+          if (safeCompare(user, USER_OK) && safeCompare(pass, PASS_OK)) {
+            // Succès : on nettoie les tentatives de l'IP
             await kv.del(`failed_attempts:${userIP}`);
+            return next();
+          } else {
+            // ÉCHEC : On incrémente le compteur
+            const attempts = (await kv.incr(`failed_attempts:${userIP}`)) as number;
+            
+            // Au bout de 5 erreurs, blocage 15 min (900 sec)
+            if (attempts >= 5) {
+              await kv.set(lockKey, "true", { ex: 900 }); 
+              await kv.del(`failed_attempts:${userIP}`);
+            }
           }
+        } catch (decodeError) {
+          console.warn("Middleware: Failed to decode Basic Auth credentials", decodeError);
+          // Traiter comme un échec d'authentification pour éviter de révéler des informations
         }
       }
     } catch (error) {
