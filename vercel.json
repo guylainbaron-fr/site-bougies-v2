@@ -12,7 +12,7 @@
       {
         "type": "header",
         "key": "user-agent",
-        "value": "^(?=.*(ahrefsbot|semrushbot|dotbot|mj12bot|gptbot|claudebot|amazonbot|bytespider|petalbot|blexbot|yandexbot|mail.ru|baiduspider))(?!.*facebookexternalhit).*"
+        "value": "^(?=.*(ahrefsbot|semrushbot|dotbot|mj12bot|gptbot|claudebot|amazonbot|bytespider|petalbot|blexbot|yandexbot|mail.ru|baiduspider))(?!.*facebookexternalhit|vercel).*"
       }
     ],
     "permanent": false,
