@@ -12,7 +12,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": ".*(ahrefsbot|semrushbot|dotbot|mj12bot|gptbot|claudebot|amazonbot|bytespider|petalbot|python|axios|curl|wget|go-http-client|java|php|postman|runtime|insomnia|nimbostratus).*"
+          "value": ".*(ahrefsbot|semrushbot|dotbot|mj12bot|gptbot|claudebot|amazonbot|bytespider|petalbot|blexbot|yandexbot|mail.ru|baiduspider).*"
         }
       ],
       "permanent": false,
@@ -23,23 +23,14 @@
     {
       "source": "/sw.js",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        },
-        {
-          "key": "Service-Worker-Allowed",
-          "value": "/"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" },
+        { "key": "Service-Worker-Allowed", "value": "/" }
       ]
     },
     {
       "source": "/_astro/(.*)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
@@ -47,36 +38,15 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://maps.googleapis.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://maps.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://maps.gstatic.com https://*.googleapis.com https://maps.googleapis.com https://*.gstatic.com https://quickchart.io https://flagcdn.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://*.googleapis.com; frame-src 'self' https://www.google.com https://www.google.fr https://maps.google.fr; connect-src 'self' https://api.brevo.com https://api.sendinblue.com https://*.sibforms.com https://*.brevo.com https://*.upstash.io https://*.upstash.com; upgrade-insecure-requests; base-uri 'self'; form-action 'self';"
+          "value": "default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://maps.googleapis.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://maps.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://maps.gstatic.com https://*.googleapis.com https://maps.googleapis.com https://*.gstatic.com https://quickchart.io https://flagcdn.com https://*.vercel.app; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://*.googleapis.com https://*.vercel-analytics.com; frame-src 'self' https://www.google.com https://www.google.fr https://maps.google.fr; connect-src 'self' https://api.brevo.com https://api.sendinblue.com https://*.sibforms.com https://*.brevo.com https://*.upstash.io https://*.upstash.com https://*.vercel-analytics.com https://*.vercel-insights.com; upgrade-insecure-requests; base-uri 'self'; form-action 'self';"
         },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=31536000; includeSubDomains; preload"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=()"
-        },
-        {
-          "key": "X-DNS-Prefetch-Control",
-          "value": "on"
-        }
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains; preload" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
+        { "key": "X-DNS-Prefetch-Control", "value": "on" }
       ]
     }
   ]
