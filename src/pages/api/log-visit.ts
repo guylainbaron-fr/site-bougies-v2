@@ -34,14 +34,47 @@ function sanitizeString(input: string | undefined | null, maxLength: number = 25
 
 export const POST: APIRoute = async ({ request }) => {
     try {
-        const data = await request.json();
-        const ua = sanitizeString(data.ua || request.headers.get('user-agent'));
+        // 0. PROTECTION CONTRE LES PAYLOADS TROP LOURDS
+        const contentType = request.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            return new Response(null, { status: 400 });
+        }
+
+        const rawBody = await request.text();
+        if (rawBody.length > 2000) { // Max 2KB pour un log, largement suffisant
+            return new Response(JSON.stringify({ error: "Payload too large" }), { status: 413 });
+        }
+
+        let data;
+        try {
+            data = JSON.parse(rawBody);
+        } catch (e) {
+            return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 });
+        }
+
+        const ua = sanitizeString(data.ua || request.headers.get('user-agent'), 500);
+
+        // --- PROTECTION GLOBALE (KV QUOTA) ---
+        // Empêche de saturer le KV si une attaque massive survient (max 1000 logs/heure au total)
+        const globalLimit = await kv.get('global_log_rate_limit');
+        if (globalLimit && Number(globalLimit) > 1000) {
+            return new Response(null, { status: 429 });
+        }
+        await kv.incr('global_log_rate_limit');
+        await kv.expire('global_log_rate_limit', 3600); // Reset toutes les heures
 
         // 1. RÉCUPÉRATION IP, PAYS ET REFERRER
-        const ip = sanitizeString(request.headers.get('x-real-ip') || request.headers.get('x-forwarded-for') || "Anonyme", 45);
+        const rawIp = request.headers.get('x-real-ip') || request.headers.get('x-forwarded-for') || "Anonyme";
+        const ip = sanitizeString(rawIp.split(',')[0].trim(), 45);
+
+        // --- MODE FANTÔME (BUREAU) ---
+        const GHOST_IP = import.meta.env.GHOST_MODE_IP; // Utilisation de la variable d'environnement définie sur Vercel
+        if (GHOST_IP && ip === GHOST_IP) {
+            return new Response(JSON.stringify({ success: true, mode: "ghost-active" }), { status: 200 });
+        }
 
         // --- PROTECTION CONTRE LE SPAM (Rate Limit) ---
-        // On limite à 1 log par minute par IP pour éviter le flood
+        // On limite à 1 log par minute par IP pour éviter le flood (sauf pour le mode fantôme)
         const rateLimitKey = `rate_limit_log:${ip}`; // IP is already sanitized
         const isRateLimited = await kv.get(rateLimitKey);
         
@@ -53,12 +86,6 @@ export const POST: APIRoute = async ({ request }) => {
 
         const referrer = sanitizeString(request.headers.get('referer')); 
 
-        // --- MODE FANTÔME (BUREAU) ---
-        const GHOST_IP = import.meta.env.GHOST_MODE_IP; // Utilisation de la variable d'environnement
-        if (ip === GHOST_IP) {
-            return new Response(JSON.stringify({ success: true, mode: "ghost-active" }), { status: 200 });
-        }
-        
         const countryCodeRaw = request.headers.get('x-vercel-ip-country');
         const countryCode = sanitizeString(countryCodeRaw, 2).toLowerCase(); // Country codes are 2 chars
 
