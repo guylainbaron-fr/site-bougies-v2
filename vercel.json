@@ -6,19 +6,19 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*(ahrefsbot|semrushbot|dotbot|mj12bot|gptbot|claudebot|amazonbot|bytespider|petalbot|blexbot|yandexbot|mail.ru|baiduspider).*"
-        }
-      ],
-      "permanent": false,
-      "destination": "https://www.google.com"
-    }
-  ],
+  {
+    "source": "/(.*)",
+    "has": [
+      {
+        "type": "header",
+        "key": "user-agent",
+        "value": "^(?=.*(ahrefsbot|semrushbot|dotbot|mj12bot|gptbot|claudebot|amazonbot|bytespider|petalbot|blexbot|yandexbot|mail.ru|baiduspider))(?!.*facebookexternalhit).*"
+      }
+    ],
+    "permanent": false,
+    "destination": "https://www.google.com"
+  }
+],
   "headers": [
     {
       "source": "/sw.js",
