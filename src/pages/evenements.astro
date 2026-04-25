@@ -5,7 +5,7 @@ const pageId = "evenements";
 
 import VideoItem from '../components/VideoItem.astro'; 
 import { Image } from 'astro:assets';
-import { kv } from '@vercel/kv';
+import { kv } from "../lib/kv";
 
 // 1. Définition des types
 interface EventData {

@@ -1,6 +1,23 @@
 ---
 export const prerender = false;
-import { kv } from '@vercel/kv';
+import { kv } from "../../lib/kv";
+
+// Helper pour assainir les entrées
+function sanitize(str: any, max: number = 500) {
+    if (!str) return "";
+    return str.toString()
+        .replace(/[\x00-\x1F\x7F-\x9F]/g, '')
+        .trim()
+        .substring(0, max);
+}
+
+// Validation stricte de l'URL Google Maps
+function validateMapUrl(url: string) {
+    if (!url) return "";
+    // On vérifie que c'est bien un lien d'intégration Google (com ou fr)
+    const isGoogle = url.includes('google.com/maps/embed') || url.includes('google.fr/maps/embed');
+    return isGoogle ? url : "";
+}
 
 // 1. MODÈLE RÉEL PAR DÉFAUT (Mende avec ses 3 créneaux)
 const mendeModel = {
@@ -13,7 +30,7 @@ const mendeModel = {
     ],
     description: "Retrouvez-nous au cœur du marché couvert de Mende pour découvrir nos dernières sculptures sur bois et nos bougies artisanales.",
     map_url: "https://maps.app.goo.gl/pSesTFPPLNPwGptb7",
-    map_iframe: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2844.9865659534867!2d3.4955737760506964!3d44.515428571074295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12b36de0792c499d%3A0xca92c4b3a1a2ef3e!2sMarch%C3%A9%20Couvert%20De%20Mende!5e0!3m2!1sfr!2sfr!4v1769263957380!5m2!1sfr!2sfr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>'
+    map_iframe: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2844.9865659534867!2d3.4955737760506964!3d44.515428571074295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12b36de0792c499d%3A0xca92c4b3a1a2ef3e!2sMarch%C3%A9%20Couvert%20De%20Mende!5e0!3m2!1sfr!2sfr!4v1769263957380!5m2!1sfr!2sfr'
 };
 
 // --- LOGIQUE DE TRAITEMENT DES FORMULAIRES ---
@@ -25,7 +42,7 @@ if (Astro.request.method === "POST") {
         // 1. ACTION : MISE À JOUR OU ENREGISTREMENT
         if (action === "update_market") {
             const status = formData.get("status");
-            const newTitle = formData.get("titre_annonce")?.toString();
+            const newTitle = sanitize(formData.get("titre_annonce"), 100);
             
             const oldMarket: any = await kv.get('event_data');
             const pastMarkets: any[] = await kv.get('past_markets') || [];
@@ -37,23 +54,23 @@ if (Astro.request.method === "POST") {
 
             let rawInput = formData.get("map_iframe")?.toString() || "";
             let finalUrl = rawInput;
-            if (rawInput.includes('src="')) {
-                finalUrl = rawInput.split('src="')[1].split('"')[0];
-            } else {
-                finalUrl = rawInput.replace(/"/g, '').trim();
-            }
+
+            // Extraction automatique de l'URL du src de l'iframe si l'utilisateur colle tout le code Google
+            // On utilise une expression régulière pour être sûr de bien capturer le lien
+            const srcMatch = rawInput.match(/src=["']([^"']+)["']/i);
+            finalUrl = srcMatch ? srcMatch[1] : rawInput.replace(/["']/g, '').trim();
 
             const eventData = {
-                titre_annonce: newTitle,
-                dates: formData.get("dates"),
+                titre_annonce: sanitize(newTitle, 100),
+                dates: sanitize(formData.get("dates"), 50),
                 horaires: [
-                    formData.get("h1"),
-                    formData.get("h2"),
-                    formData.get("h3")
-                ].filter(h => h),
-                description: formData.get("description"),
-                map_url: formData.get("map_url"),
-                map_iframe: finalUrl
+                    sanitize(formData.get("h1"), 50),
+                    sanitize(formData.get("h2"), 50),
+                    sanitize(formData.get("h3"), 50)
+                ].filter(h => h !== ""),
+                description: sanitize(formData.get("description"), 500),
+                map_url: sanitize(formData.get("map_url"), 200),
+                map_iframe: validateMapUrl(finalUrl) || mendeModel.map_iframe
             };
 
             await kv.set('event_status', status);

@@ -2,8 +2,7 @@
 const currentYear = new Date().getFullYear();
 export const prerender = false;
 
-// @ts-ignore
-import { kv } from '@vercel/kv';
+import { kv } from "../../lib/kv";
 
 interface LogEntry {
     device: string;
