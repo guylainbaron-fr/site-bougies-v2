@@ -1,6 +1,9 @@
 ---
 export const prerender = false;
 import { kv } from "../../lib/kv";
+import AdminHeader from "../../components/AdminHeader.astro";
+import '../../styles/admin.css';
+const currentYear = new Date().getFullYear();
 
 // Helper pour assainir les entrées
 function sanitize(str: any, max: number = 500) {
@@ -158,235 +161,14 @@ const pastMarkets: any[] = await kv.get('past_markets') || [];
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow">
     <title>Gestion Marchés | Atelier</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <meta name="theme-color" content="#fdfaf7">
-    <style>
-        :root { 
-            --sable-dore: #e0c297; 
-            --vanille-pure: #fcf4dd; 
-            --brun-coco: #4a3728; 
-            --fond-ecume: #fdfaf7;
-            --font-principale: "Poppins", sans-serif;
-        }
-
-        * { box-sizing: border-box; }
-
-        body { 
-            font-family: var(--font-principale); 
-            background-color: var(--fond-ecume); 
-            color: var(--brun-coco); 
-            margin: 0; 
-            padding: 15px; 
-        }
-
-        .dashboard-container { 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 20px; 
-            border-radius: 4px; 
-            border: 1px solid var(--sable-dore); 
-        }
-
-        .header-flex { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 25px; 
-            border-bottom: 2px solid var(--sable-dore); 
-            padding-bottom: 15px; 
-            flex-wrap: wrap; 
-            gap: 15px; 
-        }
-
-        .header-flex h1 { 
-            margin: 0; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            font-size: 0.9rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-        }
-
-        .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
-
-        .btn { 
-            padding: 8px 12px; 
-            border-radius: 4px; 
-            text-decoration: none; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            font-size: 0.6rem; 
-            cursor: pointer; 
-            border: 1px solid var(--sable-dore); 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-            color: var(--brun-coco); 
-            background: white; 
-        }
-
-        .btn-gold { background: var(--vanille-pure); }
-
-        .market-form-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 20px; 
-            margin-top: 20px; 
-        }
-
-        @media (max-width: 768px) { 
-            .market-form-grid { grid-template-columns: 1fr; } 
-        }
-
-        .form-section { 
-            background: #fff; 
-            border: 1px solid var(--sable-dore); 
-            padding: 20px; 
-            border-radius: 4px; 
-        }
-
-        .form-group { margin-bottom: 15px; }
-
-        label { 
-            display: block; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            font-size: 0.6rem; 
-            margin-bottom: 5px; 
-            color: var(--brun-coco); 
-        }
-
-        input, textarea, select { 
-            width: 100%; 
-            padding: 10px; 
-            border: 1px solid var(--sable-dore); 
-            border-radius: 4px; 
-            font-family: inherit; 
-            font-size: 0.8rem; 
-            color: #000; 
-        }
-
-        .status-banner { 
-            padding: 10px; 
-            border-radius: 4px; 
-            margin-bottom: 20px; 
-            text-align: center; 
-            font-weight: 900; 
-            font-size: 0.7rem; 
-            text-transform: uppercase; 
-        }
-
-        .bg-actif { background: #27ae60; color: white; }
-        .bg-attente { background: var(--sable-dore); color: var(--brun-coco); }
-
-        .action-buttons { 
-            display: flex; 
-            gap: 10px; 
-            margin-top: 20px; 
-        }
-
-        .btn-save { 
-            background: var(--brun-coco); 
-            color: white; 
-            border: none; 
-            padding: 15px; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            font-size: 0.8rem; 
-            flex: 2; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 10px; 
-        }
-
-        .btn-archive { 
-            background: white; 
-            color: var(--brun-coco); 
-            border: 1px dashed var(--brun-coco); 
-            padding: 15px; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            font-size: 0.8rem; 
-            flex: 1; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 10px; 
-        }
-
-        .archive-list { 
-            margin-top: 30px; 
-            padding: 15px; 
-            background: #f9f9f9; 
-            border-radius: 4px; 
-            border: 1px dashed var(--sable-dore); 
-        }
-
-        .archive-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 10px; 
-        }
-
-        .archive-item { 
-            font-size: 0.7rem; 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 8px 0; 
-            border-bottom: 1px solid #eee; 
-        }
-
-        .btn-delete-history { 
-            background: none; 
-            border: none; 
-            color: #c0392b; 
-            cursor: pointer; 
-            font-size: 0.6rem; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            text-decoration: underline; 
-        }
-
-        .dashboard-footer { 
-            margin-top: 30px; 
-            padding: 20px 0; 
-            border-top: 1px solid var(--sable-dore); 
-            text-align: center; 
-        }
-
-        .dashboard-footer p { 
-            margin: 0; 
-            font-size: 0.6rem; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            font-weight: 800; 
-            color: var(--brun-coco); 
-            opacity: 0.6; 
-        }
-    </style>
 </head>
 <body>
     <div class="dashboard-container">
-        <header class="header-flex">
-            <h1><i class="fa-solid fa-store" style="color: var(--sable-dore);"></i> Gestion Événements</h1>
-            <div class="btn-group">
-                <a href="/dashboard-48" class="btn btn-gold"><i class="fa-solid fa-gauge-high"></i> Stats</a>
-                <a href="/dashboard-48/cartes" class="btn btn-gold"><i class="fa-solid fa-id-card"></i> Cartes</a>
-                <a href="/evenements" target="_blank" class="btn btn-gold" style="background: var(--brun-coco); color: white; border: none;"><i class="fa-solid fa-eye"></i> Voir le site</a>
-            </div>
-        </header>
+        <AdminHeader currentPage="marches" title="Gestion Événements" />
 
         <div class={`status-banner ${currentStatus === 'actif' ? 'bg-actif' : 'bg-attente'}`}>
             Statut actuel : {currentStatus === 'actif' ? 'Événement en ligne' : 'Mode attente (Cœur affiché)'}
@@ -396,51 +178,51 @@ const pastMarkets: any[] = await kv.get('past_markets') || [];
             <div class="market-form-grid">
                 <div class="form-section">
                     <div class="form-group">
-                        <label>Visibilité sur le site</label>
-                        <select name="status">
+                        <label class="admin-label">Visibilité sur le site</label>
+                        <select class="admin-select" name="status">
                             <option value="attente" selected={currentStatus === 'attente'}>Désactivé (Affiche "Bientôt")</option>
                             <option value="actif" selected={currentStatus === 'actif'}>Activé (Affiche les détails)</option>
                         </select>
                     </div>
                     
                     <div class="form-group">
-                        <label>Titre de l'annonce</label>
-                        <input type="text" name="titre_annonce" value={currentData.titre_annonce} placeholder="Ex: Marché de Mende" required />
+                        <label class="admin-label">Titre de l'annonce</label>
+                        <input class="admin-input" type="text" name="titre_annonce" value={currentData.titre_annonce} placeholder="Ex: Marché de Mende" required />
                     </div>
                     
                     <div class="form-group">
-                        <label>Dates</label>
-                        <input type="text" name="dates" value={currentData.dates} placeholder="Ex: 14 & 15 Janvier" required />
+                        <label class="admin-label">Dates</label>
+                        <input class="admin-input" type="text" name="dates" value={currentData.dates} placeholder="Ex: 14 & 15 Janvier" required />
                     </div>
                     
                     <div class="form-group">
-                        <label>Horaires</label>
-                        <input type="text" name="h1" value={currentData.horaires?.[0] || ""} placeholder="Jour 1" style="margin-bottom:5px" />
-                        <input type="text" name="h2" value={currentData.horaires?.[1] || ""} placeholder="Jour 2" style="margin-bottom:5px" />
-                        <input type="text" name="h3" value={currentData.horaires?.[2] || ""} placeholder="Jour 3" />
+                        <label class="admin-label">Horaires</label>
+                        <input class="admin-input" type="text" name="h1" value={currentData.horaires?.[0] || ""} placeholder="Jour 1" style="margin-bottom:5px" />
+                        <input class="admin-input" type="text" name="h2" value={currentData.horaires?.[1] || ""} placeholder="Jour 2" style="margin-bottom:5px" />
+                        <input class="admin-input" type="text" name="h3" value={currentData.horaires?.[2] || ""} placeholder="Jour 3" />
                     </div>
                 </div>
 
                 <div class="form-section">
                     <div class="form-group">
-                        <label>Description (Étiquette)</label>
-                        <textarea name="description" rows="3">{currentData.description}</textarea>
+                        <label class="admin-label">Description (Étiquette)</label>
+                        <textarea class="admin-textarea" name="description" rows="3">{currentData.description}</textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label>Lien Bouton GPS</label>
-                        <input type="text" name="map_url" value={currentData.map_url} placeholder="https://goo.gl/maps/..." />
+                        <label class="admin-label">Lien Bouton GPS</label>
+                        <input class="admin-input" type="text" name="map_url" value={currentData.map_url} placeholder="https://goo.gl/maps/..." />
                     </div>
                     
                     <div class="form-group">
-                        <label>Code Carte (Iframe Google Maps)</label>
-                        <textarea name="map_iframe" rows="4">{currentData.map_iframe}</textarea>
+                        <label class="admin-label">Code Carte (Iframe Google Maps)</label>
+                        <textarea class="admin-textarea" name="map_iframe" rows="4">{currentData.map_iframe}</textarea>
                     </div>
                     
                     {pastMarkets.length > 0 && (
                         <div class="archive-list">
                             <div class="archive-header">
-                                <label style="margin:0">Derniers marchés terminés</label>
+                                <label class="admin-label" style="margin:0">Derniers marchés terminés</label>
                                 <button type="submit" name="action" value="delete_history" class="btn-delete-history" onclick="return confirm('Effacer tout l\'historique ?');">
                                     Effacer tout
                                 </button>
@@ -457,17 +239,17 @@ const pastMarkets: any[] = await kv.get('past_markets') || [];
             </div>
 
             <div class="action-buttons">
-                <button type="submit" name="action" value="update_market" class="btn-save">
+                <button type="submit" name="action" value="update_market" class="btn btn-add btn-save-market">
                     <i class="fa-solid fa-floppy-disk"></i> Enregistrer et mettre à jour
                 </button>
-                <button type="submit" name="action" value="archive_market" class="btn-archive" onclick="return confirm('Archiver ce marché et réinitialiser ?');">
+                <button type="submit" name="action" value="archive_market" class="btn btn-archive-market" onclick="return confirm('Archiver ce marché et réinitialiser ?');">
                     <i class="fa-solid fa-box-archive"></i> Archiver le marché
                 </button>
             </div>
         </form>
 
         <footer class="dashboard-footer">
-            <p>© {new Date().getFullYear()} Jean François & Aniuta — Dashboard Atelier</p>
+            <p>© {currentYear} Jean François & Aniuta — Dashboard Atelier</p>
         </footer>
     </div>
 </body>

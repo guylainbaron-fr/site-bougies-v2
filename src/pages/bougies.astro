@@ -19,6 +19,13 @@ import petiteImg from '../assets/images/bougie-petite.webp';
 import moyenneImg from '../assets/images/bougie-moyenne.webp';
 import grandeImg from '../assets/images/bougie-grande.webp';
 import allumeesImg from '../assets/images/bougies-allumees.jpg';
+
+import VideoItem from '../components/VideoItem.astro';
+
+// Importation des miniatures vidéos
+import poster1 from '../assets/images/miniature-cadeau-1.webp';
+import poster2 from '../assets/images/miniature-cadeau-2.webp';
+import poster3 from '../assets/images/miniature-cadeau-3.webp';
 ---
 
 <MainLayout 
@@ -65,6 +72,15 @@ import allumeesImg from '../assets/images/bougies-allumees.jpg';
         "https://www.instagram.com/jean_francois_aniuta/"
       ],
       "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+    },
+    {
+      "@type": "VideoObject",
+      "name": "Bougies Cèpes Artisanales",
+      "description": "Démonstration visuelle du réalisme de nos bougies cèpes en cire naturelle.",
+      "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-1.webp",
+      "uploadDate": "2026-01-11",
+      "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-1.mp4",
+      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" }
     }
   ]
 }
@@ -155,14 +171,9 @@ import allumeesImg from '../assets/images/bougies-allumees.jpg';
                 </div>
             </div>
             
-            <PhoneProtect 
-                isWhatsApp={true} 
-                onlyLink={true} 
-                class="btn large-btn whatsapp-btn main-whatsapp-btn"
-                title="Commander vos bougies champignons via WhatsApp"
-                >
-                <i class="fab fa-whatsapp" aria-hidden="true"></i> Commander vos bougies via WhatsApp
-            </PhoneProtect>
+<div class="cta-container">
+    <a href="/boutique" class="btn">Découvrir la boutique</a>
+</div>
             
             <div class="whatsapp-image-container">
                 <Image 
@@ -172,6 +183,61 @@ import allumeesImg from '../assets/images/bougies-allumees.jpg';
                     width={500}
                     height={500}
                 />
+            </div>
+        </div>
+    </section>
+
+    <section id="christmas-videos" class="main-content" style="background-color: var(--fond-ecume);">
+        <div class="container">
+            <h2 class="titre-noel">
+                <span class="scintillement"></span> 
+                L'Atelier en Vidéo : Collection Cèpes
+                <span class="scintillement"></span>
+            </h2>
+            
+            <div class="video-intro-text">
+                <p>
+                    Plongez dans l'univers de l'atelier <strong>Jean-François & Aniuta</strong> à travers nos présentations vidéos. 
+                    Découvrez le <strong>réalisme saisissant</strong> de notre création phare : la <strong>bougie cèpe de Lozère</strong>.
+                </p>
+                <p>
+                    Chaque vidéo vous présente la texture unique et les finitions détaillées de notre collection <strong>Vanille Gourmande</strong>. 
+                    Fabriquées en <strong>cire 100% naturelle</strong>, ces pièces artisanales capturent l'essence de la forêt pour sublimer votre décoration d'intérieur.
+                </p>
+            </div>
+
+            <div class="video-gallery">
+                <VideoItem 
+                    title="La Bougie Cèpe (Présentation 1)"
+                    videoSrc="/videos/video-noel-1.mp4"
+                    posterImg={poster1}
+                />
+
+                <VideoItem 
+                    title="Détails & Réalisme (Présentation 2)"
+                    videoSrc="/videos/video-noel-2.mp4"
+                    posterImg={poster2}
+                />
+
+                <VideoItem 
+                    title="Ambiance Vanille Gourmande (Présentation 3)"
+                    videoSrc="/videos/video-noel-3.mp4"
+                    posterImg={poster3}
+                />
+            </div>
+            
+            <div class="cta-wrapper">
+                <p class="etiquette-signature">
+                    Vous avez eu un coup de cœur pour l'une de nos bougies en vidéo ? 
+                </p>
+                <PhoneProtect 
+                        isWhatsApp={true} 
+                        onlyLink={true} 
+                        class="btn large-btn whatsapp-btn main-whatsapp-btn"
+                        title="Commander via WhatsApp"
+                        >
+                    <i class="fab fa-whatsapp"></i> Commander votre bougie via WhatsApp
+                </PhoneProtect>
             </div>
         </div>
     </section>

@@ -1,0 +1,61 @@
+---
+interface Props {
+    currentPage: string;
+    title: string;
+}
+
+const { currentPage, title } = Astro.props;
+---
+
+<header class="admin-header">
+    <div class="header-top">
+        <a href="/dashboard-48" class="admin-dash-link" title="Dashboard">
+            <i class="fa-solid fa-gauge-high"></i>
+        </a>
+
+        <nav class="admin-nav">
+            <a href="/dashboard-48" class={(currentPage === 'stats' || currentPage === 'index') ? 'nav-link active' : 'nav-link'}>
+                <i class="fa-solid fa-chart-line"></i> Stats
+            </a>
+            <a href="/dashboard-48/boutique" class={currentPage === 'boutique' ? 'nav-link active' : 'nav-link'}>
+                <i class="fa-solid fa-shop"></i> Boutique
+            </a>
+            <a href="/dashboard-48/commandes" class={(currentPage === 'commandes' || currentPage === 'order') ? 'nav-link active' : 'nav-link'}>
+                <i class="fa-solid fa-box"></i> Commandes
+            </a>
+            <a href="/dashboard-48/marches" class={(currentPage === 'marches' || currentPage === 'market') ? 'nav-link active' : 'nav-link'}>
+                <i class="fa-solid fa-store"></i> Marchés
+            </a>
+            <a href="/dashboard-48/cartes" class={currentPage === 'cartes' ? 'nav-link active' : 'nav-link'}>
+                <i class="fa-solid fa-print"></i> Cartes
+            </a>
+        </nav>
+
+        <div class="header-actions">
+            <div class="social-mini-nav">
+                <a href="https://www.instagram.com/jean_francois_aniuta/" target="_blank" title="Instagram" class="social-icon insta"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://whatsapp.com/channel/0029VbBimwMHQbS9rBEXXu0T" target="_blank" title="WhatsApp" class="social-icon wa"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://www.tiktok.com/@jeanfrancoisbaron2" target="_blank" title="TikTok" class="social-icon tt"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="https://app.brevo.com/" target="_blank" title="Newsletter (Brevo)" class="social-icon brevo"><i class="fa-solid fa-paper-plane"></i></a>
+                <a href="https://www.laposte.net/accueil" target="_blank" title="Email (La Poste)" class="social-icon mail"><i class="fa-solid fa-envelope"></i></a>
+            </div>
+            <a href="/" target="_blank" class="btn-admin-tool" style="background:var(--brun-coco); color:white; border:none; display: flex; align-items: center; justify-content: center; text-decoration: none;" title="Voir le site public"><i class="fa-solid fa-eye"></i></a>
+            <button onclick="logout()" class="btn-admin-tool" style="color:var(--rouge)" title="Déconnexion"><i class="fa-solid fa-right-from-bracket"></i></button>
+            <slot />
+        </div>
+    </div>
+    <div class="header-bottom">
+        <h2>{title}</h2>
+    </div>
+</header>
+
+<script>
+    (window as any).logout = () => {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", "/dashboard-48", true, "logout", "logout");
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4) window.location.href = "/";
+        };
+        xmlhttp.send();
+    };
+</script>

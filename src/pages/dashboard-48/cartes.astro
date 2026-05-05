@@ -1,6 +1,8 @@
 ---
 // src/pages/dashboard-48/cartes.astro
 import ThankYouCard from '../../components/ThankYouCard.astro';
+import AdminHeader from '../../components/AdminHeader.astro';
+import '../../styles/admin.css';
 const currentYear = new Date().getFullYear();
 ---
 
@@ -11,99 +13,34 @@ const currentYear = new Date().getFullYear();
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow">
     <title>Impression Cartes | Atelier</title>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <meta name="theme-color" content="#fdfaf7">
     <style>
-      :root { 
-          --sable-dore: #e0c297; 
-          --vanille-pure: #fcf4dd; 
-          --brun-coco: #4a3728; 
-          --fond-ecume: #fdfaf7;
-          --font-principale: "Poppins", sans-serif;
-      }
+        .preview-container {
+            flex-grow: 1; 
+            display: flex;
+            justify-content: center; 
+            padding: 40px 0;
+            overflow-x: auto;
+            background: var(--fond-ecume);
+        }
 
-      * { box-sizing: border-box; }
+        .page-a4 {
+            width: 210mm; 
+            height: 297mm; 
+            background: white; 
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: scale(0.6);
+            transform-origin: top center;
+            margin-bottom: -100mm;
+        }
 
-      body { 
-          margin: 0; padding: 15px; 
-          background-color: var(--fond-ecume); 
-          font-family: var(--font-principale); 
-          color: var(--brun-coco);
-          display: flex;
-          flex-direction: column;
-          min-height: 100vh;
-      }
-
-      .dashboard-container { max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; flex-grow: 1; }
-      
-      /* HEADER HARMONISÉ */
-      .header-flex { 
-          display: flex; 
-          justify-content: space-between; 
-          align-items: center; 
-          margin-bottom: 25px; 
-          border-bottom: 2px solid var(--sable-dore); 
-          padding-bottom: 15px; 
-          background: transparent;
-          flex-wrap: wrap;
-          gap: 15px;
-      }
-
-      .header-flex h1 { 
-          margin: 0; 
-          text-transform: uppercase; 
-          letter-spacing: 1px; 
-          font-size: 0.9rem; 
-          display: flex; 
-          align-items: center; 
-          gap: 10px; 
-      }
-
-      .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
-
-      .btn { 
-          padding: 8px 12px; border-radius: 4px; text-decoration: none; 
-          font-weight: 700; text-transform: uppercase; font-size: 0.6rem; 
-          cursor: pointer; border: 1px solid var(--sable-dore); 
-          display: flex; align-items: center; gap: 6px; 
-          color: var(--brun-coco); background: white;
-      }
-      .btn-gold { background: var(--vanille-pure); }
-      .btn-print { background: var(--brun-coco); color: white; border: none; }
-
-      /* ZONE DE PREVIEW */
-      .preview-container {
-          width: 100%;
-          flex-grow: 1; 
-          display: flex;
-          justify-content: center;
-          align-items: flex-start; 
-          padding: 20px 0;
-          overflow-x: auto;
-      }
-
-      .page-a4 {
-          width: 210mm;
-          height: 297mm;
-          background: white;
-          display: flex;
-          flex-direction: column;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-          transform-origin: top center;
-      }
-
-      /* MOBILE AJUSTEMENTS */
-      @media (max-width: 850px) {
-          .page-a4 { transform: scale(0.4); margin-bottom: -150mm; }
-          .btn-text { display: none; }
-      }
-
-      .half {
+        .half {
           flex: 1;
           display: flex;
           justify-content: center;
@@ -139,7 +76,7 @@ const currentYear = new Date().getFullYear();
       @media print {
           @page { size: A4 portrait; margin: 0 !important; }
           body { padding: 0; background: white; }
-          .header-flex, .dashboard-footer { display: none !important; }
+          .admin-header, .dashboard-footer, .actions-bar { display: none !important; }
           .dashboard-container { max-width: none; margin: 0; }
           .preview-container { padding: 0; overflow: hidden; display: block; }
           .page-a4 { transform: none !important; box-shadow: none !important; margin: 0 !important; width: 210mm !important; height: 297mm !important; }
@@ -148,16 +85,13 @@ const currentYear = new Date().getFullYear();
   </head>
   <body>
     <div class="dashboard-container">
-        <header class="header-flex">
-            <h1><i class="fa-solid fa-id-card" style="color: var(--sable-dore);"></i> Impression Cartes</h1>
-            <div class="btn-group">
-                <a href="/dashboard-48" class="btn btn-gold"><i class="fa-solid fa-gauge-high"></i> <span class="btn-text">Stats</span></a>
-                <a href="/dashboard-48/marches" class="btn btn-gold"><i class="fa-solid fa-store"></i> <span class="btn-text">Marchés</span></a>
-                <button class="btn btn-print" onclick="window.print()">
-                    <i class="fa-solid fa-print"></i> <strong>Imprimer les cartes</strong>
-                </button>
-            </div>
-        </header>
+        <AdminHeader currentPage="cartes" title="Impression Cartes" />
+
+        <div class="actions-bar">
+            <button class="btn btn-add" onclick="window.print()">
+                <i class="fa-solid fa-print"></i> Imprimer les cartes
+            </button>
+        </div>
 
         <div class="preview-container">
             <div class="page-a4">

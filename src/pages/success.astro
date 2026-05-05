@@ -1,0 +1,322 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+export const prerender = false;
+
+const iconP_svg = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px; vertical-align:middle; display:inline-block; position:relative; top:-1px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>`;
+const iconM_svg = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px; vertical-align:middle; display:inline-block; position:relative; top:-1px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>`;
+
+const pageId = "panier-success";
+---
+
+<MainLayout title="Paiement Réussi - Jean-François & Aniuta" pageId={pageId}>
+    <style>
+        .spin-animation {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media print {
+            :global(nav), :global(footer), :global(.main-nav), :global(.footer-divider), :global(.panier-header), :global(.filter-btn), :global(.btn-continue-shopping), :global(.panier-tag), :global(.success-checkmark), :global(.no-print), :global(.site-header), :global(.header-actions), :global(.container > h1), :global(.container > p) {
+                display: none !important;
+            }
+
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
+
+            :global(html), :global(body) {
+                overflow: visible !important;
+                height: auto !important;
+                background: white !important;
+                color: black !important;
+            }
+            
+            #panier-success-page {
+                padding: 0 !important;
+                background: white !important;
+            }
+
+            /* Suppression des styles d'étiquette globale pour l'impression */
+            #printable-invoice {
+                color: black !important;
+                background: white !important;
+            }
+
+            #order-summary {
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+                width: 100% !important;
+            }
+
+            :global(.legal-mentions-print) {
+                font-size: 10pt !important;
+                margin-top: 15px !important;
+                padding-top: 10px !important;
+                color: black !important;
+            }
+        }
+    </style>
+    <section id="panier-success-page" style="background-color: var(--fond-ecume); padding: 80px 0;">
+        <div class="container">
+            <div class="panier-header">
+                <span class="panier-tag">Merci pour votre commande</span>
+                <h1>Votre paiement a été un succès !</h1>
+            </div>
+
+            <div class="empty-boutique-style" style="max-width: 700px; margin: 40px auto;">
+                <div class="success-checkmark" style="margin-bottom: 40px;">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                    </div>
+                </div>
+                <p class="no-print" style="font-size: 1.15rem; line-height: 1.8; margin-bottom: 30px;">
+                    Nous vous remercions chaleureusement pour votre achat. Votre commande est en cours de traitement et vous recevrez bientôt un e-mail de confirmation avec tous les détails.
+                </p>
+                <p class="no-print" style="font-size: 1rem; color: var(--bois-ecorce);">
+                    Si vous avez des questions, n'hésitez pas à nous contacter.
+                </p>
+
+                <div id="order-summary" class="order-summary-container" style="margin-top: 30px; padding-top: 30px; border-top: 1px dashed var(--sable-dore); text-align: left;">
+                </div>
+
+                <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 15px; align-items: center;" class="no-print">
+                    <a href="/boutique" class="filter-btn active" style="text-decoration: none; display: inline-block;">                        Continuer mes achats
+                    </a>
+                    <a href="/" class="btn-continue-shopping" style="text-decoration: none;">
+                        Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsIDDO2LpvthJb5YntptG6eAhl+eH7LnpT4JFXftf+Power/QJCJ4UjrADoWEfQc4p/bdYtSSyqemRgsbY/Qcag==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</MainLayout>
+
+<script is:inline>
+    // 1. On initialise la variable globale immédiatement
+    window.currentInvoiceId = 'FACTURE';
+
+    function clearCartAndNotify() {
+        localStorage.removeItem('panier-atelier');
+        // On émet l'événement pour mettre à jour l'icône du panier dans le header
+        window.dispatchEvent(new Event('storage'));
+    }
+
+    // Exécution immédiate : indispensable pour les redirections Stripe
+    clearCartAndNotify();
+    document.addEventListener('astro:page-load', clearCartAndNotify);
+
+    // Récupération des détails de la commande
+    async function fetchOrderDetails() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        const summaryDiv = document.getElementById('order-summary');
+
+        if (!sessionId || !summaryDiv) return;
+
+        summaryDiv.innerHTML = '<p style="text-align:center; opacity:0.6;">Chargement de votre récapitulatif...</p>';
+        
+        // Variable globale pour stocker l'ID de facture pour le renommage PDF
+        window.currentInvoiceId = 'FACTURE';
+
+        try {
+            const response = await fetch(`/api/stripe-session-details?session_id=${sessionId}`);
+            const data = await response.json();
+
+            if (data.error) throw new Error(data.error);
+
+            // RÉCUPÉRATION IDENTIQUE AU DASHBOARD
+            // On extrait les métadonnées directement de la session Stripe
+            const metadata = data.metadata || {};
+            
+            // On normalise la détection (si vide ou absent -> colissimo)
+            const shippingMethod = (metadata.mode_livraison || 'colissimo').toLowerCase();
+            const relayInfo = metadata.infos_relais || null;
+                                 
+            const isMR = shippingMethod === 'mondialrelay';
+
+            let itemsHtml = data.line_items.map(item => {
+                const desc = item.description.toLowerCase();
+                // On identifie si c'est une ligne de frais (livraison ou emballage)
+                const isFrais = desc.includes('frais de') || 
+                                desc.includes('emballage') || 
+                                desc.includes('livraison');
+
+                const isMRLine = desc.includes('mondial relay');
+
+                return `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 8px 0; text-align: left;">
+                        ${item.description}
+                        ${isMRLine && relayInfo ? `
+                            <div style="font-size: 8.5pt; color: #6b564a; font-style: italic; margin-top: 5px; padding-left: 10px; border-left: 2px solid #e0c297;">
+                                ${relayInfo}
+                            </div>
+                        ` : ''}
+                        ${isFrais ? '' : `<br><small style="color:#888; font-size:0.75em;">${(item.amount_total / 100 / item.quantity).toFixed(2)} € / unité</small>`}
+                    </td>
+                    <td style="padding: 8px 0; text-align: center;">${isFrais ? '-' : item.quantity}</td>
+                    <td style="padding: 8px 0; text-align: right; font-weight: 600;">${(item.amount_total / 100).toFixed(2)} €</td>
+                </tr>
+            `;
+            }).join('');
+
+            // Icônes SVG légères (Phone & Envelope) pour éviter de charger FontAwesome
+            // Ces variables sont définies ici car elles sont utilisées dans le template string pour le contenu dynamique
+            const iconP_js = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px; vertical-align:middle; display:inline-block; position:relative; top:-1px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>`;
+            const iconM_js = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px; vertical-align:middle; display:inline-block; position:relative; top:-1px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>`;
+
+            // Formatage de la date et heure de la commande
+            const orderDate = data.created ? new Date(data.created * 1000).toLocaleString('fr-FR', {
+                year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            }) : 'Date non disponible';
+            
+            const invoiceId = data.order_id ? data.order_id.replace('pi_', 'INV-').substring(0, 12).toUpperCase() : 'N/A';
+            window.currentInvoiceId = invoiceId;
+
+            const jfP = atob("MDYgNTggOTAgOTggMzU=");
+            const jfE = atob("amVhbmZyYW5jb2lzYmFyb25AbGFwb3N0ZS5uZXQ=");
+
+            summaryDiv.innerHTML = `
+                <div id="printable-invoice" style="font-family: Arial, sans-serif; color: #000; background: #fff; line-height: 1.4; width: 100%;">
+                    
+                    <!-- EN-TÊTE : ÉMETTEUR & CLIENT -->
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                        <div style="font-size: 10pt; line-height: 1.5;">
+                            <strong style="font-size: 14pt; text-transform: uppercase;">Jean-François & Aniuta</strong><br>
+                            Village de Chasseradès<br>
+                            48250 Mont Lozère et Goulet<br>
+                            ${iconP_js} ${jfP}<br>
+                            ${iconM_js} ${jfE}<br>
+                            <div style="margin-top: 10px; line-height: 1.4;">
+                                <em>Entrepreneur Individuel</em><br>
+                                SIRET : 982 599 102 000 18<br>
+                                Code APE : 1629Z<br>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: right; font-size: 10pt; line-height: 1.5;">
+                            <div style="font-weight: 900; font-size: 24pt; margin-bottom: 5px; color: #000; letter-spacing: 1px;">FACTURE</div>
+                            <strong style="font-size: 11pt; color: #000;">N° ${invoiceId}</strong><br>
+                            Date : ${orderDate}<br><br>
+                            
+                            <div style="margin-top: 10px; padding: 12px; border: 1px solid #ccc; border-radius: 4px; text-align: left; background: #fff; min-width: 200px;">
+                                <strong style="font-size: 8pt; text-transform: uppercase; color: #666;">Destinataire</strong><br>
+                                <strong style="color: #000;">${data.customer_details?.name || 'Client'}</strong><br>
+                                ${data.customer_details?.address ? `
+                                    <div style="font-size: 9pt; margin-top: 5px;">
+                                        ${data.customer_details.address.line1 || ''}<br>
+                                        ${data.customer_details.address.postal_code || ''} ${data.customer_details.address.city || ''}
+                                    </div>
+                                ` : '<span style="font-style: italic; opacity: 0.5;">Adresse de livraison</span>'}
+                                <div style="margin-top: 8px; border-top: 1px solid #f5f5f5; padding-top: 5px;">
+                                    ${data.customer_details?.phone ? `<div style="font-size: 9pt;">${iconP_js} ${data.customer_details.phone.replace(/^\+33/, '0')}</div>` : ''}
+                                    ${data.customer_details?.email ? `<div style="font-size: 9pt; opacity: 0.8;">${iconM_js} ${data.customer_details.email}</div>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CORPS DE LA FACTURE -->
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10pt; margin-bottom: 20px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #000; text-transform: uppercase; font-weight: bold;">
+                                <th style="text-align: left; padding: 10px 0;">Désignation</th>
+                                <th style="text-align: center; padding: 10px 0; width: 50px;">Qté</th>
+                                <th style="text-align: right; padding: 10px 0; width: 100px;">Total TTC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemsHtml}
+                        </tbody>
+                    </table>
+                    
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid #000; display: flex; justify-content: space-between; font-weight: bold; font-size: 14pt; color: #000;">
+                        <span>TOTAL NET À PAYER</span>
+                        <span>${(data.amount_total / 100).toFixed(2)} €</span>
+                    </div>
+                    
+                    <div class="legal-mentions-print" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; font-size: 13px; line-height: 1.5; color: #000; text-align: justify;">
+                        <strong>TVA non applicable, article 293 B du CGI.</strong> Exonération de TVA.<br>
+                        Dispense d'immatriculation au registre du commerce et des sociétés (RCS) et au répertoire des métiers (RM) en tant que micro-entrepreneur.
+                    </div>
+                </div>
+                
+                <!-- Boutons d'action (cachés à l'impression via ta classe .no-print) -->
+                <div style="text-align: center; margin-top: 30px;" class="no-print">
+                    <button id="printable-invoice-download-btn" class="filter-btn active" style="cursor: pointer; padding: 14px 40px; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> Télécharger ma facture (PDF)
+                    </button>
+                </div>
+                ${data.customer_details?.email ? `
+                    <p style="font-size: 0.85rem; margin-top: 15px; text-align: center; opacity: 0.7;" class="no-print">
+                        Un reçu officiel vous a également été envoyé par e-mail.
+                    </p>
+                ` : ''}
+            `;
+
+        } catch (err) {
+            console.error("Erreur lors de la récupération ou de l'affichage de la facture :", err);
+            summaryDiv.innerHTML = ''; // On cache si erreur pour ne pas polluer l'expérience
+        }
+    }
+
+    // Lancer la récupération
+    if (document.readyState === 'complete') {
+        fetchOrderDetails();
+    } else {
+        window.addEventListener('DOMContentLoaded', fetchOrderDetails);
+    }
+    document.addEventListener('astro:page-load', fetchOrderDetails);
+
+    // Gestion du téléchargement PDF personnalisé
+    document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('#printable-invoice-download-btn');
+    if (!btn) return;
+
+    const element = document.getElementById('printable-invoice');
+    if (!element) return;
+
+    const oldTitle = document.title; // On mémorise le titre actuel
+    const fileName = `Facture_${window.currentInvoiceId || 'FACTURE'}`;
+    document.title = fileName; // On force le titre de la page avec l'ID de facture
+
+    // Utilisation de la variable globale définie lors du fetchOrderDetails
+    // On s'assure d'avoir une valeur par défaut au cas où
+    const invoiceNumber = window.currentInvoiceId || 'FACTURE';
+
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<span class="spin-animation" style="margin-right:8px; display:inline-block;">↻</span> Génération...';
+    btn.style.pointerEvents = "none";
+
+    const opt = {
+        margin: [10, 10, 10, 10],
+        filename: `Facture_${invoiceNumber}.pdf`, // C'est ici que la magie opère
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    try {
+        if (typeof html2pdf === 'undefined') {
+            throw new Error("Librairie html2pdf non chargée.");
+        }
+        await html2pdf().set(opt).from(element).save();
+    } catch (err) {
+        console.error("Erreur génération PDF :", err);
+        // Si le PDF échoue, on propose l'impression classique
+        window.print(); 
+    } finally {
+        document.title = oldTitle;
+        btn.innerHTML = originalContent;
+        btn.style.pointerEvents = "auto";
+    }
+});
+</script>

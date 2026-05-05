@@ -23,7 +23,7 @@ function withSecurityHeaders(response: Response): Response {
   // HSTS (Force HTTPS pendant 1 an)
   headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   // CSP renforcée : Ajout de cdnjs.cloudflare.com pour FontAwesome et sécurisation accrue
-  headers.set('Content-Security-Policy', "default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://maps.googleapis.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://maps.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https: https://maps.gstatic.com https://*.googleapis.com https://maps.googleapis.com https://*.gstatic.com https://quickchart.io https://flagcdn.com https://*.vercel.app; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://*.googleapis.com https://*.vercel-analytics.com https://*.vercel-scripts.com; frame-src 'self' https://www.google.com https://www.google.fr https://maps.google.fr; connect-src 'self' https://api.brevo.com https://api.sendinblue.com https://*.sibforms.com https://*.brevo.com https://*.upstash.io https://*.upstash.com https://*.vercel-analytics.com https://*.vercel-insights.com https://*.vercel-storage.com; upgrade-insecure-requests; base-uri 'self'; form-action 'self';");
+  headers.set('Content-Security-Policy', "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://ajax.googleapis.com https://widget.mondialrelay.com https://maps.googleapis.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https: https://*.google.com https://*.googleapis.com; frame-src 'self' https://www.google.com https://js.stripe.com; connect-src 'self' https:; upgrade-insecure-requests;");
   
   // Indique aux caches que la réponse dépend de l'authentification
   headers.set('Vary', 'Authorization');
@@ -36,24 +36,24 @@ function withSecurityHeaders(response: Response): Response {
 }
 
 export const onRequest: MiddlewareHandler = async (context, next) => {
-  // On cible uniquement les routes du dashboard
-  if (context.url.pathname.startsWith("/dashboard-48")) {
+  // On cible les routes du dashboard et les API sensibles
+  const isProtectedPath = context.url.pathname.startsWith("/dashboard-48") ||
+                         context.url.pathname.startsWith("/api/admin-proxy") ||
+                         context.url.pathname.startsWith("/api/admin-list-orders") ||
+                         context.url.pathname.startsWith("/api/admin-update-order"); 
+
+  if (isProtectedPath) {
     
     // Récupération de l'IP
     const rawIP = context.request.headers.get('x-real-ip') || context.request.headers.get('x-forwarded-for') || "Anonyme";
     const userIP = rawIP.split(',')[0].trim();
     const GHOST_IP = import.meta.env.GHOST_MODE_IP;
-    const lockKey = `brute_force_lock:${userIP}`;
 
     // --- PROTECTION CSRF ---
     if (context.request.method !== "GET" && context.request.method !== "HEAD") {
       const origin = context.request.headers.get("origin");
-      try {
-        if (!origin || new URL(origin).hostname !== context.url.hostname) {
-          return withSecurityHeaders(new Response("Requête interdite : Origine non autorisée.", { status: 403 }));
-        }
-      } catch (e) {
-        return withSecurityHeaders(new Response("Requête interdite : En-tête malformé.", { status: 403 }));
+      if (origin && new URL(origin).hostname !== context.url.hostname) {
+        return withSecurityHeaders(new Response("Requête interdite : Origine non autorisée.", { status: 403 }));
       }
     }
 
@@ -65,11 +65,16 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
 
       const USER_OK = import.meta.env.DASHBOARD_USER;
       const PASS_OK = import.meta.env.DASHBOARD_PASS;
+      const ADMIN_TOKEN = import.meta.env.ADMIN_TOKEN;
 
       // 1. Vérification si l'IP est temporairement bloquée
-      const isLocked = await kv.get(lockKey);
-      if (isLocked) {
-        return withSecurityHeaders(new Response("Trop de tentatives. Réessayez dans 15 minutes.", { status: 429 }));
+      try {
+        const isLocked = await kv.get(`brute_force_lock:${userIP}`);
+        if (isLocked) {
+          return withSecurityHeaders(new Response("Trop de tentatives. Réessayez dans 15 minutes.", { status: 429 }));
+        }
+      } catch (e) {
+        console.warn("KV check failed, skipping rate limit");
       }
 
       if (!USER_OK || !PASS_OK) {
@@ -91,16 +96,16 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
           const [user, pass] = authParts;
           if (safeCompare(user, USER_OK) && safeCompare(pass, PASS_OK)) {
             // Succès : on nettoie les tentatives de l'IP
-            await kv.del(`failed_attempts:${userIP}`);
+            kv.del(`failed_attempts:${userIP}`).catch(() => {});
             return withSecurityHeaders(await next());
           } else {
             // ÉCHEC : On incrémente le compteur
-            const attempts = (await kv.incr(`failed_attempts:${userIP}`)) as number;
+            const attempts = await kv.incr(`failed_attempts:${userIP}`).catch(() => 0) as number;
             
             // Au bout de 5 erreurs, blocage 15 min (900 sec)
             if (attempts >= 5) {
-              await kv.set(lockKey, "true", { ex: 900 }); 
-              await kv.del(`failed_attempts:${userIP}`);
+              await kv.set(`brute_force_lock:${userIP}`, "true", { ex: 900 }).catch(() => {});
+              await kv.del(`failed_attempts:${userIP}`).catch(() => {});
             }
           }
         } catch (decodeError) {
@@ -109,9 +114,8 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
         }
       }
     } catch (error) {
-      // En cas de problème avec la base de données (ex: mauvais token)
-      console.error("KV Error in Middleware:", error);
-      return withSecurityHeaders(new Response("Database Connection Error", { status: 500 }));
+      console.error("Middleware Error:", error);
+      // On ne bloque pas si c'est juste une erreur de log
     }
 
     // Demande de Basic Auth

@@ -1,0 +1,32 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+const pageId = "panier-cancel";
+---
+
+<MainLayout title="Paiement Annulé - Jean-François & Aniuta" pageId={pageId}>
+    <section id="panier-cancel-page" style="background-color: var(--fond-ecume); padding: 80px 0;">
+        <div class="container">
+            <div class="panier-header">
+                <span class="panier-tag">Oups, quelque chose s'est mal passé</span>
+                <h1>Paiement annulé</h1>
+            </div>
+
+            <div class="empty-boutique-style" style="max-width: 700px; margin: 40px auto;">
+                <p style="font-size: 1.15rem; line-height: 1.8; margin-bottom: 30px;">
+                    Votre commande n'a pas pu être finalisée. Cela peut être dû à une annulation de votre part ou à un problème technique.
+                </p>
+                <p style="font-size: 1rem; color: var(--bois-ecorce);">
+                    Votre panier a été conservé. Vous pouvez réessayer ou nous contacter si le problème persiste.
+                </p>
+                <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 15px; align-items: center;">
+                    <a href="/panier" class="filter-btn active" style="text-decoration: none; display: inline-block;">
+                        Retourner au panier
+                    </a>
+                    <a href="/boutique" class="btn-continue-shopping" style="text-decoration: none;">
+                        Continuer mes achats
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</MainLayout>

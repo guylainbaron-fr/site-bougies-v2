@@ -5,8 +5,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* On laisse l'outline rouge pour tes tests de décalage */
-    /* outline: 1px solid red !important; */
 }
 
 :root {
@@ -363,6 +361,28 @@ section {
     color: var(--fond-sable);
 }
 
+/* --- VARIANTE BOUTIQUE : EXPLOSION VANILLE --- */
+
+.main-nav a.nav-boutique {
+    /* Au repos : identique aux autres ou légèrement doré pour le distinguer */
+    color: var(--vanille-eclat);
+    border: 2px solid var(--vanille-eclat);
+}
+
+/* On change la couleur du cercle qui explose */
+.main-nav a.nav-boutique::before {
+    background-color: var(--vanille-eclat); /* Le remplissage devient doré */
+}
+
+.main-nav a.nav-boutique:hover, 
+.main-nav a.nav-boutique.active {
+    /* Le texte devient blanc au survol comme tu le souhaites */
+    color: #FFFFFF; 
+    
+    /* On s'assure que la bordure suive la couleur du fond pour un effet plein propre */
+    border-color: var(--vanille-eclat);
+}
+
 /* --- RESPONSIVE --- */
 
 @media (max-width: 1100px) {
@@ -637,14 +657,6 @@ section {
     padding: 60px 0;
 }
 
-@media (max-width: 768px) {
-    section {
-        padding: 50px 0;
-    }
-}
-/* ==========================================================================
-   SECTION FOOTER : COLLINE ET CONTENU
-   ========================================================================== */
 
 /* CORRECTIF SÉCURITÉ MOBILE : Empêche le contenu de la page de toucher la colline */
 main section, section {
@@ -1182,43 +1194,6 @@ h2::after {
     color: var(--brun-coco);
     font-size: 1.5rem;
     margin-bottom: 15px;
-}
-
-/* --- SECTION PRESSE STYLE ÉPURÉ --- */
-#presse-section {
-    margin-top: 80px;
-    padding-bottom: 40px;
-}
-
-#presse-section h2 {
-    text-align: center;
-    margin-bottom: 50px;
-    color: var(--brun-coco);
-}
-
-.presse-item-recent {
-    margin-bottom: 60px;
-    padding: 40px;
-    background-color: var(--fond-sable);
-    border-radius: 15px;
-    position: relative; /* Nécessaire pour le placement du guillemet */
-    overflow: hidden;   /* Empêche le guillemet de dépasser du cadre arrondi */
-}
-
-/* Le guillemet décoratif (l'icône double apostrophe) */
-.presse-item-recent::before {
-    content: '“';
-    position: absolute;
-    top: -20px;         /* Ajusté pour être visible mais pas trop haut */
-    left: 10px;
-    font-size: 140px;   
-    color: var(--sable-dore);
-    opacity: 0.45;      /* Opacité optimale pour la visibilité sans gêner la lecture */
-    font-weight: 900;   
-    font-family: 'Georgia', serif; 
-    line-height: 1;
-    z-index: 0;         /* Placé derrière le texte */
-    pointer-events: none; /* Le clic passe à travers */
 }
 
 /* Titre, citation et infos : on les force au-dessus du guillemet */
@@ -1970,27 +1945,6 @@ h2::after {
 @keyframes flickerVivid {
     0% { transform: rotate(-45deg) scale(0.9); opacity: 0.8; }
     100% { transform: rotate(-45deg) scale(1.1); opacity: 1; }
-}
-
-@keyframes shine-btn {
-    0% { left: -150%; }
-    100% { left: 150%; }
-}
-
-@keyframes sun-shine-on-coco {
-    0% { background-position: 150% center; }
-    100% { background-position: -150% center; }
-}
-
-@keyframes icon-line-tip {
-    0% { width: 0; left: 1px; top: 19px; opacity: 0; }
-    100% { width: 25px; left: 14px; top: 46px; opacity: 1; }
-}
-
-@keyframes icon-line-long {
-    0% { width: 0; right: 46px; top: 54px; opacity: 0; }
-    30% { width: 0; right: 46px; top: 54px; opacity: 0; } 
-    100% { width: 47px; right: 8px; top: 38px; opacity: 1; }
 }
 
 /* --- SECTION TARIFS & SEO --- */
@@ -3034,12 +2988,6 @@ h2::after {
     animation: sun-shine-on-coco 7s linear infinite;
 }
 
-/* Animation de l'éclat Solaire */
-@keyframes sun-shine-on-coco {
-    0% { background-position: 150% center; }
-    100% { background-position: -150% center; }
-}
-
 @media (max-width: 768px) {
     .holiday-bar { padding: 12px 10px; }
     .holiday-text { 
@@ -3128,17 +3076,6 @@ h2::after {
     animation: icon-line-long 0.75s ease-in-out; 
 }
 
-@keyframes icon-line-tip {
-    0% { width: 0; left: 1px; top: 19px; opacity: 0; }
-    100% { width: 25px; left: 14px; top: 46px; opacity: 1; }
-}
-
-@keyframes icon-line-long {
-    0% { width: 0; right: 46px; top: 54px; opacity: 0; }
-    30% { width: 0; right: 46px; top: 54px; opacity: 0; } 
-    100% { width: 47px; right: 8px; top: 38px; opacity: 1; }
-}
-
 /* --- NOTE DE BIENVEILLANCE (L'ESPRIT DE L'ATELIER) --- */
 .note-bienveillance {
     padding: 40px 30px; /* Un peu plus d'espace en haut/bas pour l'élégance */
@@ -3183,15 +3120,6 @@ h2::after {
     color: var(--brun-profond);
     font-size: 1.3rem;
     font-style: italic;
-}
-/* --- SECTION LIVRE D'OR --- */
-#apropos-livre {
-    background-color: var(--blanc-creme);
-    padding: 80px 0;
-    border: none;
-    margin: 0;
-    position: relative;
-    z-index: 1;
 }
 /* --- SECTION AVIS GOOGLE --- */
 #avis-google-unique {
@@ -3245,24 +3173,11 @@ h2::after {
     margin-bottom: 15px;
     font-size: 1.1rem;
 }
-.google-avis-texte {
-    font-family: var(--font-secondaire);
-    font-style: italic;
-    color: #202124;
-    line-height: 1.7;
-    margin-bottom: 20px;
-}
 .google-avis-auteur {
     color: #d93025;
     font-weight: 700;
     font-size: 0.85rem;
     text-transform: uppercase;
-}
-.google-action-titre {
-    color: #ea4335;
-    font-weight: 700;
-    font-size: 1.2rem;
-    margin-bottom: 5px;
 }
 .google-action-sous-titre {
     color: #3c4043;
@@ -3809,4 +3724,601 @@ h2::after {
     text-align: center;
     line-height: 1.4;
     border: 1px solid var(--sable-dore); /* Pour finir l'aspect étiquette */
+}
+
+/* ==========================================================================
+   SECTION BOUTIQUE : STABILITÉ & RESPIRATION (ALIGNE PARFAIT)
+   ========================================================================== */
+
+.produits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 40px; /* Augmenté pour plus d'air entre les cartes */
+    align-items: stretch; /* Aligne le bas de toutes les cartes d'une ligne */
+}
+
+.produit-card {
+    background: #fff;
+    border: 1px solid var(--sable-dore);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: box-shadow 0.3s ease; 
+    box-shadow: 0 4px 12px rgba(45, 34, 26, 0.05);
+}
+
+.produit-card:hover {
+    transform: none !important; 
+    box-shadow: 0 10px 25px rgba(45, 34, 26, 0.12);
+}
+
+.produit-card .image-container {
+    height: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: var(--fond-sable);
+    border-bottom: 1px solid var(--sable-dore);
+    padding: 20px;
+}
+
+.produit-card .produit-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.6s ease;
+}
+
+.produit-card:hover .produit-img {
+    transform: scale(1.05);
+}
+
+.produit-info {
+    padding: 30px 25px; /* Augmenté pour que le contenu respire */
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.produit-info h3 {
+    color: var(--brun-profond) !important;
+    font-family: var(--font-principale);
+    font-size: 1.4rem;
+    text-align: center;
+    margin: 0 0 15px 0; /* Plus d'espace sous le titre */
+    height: 3.2rem;
+    line-height: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.produit-info .poids {
+    font-size: 0.85rem;
+    color: var(--bois-flotte);
+    margin-bottom: 25px; /* Plus d'espace sous le poids */
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    height: 1.2rem;
+}
+
+.produit-description {
+    font-family: var(--font-secondaire), cursive;
+    font-style: italic;
+    font-size: 1.05rem !important;
+    text-align: center !important;
+    color: var(--bois-ecorce);
+    line-height: 1.6;
+    /* CHANGEMENT : min-height pour ne plus couper et laisser respirer */
+    min-height: 6rem; 
+    margin: 0 0 30px 0 !important; /* Plus d'espace avant le prix */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prix-action {
+    margin-top: auto; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    border-top: 1px dashed var(--sable-dore);
+    padding: 25px 20px;
+}
+
+.prix {
+    font-size: 1.6rem;
+    color: var(--brun-profond);
+    font-weight: 700;
+}
+
+.produit-card .add-to-cart {
+    margin: 0 !important;
+    width: 100%;
+    padding: 14px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+/* filtre barre et pagination */
+.filter-bar {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: transparent;
+    border: 1px solid var(--sable-dore);
+    padding: 8px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: var(--font-principale);
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover, .filter-btn.active {
+    background-color: var(--brun-profond) !important;
+    color: white !important;
+    border-color: var(--brun-profond) !important;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 50px;
+}
+
+.pagination button {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--sable-dore);
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.pagination button.active {
+    background: var(--brun-profond);
+    color: white;
+    border-color: var(--brun-profond);
+}
+
+.pagination button:hover {
+    background: var(--fond-sable); /* Lighter background on hover, consistent with site */
+    border-color: var(--brun-coco); /* A bit darker border on hover */
+    color: var(--brun-coco); /* Text color on hover */
+}
+
+/* --- LE PANIER LUXE ÉCORCE & SABLE (VERSION FINALE) --- */
+.header-actions {
+    position: fixed;
+    bottom: 35px;
+    right: 35px;
+    z-index: 1000;
+}
+
+.cart-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    
+    /* Base Écorce : Solide et Artisanale */
+    background-color: var(--bois-ecorce);
+    color: var(--vanille-pure);
+    border: 1px solid var(--sable-dore);
+    border-radius: 50%;
+    
+    box-shadow: 0 8px 25px rgba(45, 34, 26, 0.4);
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.cart-icon-wrapper:hover {
+    /* Le panier devient Sable Doré au survol (comme demandé) */
+    background-color: var(--sable-dore);
+    /* On bascule l'icône en Brun Profond pour qu'elle ressorte sur le sable */
+    color: var(--brun-profond);
+    border-color: var(--vanille-eclat);
+    
+    box-shadow: 0 12px 30px rgba(45, 34, 26, 0.5);
+    transform: translateY(-5px);
+}
+
+/* Le Badge : Sable Doré en permanence */
+#cart-count {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background-color: var(--fond-ecume);
+    color: var(--brun-profond);
+    
+    font-size: 0.8rem;
+    font-weight: 800;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    
+    /* Bordure Brun pour la définition */
+    border: 2px solid var(--brun-profond);
+    
+    display: none; /* Piloté par le JS */
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+}
+
+.cart-icon-wrapper svg {
+    width: 26px;
+    height: 26px;
+    stroke-width: 1.8px;
+}
+/* --- FIN BLOC PANIER --- */
+
+/* --- PANIER HARMONISÉ --- */
+#panier-page {
+    padding: 60px 0 160px 0;
+}
+
+/* Titre Centré (Ta modif) */
+.panier-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.panier-tag {
+    color: var(--bois-flotte);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.panier-header h1 {
+    font-size: 2.8rem;
+    color: var(--brun-profond);
+    margin: 0;
+    font-family: var(--font-secondaire);
+}
+
+/* Grille */
+.panier-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 40px;
+    align-items: start;
+}
+
+/* --- LE CONTENEUR UNIQUE (Devient la grande carte blanche) --- */
+.produits-panier-list {
+    display: flex;
+    flex-direction: column;
+    background: #fff;                     /* Fond blanc unique */
+    border: 1px solid var(--sable-dore);  /* Bordure du grand bloc */
+    border-radius: 12px;                  /* Arrondis du grand bloc */
+    box-shadow: 0 4px 12px rgba(45, 34, 26, 0.05); /* Ombre unique */
+    overflow: hidden;
+}
+
+/* --- LES LIGNES (Chaque produit) --- */
+.panier-item-card {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 25px 30px;
+    background: transparent;              /* Plus de fond propre */
+    border: none;                         /* Plus de bordure propre */
+    border-radius: 0;                     /* Plus d'arrondis propres */
+    box-shadow: none;                     /* Plus d'ombre propre */
+}
+
+/* On ajoute un trait de séparation entre les produits sauf le dernier */
+.panier-item-card:not(:last-child) {
+    border-bottom: 1px solid var(--fond-sable);
+}
+
+/* --- LE RESTE NE CHANGE PAS --- */
+.p-img-container {
+    width: 100px;
+    height: 100px;
+    background-color: var(--fond-sable);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border: 1px solid var(--sable-dore);
+    flex-shrink: 0;
+}
+
+.p-img-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.p-info {
+    flex-grow: 1;
+}
+
+.p-info h4 {
+    color: var(--brun-profond);
+    font-family: var(--font-principale);
+    font-size: 1.25rem;
+    margin: 0 0 5px 0;
+}
+
+.p-meta {
+    font-size: 0.85rem;
+    color: var(--bois-flotte);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.p-actions {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+/* Sélecteur de quantité */
+.p-qty-selector {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--sable-dore);
+    border-radius: 25px;
+    overflow: hidden;
+    background: white;
+}
+
+.p-qty-selector button {
+    background: transparent;
+    border: none;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: var(--brun-profond);
+    transition: background 0.2s;
+}
+
+.p-qty-selector button:hover { background: var(--fond-sable); }
+.qty-num { width: 30px; text-align: center; font-weight: 700; color: var(--brun-profond); }
+
+.p-total-line {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--brun-profond);
+    min-width: 90px;
+    text-align: right;
+}
+
+.p-remove {
+    background: none;
+    border: none;
+    color: var(--bois-flotte);
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.3s;
+}
+
+.p-remove:hover { color: #e74c3c; }
+
+/* Récapitulatif */
+.recap-card {
+    background: #fff;
+    border: 1px solid var(--sable-dore);
+    border-radius: 12px;
+    padding: 35px;
+    box-shadow: 0 4px 12px rgba(45, 34, 26, 0.05);
+}
+
+.recap-card h3 {
+    font-family: var(--font-principale);
+    font-size: 1.4rem;
+    color: var(--brun-profond);
+    margin-bottom: 25px;
+    text-align: center;
+    border-bottom: 1px dashed var(--sable-dore);
+    padding-bottom: 20px;
+}
+
+.recap-line {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    color: var(--bois-ecorce);
+}
+
+.shipping-info { font-style: italic; font-size: 0.85rem; color: var(--bois-flotte); }
+
+.recap-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 25px 0;
+    padding: 20px 0;
+    border-top: 1px solid var(--sable-dore);
+}
+
+.recap-total label { font-weight: 700; text-transform: uppercase; }
+.recap-total span { font-size: 2rem; font-weight: 800; color: var(--brun-profond); }
+
+/* Bouton Final */
+.btn-checkout-final {
+    width: 100%; /* Important */
+    padding: 18px;
+    background-color: var(--brun-profond);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-checkout-final:hover {
+    background-color: var(--bois-ecorce);
+    transform: translateY(-2px);
+}
+
+.recap-trust { margin-top: 25px; text-align: center; }
+.recap-trust img { height: 22px; opacity: 0.7; margin-bottom: 8px; }
+.recap-trust p { font-size: 0.75rem; color: var(--bois-flotte); margin: 0; }
+
+/* Empty State */
+.empty-boutique-style {
+    background: #fff;
+    border: 1px solid var(--sable-dore);
+    border-radius: 12px;
+    padding: 80px 40px;
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 1024px) {
+    .panier-main-grid { grid-template-columns: 1fr; }
+    .panier-item-card { flex-direction: column; text-align: center; padding: 30px; }
+    .p-actions { width: 100%; justify-content: space-around; margin-top: 15px; }
+}
+
+/* Message d'alerte qui disparait tout seul */
+.toast-container {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+.toast-message {
+    background: var(--brun-profond);
+    color: var(--vanille-pure);
+    padding: 12px 25px;
+    border-radius: 50px; /* Style pilule comme tes filtres */
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideUpFade 0.4s ease-out forwards;
+}
+
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.toast-message.fade-out {
+    animation: fadeOut 0.4s ease-out forwards;
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* --- BLOC RÉASSURANCE PAIEMENT --- */
+.recap-trust {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px dashed var(--sable-dore);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.payment-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+    max-width: 280px;
+    gap: 20px;
+}
+
+/* --- LOGOS DE PAIEMENT (SOBRES) --- */
+.payment-row img {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    display: block;
+    opacity: 0.8; /* Légèrement plus discret pour le côté artisanal */
+}
+
+.payment-row img:hover {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.icon-visa { height: 16px; }
+.icon-master { height: 26px; }
+.icon-apple { height: 24px; }
+.icon-google { height: 20px; }
+
+/* --- BADGE STRIPE (COULEUR & ÉCLAT) --- */
+.stripe-badge-inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.stripe-badge-inline:hover {
+    transform: scale(1.05);
+}
+
+.stripe-badge-inline img {
+    height: 18px; 
+    width: auto;
+    opacity: 1 !important; /* Force la pleine couleur, pas de gris */
+    filter: none !important; /* Sécurité anti-grisaillage */
+}
+
+/* --- TEXTE DE RÉASSURANCE --- */
+.trust-text {
+    font-size: 0.7rem;
+    color: var(--bois-flotte);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin: 5px 0 0 0;
+}
+
+/* --- BOUTON RETOUR BOUTIQUE --- */
+.btn-continue-shopping {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 15px;
+    color: var(--bois-flotte);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-family: var(--font-serif);
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+.btn-continue-shopping:hover {
+    opacity: 1;
+    color: var(--sable-dore);
+    transform: translateX(-3px);
 }

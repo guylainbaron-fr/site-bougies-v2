@@ -1,0 +1,545 @@
+---
+import MainLayout from './layouts/MainLayout.astro';
+const pageId = "panier";
+---
+
+<MainLayout title="Mon Panier - Jean-François & Aniuta" pageId={pageId}>
+    <!-- Scripts Mondial Relay (Requis) -->
+    <script is:inline src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script is:inline src="https://widget.mondialrelay.com/parcelshop-picker/jquery.plugin.mondialrelay.parcelshoppicker.min.js"></script>
+    <!-- CSS indispensable pour Mondial Relay -->
+    <link rel="stylesheet" href="https://widget.mondialrelay.com/parcelshop-picker/1.0/css/mr-picker.css" />
+
+    <style>
+        /* Styles pour la Modal Mondial Relay */
+        .mr-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            align-items: center; justify-content: center;
+        }
+        .mr-modal.active { display: flex; }
+        .mr-modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%; max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .mr-close {
+            position: absolute;
+            right: 20px; top: 15px;
+            font-size: 28px; font-weight: bold; color: var(--brun-coco);
+            cursor: pointer; z-index: 10;
+        }
+        .selected-relay-box {
+            margin-top: 15px;
+            padding: 12px;
+            background: var(--vanille-brume);
+            border: 1.5px dashed var(--sable-dore);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+        .btn-select-relay {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 0.8rem;
+        }
+        /* Stabilisateur de hauteur pour éviter les sauts de mise en page */
+        .mr-ui-container {
+            min-height: 55px;
+        }
+    </style>
+
+    <section id="panier-page" style="background-color: var(--fond-ecume);">
+        <div class="container">
+            <div class="panier-header">
+                <span class="panier-tag">Votre sélection</span>
+                <h1>Mon Panier</h1>
+            </div>
+
+            <div id="cart-empty" class="hidden">
+                <div class="empty-boutique-style">
+                    <p>Votre panier est actuellement vide.</p>
+                    <a href="/boutique" class="filter-btn active" style="text-decoration: none; display: inline-block; margin-top: 20px;">Retourner à la boutique</a>
+                </div>
+            </div>
+
+            <div id="cart-content" class="panier-main-grid hidden">
+                <div class="produits-panier-list" id="cart-items-list">
+                    </div>
+
+<aside class="panier-summary-sidebar">
+    <div class="recap-card">
+        <h3>Résumé de la commande</h3>
+        
+        <div class="shipping-selector" style="margin-bottom: 25px; padding: 15px; background: var(--fond-sable); border-radius: 8px; border: 1px solid var(--sable-dore);">
+            <strong style="display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 12px; color: var(--brun-coco);">Mode de livraison</strong>
+            
+            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; font-size: 0.9rem;">
+                <input type="radio" name="shipping-method" value="colissimo" checked onchange="handleShippingChange('colissimo')">
+                <span>Colissimo (Domicile)</span>
+            </label>
+            
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.9rem;">
+                <input type="radio" name="shipping-method" value="mondialrelay" onchange="handleShippingChange('mondialrelay')">
+                <span>Mondial Relay (Point Relais)</span>
+            </label>
+
+            <div id="mr-selection-area" class="hidden" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--sable-dore);">
+                <button type="button" class="btn filter-btn active btn-select-relay" onclick="openMRModal()">
+                    <i class="fa-solid fa-list-ul"></i> Trouver un point relais
+                </button>
+                
+                <div id="relay-display" class="selected-relay-box hidden">
+                    <strong style="color: var(--brun-coco); display: block; margin-bottom: 4px;">Point sélectionné :</strong>
+                    <span id="relay-info-text"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="recap-details">
+            <div class="recap-line">
+                <span>Articles (<span id="res-count">0</span>)</span>
+                <span id="res-subtotal">0.00 €</span>
+            </div>
+            <div class="recap-line">
+                <span>Poids total</span>
+                <span id="res-weight">0g</span>
+            </div>
+            <div class="recap-line shipping-info">
+                <span>Livraison & Emballage</span>
+                <span id="res-shipping">0.00 €</span>
+            </div>
+        </div>
+        <div class="recap-total">
+            <label>Total TTC</label>
+            <span id="res-total">0.00 €</span>
+        </div>
+
+        <button id="checkout-btn" class="btn-checkout-final">
+            Valider la commande
+        </button>
+
+        <a href="/boutique" class="btn-continue-shopping">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Continuer mes achats
+        </a>
+
+        <div class="recap-trust">
+    <div class="payment-row">
+        <img src="/images/paiement/visa.svg" alt="Visa" class="icon-visa">
+        <img src="/images/paiement/mastercard.svg" alt="Mastercard" class="icon-master">
+        <img src="/images/paiement/applepay.svg" alt="Apple Pay" class="icon-apple">
+    </div>
+    <div class="payment-row">
+        <img src="/images/paiement/googlepay.svg" alt="Google Pay" class="icon-google">
+        <div class="stripe-badge-inline">
+            <img src="/images/paiement/stripe.svg" alt="Stripe">
+        </div>
+        </div>
+    <p class="trust-text">Paiement 100% sécurisé via Stripe</p>
+</div>
+    </div>
+</aside>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Mondial Relay -->
+    <div id="mr-modal" class="mr-modal">
+        <div class="mr-modal-content">
+            <span class="mr-close" onclick="closeMRModal()">&times;</span>
+            <h3 style="margin-bottom: 20px; color: var(--brun-coco);">Sélectionnez votre Point Relais</h3>
+            <div id="mr-loader" style="text-align: center; padding: 20px; color: var(--bois-flotte);">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Recherche des points à proximité...
+            </div>
+            <div id="Zone_Widget" style="width: 100%;"></div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+</MainLayout>
+
+<script is:inline>
+    /**
+     * --- GESTION DES NOTIFICATIONS (TOASTS) ---
+     */
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        
+        const toast = document.createElement('div');
+        toast.className = 'toast-message';
+        const icon = type === 'delete' ? '✕' : '✓';
+        toast.innerHTML = `<span>${icon}</span> ${message}`;
+        
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 400);
+        }, 2500);
+    }
+
+    // État global du mode de livraison
+    let currentShippingMethod = 'colissimo';
+    let selectedRelay = null; // Stockera { id, name, address }
+
+/**
+     * --- UTILITAIRES DE CALCUL ---
+     */
+    function parseWeight(weightInput) {
+        if (typeof weightInput === 'number') return weightInput;
+        if (!weightInput) return 0;
+        const cleaned = weightInput.toString().replace(/[^\d.]/g, '');
+        return parseFloat(cleaned) || 0;
+    }
+
+    function calculFraisPort(weight, method = 'colissimo') {
+        // On ajoute 200g de sécurité (emballage artisanal robuste)
+        const totalWeight = weight > 0 ? weight + 200 : 0;
+
+        if (totalWeight <= 0)     return 0;
+
+        // Tarifs Mondial Relay (Exemple 2024 France)
+        if (method === 'mondialrelay') {
+            if (totalWeight <= 500)   return 4.40;
+            if (totalWeight <= 1000)  return 4.90;
+            if (totalWeight <= 2000)  return 6.30;
+            if (totalWeight <= 3000)  return 6.90;
+            if (totalWeight <= 5000)  return 10.40;
+            if (totalWeight <= 7000)  return 12.90;
+            if (totalWeight <= 10000) return 14.90;
+            return -1;
+        }
+        
+        // Paliers petits poids
+        if (totalWeight <= 250)   return 6.00;
+        if (totalWeight <= 500)   return 8.00;
+        if (totalWeight <= 750)   return 9.50;
+        if (totalWeight <= 1000)  return 10.00;
+        
+        // Paliers moyens poids (resserrés)
+        if (totalWeight <= 2000)  return 11.50;
+        if (totalWeight <= 3000)  return 14.50; // Nouveau palier
+        if (totalWeight <= 4000)  return 16.50; // Nouveau palier
+        if (totalWeight <= 5000)  return 18.00;
+        
+        // Paliers lourds (sécurisés)
+        if (totalWeight <= 7000)  return 22.50;
+        if (totalWeight <= 8500)  return 24.50; // Nouveau palier
+        if (totalWeight <= 10000) return 26.50; // Arrondi sup pour 10kg
+        
+        return -1; // Trop lourd (> 10kg emballé)
+    }
+
+    window.handleShippingChange = (method) => {
+        currentShippingMethod = method;
+        const mrArea = document.getElementById('mr-selection-area');
+        if (mrArea) {
+            if (method === 'mondialrelay') {
+                mrArea.classList.remove('hidden');
+            } else {
+                mrArea.classList.add('hidden');
+                selectedRelay = null;
+                document.getElementById('relay-display')?.classList.add('hidden');
+            }
+        }
+        renderPanier();
+    };
+
+    window.openMRModal = () => {
+        document.getElementById('mr-modal').classList.add('active');
+        // On initialise le widget une fois la modal ouverte
+        setTimeout(() => initMRWidget(), 100);
+    };
+
+    window.closeMRModal = () => {
+        document.getElementById('mr-modal').classList.remove('active');
+    };
+
+    function initMRWidget() {
+        // @ts-ignore
+        if (window.jQuery && window.jQuery("#Zone_Widget").MR_ParcelShopPicker) {
+            // @ts-ignore
+            window.jQuery("#Zone_Widget").MR_ParcelShopPicker({
+                TargetDisplay: "#relay-info-text", // On utilise l'id existant pour afficher l'adresse
+                Brand: "TTMRSDBX", // Ton code enseigne Mondial Relay
+                Country: "FR",
+                PostCode: "48250", // Code postal par défaut (Chasseradès)
+                ColLivMod: "24R",
+                NbResults: "7",
+                Responsive: true,
+                OnParcelShopSelected: (data) => {
+                    selectedRelay = { id: data.ID, name: data.Nom, address: `${data.Adresse1}, ${data.CP} ${data.Ville}` };
+                    
+                    // Mise à jour de l'affichage
+                    const display = document.getElementById('relay-display');
+                    const text = document.getElementById('relay-info-text');
+                    if (display && text) {
+                        text.innerHTML = `<strong>${data.Nom}</strong><br>${data.Adresse1}, ${data.CP} ${data.Ville}`;
+                        display.classList.remove('hidden');
+                    }
+                    closeMRModal();
+                },
+                OnWidgetLoaded: () => {
+                    document.getElementById('mr-loader').style.display = 'none';
+                }
+            });
+        }
+    }
+
+    /**
+     * --- NETTOYAGE AUTOMATIQUE DU PANIER ---
+     * Compare le local avec la BD Upstash et vire les surplus
+     */
+    async function syncStocks() {
+        try {
+            // On interroge ton API (qui est sécurisée par le .env côté serveur)
+            const response = await fetch('/api/produits');
+            if (!response.ok) return;
+            
+            const produitsBD = await response.json();
+            let cart = JSON.parse(localStorage.getItem('panier-atelier')) || [];
+            const avantModif = JSON.stringify(cart);
+
+            // Filtrage : on ne garde que ce qui est en stock réel
+            const panierFiltre = cart.filter(item => {
+                const live = produitsBD.find(p => p.id === item.id);
+                
+                // 1. Si plus en BD ou stock à 0 -> On supprime l'article du panier
+                if (!live || live.stock <= 0) return false;
+
+                // 2. Si le client en a 8 mais que la BD dit 1 -> On redescend à 1
+                if (item.quantite > live.stock) {
+                    item.quantite = live.stock;
+                }
+
+                // 3. Mise à jour des métadonnées (prix/poids)
+                item.stock = live.stock;
+                item.prix = live.prix;
+                return true;
+            });
+
+            // Sauvegarde seulement si le panier a été modifié
+            if (JSON.stringify(panierFiltre) !== avantModif) {
+                localStorage.setItem('panier-atelier', JSON.stringify(panierFiltre));
+                
+                // Rafraîchissement du design
+                renderPanier(); 
+                
+                // Notification pour le reste du site
+                window.dispatchEvent(new Event('storage'));
+                showToast("Panier actualisé selon les stocks réels", "delete");
+            }
+        } catch (error) {
+            console.error("Erreur de synchronisation stocks");
+        }
+    }
+
+    /**
+     * --- RENDU DU PANIER ---
+     */
+    function renderPanier() {
+        const cart = JSON.parse(localStorage.getItem('panier-atelier')) || [];
+        const emptyDiv = document.getElementById('cart-empty');
+        const contentDiv = document.getElementById('cart-content');
+        const listDiv = document.getElementById('cart-items-list');
+
+        if (!cart.length) {
+            if(emptyDiv) emptyDiv.classList.remove('hidden');
+            if(contentDiv) contentDiv.classList.add('hidden');
+            return;
+        }
+
+        if(emptyDiv) emptyDiv.classList.add('hidden');
+        if(contentDiv) contentDiv.classList.remove('hidden');
+        if(!listDiv) return;
+
+        listDiv.innerHTML = '';
+        let totalCommande = 0;
+        let poidsTotal = 0;
+        let nombreArticles = 0;
+
+        // Calcul initial pour le poids total
+        cart.forEach(item => {
+            const w = parseWeight(item.poids);
+            poidsTotal += (w * item.quantite);
+            totalCommande += (item.prix * item.quantite);
+            nombreArticles += item.quantite;
+        });
+
+        // Génération des lignes
+        cart.forEach((item, index) => {
+            const unitW = parseWeight(item.poids);
+            const linePrice = item.prix * item.quantite;
+            
+            // Sécurité anti-spam : on bloque si stock atteint OU si +1 dépasse 10kg
+            const isStockMax = item.stock !== undefined && item.quantite >= item.stock;
+            const isPoidsMax = (poidsTotal + unitW) > 10000;
+            const canNotAdd = isStockMax || isPoidsMax;
+
+            listDiv.innerHTML += `
+                <div class="panier-item-card">
+                    <div class="p-img-container">
+                        <img src="${item.image}" alt="${item.nom}" onerror="this.src='/images/logo-entreprise.webp'">
+                    </div>
+                    <div class="p-info">
+                        <h4>${item.nom}</h4>
+                        <span class="p-meta">${item.poids}g — ${item.prix.toFixed(2)}€/unité</span>
+                    </div>
+                    <div class="p-actions">
+                        <div class="p-qty-selector">
+                            <button onclick="updateQty(${index}, -1)">−</button>
+                            <span class="qty-num">${item.quantite}</span>
+                            <button 
+                                onclick="updateQty(${index}, 1)" 
+                                ${canNotAdd ? 'disabled style="opacity:0.2; cursor:not-allowed;"' : ''}
+                                title="${isPoidsMax ? 'Limite de 10kg atteinte' : ''}"
+                            >+</button>
+                        </div>
+                        <div class="p-total-line">${linePrice.toFixed(2)}€</div>
+                        <button class="p-remove" onclick="deleteItem(${index})">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Récapitulatif
+        const fraisPort = calculFraisPort(poidsTotal, currentShippingMethod);
+        const shippingElem = document.getElementById('res-shipping');
+        const totalElem = document.getElementById('res-total');
+        const payBtn = document.getElementById('checkout-btn');
+
+        if (fraisPort === -1) {
+            if (shippingElem) shippingElem.textContent = "Sur devis";
+            if (totalElem) totalElem.textContent = "— €";
+            if (payBtn) {
+                payBtn.disabled = true;
+                payBtn.textContent = "Poids excessif (> 10kg)";
+            }
+        } else {
+            const finalTotal = totalCommande + fraisPort;
+            if (shippingElem) shippingElem.textContent = fraisPort.toFixed(2) + " €";
+            if (totalElem) totalElem.textContent = finalTotal.toFixed(2) + " €";
+            if (payBtn) {
+                payBtn.disabled = false;
+                payBtn.textContent = "Valider la commande";
+            }
+        }
+
+        if(document.getElementById('res-count')) document.getElementById('res-count').textContent = nombreArticles;
+        if(document.getElementById('res-weight')) document.getElementById('res-weight').textContent = poidsTotal + 'g';
+        if(document.getElementById('res-subtotal')) document.getElementById('res-subtotal').textContent = totalCommande.toFixed(2) + ' €';
+    }
+
+    /**
+     * --- ACTIONS ---
+     */
+    window.updateQty = (idx, delta) => {
+        let cart = JSON.parse(localStorage.getItem('panier-atelier'));
+        const item = cart[idx];
+        const unitW = parseWeight(item.poids);
+        const currentPoids = cart.reduce((acc, it) => acc + (parseWeight(it.poids) * it.quantite), 0);
+
+        if (delta > 0) {
+            if (item.stock !== undefined && (item.quantite + delta) > item.stock) {
+                showToast("Désolé, stock épuisé", "delete");
+                return;
+            }
+            if ((currentPoids + unitW) > 10000) {
+                showToast("Limite de 10kg atteinte", "delete");
+                return;
+            }
+        }
+
+        item.quantite += delta;
+        if (item.quantite < 1) return deleteItem(idx);
+
+        localStorage.setItem('panier-atelier', JSON.stringify(cart));
+        renderPanier();
+        window.dispatchEvent(new Event('storage'));
+    };
+
+    window.deleteItem = (idx) => {
+        let cart = JSON.parse(localStorage.getItem('panier-atelier'));
+        cart.splice(idx, 1);
+        localStorage.setItem('panier-atelier', JSON.stringify(cart));
+        renderPanier();
+        window.dispatchEvent(new Event('storage'));
+        showToast("Article retiré", "delete");
+    };
+
+    function initCheckout() {
+        const payBtn = document.getElementById('checkout-btn');
+        if (!payBtn) return;
+        payBtn.onclick = async () => {
+            const cart = JSON.parse(localStorage.getItem('panier-atelier')) || [];
+            if (!cart.length) return;
+
+            if (currentShippingMethod === 'mondialrelay' && !selectedRelay) {
+                showToast("Veuillez sélectionner un point relais sur la carte", "delete");
+                return;
+            }
+
+            // On recalcule le poids total et les frais pour les envoyer à l'API
+            let poidsTotal = 0;
+            cart.forEach(item => {
+                poidsTotal += (parseWeight(item.poids) * item.quantite);
+            });
+            const fraisPort = calculFraisPort(poidsTotal, currentShippingMethod);
+            if (fraisPort === -1) return; // Sécurité si le poids dépasse 10kg
+
+            payBtn.disabled = true;
+            payBtn.textContent = "Lien avec Stripe...";
+            // Optionnel: ajouter une icône de chargement
+            // payBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lien avec Stripe...';
+            try {
+                // Appel de la nouvelle API pour créer une session Stripe Checkout
+                const response = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        cartItems: cart,
+                        shippingMethod: currentShippingMethod,
+                        relayData: selectedRelay,
+                        shippingFee: fraisPort,
+                        packagingFee: 0 // Inclus dans fraisPort selon ta logique actuelle
+                    })
+                });
+                const data = await response.json();
+                if (response.ok && data.url) {
+                    window.location.href = data.url; // Rediriger vers Stripe Checkout
+                } else {
+                    throw new Error(data.error || "Erreur inconnue lors de la création de la session.");
+                }
+            } catch (err) {
+                console.error("Erreur de paiement:", err);
+                showToast(err.message || "Erreur lors de la création de la session de paiement.", "delete");
+                payBtn.disabled = false;
+                payBtn.textContent = "Valider la commande";
+            }
+        };
+    }
+
+    async function initPage() {
+        await syncStocks(); // On vérifie les stocks réels AVANT d'afficher
+        renderPanier();
+        initCheckout();
+    }
+
+    document.addEventListener('astro:page-load', initPage);
+    if (document.readyState === 'complete') initPage();
+    else window.addEventListener('DOMContentLoaded', initPage);
+</script>

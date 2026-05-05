@@ -1,0 +1,689 @@
+---
+export const prerender = false;
+import { kv } from "../../lib/kv";
+import AdminHeader from "../../components/AdminHeader.astro";
+import '../../styles/admin.css';
+const currentYear = new Date().getFullYear();
+
+const data = await kv.get("boutique:produits");
+const produits = Array.isArray(data) 
+    ? data
+        .filter(p => p && p.id) // S'assurer que le produit a un ID
+        .sort((a, b) => (Number(a.ordre) || 0) - (Number(b.ordre) || 0)) // Trier par 'ordre', par défaut 0 si non défini
+    : [];
+
+const activeCat = Astro.url.searchParams.get('cat') || 'Tous';
+const activePage = Astro.url.searchParams.get('page') || '1';
+---
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestion Boutique | Admin</title>
+    <style>
+        /* TABLEAU */
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; background: #fcfcfc; padding: 15px; font-size: 0.75rem; text-transform: uppercase; color: var(--sable-dore); letter-spacing: 1px; border-bottom: 1px solid #eee; }
+        td { padding: 15px; border-bottom: 1px solid #f5f5f5; vertical-align: middle; }
+        .mini-cadre { width: 50px; height: 50px; background: #fafafa; border: 1px solid #eee; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .img-mini { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ORDRE */
+        .ordre-container { display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--brun-coco); }
+        .ordre-actions { display: flex; flex-direction: column; gap: 2px; }
+        .btn-ordre { background: none; border: 1px solid #eee; color: var(--sable-dore); padding: 2px 6px; font-size: 0.7rem; cursor: pointer; border-radius: 4px; transition: 0.2s; }
+        .btn-ordre:hover { background: var(--sable-dore); color: white; border-color: var(--sable-dore); }
+
+        /* FILTRES */
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 25px; padding: 10px; background: #fafafa; border-radius: 8px; border: 1px solid #eee; }
+        .filter-btn { padding: 8px 16px; border: 1px solid var(--sable-dore); border-radius: 20px; background: white; cursor: pointer; font-size: 0.75rem; font-weight: 800; color: var(--brun-coco); text-transform: uppercase; transition: 0.2s; letter-spacing: 1px; }
+        .filter-btn.active { background: var(--brun-coco); color: white; border-color: var(--brun-coco); }
+
+        /* MODALE */
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(45, 34, 26, 0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-content { 
+            background: white; width: 95%; max-width: 850px; padding: 40px; border-radius: 20px; position: relative; 
+            max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); 
+            border: 1px solid var(--sable-dore);
+            scrollbar-width: thin; scrollbar-color: var(--sable-dore) #f5f5f5;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-track { background: #f5f5f5; border-radius: 10px; }
+        .modal-content::-webkit-scrollbar-thumb { background-color: var(--sable-dore); border-radius: 10px; border: 1px solid #f5f5f5; }
+        .modal-content::-webkit-scrollbar-thumb:hover { background-color: #d4b386; }
+
+        .modal-title {
+            color: var(--brun-profond); font-family: var(--font-secondaire); font-size: 1.9rem;
+            margin-bottom: 45px; display: block; text-align: center; position: relative;
+            font-weight: 700; letter-spacing: 0.5px;
+        }
+        .modal-title i {
+            color: var(--vanille-eclat); margin-right: 12px; font-size: 1.6rem; vertical-align: middle;
+        }
+        .modal-title::after {
+            content: ""; position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%);
+            width: 60px; height: 3px; background: var(--vanille-eclat); border-radius: 10px;
+        }
+
+        /* NOUVEAU LAYOUT COLONNES */
+        .modal-layout { display: flex; gap: 35px; margin-bottom: 25px; align-items: flex-start; }
+        .img-side { flex: 0 0 300px; }
+        .form-side { flex: 1; }
+
+        .img-preview-container {
+            width: 300px; height: 380px; /* Ratio proche de 718/800 ou 1536/2048 */
+            background: var(--fond-ecume); border: 1.5px dashed var(--sable-dore); border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+        }
+        .img-preview-container img { max-width: 100%; max-height: 100%; object-fit: contain; z-index: 2; transition: transform 0.3s ease; }
+        .img-preview-container:hover img { transform: scale(1.05); }
+        .img-preview-container i { position: absolute; font-size: 3.5rem; color: var(--sable-dore); opacity: 0.2; z-index: 1; }
+        #prev-img[src=""], #prev-img:not([src]) { display: none; }
+        
+        /* BADGES DANS LE TABLEAU */
+        .badge-atelier { background: var(--vanille-pure); color: var(--brun-profond); font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--sable-dore); margin-left: 8px; vertical-align: middle; text-transform: uppercase; font-weight: 800; }
+        .badge-multi-img { color: var(--sable-dore); font-size: 0.8rem; margin-left: 5px; }
+        .row-store-only { background-color: #fffdf5; }
+
+        /* FORMULAIRE */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .field { display: flex; flex-direction: column; gap: 8px; }
+        .full { grid-column: span 2; }
+        .span-2 { grid-column: span 2; }
+        label { font-size: 0.75rem; font-weight: 700; color: var(--bois-ecorce); text-transform: uppercase; letter-spacing: 1px; }
+        input, select, textarea { 
+            width: 100%; padding: 14px; border: 1.5px solid #eee; border-radius: 10px; 
+            font-size: 0.95rem; background: #fafafa; transition: all 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--sable-dore); background: white; outline: none; box-shadow: 0 0 0 4px rgba(224, 194, 151, 0.15); }
+
+        /* RESPONSIVE MODALE */
+        @media (max-width: 750px) {
+            .modal-layout { flex-direction: column; align-items: center; }
+            .img-side { width: 100%; }
+            .img-preview-container { width: 100%; height: 350px; }
+        }
+
+        /* BOUTONS */
+        .btn-save {
+            background: var(--brun-profond); color: white; width: fit-content; min-width: 260px;
+            margin: 40px auto 10px auto; padding: 14px 30px; display: flex; align-items: center;
+            justify-content: center; font-size: 0.95rem; border-radius: 12px;
+            letter-spacing: 1.5px; box-shadow: 0 6px 15px rgba(45, 34, 26, 0.15);
+            border: none;
+        }
+        .btn-save:hover { background: var(--brun-coco); transform: translateY(-2px); }
+        .btn-edit { background: white; color: var(--brun-coco); border: 1px solid var(--sable-dore); }
+        .btn-delete { background: #fff5f5; color: var(--rouge); border: 1px solid #ffdada; }
+        .btn-edit:hover { background: var(--fond-ecume); }
+        .btn-delete:hover { background: var(--rouge); color: white; }
+        
+        .btn-close { 
+            position: absolute; top: 25px; right: 25px; background: var(--fond-ecume); 
+            border: 1px solid var(--sable-dore); width: 35px; height: 35px; border-radius: 50%;
+            font-size: 1.2rem; cursor: pointer; color: var(--bois-flotte); 
+            display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 10;
+        }
+        .btn-close:hover { background: var(--rouge); color: white; border-color: var(--rouge); transform: rotate(90deg); }
+        .action-cell { display: flex; gap: 8px; }
+
+        .btn-upload { background: var(--fond-sable); color: var(--brun-profond); border: 1px solid var(--sable-dore); padding: 5px 10px; font-size: 0.7rem; border-radius: 4px; cursor: pointer; margin-top: 5px; width: fit-content; }
+        .btn-upload:hover { background: var(--sable-dore); }
+
+        /* PAGINATION */
+        #pagination-wrapper {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px dashed var(--sable-dore);
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* On utilise :global car les éléments sont créés dynamiquement en JavaScript */
+        /* Cela permet au CSS de s'appliquer même si les balises n'existent pas encore au chargement */
+        :global(.pagination-list) {
+            display: flex !important;
+            gap: 12px !important;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            align-items: center;
+        }
+        :global(.pagination-list button) {
+            width: 40px;
+            height: 40px;
+            border: 1.5px solid var(--sable-dore);
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 700;
+            color: var(--brun-coco);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        :global(.pagination-list button.active) {
+            background: var(--brun-profond) !important;
+            color: white !important;
+            border-color: var(--brun-profond) !important;
+        }
+        :global(.pagination-list button:hover:not(.active):not(:disabled)) {
+            background: var(--fond-sable);
+            border-color: var(--brun-coco);
+            color: var(--brun-coco);
+        }
+        :global(.pagination-list button:disabled) {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+    </style>
+    <!-- Chargement du Widget Cloudinary -->
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+</head>
+<body>
+
+<script is:inline define:vars={{ initialProduits: produits }}>
+    // On injecte les produits du serveur vers le client de manière sûre
+    window.allProduitsData = initialProduits || [];
+</script>
+
+<div class="dashboard-container">
+    <AdminHeader currentPage="boutique" title="Catalogue Boutique" />
+
+    <div class="actions-bar">
+        <button class="btn btn-add" onclick="openModal()">
+            <i class="fa-solid fa-plus"></i> Ajouter un article
+        </button>
+    </div>
+
+    <div class="filter-bar">
+        {['Tous', 'Bougies', 'Sculptures', 'Accessoires'].map(cat => (
+            <button 
+                class={`filter-btn ${activeCat === cat ? 'active' : ''}`} 
+                onclick={`filterCategory('${cat}', this)`}
+            >
+                {cat}
+            </button>
+        ))}
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Ordre</th>
+                <th>Image</th>
+                <th>Produit</th>
+                <th>Prix</th>
+                <th>Stock</th>
+                <th>Poids</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {produits.map((p) => (
+                                <tr 
+                    data-id={p.id} 
+                    data-category={p.categorie} 
+                    class={p.enMagasinUniquement ? "row-store-only" : ""}
+                    style={(activeCat !== 'Tous' && p.categorie !== activeCat) ? "display: none;" : ""}
+                >
+                  <td>
+            <div class="ordre-container">
+              <span>{(p.ordre && p.ordre > 0) ? p.ordre : 1}</span>
+              <div class="ordre-actions">
+                <button class="btn-ordre" onclick={`moveOrder(event, '${p.id}', -1)`} title="Monter">
+                  <i class="fa-solid fa-chevron-up"></i>
+                </button>
+                <button class="btn-ordre" onclick={`moveOrder(event, '${p.id}', 1)`} title="Descendre">
+                  <i class="fa-solid fa-chevron-down"></i>
+                </button>
+              </div>
+            </div>
+          </td>
+                    <td>
+    <div class="mini-cadre">
+        {p.image ? 
+            <img src={p.image} class="img-mini" alt="" /> : 
+            <i class="fa-solid fa-camera"></i>
+        }
+    </div>
+</td>
+                    <td>
+                        <strong>{p.nom}</strong>
+                        {p.enMagasinUniquement && <span class="badge-atelier"><i class="fa-solid fa-shop"></i> ATELIER</span>}
+                        {(p.image2 || p.image3) && <i class="fa-solid fa-images badge-multi-img" title="Plusieurs images"></i>}
+                        <br/>
+                        <small style="color:#888">{p.categorie}</small>
+                    </td>
+                    <td>{Number(p.prix).toFixed(2)} €</td>
+                    <td><span style={p.stock <= 0 ? "color:var(--rouge); font-weight:bold" : "color:green; font-weight:bold"}>{p.stock > 0 ? 'Disponible' : 'Épuisé'}</span></td>
+                    <td>{p.poids}</td>
+                    <td class="action-cell">
+                      <button class="btn btn-edit" onclick={`openModal(${JSON.stringify(p)})`}>
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button class="btn btn-delete" onclick={`remove('${p.id}')`}>
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </td>
+                </tr>
+            ))}
+        </tbody>
+    </table>
+
+    <div id="pagination-wrapper"></div>
+
+    <footer class="dashboard-footer">
+        <p>&copy; {currentYear} Jean François & Aniuta — Dashboard Atelier</p>
+    </footer>
+</div>
+
+<div id="modal">
+    <div class="modal-content">
+        <button class="btn-close" onclick="closeModal()">&times;</button>
+        <div id="modal-title" class="modal-title">Fiche Produit</div>
+        
+        <input type="hidden" id="p-id" />
+        
+        <div style="margin-bottom: 25px; padding: 15px; background: var(--vanille-brume); border-radius: 10px; border: 1px dashed var(--sable-dore);">
+            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; color: var(--brun-profond); font-weight: 800; text-transform: none; letter-spacing: 0;">
+                <input type="checkbox" id="p-store-only" style="width: 20px; height: 20px; cursor: pointer;" />
+                <span><i class="fa-solid fa-phone"></i> DISPONIBLE SUR DEMANDE (Pros / Hôtels)</span>
+            </label>
+            <p style="margin: 5px 0 0 32px; font-size: 0.75rem; color: var(--bois-ecorce); text-align: left;">
+                Cochez cette case pour les articles réservés aux professionnels (hôteliers, etc.). Le bouton d'achat sera remplacé par un lien d'appel.
+            </p>
+        </div>
+
+        <div class="modal-layout">
+            <div class="img-side">
+                <div class="img-preview-container">
+                    <i class="fa-solid fa-image"></i>
+                    <img id="prev-img" src="" alt="" />
+                </div>
+            </div>
+
+            <div class="form-side">
+                <div class="form-grid">
+                    <div class="field full">
+                        <label>Nom de l'article</label>
+                        <input type="text" id="p-nom" placeholder="Ex: Bougie Cèpe" />
+                    </div>
+                    <div class="field">
+                        <label>Catégorie</label>
+                        <select id="p-cat" onchange="toggleParfumField()">
+                            <option value="Bougies">Bougies</option>
+                            <option value="Sculptures">Sculptures</option>
+                            <option value="Accessoires">Accessoires</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Prix (€)</label>
+                        <input type="number" step="0.01" min="0" id="p-prix" />
+                    </div>
+                    <div class="field">
+                        <label>Poids (Grammes)</label>
+                        <input type="number" min="0" id="p-poids-num" placeholder="300" />
+                    </div>
+                    <div class="field">
+                        <label>État du Stock</label>
+                        <select id="p-stock">
+                            <option value="100">Disponible</option>
+                            <option value="0">Épuisé</option>
+                        </select>
+                    </div>
+                    <div class="field full" id="parfum-field-container">
+                        <label>Parfum / Senteur</label>
+                        <input type="text" id="p-parfum" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="field full">
+                <label>Image Principale</label>
+                <input type="text" id="p-img" oninput="document.getElementById('prev-img').src=this.value" />
+                <button type="button" class="btn-upload" onclick="openUploadWidget('p-img')"><i class="fa-solid fa-cloud-arrow-up"></i> Télécharger via Cloudinary</button>
+            </div>
+            <div class="field">
+                <label>Image 2 (Optionnel)</label>
+                <input type="text" id="p-img-2" />
+                <button type="button" class="btn-upload" onclick="openUploadWidget('p-img-2')"><i class="fa-solid fa-cloud-arrow-up"></i> Télécharger</button>
+            </div>
+            <div class="field">
+                <label>Image 3 (Optionnel)</label>
+                <input type="text" id="p-img-3" />
+                <button type="button" class="btn-upload" onclick="openUploadWidget('p-img-3')"><i class="fa-solid fa-cloud-arrow-up"></i> Télécharger</button>
+            </div>
+            <div class="field full">
+                <label>Description Courte</label>
+                <textarea id="p-desc" rows="3"></textarea>
+            </div>
+        </div>
+        
+        <button class="btn btn-save" onclick="save()">
+            <i class="fa-solid fa-floppy-disk"></i> ENREGISTRER L'ARTICLE
+        </button>
+    </div>
+</div>
+
+<script>
+    // Sécurité immédiate au chargement
+    // La page du tableau de bord elle-même est protégée par Basic Auth.
+    // Si l'utilisateur atteint ce script, il est déjà authentifié via Basic Auth.
+    // Pas besoin de vérification de token côté client ici.
+
+    const modal = document.getElementById('modal') as HTMLElement;
+
+    // --- CONFIGURATION CLOUDINARY ---
+    const CLOUD_NAME = "dksok1rxg"; 
+    const UPLOAD_PRESET = "boutique_preset";
+
+    (window as any).openUploadWidget = (inputId: string) => {
+        if (!(window as any).cloudinary) {
+            console.error("Le module Cloudinary n'est pas chargé.");
+            return alert("Le module de téléchargement n'est pas encore prêt. Patientez une seconde ou vérifiez votre connexion.");
+        }
+        (window as any).cloudinary.openUploadWidget({
+            cloudName: CLOUD_NAME,
+            uploadPreset: UPLOAD_PRESET,
+            sources: ['local', 'url', 'camera'],
+            showAdvancedOptions: false,
+            cropping: true, // JF peut recadrer ses photos au format portrait
+            multiple: false,
+            defaultSource: 'local',
+            styles: { palette: { window: "#FDFDFD", sourceBg: "#F9F1E7", windowBorder: "#E0C297", tabIcon: "#4A3728", inactiveTabIcon: "#967969", menuIcons: "#4A3728", link: "#E9C46A", action: "#2D221A", inProgress: "#E9C46A", complete: "#2D221A", error: "#C0392B", textDark: "#2D221A", textLight: "#FFFFFF" }}
+        }, (error: any, result: any) => {
+            if (!error && result && result.event === "success") {
+                const url = result.info.secure_url;
+                (document.getElementById(inputId) as HTMLInputElement).value = url;
+                // Mise à jour immédiate de l'aperçu si c'est l'image principale
+                if (inputId === 'p-img') (document.getElementById('prev-img') as HTMLImageElement).src = url;
+            }
+        });
+    };
+
+    // Fonction centralisée pour vérifier l'accès et communiquer avec l'API
+    async function secureApiCall(action: string, payload: any) {
+        try {
+            const res = await fetch('/api/admin-proxy', { // Appelle le nouveau point d'API proxy
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, payload })
+            });
+            const result = await res.json();
+
+            if (res.status === 401 || res.status === 403) { // Gère les erreurs 401 (Non autorisé) ou 403 (Interdit)
+                alert("Votre session a expiré. Reconnexion requise.");
+                window.location.reload();
+                return null;
+            }
+
+            if (!res.ok) throw new Error(result.error || "Erreur serveur");
+            return result;
+        } catch (e) {
+            console.error("Erreur de sécurité/réseau:", e);
+            alert("L'opération a échoué : " + (e instanceof Error ? e.message : "Erreur réseau"));
+            return null;
+        }
+    }
+
+    // Récupération UNIQUE et robuste de l'état depuis l'URL dès le chargement
+    const urlParams = new URLSearchParams(window.location.search);
+    let currentCategory = urlParams.get('cat') || 'Tous';
+    let currentPage = parseInt(urlParams.get('page') || '1') || 1;
+    const itemsPerPage = 6;
+
+    // Fonction pour recharger la page en conservant le filtre et la pagination
+    function reloadWithState() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('cat', currentCategory);
+        url.searchParams.set('page', currentPage.toString());
+        window.location.href = url.pathname + url.search;
+    }
+
+    function updatePagination() {
+        const rows = Array.from(document.querySelectorAll('tbody tr')) as HTMLElement[];
+
+        const visibleRows = rows.filter(row => {
+            return currentCategory === 'Tous' || row.dataset.category === currentCategory;
+        });
+
+        const totalItems = visibleRows.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        if (currentPage > totalPages) currentPage = totalPages || 1;
+
+        // On cache tout le monde
+        rows.forEach(r => r.style.display = 'none');
+
+        // On affiche uniquement la tranche de la page courante parmi les visibles
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        visibleRows.slice(start, end).forEach(r => r.style.display = '');
+
+        renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages: number) {
+        const container = document.getElementById('pagination-wrapper');
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (totalPages <= 1) return;
+
+        const nav = document.createElement('div');
+        nav.className = 'pagination-list';
+
+        // Bouton Précédent
+        const prevBtn = document.createElement('button');
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+        prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; updatePagination(); } };
+        nav.appendChild(prevBtn);
+
+        // Boutons numériques
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            if (i === currentPage) btn.className = 'active';
+            btn.innerText = i.toString();
+            btn.onclick = () => {
+                currentPage = i;
+                updatePagination();
+            };
+            nav.appendChild(btn);
+        }
+
+        // Bouton Suivant
+        const nextBtn = document.createElement('button');
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+        nextBtn.onclick = () => { if (currentPage < totalPages) { currentPage++; updatePagination(); } };
+        nav.appendChild(nextBtn);
+
+        container.appendChild(nav);
+    }
+
+    (window as any).filterCategory = (cat: string, btn: HTMLElement) => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCategory = cat;
+        currentPage = 1;
+
+        // Mise à jour de l'URL sans recharger pour maintenir l'état du filtre
+        const url = new URL(window.location.href);
+        url.searchParams.set('cat', currentCategory);
+        url.searchParams.set('page', '1');
+        window.history.replaceState({}, '', url.pathname + url.search);
+
+        updatePagination();
+    };
+
+    (window as any).toggleParfumField = () => {
+        const cat = (document.getElementById('p-cat') as HTMLSelectElement).value;
+        const container = document.getElementById('parfum-field-container') as HTMLElement;
+        const input = document.getElementById('p-parfum') as HTMLInputElement;
+
+        if (cat === 'Bougies') {
+            container.style.display = 'block';
+            // On pré-remplit si vide
+            if (!input.value) input.value = "Vanille Gourmande";
+        } else {
+            container.style.display = 'none';
+            input.value = ""; // Inutile pour les autres catégories
+        }
+    };
+
+    (window as any).openModal = (data: any = null) => {
+        // Nettoyage préalable de tous les champs
+        document.querySelectorAll('.modal-content input, .modal-content textarea').forEach(el => (el as HTMLInputElement).value = "");
+
+        const parfumInput = document.getElementById('p-parfum') as HTMLInputElement;
+
+        if (data) {
+            (document.getElementById('modal-title') as HTMLElement).innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Modifier l\'article';
+            (document.getElementById('p-id') as HTMLInputElement).value = data.id || "";
+            (document.getElementById('p-nom') as HTMLInputElement).value = data.nom || "";
+            (document.getElementById('p-cat') as HTMLSelectElement).value = data.categorie || "Bougies";
+            (document.getElementById('p-prix') as HTMLInputElement).value = data.prix ? Number(data.prix).toFixed(2) : "0.00";
+            (document.getElementById('p-stock') as HTMLSelectElement).value = (data.stock > 0) ? "100" : "0";
+            parfumInput.value = data.parfum || "";
+            (document.getElementById('p-img') as HTMLInputElement).value = data.image || "";
+            (document.getElementById('p-img-2') as HTMLInputElement).value = data.image2 || "";
+            (document.getElementById('p-img-3') as HTMLInputElement).value = data.image3 || "";
+            (document.getElementById('p-desc') as HTMLTextAreaElement).value = data.description || "";
+            (document.getElementById('prev-img') as HTMLImageElement).src = data.image || "";
+            (document.getElementById('p-poids-num') as HTMLInputElement).value = data.poids ? data.poids.replace('g', '') : '';
+            (document.getElementById('p-store-only') as HTMLInputElement).checked = data.enMagasinUniquement === true;
+            
+            // Note : p-ordre a été supprimé ici car il n'est plus dans la modale
+        } else {
+            (document.getElementById('modal-title') as HTMLElement).innerHTML = '<i class="fa-solid fa-circle-plus"></i> Nouvel Article';
+            (document.getElementById('p-id') as HTMLInputElement).value = "";
+            (document.getElementById('p-stock') as HTMLSelectElement).value = "100";
+            (document.getElementById('p-cat') as HTMLSelectElement).value = "Bougies";
+            parfumInput.value = "Vanille Gourmande";
+            (document.getElementById('prev-img') as HTMLImageElement).src = "";
+            (document.getElementById('p-img-2') as HTMLInputElement).value = "";
+            (document.getElementById('p-img-3') as HTMLInputElement).value = "";
+            (document.getElementById('p-store-only') as HTMLInputElement).checked = false;
+        }
+        (window as any).toggleParfumField();
+        modal.style.display = 'flex';
+    };
+
+    (window as any).closeModal = () => modal.style.display = 'none';
+
+    (window as any).save = async () => {
+        const id = (document.getElementById('p-id') as HTMLInputElement).value;
+        const nom = (document.getElementById('p-nom') as HTMLInputElement).value.trim();
+        const poidsVal = (document.getElementById('p-poids-num') as HTMLInputElement).value;
+
+        if (!nom) return alert("Le nom est obligatoire.");
+
+        const finalId = id || nom.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        const currentList = (window as any).allProduitsData || [];
+        
+        let finalOrdre = 1;
+        if (id) {
+            const existing = currentList.find((p: any) => p.id === id);
+            finalOrdre = existing ? existing.ordre : currentList.length + 1;
+        } else {
+            finalOrdre = currentList.length + 1;
+        }
+
+        // Nettoyage du poids pour éviter "NaNg"
+        const poidsFinal = poidsVal ? Math.max(0, parseInt(poidsVal)) + 'g' : '';
+
+        const payload = {
+            id: finalId,
+            nom: nom,
+            categorie: (document.getElementById('p-cat') as HTMLSelectElement).value,
+            parfum: (document.getElementById('p-parfum') as HTMLInputElement).value,
+            image: (document.getElementById('p-img') as HTMLInputElement).value,
+            image2: (document.getElementById('p-img-2') as HTMLInputElement).value,
+            image3: (document.getElementById('p-img-3') as HTMLInputElement).value,
+            description: (document.getElementById('p-desc') as HTMLTextAreaElement).value,
+            stock: parseInt((document.getElementById('p-stock') as HTMLSelectElement).value),
+            ordre: finalOrdre,
+            poids: poidsFinal,
+            prix: Math.max(0, parseFloat((document.getElementById('p-prix') as HTMLInputElement).value) || 0),
+            enMagasinUniquement: (document.getElementById('p-store-only') as HTMLInputElement).checked
+        };
+
+        const result = await secureApiCall('upsert', payload);
+        if (result && result.success) reloadWithState();
+    };
+
+    (window as any).remove = async (id: string) => {
+        if (confirm('Supprimer cet article définitivement ?')) {
+            const result = await secureApiCall('delete', { id });
+            if (result && result.success) reloadWithState();
+        }
+    };
+
+    (window as any).moveOrder = async (event: any, id: string, direction: number) => {
+        // Empêche les clics frénétiques (le côté "rouillé")
+        if ((window as any).isOrdering) return;
+        (window as any).isOrdering = true;
+
+        // Feedback visuel immédiat
+        if (event && event.currentTarget) event.currentTarget.style.opacity = "0.4";
+        document.body.style.cursor = 'wait';
+
+        let allProducts = [...((window as any).allProduitsData || [])] as any[];
+
+        // SÉCURITÉ : On normalise d'abord l'ordre global pour éviter les collisions (0, doublons, etc.)
+        allProducts.sort((a, b) => (Number(a.ordre) || 0) - (Number(b.ordre) || 0));
+        allProducts.forEach((p, i) => p.ordre = i + 1);
+
+        // On travaille sur les produits visibles de l'onglet actuel pour trouver le bon voisin
+        const filtered = allProducts
+            .filter(p => currentCategory === 'Tous' || p.categorie === currentCategory);
+        // Note : filtered est déjà trié car allProducts l'est.
+
+        const currentIndex = filtered.findIndex(p => p.id === id);
+        const targetIndex = currentIndex + direction;
+
+        // On ne sort pas des limites de l'onglet actuel
+        if (targetIndex < 0 || targetIndex >= filtered.length) {
+            (window as any).isOrdering = false;
+            document.body.style.cursor = 'default';
+            if (event && event.currentTarget) event.currentTarget.style.opacity = "1";
+            return;
+        }
+
+        const currentItem = filtered[currentIndex];
+        const targetItem = filtered[targetIndex];
+
+        // Échange des ordres entre les deux éléments
+        const tempOrdre = currentItem.ordre;
+        currentItem.ordre = targetItem.ordre;
+        targetItem.ordre = tempOrdre;
+
+        // Tri global et ré-indexation propre du catalogue complet
+        allProducts.sort((a, b) => (Number(a.ordre) || 0) - (Number(b.ordre) || 0));
+        allProducts.forEach((p, i) => p.ordre = i + 1);
+
+        const result = await secureApiCall('reorder', allProducts);
+        if (result && result.success) {
+            reloadWithState();
+        } else {
+        alert("Erreur lors du déplacement");
+        (window as any).isOrdering = false;
+        document.body.style.cursor = 'default';
+    }
+};
+
+updatePagination();
+</script>
+</body>
+</html>

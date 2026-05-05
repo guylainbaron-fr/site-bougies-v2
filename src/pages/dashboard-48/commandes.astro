@@ -1,0 +1,530 @@
+---
+export const prerender = false;
+import AdminHeader from "../../components/AdminHeader.astro";
+import '../../styles/admin.css';
+const currentYear = new Date().getFullYear();
+---
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Commandes Client | Admin</title>
+    <style>
+        /* FILTRES PAR STATUT (Onglets) */
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 25px; padding: 10px; background: #fafafa; border-radius: 8px; border: 1px solid #eee; }
+        .filter-btn { padding: 8px 16px; border: 1px solid var(--sable-dore); border-radius: 20px; background: white; cursor: pointer; font-size: 0.75rem; font-weight: 800; color: var(--brun-coco); text-transform: uppercase; transition: 0.2s; letter-spacing: 1px; }
+        .filter-btn.active { background: var(--brun-coco); color: white; border-color: var(--brun-coco); }
+        /* On pousse l'onglet Archive à droite de la barre */
+        .filter-btn.archive-tab { border-style: dashed; margin-left: auto; }
+
+        /* COMPTEUR CA (Motivation) */
+        .actions-row { display: flex; gap: 20px; margin-bottom: 30px; }
+        .ca-pill { 
+            display: flex; align-items: center; gap: 15px; 
+            background: white; padding: 12px 25px; border-radius: 12px; 
+            border: 1px solid var(--sable-dore); box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            min-width: 220px;
+        }
+        .ca-info span { display: block; font-size: 0.65rem; text-transform: uppercase; font-weight: 800; color: var(--bois-flotte); letter-spacing: 1px; }
+        .ca-info b { font-size: 1.3rem; color: var(--brun-coco); }
+        .icon-encaisse { color: var(--vert); font-size: 1.5rem; }
+        .icon-attente { color: var(--sable-dore); font-size: 1.5rem; }
+        @media (max-width: 600px) { .actions-row { flex-direction: column; } }
+
+        /* PAGINATION - Identique à la boutique */
+        #pagination-wrapper {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px dashed var(--sable-dore);
+            display: flex;
+            justify-content: center;
+        }
+        
+        :global(.pagination-list) {
+            display: flex !important;
+            gap: 12px !important;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            align-items: center;
+        }
+        
+        :global(.pagination-list button) {
+            width: 40px;
+            height: 40px;
+            border: 1.5px solid var(--sable-dore);
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 700;
+            color: var(--brun-coco);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        :global(.pagination-list button.active) {
+            background: var(--brun-profond) !important;
+            color: white !important;
+            border-color: var(--brun-profond) !important;
+        }
+        
+        :global(.pagination-list button:hover:not(.active):not(:disabled)) {
+            background: var(--fond-sable);
+            border-color: var(--brun-coco);
+            color: var(--brun-coco);
+        }
+        
+        :global(.pagination-list button:disabled) {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* BLOC ARTICLES - Style Atelier */
+        :global(.order-items-summary) {
+            background: #fff !important;
+            border: 1px dashed var(--sable-dore) !important; /* Bordure plus fine */
+            padding: 10px 12px !important; /* Plus compact */
+            margin: 8px 0 25px 0 !important; /* Ajout d'un espace de sécurité en bas (25px) */
+            border-radius: 8px !important; /* Arrondis plus discrets */
+        }
+
+        :global(.order-items-summary strong) {
+            display: block !important;
+            color: var(--brun-profond) !important;
+            font-size: 0.85rem !important; /* Agrandi pour lisibilité */
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            margin-bottom: 4px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+        :global(.order-items-summary strong i) {
+            font-size: 1rem; /* Taille identique mail/tel */
+            color: var(--sable-dore);
+        }
+
+        :global(.order-items-list) {
+            font-family: "Georgia", serif !important;
+            font-style: italic !important;
+            font-size: 0.95rem !important; /* Augmenté pour mieux équilibrer la ligne */
+            color: var(--brun-coco) !important;
+            font-weight: 700 !important;
+            line-height: 1.2 !important; /* Ajusté pour la nouvelle taille */
+        }
+
+        /* Style spécifique pour la ligne d'article et la quantité */
+        :global(.prep-item) {
+            margin-bottom: 6px !important;
+            display: block !important;
+        }
+
+        :global(.prep-qty) {
+            color: var(--brun-profond) !important;
+            font-size: 1.05rem !important; /* Légèrement réduit pour s'aligner sur le texte */
+            font-weight: 800 !important; /* Baissé d'un cran pour être moins "pâté" */
+            margin-right: 6px !important;
+            font-family: var(--font-principale) !important;
+        }
+
+        /* On élargit un peu les cartes pour que les noms longs rentrent sur une ligne */
+        :global(.orders-grid) {
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important; 
+        }
+        
+        /* Amélioration visuelle Date et Nom */
+        :global(.order-date) {
+            font-size: 0.9rem !important;
+            color: var(--brun-coco) !important; /* Plus sombre que le sable doré pour la lecture */
+        }
+        
+        :global(.client-name) {
+            font-size: 1.4rem !important;
+            font-weight: 700 !important;
+            color: var(--brun-profond) !important;
+            margin-bottom: 8px !important;
+        }
+
+        :global(.date-ref-container) {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 2px !important;
+        }
+
+        :global(.order-ref) {
+            font-size: 0.65rem !important;
+            color: var(--bois-flotte) !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.5px !important;
+        }
+
+        :global(.order-info-block strong) {
+            font-size: 0.75rem !important;
+            color: var(--brun-coco) !important;
+        }
+
+        /* Nouveaux styles pour les boutons repositionnés */
+        :global(.btn-invoice-inline) {
+            margin-top: 12px !important;
+            background: white !important;
+            color: var(--brun-coco) !important;
+            border: 1px solid var(--sable-dore) !important;
+            font-size: 0.7rem !important;
+            padding: 6px 12px !important;
+            width: auto !important;
+        }
+        
+        /* Bouton archive secondaire en bas de carte */
+        :global(.btn-archive-secondary) {
+            margin-top: 10px !important;
+            width: 100% !important;
+            background: transparent !important;
+            border: 1px dashed var(--sable-dore) !important;
+            color: var(--bois-flotte) !important;
+            font-size: 0.65rem !important;
+            padding: 8px 12px !important;
+            justify-content: center !important;
+        }
+
+        /* Amélioration lisibilité contact et adresse */
+        :global(.client-contact) {
+            font-size: 0.95rem !important;
+            color: var(--brun-coco) !important;
+            line-height: 1.6 !important;
+            border-bottom: 1.5px dashed var(--sable-dore) !important;
+        }
+        :global(.client-contact i) {
+            color: var(--sable-dore);
+            width: 20px;
+            margin-right: 5px;
+        }
+        :global(.address-text) {
+            font-size: 1.05rem !important;
+            line-height: 1.5 !important;
+            font-weight: 600 !important;
+            font-family: var(--font-secondaire) !important; /* Style plus "courrier" */
+            color: var(--brun-coco) !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <AdminHeader currentPage="commandes" title="Gestion des Commandes" />
+
+    <div class="actions-row">
+        <div class="ca-pill">
+            <i class="fa-solid fa-sack-dollar icon-encaisse"></i>
+            <div class="ca-info">
+                <span>Déjà Encaissé</span>
+                <b id="stats-encaissé">0.00 €</b>
+            </div>
+        </div>
+
+        <div class="ca-pill">
+            <i class="fa-solid fa-hourglass-half icon-attente"></i>
+            <div class="ca-info">
+                <span>À Préparer (Valeur)</span>
+                <b id="stats-attente">0.00 €</b>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <button class="filter-btn active" onclick="setTab('prepare', this)">À préparer</button>
+        <button class="filter-btn" onclick="setTab('shipped', this)">Expédiées</button>
+        <button class="filter-btn" onclick="setTab('all', this)">Toutes</button>
+        <button class="filter-btn archive-tab" onclick="setTab('archives', this)"><i class="fa-solid fa-box-archive"></i> Archives</button>
+    </div>
+
+    <div id="orders-container" class="orders-grid">
+        <div class="loading">
+            <i class="fa-solid fa-circle-notch fa-spin"></i> Récupération des commandes Stripe...
+        </div>
+    </div>
+
+    <div id="pagination-wrapper"></div>
+
+    <footer class="dashboard-footer">
+        <p>&copy; {currentYear} Jean François & Aniuta — Dashboard Atelier</p>
+    </footer>
+</div>
+
+<script>
+    let allOrders = [];
+    let currentPage = 1;
+    let currentTab = 'prepare'; // prepare, shipped, all, archives
+    const itemsPerPage = 6; // On peut en afficher plus avec les filtres
+
+    async function fetchOrders() {
+        const container = document.getElementById('orders-container');
+        try {
+            // Ajout d'un paramètre timestamp pour forcer le navigateur à ignorer le cache
+            const res = await fetch(`/api/admin-list-orders?t=${Date.now()}`);
+            allOrders = await res.json();
+
+            if (!allOrders || allOrders.length === 0) {
+                container.innerHTML = '<div class="loading">Aucune commande trouvée.</div>';
+                document.getElementById('pagination-wrapper').innerHTML = '';
+                return;
+            }
+
+            // CALCUL DES STATS (Inclusion de toutes les commandes pour que le total reste juste)
+            const totalEncaissé = allOrders
+                .filter(o => o.statut_livraison === 'expedie')
+                .reduce((acc, curr) => acc + curr.total, 0);
+            const totalAttente = allOrders
+                .filter(o => o.statut_livraison === 'en_attente')
+                .reduce((acc, curr) => acc + curr.total, 0);
+
+            document.getElementById('stats-encaissé').innerText = `${totalEncaissé.toFixed(2)} €`;
+            document.getElementById('stats-attente').innerText = `${totalAttente.toFixed(2)} €`;
+
+            updatePagination();
+        } catch (err) {
+            container.innerHTML = '<div class="loading" style="color:var(--rouge)">Erreur de connexion avec Stripe.</div>';
+        }
+    }
+
+    function updatePagination() {
+        const container = document.getElementById('orders-container');
+        
+        // LOGIQUE DE FILTRAGE DES ONGLETS
+        const filteredOrders = allOrders.filter(order => {
+            if (currentTab === 'archives') return order.archived === true;
+            
+            // Pour les autres onglets, on ignore les archivés
+            if (order.archived === true) return false;
+            
+            if (currentTab === 'prepare') return order.statut_livraison === 'en_attente';
+            if (currentTab === 'shipped') return order.statut_livraison === 'expedie';
+            return true; // Onglet 'Toutes'
+        });
+
+        const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+        if (currentPage > totalPages) currentPage = totalPages || 1;
+
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const currentOrders = filteredOrders.slice(start, end);
+
+        container.innerHTML = currentOrders.map(order => {
+            const canArchive = order.statut_livraison === 'expedie' && !order.archived;
+            const canUnarchive = order.archived === true;
+
+            return `
+                <article class="order-card">
+                    <div class="card-top">
+                        <div class="date-ref-container">
+                            <span class="order-date">${order.date}</span>
+                            <span class="order-ref">${order.paymentIntentId ? order.paymentIntentId.replace('pi_', 'INV-').substring(0, 12).toUpperCase() : 'REF: N/A'}</span>
+                        </div>
+                        <span class="order-total">${order.total.toFixed(2)} €</span>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="client-name">${order.client}</h3>
+                        <div class="client-contact">
+                            <div><i class="fa-solid fa-envelope"></i> <strong>${order.email}</strong></div>
+                            <div><i class="fa-solid fa-phone"></i> <strong>${order.telephone || 'Non renseigné'}</strong></div>
+                        </div>
+
+                        <!-- Bloc Articles remonté -->
+                        <div class="order-items-summary">
+                            <strong><i class="fa-solid fa-box-open"></i> Articles à préparer :</strong>
+                            <div class="order-items-list">
+                                ${order.panier || '⚠️ Aucun article trouvé dans cette commande'}
+                            </div>
+                            <!-- Facture déplacée ici, sous les articles -->
+                            <button 
+                                class="btn btn-invoice-inline" 
+                                onclick="window.open('/success?session_id=${order.id}', '_blank')"
+                            >
+                                <i class="fa-solid fa-file-invoice"></i> Facture
+                            </button>
+                        </div>
+
+                        <div class="badges-row">
+                            <span class="badge badge-paid">Payé</span>
+                            <span class="badge ${order.statut_livraison === 'expedie' ? 'badge-shipped' : 'badge-wait'}">
+                                ${order.statut_livraison === 'expedie' ? 'Expédié' : 'En attente'}
+                            </span>
+                            <span class="badge ${order.mode_livraison === 'mondialrelay' ? 'badge-mondialrelay' : 'badge-colissimo'}">
+                                <i class="fa-solid ${order.mode_livraison === 'mondialrelay' ? 'fa-shop' : 'fa-truck'}"></i>
+                                ${order.mode_livraison === 'mondialrelay' ? 'Mondial Relay' : 'Colissimo'}
+                            </span>
+                        </div> 
+
+                        <div class="order-info-block">
+                            <strong>Adresse de livraison</strong>
+                            <div class="address-text">
+                                ${order.adresse && (order.adresse.line1 || order.adresse.city) ? `
+                                    ${order.adresse.line1 || ''}${order.adresse.line2 ? ', ' + order.adresse.line2 : ''}<br>
+                                    ${order.adresse.postal_code || ''} ${order.adresse.city || ''}
+                                ` : 'Non renseignée'}
+                            </div>
+                            ${order.infos_relais ? `
+                                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--sable-dore); color: var(--brun-profond); font-size: 0.9rem;">
+                                    <strong style="color: var(--sable-dore); font-size: 0.65rem; text-transform: uppercase; display: block; margin-bottom: 4px;">
+                                        <i class="fa-solid fa-location-dot"></i> Point Relais Sélectionné
+                                    </strong>
+                                    ${order.infos_relais}
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <!-- Retour aux boutons empilés en bas de carte -->
+                        ${!order.archived ? `
+                        <button 
+                            class="btn ${order.statut_livraison === 'expedie' ? 'btn-wait' : 'btn-add'} admin-action-btn-status" 
+                            onclick="updateStatus(event, '${order.paymentIntentId}', '${order.statut_livraison}')"
+                        >
+                            <i class="fa-solid ${order.statut_livraison === 'expedie' ? 'fa-rotate-left' : 'fa-truck-fast'}"></i>
+                            ${order.statut_livraison === 'expedie' ? 'Remettre en attente' : 'Marquer comme Expédié'}
+                        </button>
+                        ` : ''}
+
+                        ${canArchive ? `
+                            <button class="btn btn-archive-secondary" onclick="archiveOrder(event, '${order.paymentIntentId}')">
+                                <i class="fa-solid fa-box-archive"></i> Archiver la commande
+                            </button>
+                        ` : ''}
+
+                        ${canUnarchive ? `
+                            <button class="btn btn-archive-secondary" onclick="unarchiveOrder(event, '${order.paymentIntentId}')">
+                                <i class="fa-solid fa-arrow-up-from-bracket"></i> Désarchiver la commande
+                            </button>
+                        ` : ''}
+                    </div>
+                </article>
+            `}).join('');
+
+        renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+        const container = document.getElementById('pagination-wrapper');
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (totalPages <= 1) return;
+
+        const nav = document.createElement('div');
+        nav.className = 'pagination-list';
+
+        // Bouton Précédent
+        const prevBtn = document.createElement('button');
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+        prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; updatePagination(); } };
+        nav.appendChild(prevBtn);
+
+        // Boutons numériques
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            if (i === currentPage) btn.className = 'active';
+            btn.innerText = i.toString();
+            btn.onclick = () => {
+                currentPage = i;
+                updatePagination();
+            };
+            nav.appendChild(btn);
+        }
+
+        // Bouton Suivant
+        const nextBtn = document.createElement('button');
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+        nextBtn.onclick = () => { if (currentPage < totalPages) { currentPage++; updatePagination(); } };
+        nav.appendChild(nextBtn);
+
+        container.appendChild(nav);
+    }
+
+    (window as any).setTab = (tab, btn) => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTab = tab;
+        currentPage = 1;
+        updatePagination();
+    };
+
+    (window as any).updateStatus = async (event, piId, currentStatus) => {
+        // On s'assure que la comparaison est robuste
+        const isCurrentlyShipped = currentStatus === 'expedie';
+        const newStatus = isCurrentlyShipped ? 'en_attente' : 'expedie';
+        
+        const btn = event.currentTarget as HTMLElement;
+        const originalContent = btn.innerHTML;
+        
+        try {
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>...';
+            btn.style.pointerEvents = 'none';
+
+            const res = await fetch('/api/admin-update-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paymentIntentId: piId, statut_livraison: newStatus })
+            });
+            
+            if (res.ok) {
+                await fetchOrders(); 
+            } else {
+                throw new Error();
+            }
+        } catch (err) {
+            alert("Impossible de mettre à jour le statut sur Stripe.");
+            btn.innerHTML = originalContent;
+            btn.style.pointerEvents = 'auto';
+        }
+    };
+
+    (window as any).unarchiveOrder = async (event, piId) => {
+        const btn = event.currentTarget as HTMLElement;
+        const originalContent = btn.innerHTML;
+        try {
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>...';
+            btn.style.pointerEvents = 'none';
+
+            const res = await fetch('/api/admin-update-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paymentIntentId: piId, archived: "" }) // Une chaîne vide supprime la clé metadata chez Stripe
+            });
+            
+            if (res.ok) await fetchOrders(); 
+            else throw new Error();
+        } catch (err) {
+            alert("Erreur lors de la désarchivation.");
+            btn.innerHTML = originalContent;
+            btn.style.pointerEvents = 'auto';
+        }
+    };
+
+    (window as any).archiveOrder = async (event, piId) => {
+        const btn = event.currentTarget as HTMLElement;
+        try {
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>...';
+            btn.style.pointerEvents = 'none';
+
+            const res = await fetch('/api/admin-update-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paymentIntentId: piId, archived: 'true' })
+            });
+            
+            if (res.ok) await fetchOrders(); 
+            else throw new Error();
+        } catch (err) {
+            alert("Erreur lors de l'archivage.");
+            btn.style.pointerEvents = 'auto';
+        }
+    };
+
+    fetchOrders();
+</script>
+
+</body>
+</html>

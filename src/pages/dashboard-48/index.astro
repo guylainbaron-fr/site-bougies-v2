@@ -3,6 +3,8 @@ const currentYear = new Date().getFullYear();
 export const prerender = false;
 
 import { kv } from "../../lib/kv";
+import AdminHeader from "../../components/AdminHeader.astro";
+import '../../styles/admin.css';
 
 interface LogEntry {
     device: string;
@@ -126,65 +128,36 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
     <meta name="robots" content="noindex, nofollow">
     <title>Dashboard Atelier | J.F. & Aniuta</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <meta name="theme-color" content="#fdfaf7">
     <style>
     :root { 
-        --sable-dore: #e0c297; 
-        --vanille-pure: #fcf4dd; 
-        --brun-coco: #4a3728; 
-        --fond-ecume: #fdfaf7;
-        --font-principale: "Poppins", sans-serif;
-        --color-ios: #2980b9; --color-android: #27ae60; --color-pc: #7f8c8d;
-        --color-qr: #d35400; --color-direct: #2c3e50;
+        --violet: #9b59b6;
+        --color-ios: #2980b9; 
+        --color-android: #27ae60; 
+        --color-pc: #7f8c8d;
+        --color-qr: #d35400; 
+        --color-direct: #2c3e50;
     }
 
-    /* Reset global pour forcer les bordures vers l'intérieur */
-    * { box-sizing: border-box; }
-
-    body { font-family: var(--font-principale); background-color: var(--fond-ecume); color: var(--brun-coco); margin: 0; padding: 15px; overflow-x: hidden; }
-    
-    .dashboard-container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 4px; border: 1px solid var(--sable-dore); }
-
-    a[href^="https://ipinfo.io/"]:hover {
-    color: var(--sable-dore) !important;
-    cursor: crosshair; /* Un petit viseur pour le côté "investigation" */
-    }
-
-    /* HEADER RESPONSIVE */
-    .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--sable-dore); padding-bottom: 15px; flex-wrap: wrap; gap: 15px; }
-    .header-flex h1 { margin: 0; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; color: var(--brun-coco); display: flex; align-items: center; gap: 10px; }
-    
-    .nav-right { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-    .social-mini-nav { display: flex; gap: 20px; border-right: 1px solid var(--sable-dore); padding-right: 15px; }
-    .social-mini-nav a { color: var(--brun-coco); font-size: 1.5rem; text-decoration: none; }
-
-    .btn-group { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-    .btn { padding: 8px 12px; border-radius: 4px; text-decoration: none; font-weight: 700; text-transform: uppercase; font-size: 0.6rem; cursor: pointer; border: 1px solid var(--sable-dore); display: flex; align-items: center; gap: 6px; color: var(--brun-coco); background: white; white-space: nowrap; }
-    .btn-gold { background: var(--vanille-pure); }
-
-    /* GRILLE STATS */
     .stats-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 25px; }
-    .stat-card-mini { padding: 15px 5px; border-radius: 4px; display: flex; flex-direction: column; text-align: center; justify-content: center; color: white; font-weight: bold; min-width: 0; }
-    
+    .stat-card-mini { padding: 15px 5px; border-radius: 8px; display: flex; flex-direction: column; text-align: center; color: white; font-weight: bold; }
     .card-total { background: var(--color-direct); }
     .card-qr { background: var(--color-qr); }
     .card-ios { background: var(--color-ios); }
     .card-android { background: var(--color-android); }
     .card-pc { background: var(--color-pc); }
-    .card-clock { background: var(--brun-coco); color: white; border: none; }
+    .card-clock { background: var(--coco); }
     .stat-card-mini .val { font-size: 1.4rem; font-weight: 800; }
     .stat-card-mini .label { font-size: 0.55rem; text-transform: uppercase; margin-top: 5px; opacity: 0.9; }
 
     /* BARS & LEGENDS */
     .dist-section { margin-bottom: 25px; }
-    .dist-header { display: inline-flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: 4px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; border: 1.5px solid var(--sable-dore); background: var(--vanille-pure); color: var(--brun-coco); }
+    .dist-header { display: inline-flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: 4px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; border: 1.5px solid var(--sable); background: var(--vanille); color: var(--coco); }
     .distribution-bar { display: flex; width: 100%; height: 22px; border-radius: 4px; overflow: hidden; background-color: #eee; margin-bottom: 10px; }
-    .segment { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 900; color: white; }
+    .segment { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 900; color: white; overflow: hidden; white-space: nowrap; }
     .bg-ios { background-color: var(--color-ios); }
     .bg-android { background-color: var(--color-android); }
     .bg-pc { background-color: var(--color-pc); }
@@ -196,16 +169,16 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
     .dot { width: 10px; height: 10px; border-radius: 2px; }
 
     /* ACTIONS */
-    .actions-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 15px; flex-wrap: wrap; }
+    .actions-row { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 25px; gap: 15px; flex-wrap: wrap; background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #eee; }
 
     /* JOURNAL RESPONSIVE - CORRECTION TRAIT DROIT */
-    .logs-section { background: white; border: 1px solid var(--sable-dore); padding: 15px; border-radius: 4px; width: 100%; }
+    .logs-section { background: white; border: 1px solid var(--sable); padding: 15px; border-radius: 4px; width: 100%; }
     .logs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
-    .log-entry { display: grid; grid-template-columns: 40px 1fr 80px; align-items: center; border: 1px solid var(--sable-dore); background: #fff; height: 65px; border-radius: 3px; overflow: hidden; }
+    .log-entry { display: grid; grid-template-columns: 40px 1fr 80px; align-items: center; border: 1px solid var(--sable); background: #fff; height: 65px; border-radius: 3px; overflow: hidden; }
     /* SÉCURITÉ ÉCRAN : Si le JS dit de cacher, on cache vraiment */
     .log-entry[style*="display: none"] { display: none !important; }
-    .log-cell-num { background: var(--vanille-pure); height: 100%; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--sable-dore); font-weight: 900; font-family: monospace; font-size: 0.8rem; }
-    .log-cell-right { border-left: 1px solid var(--sable-dore); height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--fond-ecume); font-size: 0.65rem; font-weight: 800; }
+    .log-cell-num { background: var(--vanille); height: 100%; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--sable); font-weight: 900; font-family: monospace; font-size: 0.8rem; }
+    .log-cell-right { border-left: 1px solid var(--sable); height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--fond); font-size: 0.65rem; font-weight: 800; }
 
     /* FILTRES : Centrés et Responsive */
     .filter-bar { 
@@ -220,14 +193,14 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
 
     .filter-btn { 
         background: white; 
-        border: 1px solid var(--sable-dore); 
+        border: 1px solid var(--sable); 
         padding: 7px 12px; 
         border-radius: 4px; 
         font-size: 0.65rem; 
         font-weight: 800; 
         text-transform: uppercase; 
         letter-spacing: 0.5px; 
-        color: var(--brun-coco); 
+        color: var(--coco); 
         cursor: pointer; 
         display: flex; 
         align-items: center; 
@@ -240,19 +213,19 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
     }
 
     .filter-btn.active { 
-        background: var(--brun-coco) !important; 
-        color: var(--vanille-pure) !important; 
-        border-color: var(--brun-coco) !important; 
+        background: var(--coco) !important; 
+        color: var(--vanille) !important; 
+        border-color: var(--coco) !important; 
     }
 
-    .badge { background: var(--vanille-pure); color: var(--brun-coco); padding: 2px 6px; border-radius: 3px; font-size: 0.6rem; font-family: monospace; font-weight: 900; }
-    .filter-btn.active .badge { background: white !important; color: var(--brun-coco) !important; }
-    .filter-btn:not(.active):hover { background: var(--fond-ecume); border-color: var(--brun-coco); }
+    .badge { background: var(--vanille); color: var(--coco); padding: 2px 6px; border-radius: 3px; font-size: 0.6rem; font-family: monospace; font-weight: 900; }
+    .filter-btn.active .badge { background: white !important; color: var(--coco) !important; }
+    .filter-btn:not(.active):hover { background: var(--fond); border-color: var(--coco); }
 
 .dashboard-footer {
     margin-top: 30px;
     padding: 20px 0;
-    border-top: 1px solid var(--sable-dore);
+    border-top: 1px solid var(--sable);
     text-align: center;
 }
 
@@ -262,7 +235,7 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
     text-transform: uppercase;
     letter-spacing: 2px;
     font-weight: 800;
-    color: var(--brun-coco);
+    color: var(--coco);
     opacity: 0.6;
 }
 
@@ -343,9 +316,7 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
         }
         
         /* Cacher l'inutile */
-        .nav-right, .actions-row, .social-mini-nav, #confirmReset, .dashboard-footer, .btn-group { 
-            display: none !important; 
-        }
+        /* Les éléments à cacher sont maintenant gérés dans admin.css */
 
         .logs-section { 
             border: none !important; 
@@ -402,25 +373,16 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
 </head>
 <body>
     <div class="dashboard-container">
-        <header class="header-flex">
-            <h1><i class="fa-solid fa-gauge-high" style="color: var(--sable-dore);"></i> Dashboard Atelier</h1>
-            <div class="nav-right">
-                <div class="social-mini-nav">
-    <a href="https://www.instagram.com/jean_francois_aniuta/" target="_blank" title="Instagram" style="color: #E1306C;"><i class="fa-brands fa-instagram"></i></a>
-    <a href="https://whatsapp.com/channel/0029VbBimwMHQbS9rBEXXu0T" target="_blank" title="Chaîne WhatsApp" style="color: #25D366;"><i class="fa-brands fa-whatsapp"></i></a>
-    <a href="https://www.tiktok.com/@jeanfrancoisbaron2" target="_blank" title="TikTok" style="color: #000000;"><i class="fa-brands fa-tiktok"></i></a>
-    <a href="https://app.brevo.com/" target="_blank" title="Gestion Newsletter (Brevo)" style="color: #008060;"><i class="fa-solid fa-paper-plane"></i></a>
-    <a href="https://www.laposte.net/accueil" target="_blank" title="Mail La Poste" style="color: #004b9a;"><i class="fa-solid fa-envelope"></i></a>
-</div>
-                <div class="btn-group">
-    <a href="/" target="_blank" class="btn btn-gold" style="background: var(--brun-coco); color: white; border: none;"><i class="fa-solid fa-eye"></i> Voir le site</a>
-    <a href="/dashboard-48/cartes" class="btn btn-gold"><i class="fa-solid fa-id-card"></i> Cartes</a>
-    <a href="/dashboard-48/marches" class="btn btn-gold"><i class="fa-solid fa-store"></i> Marchés</a>
-    <a href="#" onclick="exportLogsToCSV(); return false;" class="btn btn-gold"><i class="fa-solid fa-file-export"></i> Export CSV</a>
-    <button onclick="logout()" class="btn btn-gold" style="background: #4a3728; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</button>
-</div>
-            </div>
-        </header>
+        <AdminHeader currentPage="stats" title="Dashboard" />
+
+        <div class="actions-bar">
+            <button onclick="window.print()" class="btn btn-add">
+                <i class="fa-solid fa-file-pdf"></i> RAPPORT
+            </button>
+            <button onclick="exportLogsToCSV()" class="btn btn-add">
+                <i class="fa-solid fa-file-export"></i> EXPORT
+            </button>
+        </div>
 
         <div class="stats-row">
             <div class="stat-card-mini card-total"><span class="val">{totalVisitesHumaines}</span><span class="label">Visites</span></div>
@@ -436,11 +398,11 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
 
 <div class="dist-section">
     <div class="dist-header">Technologie</div>
-    <div class="distribution-bar" style="display: flex; width: 100%; height: 20px; background: #eee; border-radius: 4px; overflow: hidden;">
-        {iosCount > 0 && <div class="segment bg-ios" style={`width: ${iosPct}%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap;`}>{iosPct > 10 ? `${iosPct}%` : ''}</div>}
-        {androidCount > 0 && <div class="segment bg-android" style={`width: ${androidPct}%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap;`}>{androidPct > 10 ? `${androidPct}%` : ''}</div>}
-        {pcCount > 0 && <div class="segment bg-pc" style={`width: ${pcPct}%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap;`}>{pcPct > 10 ? `${pcPct}%` : ''}</div>}
-        {botCount > 0 && <div class="segment" style={`width: ${botPct}%; background-color: #9b59b6; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap;`}>{botPct > 10 ? `${botPct}%` : ''}</div>}
+    <div class="distribution-bar">
+        {iosCount > 0 && <div class="segment bg-ios" style={`width: ${iosPct}%`}>{iosPct > 10 ? `${iosPct}%` : ''}</div>}
+        {androidCount > 0 && <div class="segment bg-android" style={`width: ${androidPct}%`}>{androidPct > 10 ? `${androidPct}%` : ''}</div>}
+        {pcCount > 0 && <div class="segment bg-pc" style={`width: ${pcPct}%`}>{pcPct > 10 ? `${pcPct}%` : ''}</div>}
+        {botCount > 0 && <div class="segment" style={`width: ${botPct}%; background-color: var(--violet);`}>{botPct > 10 ? `${botPct}%` : ''}</div>}
     </div>
     <div class="bar-legend">
         <span class="legend-item"><span class="dot bg-ios"></span> Apple ({iosPct}%)</span>
@@ -452,9 +414,9 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
 
 <div class="dist-section">
     <div class="dist-header">Origine</div>
-    <div class="distribution-bar" style="display: flex; width: 100%; height: 20px; background: #eee; border-radius: 4px; overflow: hidden;">
-        {qrCount > 0 && <div class="segment bg-qr" style={`width: ${qrPct}%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap;`}>{qrPct > 10 ? `${qrPct}%` : ''}</div>}
-        {directPct > 0 && <div class="segment bg-direct" style={`width: ${directPct}%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap;`}>{directPct > 10 ? `${directPct}%` : ''}</div>}
+    <div class="distribution-bar">
+        {qrCount > 0 && <div class="segment bg-qr" style={`width: ${qrPct}%`}>{qrPct > 10 ? `${qrPct}%` : ''}</div>}
+        {directPct > 0 && <div class="segment bg-direct" style={`width: ${directPct}%`}>{directPct > 10 ? `${directPct}%` : ''}</div>}
     </div>
     <div class="bar-legend">
         <span class="legend-item"><span class="dot bg-qr"></span> Scan QR ({qrPct}%)</span>
@@ -462,37 +424,36 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
     </div>
 </div>
 
-        <div class="actions-row" style="display:flex; align-items:center; gap:12px;">
-    <button onclick="window.print()" class="btn btn-gold"><i class="fa-solid fa-file-pdf"></i> Rapport</button>
+        <div class="actions-row">
 
-    <div style="margin-left: auto; display:flex; align-items:center; gap:12px; border-right: 1px solid var(--sable-dore); padding-right: 20px;">
+    <div style="margin-right: auto; display:flex; align-items:center; gap:12px; border-right: 1px solid var(--sable); padding-right: 20px;">
         <div style="display:flex; align-items:center; gap:8px;">
-            <input type="text" id="confirmBots" placeholder="ROBOTS" style="width:70px; padding:6px; border:1px solid #9b59b6; border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold; color: #9b59b6;" />
+            <input type="text" id="confirmBots" placeholder="ROBOTS" style="width:80px; padding:8px; border:1px solid var(--violet); border-radius:4px; font-size:0.7rem; text-align:center; font-weight:bold; color: var(--violet);" />
             <form method="POST" style="margin:0;">
                 <input type="hidden" name="action" value="clean_bots" />
-                <button type="submit" id="botsBtn" disabled style="background: #9b59b6; color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">NETTOYER</button>
+                <button type="submit" id="botsBtn" disabled style="background: var(--violet); color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">NETTOYER</button>
             </form>
         </div>
         
         <div style="display: flex; flex-direction: column;">
-            <span style="font-size: 0.5rem; text-transform: uppercase; font-weight: 800; opacity: 0.5; letter-spacing: 0.5px; color: #9b59b6;">Dernier Ménage</span>
-            <span style="font-size: 0.65rem; font-weight: 700; color: #9b59b6;">{lastCleanBotsDate}</span>
+            <span style="font-size: 0.5rem; text-transform: uppercase; font-weight: 800; opacity: 0.5; letter-spacing: 0.5px; color: var(--violet);">Dernier Ménage</span>
+            <span style="font-size: 0.65rem; font-weight: 700; color: var(--violet);">{lastCleanBotsDate}</span>
         </div>
     </div>
 
     <div style="display:flex; align-items:center; gap:12px;">
         <div style="display:flex; align-items:center; gap:8px;">
-            <input type="text" id="confirmReset" placeholder="RESET" style="width:60px; padding:6px; border:1px solid var(--sable-dore); border-radius:3px; font-size:0.7rem; text-align:center; font-weight:bold;" />
+            <input type="text" id="confirmReset" placeholder="RESET" style="width:70px; padding:8px; border:1px solid var(--sable); border-radius:4px; font-size:0.7rem; text-align:center; font-weight:bold;" />
             <form method="POST" style="margin:0;">
                 <input type="hidden" name="action" value="reset" />
-                <button type="submit" id="resetBtn" disabled style="background: var(--brun-coco); color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">EFFACER</button>
+                <button type="submit" id="resetBtn" disabled style="background: var(--coco); color: white; opacity:0.5; border:none; padding:8px 12px; border-radius:4px; font-size:0.6rem; font-weight:bold; cursor:not-allowed;">EFFACER</button>
             </form>
         </div>
 
         {/* Affichage de la date du dernier reset */}
-        <div style="display: flex; flex-direction: column; border-left: 1px solid var(--sable-dore); padding-left: 12px;">
+        <div style="display: flex; flex-direction: column; border-left: 1px solid var(--sable); padding-left: 12px;">
             <span style="font-size: 0.5rem; text-transform: uppercase; font-weight: 800; opacity: 0.5; letter-spacing: 0.5px;">Dernier Reset</span>
-            <span style="font-size: 0.65rem; font-weight: 700; color: var(--brun-coco);">{lastResetDate}</span>
+            <span style="font-size: 0.65rem; font-weight: 700; color: var(--coco);">{lastResetDate}</span>
         </div>
     </div>
 </div>
@@ -559,7 +520,7 @@ if (log.isQR === true || String(log.isQR) === 'true') {
             }
 
 return (
-    <div class="log-entry" 
+    <article class="log-entry" 
      data-qr={String(log.isQR === true || String(log.isQR) === 'true')} 
      data-device={log.device || 'Robot Inconnu'} 
      data-source={log.source || 'Lien Web'}
@@ -596,7 +557,7 @@ return (
             target="_blank" 
             style={`font-size:0.7rem; font-weight:800; text-decoration: none; 
                 color: ${!['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device) ? '#9b59b6' : 'inherit'}; 
-                border-bottom: 1px dashed ${!['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device) ? '#9b59b6' : 'var(--sable-dore)'};`}
+                border-bottom: 1px dashed ${!['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device) ? '#9b59b6' : 'var(--sable)'};`}
         >
             {log.ip && log.ip !== 'Privé' ? log.ip : "Privé"}
         </a>
@@ -667,18 +628,29 @@ return (
             <span>{timeS}</span>
             <span style="font-size:0.55rem; opacity:0.7;">{dateS}</span>
         </div>
-    </div>
+    </article>
 );
         })}
     </div>
 </div>
 <footer class="dashboard-footer">
-    <p>&copy; {new Date().getFullYear()} Jean François & Aniuta — Dashboard Atelier</p>
+    <p>&copy; {currentYear} Jean François & Aniuta — Dashboard Atelier</p>
 </footer>
     </div>
 
 <script>
-    // Bloc TypeScript (Gestion du bouton Reset et Horloge)
+    // Gestion de l'horloge
+    function updateClock() {
+        const now = new Date();
+        const clockEl = document.getElementById('live-clock');
+        const dateEl = document.getElementById('live-date');
+        if (clockEl) clockEl.textContent = now.toLocaleTimeString('fr-FR');
+        if (dateEl) dateEl.textContent = now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+    setInterval(updateClock, 1000); 
+    updateClock();
+
+    // Gestion du bouton Reset
     const inputReset = document.getElementById('confirmReset') as HTMLInputElement;
     const btnReset = document.getElementById('resetBtn') as HTMLButtonElement;
     
@@ -688,22 +660,11 @@ return (
             btnReset.style.background = '#d32f2f'; btnReset.style.opacity = '1'; btnReset.style.cursor = 'pointer';
         } else {
             btnReset.disabled = true;
-            btnReset.style.background = '#4a3728'; btnReset.style.opacity = '0.5'; btnReset.style.cursor = 'not-allowed';
+            btnReset.style.background = 'var(--coco)'; btnReset.style.opacity = '0.5'; btnReset.style.cursor = 'not-allowed';
         }
     });
 
-    function updateClock() {
-        const now = new Date();
-        const clockEl = document.getElementById('live-clock');
-        const dateEl = document.getElementById('live-date');
-        if (clockEl) clockEl.textContent = now.toLocaleTimeString('fr-FR');
-        if (dateEl) dateEl.textContent = now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-    }
-    setInterval(updateClock, 1000); 
-    updateClock();
-</script>
-<script>
-    // Bloc TypeScript (Gestion du bouton Nettoyer les Bots)
+    // Gestion du bouton Nettoyer les Bots
     const inputBots = document.getElementById('confirmBots') as HTMLInputElement;
     const btnBots = document.getElementById('botsBtn') as HTMLButtonElement;
 
@@ -719,20 +680,44 @@ return (
             btnBots.style.cursor = 'not-allowed';
         }
     });
+
+    // Export CSV
+    (window as any).exportLogsToCSV = () => {
+        const entries = document.querySelectorAll('.log-entry');
+        const activeFilterBtn = document.querySelector('.filter-btn.active');
+        let filterName = "Tous";
+        if (activeFilterBtn) {
+            filterName = (activeFilterBtn as HTMLElement).innerText.replace(/[0-9]/g, '').trim();
+        }
+
+        let csvContent = "N°;SOURCE_IP;TYPE;PAYS;HEURE;DATE\r\n"; 
+        entries.forEach(el => {
+            const entry = el as HTMLElement;
+            if (entry.style.display !== 'none') {
+                const num = entry.querySelector('.log-cell-num')?.textContent?.trim() || "";
+                const sourceIP = entry.querySelector('a')?.textContent?.trim() || "Privé";
+                const sourceType = entry.querySelector('div[style*="font-size:0.6rem"]')?.textContent?.trim() || "";
+                const pays = entry.getAttribute('data-country') || "Inconnu";
+                const rightCell = entry.querySelector('.log-cell-right');
+                const timeDate = rightCell ? rightCell.textContent?.split('\n').map(t => t.trim()) : ["", ""];
+                
+                csvContent += `"${num}";"${sourceIP}";"${sourceType}";"${pays}";"${timeDate ? timeDate[0] : ""}";"${timeDate ? timeDate[1] : ""}"\r\n`;
+            }
+        });
+
+        const BOM = "\uFEFF";
+        const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        const dateFile = new Date().toLocaleDateString('fr-FR').replace(/\//g, '-');
+        link.setAttribute("href", url);
+        link.setAttribute("download", `logs_${filterName}_${dateFile}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 </script>
 <script is:inline>
-// Fonction de déconnexion
-function logout() {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", "/dashboard-48", true, "logout", "logout");
-    xmlhttp.onreadystatechange = function() {
-        if (xmlhttp.readyState == 4) {
-            window.location.href = "/";
-        }
-    };
-    xmlhttp.send();
-}
-
 // Fonction pour calculer les badges au chargement
 function updateBadges() {
     const entries = document.querySelectorAll('.log-entry');

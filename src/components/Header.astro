@@ -1,4 +1,6 @@
 ---
+//src/components/Headaer.astro
+
 import HolidayBar from './HolidayBar.astro';
 import { Image } from 'astro:assets';
 import logoEntreprise from '../assets/images/logo-entreprise.webp';
@@ -42,21 +44,49 @@ const { pageId } = Astro.props;
             <nav class="main-nav">
                 <ul class="nav-menu">
                     <li><a href="/" class="nav-link">Accueil</a></li>
+                    <li><a href="/boutique" class="nav-link nav-boutique">Boutique</a></li>
                     <li><a href="/bougies" class="nav-link">Les Bougies</a></li>
                     <li><a href="/evenements" class="nav-link">Événements</a></li>
                     <li><a href="/atelier" class="nav-link">L'Atelier</a></li>
                     <li><a href="/apropos" class="nav-link">À Propos</a></li>
-                    <li><a href="/videos" class="nav-link">Vidéos</a></li>
                     <li><a href="/avis" class="nav-link">Livre d'Or</a></li>
                     <li><a href="/contact" class="nav-link">Contact</a></li>
                 </ul>
             </nav>
-
         </div>
     </header>
 </div>
 
+<div class="header-actions">
+    <a href="/panier" class="cart-icon-wrapper" aria-label="Voir mon panier">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        <span id="cart-count">0</span>
+    </a>
+</div>
 <script>
+  function updateCartCountGlobal() {
+    const panier = JSON.parse(localStorage.getItem('panier-atelier')) || [];
+    const totalItems = panier.reduce((acc, item) => acc + item.quantite, 0);
+    const badge = document.getElementById('cart-count');
+    
+    if (badge) {
+      badge.textContent = totalItems;
+      badge.style.display = totalItems > 0 ? 'flex' : 'none';
+    }
+  }
+
+  // Se lance au chargement de n'importe quelle page
+  document.addEventListener('DOMContentLoaded', updateCartCountGlobal);
+  document.addEventListener('astro:page-load', updateCartCountGlobal);
+  document.addEventListener('astro:after-swap', updateCartCountGlobal);
+
+  // ICI : On écoute le clic "Ajouter au panier" de la boutique
+  window.addEventListener('storage', updateCartCountGlobal);
+
     const updateActiveLink = () => {
         const path = window.location.pathname;
         const navLinks = document.querySelectorAll(".nav-link");

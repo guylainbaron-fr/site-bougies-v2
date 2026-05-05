@@ -7,7 +7,10 @@ interface ImportMetaEnv {
   readonly DASHBOARD_USER: string;
   readonly DASHBOARD_PASS: string;
   readonly GHOST_MODE_IP: string;
-  // Ajoute ici tes futures variables Stripe si tu veux l'autocomplétion
+  readonly ADMIN_TOKEN: string;
+  readonly SITE: string;
+  readonly STRIPE_SECRET_KEY: string;
+  readonly STRIPE_PUBLISHABLE_KEY: string;
 }
 
 interface ImportMeta {
