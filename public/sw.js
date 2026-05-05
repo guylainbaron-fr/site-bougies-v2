@@ -37,8 +37,11 @@ self.addEventListener('fetch', (event) => {
       .then((response) => {
         return response;
       })
-      .catch(() => {
-        return caches.match(event.request);
+      .catch(async () => {
+        const cachedResponse = await caches.match(event.request);
+        if (cachedResponse) return cachedResponse;
+        // Si rien n'est trouvé, on laisse l'erreur se propager normalement
+        // au lieu de retourner undefined, ce qui évite le TypeError.
       })
   );
 });
