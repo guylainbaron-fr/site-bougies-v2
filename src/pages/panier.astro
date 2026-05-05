@@ -32,6 +32,24 @@ const pageId = "panier";
         padding: 0 20px !important; /* Ajoute du padding pour le texte */
     }
 
+    /* Correction responsive pour le bouton rechercher dans la modal */
+    @media (max-width: 576px) {
+        :global(.modal-search-group) {
+            flex-direction: column !important;
+            gap: 12px !important;
+            align-items: stretch !important;
+        }
+        :global(.modal-search-group input) {
+            width: 100% !important;
+            box-sizing: border-box;
+        }
+        :global(.modal-search-group .btn) {
+            width: 100% !important;
+            margin: 0 !important;
+            justify-content: center;
+        }
+    }
+
     .selected-relay-box {
         margin-top: 10px;
         padding: 12px;
