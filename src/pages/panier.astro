@@ -147,13 +147,13 @@ const pageId = "panier";
         <div class="shipping-selector" style="margin-bottom: 20px; padding: 15px; background: var(--fond-sable); border-radius: 8px; border: 1px solid var(--sable-dore);">
     <strong style="display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 12px; color: var(--brun-coco);">Mode de livraison</strong>
     
-    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.9rem; margin-bottom: 8px;">
-        <input type="radio" name="shipping-method" value="colissimo" checked onchange="handleShippingChange('colissimo')">
+    <label for="shipping-colissimo" style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.9rem; margin-bottom: 8px;">
+        <input type="radio" id="shipping-colissimo" name="shipping-method" value="colissimo" checked onchange="handleShippingChange('colissimo')">
         <span>Colissimo (Domicile)</span>
     </label>
     
-    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.9rem;">
-        <input type="radio" name="shipping-method" value="mondialrelay" onchange="handleShippingChange('mondialrelay')">
+    <label for="shipping-mondialrelay" style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.9rem;">
+        <input type="radio" id="shipping-mondialrelay" name="shipping-method" value="mondialrelay" onchange="handleShippingChange('mondialrelay')">
         <span>Mondial Relay</span>
     </label>
 
@@ -237,7 +237,7 @@ const pageId = "panier";
     <label for="modal-zip-input" class="sr-only" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">
         Code Postal
     </label>
-    <input type="text" id="modal-zip-input" placeholder="Code Postal (ex: 48800)"
+    <input type="text" id="modal-zip-input" aria-label="Code Postal" placeholder="Code Postal (ex: 48800)"
            inputmode="numeric" 
            pattern="[0-9]*" 
            maxlength="5"
