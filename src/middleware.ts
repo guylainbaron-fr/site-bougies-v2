@@ -23,7 +23,7 @@ function withSecurityHeaders(response: Response): Response {
   // HSTS (Force HTTPS pendant 1 an)
   headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   // CSP renforcée : Ajout de cdnjs.cloudflare.com pour FontAwesome et sécurisation accrue
-  headers.set('Content-Security-Policy', "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://ajax.googleapis.com https://widget.mondialrelay.com https://maps.googleapis.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https: https://*.google.com https://*.googleapis.com; frame-src 'self' https://www.google.com https://js.stripe.com; connect-src 'self' https:; upgrade-insecure-requests;");
+  headers.set('Content-Security-Policy', "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://ajax.googleapis.com https://widget.mondialrelay.com https://maps.googleapis.com https://upload-widget.cloudinary.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https: https://*.google.com https://*.googleapis.com; frame-src 'self' https://www.google.com https://upload-widget.cloudinary.com https://js.stripe.com; connect-src 'self' https:; upgrade-insecure-requests;");
   
   // Indique aux caches que la réponse dépend de l'authentification
   headers.set('Vary', 'Authorization');
@@ -58,8 +58,8 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
     }
 
     try {
-      // 0. Whitelist pour le mode fantôme (Bureau)
-      if (GHOST_IP && userIP === GHOST_IP) {
+      // 0. Whitelist pour le mode fantôme (Uniquement en mode développement local)
+      if (import.meta.env.DEV && GHOST_IP && userIP === GHOST_IP) {
         return withSecurityHeaders(await next());
       }
 

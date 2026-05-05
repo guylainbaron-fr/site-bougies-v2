@@ -385,8 +385,8 @@ const activePage = Astro.url.searchParams.get('page') || '1';
     const modal = document.getElementById('modal') as HTMLElement;
 
     // --- CONFIGURATION CLOUDINARY ---
-    const CLOUD_NAME = "dksok1rxg"; 
-    const UPLOAD_PRESET = "boutique_preset";
+    const CLOUD_NAME = import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME || "dksok1rxg"; 
+    const UPLOAD_PRESET = import.meta.env.PUBLIC_CLOUDINARY_UPLOAD_PRESET || "boutique_preset";
 
     (window as any).openUploadWidget = (inputId: string) => {
         if (!(window as any).cloudinary) {
