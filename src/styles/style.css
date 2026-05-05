@@ -4156,7 +4156,7 @@ h2::after {
     border-top: 1px solid var(--sable-dore);
 }
 
-.recap-total label { font-weight: 700; text-transform: uppercase; }
+.recap-total .total-label { font-weight: 700; text-transform: uppercase; }
 .recap-total span { font-size: 2rem; font-weight: 800; color: var(--brun-profond); }
 
 /* Bouton Final */
