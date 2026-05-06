@@ -277,6 +277,19 @@ const pageId = "panier";
         }, 2500);
     }
 
+    function getCartItems() {
+        const raw = localStorage.getItem('panier-atelier');
+        if (!raw) return [];
+        try {
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : (parsed.items || []);
+        } catch (e) { return []; }
+    }
+
+    function saveCartItems(items) {
+        localStorage.setItem('panier-atelier', JSON.stringify({ items, date: Date.now() }));
+    }
+
     // État global du mode de livraison
     let currentShippingMethod = 'colissimo';
     let selectedRelay = null;
@@ -449,7 +462,7 @@ window.closeMRModal = () => {
             if (!response.ok) return;
             
             const produitsBD = await response.json();
-            let cart = JSON.parse(localStorage.getItem('panier-atelier')) || [];
+            let cart = getCartItems();
             const avantModif = JSON.stringify(cart);
 
             // Filtrage : on ne garde que ce qui est en stock réel
@@ -472,7 +485,7 @@ window.closeMRModal = () => {
 
             // Sauvegarde seulement si le panier a été modifié
             if (JSON.stringify(panierFiltre) !== avantModif) {
-                localStorage.setItem('panier-atelier', JSON.stringify(panierFiltre));
+                saveCartItems(panierFiltre);
                 
                 // Rafraîchissement du design
                 renderPanier(); 
@@ -490,7 +503,7 @@ window.closeMRModal = () => {
      * --- RENDU DU PANIER ---
      */
     function renderPanier() {
-        const cart = JSON.parse(localStorage.getItem('panier-atelier')) || [];
+        const cart = getCartItems();
         const emptyDiv = document.getElementById('cart-empty');
         const contentDiv = document.getElementById('cart-content');
         const listDiv = document.getElementById('cart-items-list');
@@ -596,7 +609,7 @@ window.closeMRModal = () => {
      * --- ACTIONS ---
      */
     window.updateQty = (idx, delta) => {
-        let cart = JSON.parse(localStorage.getItem('panier-atelier'));
+        let cart = getCartItems();
         const item = cart[idx];
         const unitW = parseWeight(item.poids);
         const currentPoids = cart.reduce((acc, it) => acc + (parseWeight(it.poids) * it.quantite), 0);
@@ -615,15 +628,15 @@ window.closeMRModal = () => {
         item.quantite += delta;
         if (item.quantite < 1) return deleteItem(idx);
 
-        localStorage.setItem('panier-atelier', JSON.stringify(cart));
+        saveCartItems(cart);
         renderPanier();
         window.dispatchEvent(new Event('storage'));
     };
 
     window.deleteItem = (idx) => {
-        let cart = JSON.parse(localStorage.getItem('panier-atelier'));
+        let cart = getCartItems();
         cart.splice(idx, 1);
-        localStorage.setItem('panier-atelier', JSON.stringify(cart));
+        saveCartItems(cart);
         renderPanier();
         window.dispatchEvent(new Event('storage'));
         showToast("Article retiré", "delete");
@@ -633,7 +646,7 @@ window.closeMRModal = () => {
         const payBtn = document.getElementById('checkout-btn');
         if (!payBtn) return;
         payBtn.onclick = async () => {
-            const cart = JSON.parse(localStorage.getItem('panier-atelier')) || [];
+            const cart = getCartItems();
             if (!cart.length) return;
 
             // À l'intérieur de payBtn.onclick, avant le fetch :
@@ -675,6 +688,22 @@ window.closeMRModal = () => {
     }
 
     async function initPage() {
+        // 1. GESTION DE L'EXPIRATION (48h)
+        const rawData = localStorage.getItem('panier-atelier');
+        if (rawData) {
+            const parsed = JSON.parse(rawData);
+            const now = Date.now();
+            const EXPIRATION_DELAY = 48 * 60 * 60 * 1000; 
+
+            if (Array.isArray(parsed)) {
+                // Migration automatique vers le nouveau format avec date
+                saveCartItems(parsed);
+            } else if (now - parsed.date > EXPIRATION_DELAY) {
+                localStorage.removeItem('panier-atelier');
+                showToast("Votre panier a été réinitialisé après une période d'inactivité.", "delete");
+            }
+        }
+
         await syncStocks(); // On vérifie les stocks réels AVANT d'afficher
         renderPanier();
         initCheckout();

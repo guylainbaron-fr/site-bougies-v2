@@ -69,8 +69,18 @@ const { pageId } = Astro.props;
 </div>
 <script>
   function updateCartCountGlobal() {
-    const panier = JSON.parse(localStorage.getItem('panier-atelier')) || [];
-    const totalItems = panier.reduce((acc, item) => acc + item.quantite, 0);
+    const raw = localStorage.getItem('panier-atelier');
+    let items = [];
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        // Support de l'ancien format (array) et du nouveau (objet avec clé items)
+        items = Array.isArray(parsed) ? parsed : (parsed.items || []);
+      } catch (e) {
+        items = [];
+      }
+    }
+    const totalItems = items.reduce((acc, item) => acc + (Number(item.quantite) || 0), 0);
     const badge = document.getElementById('cart-count');
     
     if (badge) {
