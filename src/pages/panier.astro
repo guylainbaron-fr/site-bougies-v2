@@ -426,12 +426,10 @@ window.closeMRModal = () => {
                 if (infoText) infoText.innerHTML = `<strong>${point.nom}</strong><br>${point.adresse}`;
                 relayDisplay?.classList.remove('hidden');
                 
-                // 2. Fermeture automatique après 2 secondes pour laisser le temps de voir la coche
-                showToast("Point sélectionné");
-                
+                // 2. Fermeture automatique après un court délai pour laisser le temps de voir la coche
                 setTimeout(() => {
                     closeMRModal();
-                }, 2000);
+                }, 800);
             };
             resultsDiv.appendChild(card);
         });

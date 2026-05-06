@@ -3856,11 +3856,15 @@ h2::after {
 }
 
 .filter-btn {
+    display: inline-flex;
+    text-decoration: none;
     background: transparent;
     border: 1px solid var(--sable-dore);
     padding: 8px 20px;
     border-radius: 25px;
     cursor: pointer;
+    color: var(--texte-galet);
+    font-weight: 600;
     font-family: var(--font-principale);
     transition: all 0.3s ease;
 }

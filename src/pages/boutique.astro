@@ -25,9 +25,14 @@ const produits = (Array.isArray(data) ? data : [])
 
 // Récupération de la catégorie active depuis l'URL (pour le rendu serveur)
 const activeCat = Astro.url.searchParams.get('cat') || "Bougies";
+
+// URL Canonique : L'adresse officielle des Bougies est /boutique
+const canonicalPath = (activeCat === 'Bougies') 
+    ? '/boutique'
+    : `/boutique?cat=${activeCat}`;
 ---
 
-<MainLayout title="Boutique Artisanale - Jean-François & Aniuta" pageId={pageId}>
+<MainLayout title="Boutique Artisanale - Jean-François & Aniuta" pageId={pageId} canonical={canonicalPath}>
     <style>
         /* Style spécifique pour les miniatures d'images */
         .thumbnails-gallery {
@@ -78,12 +83,13 @@ const activeCat = Astro.url.searchParams.get('cat') || "Bougies";
 
 <div class="filter-bar">
     {categories.map(cat => (
-        <button 
-            class={`filter-btn ${cat === activeCat ? "active" : ""}`} 
+        <a 
+            href={cat === "Bougies" ? "/boutique" : `/boutique?cat=${cat}&page=1`}
+            class={`filter-btn ${cat === activeCat ? "active" : ""}`}
             data-category={cat}
         >
             {cat}
-        </button>
+        </a>
     ))}
 </div>
             
@@ -223,9 +229,14 @@ const activeCat = Astro.url.searchParams.get('cat') || "Bougies";
 
       // Persistance de l'état dans l'URL (sans recharger la page)
       const url = new URL(window.location.href);
-      url.searchParams.set('cat', currentFilter);
-      url.searchParams.set('page', currentPage.toString());
-      window.history.replaceState({}, '', url.pathname + url.search);
+      if (currentFilter === "Bougies") {
+          url.searchParams.delete('cat');
+          url.searchParams.delete('page');
+      } else {
+          url.searchParams.set('cat', currentFilter);
+          url.searchParams.set('page', currentPage.toString());
+      }
+      window.history.replaceState({}, '', url.origin + url.pathname + (url.search ? url.search : ''));
     }
 
     function renderPagination(totalPages) {

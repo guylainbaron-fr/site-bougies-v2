@@ -14,9 +14,10 @@ const {
     title = defaultTitle, 
     description = defaultDesc, 
     pageId = "default",
+    canonical,
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, "https://jf-aniuta.vercel.app");
+const canonicalURL = new URL(canonical || Astro.url.pathname, "https://jf-aniuta.vercel.app");
 const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel.app");
 ---
 
