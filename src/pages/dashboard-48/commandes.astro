@@ -11,8 +11,8 @@ const currentYear = new Date().getFullYear();
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Commandes Client | Admin</title>
     <style>
-        /* FILTRES PAR STATUT (Onglets) */
-        .filter-bar { display: flex; gap: 10px; margin-bottom: 25px; padding: 10px; background: #fafafa; border-radius: 8px; border: 1px solid #eee; }
+                /* FILTRES PAR STATUT (Onglets) */
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 25px; padding: 10px; background: #fafafa; border-radius: 8px; border: 1px solid #eee; flex-wrap: wrap; }
         .filter-btn { padding: 8px 16px; border: 1px solid var(--sable-dore); border-radius: 20px; background: white; cursor: pointer; font-size: 0.75rem; font-weight: 800; color: var(--brun-coco); text-transform: uppercase; transition: 0.2s; letter-spacing: 1px; }
         .filter-btn.active { background: var(--brun-coco); color: white; border-color: var(--brun-coco); }
         /* On pousse l'onglet Archive à droite de la barre */
@@ -39,174 +39,6 @@ const currentYear = new Date().getFullYear();
             border-top: 1px dashed var(--sable-dore);
             display: flex;
             justify-content: center;
-        }
-        
-        :global(.pagination-list) {
-            display: flex !important;
-            gap: 12px !important;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            align-items: center;
-        }
-        
-        :global(.pagination-list button) {
-            width: 40px;
-            height: 40px;
-            border: 1.5px solid var(--sable-dore);
-            background: white;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 700;
-            color: var(--brun-coco);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        :global(.pagination-list button.active) {
-            background: var(--brun-profond) !important;
-            color: white !important;
-            border-color: var(--brun-profond) !important;
-        }
-        
-        :global(.pagination-list button:hover:not(.active):not(:disabled)) {
-            background: var(--fond-sable);
-            border-color: var(--brun-coco);
-            color: var(--brun-coco);
-        }
-        
-        :global(.pagination-list button:disabled) {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        /* BLOC ARTICLES - Style Atelier */
-        :global(.order-items-summary) {
-            background: #fff !important;
-            border: 1px dashed var(--sable-dore) !important; /* Bordure plus fine */
-            padding: 10px 12px !important; /* Plus compact */
-            margin: 8px 0 25px 0 !important; /* Ajout d'un espace de sécurité en bas (25px) */
-            border-radius: 8px !important; /* Arrondis plus discrets */
-        }
-
-        :global(.order-items-summary strong) {
-            display: block !important;
-            color: var(--brun-profond) !important;
-            font-size: 0.85rem !important; /* Agrandi pour lisibilité */
-            text-transform: uppercase !important;
-            letter-spacing: 1px !important;
-            margin-bottom: 4px !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 8px !important;
-        }
-        :global(.order-items-summary strong i) {
-            font-size: 1rem; /* Taille identique mail/tel */
-            color: var(--sable-dore);
-        }
-
-        :global(.order-items-list) {
-            font-family: "Georgia", serif !important;
-            font-style: italic !important;
-            font-size: 0.95rem !important; /* Augmenté pour mieux équilibrer la ligne */
-            color: var(--brun-coco) !important;
-            font-weight: 700 !important;
-            line-height: 1.2 !important; /* Ajusté pour la nouvelle taille */
-        }
-
-        /* Style spécifique pour la ligne d'article et la quantité */
-        :global(.prep-item) {
-            margin-bottom: 6px !important;
-            display: block !important;
-        }
-
-        :global(.prep-qty) {
-            color: var(--brun-profond) !important;
-            font-size: 1.05rem !important; /* Légèrement réduit pour s'aligner sur le texte */
-            font-weight: 800 !important; /* Baissé d'un cran pour être moins "pâté" */
-            margin-right: 6px !important;
-            font-family: var(--font-principale) !important;
-        }
-
-        /* On élargit un peu les cartes pour que les noms longs rentrent sur une ligne */
-        :global(.orders-grid) {
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important; 
-        }
-        
-        /* Amélioration visuelle Date et Nom */
-        :global(.order-date) {
-            font-size: 0.9rem !important;
-            color: var(--brun-coco) !important; /* Plus sombre que le sable doré pour la lecture */
-        }
-        
-        :global(.client-name) {
-            font-size: 1.4rem !important;
-            font-weight: 700 !important;
-            color: var(--brun-profond) !important;
-            margin-bottom: 8px !important;
-        }
-
-        :global(.date-ref-container) {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 2px !important;
-        }
-
-        :global(.order-ref) {
-            font-size: 0.65rem !important;
-            color: var(--bois-flotte) !important;
-            font-weight: 800 !important;
-            letter-spacing: 0.5px !important;
-        }
-
-        :global(.order-info-block strong) {
-            font-size: 0.75rem !important;
-            color: var(--brun-coco) !important;
-        }
-
-        /* Nouveaux styles pour les boutons repositionnés */
-        :global(.btn-invoice-inline) {
-            margin-top: 12px !important;
-            background: white !important;
-            color: var(--brun-coco) !important;
-            border: 1px solid var(--sable-dore) !important;
-            font-size: 0.7rem !important;
-            padding: 6px 12px !important;
-            width: auto !important;
-        }
-        
-        /* Bouton archive secondaire en bas de carte */
-        :global(.btn-archive-secondary) {
-            margin-top: 10px !important;
-            width: 100% !important;
-            background: transparent !important;
-            border: 1px dashed var(--sable-dore) !important;
-            color: var(--bois-flotte) !important;
-            font-size: 0.65rem !important;
-            padding: 8px 12px !important;
-            justify-content: center !important;
-        }
-
-        /* Amélioration lisibilité contact et adresse */
-        :global(.client-contact) {
-            font-size: 0.95rem !important;
-            color: var(--brun-coco) !important;
-            line-height: 1.6 !important;
-            border-bottom: 1.5px dashed var(--sable-dore) !important;
-        }
-        :global(.client-contact i) {
-            color: var(--sable-dore);
-            width: 20px;
-            margin-right: 5px;
-        }
-        :global(.address-text) {
-            font-size: 1.05rem !important;
-            line-height: 1.5 !important;
-            font-weight: 600 !important;
-            font-family: var(--font-secondaire) !important; /* Style plus "courrier" */
-            color: var(--brun-coco) !important;
         }
     </style>
 </head>
@@ -246,7 +78,7 @@ const currentYear = new Date().getFullYear();
         </div>
     </div>
 
-    <div id="pagination-wrapper"></div>
+    <div id="pagination-wrapper" class="pagination-wrapper"></div>
 
     <footer class="dashboard-footer">
         <p>&copy; {currentYear} Jean François & Aniuta — Dashboard Atelier</p>
@@ -325,6 +157,17 @@ const currentYear = new Date().getFullYear();
                         <span class="order-total">${order.total.toFixed(2)} €</span>
                     </div>
                     <div class="card-body">
+                        <div class="badges-row">
+                            <span class="badge badge-paid">Payé</span>
+                            <span class="badge ${order.statut_livraison === 'expedie' ? 'badge-shipped' : 'badge-wait'}">
+                                ${order.statut_livraison === 'expedie' ? 'Expédié' : 'En attente'}
+                            </span>
+                            <span class="badge ${order.mode_livraison === 'mondialrelay' ? 'badge-mondialrelay' : 'badge-colissimo'}">
+                                <i class="fa-solid ${order.mode_livraison === 'mondialrelay' ? 'fa-shop' : 'fa-truck'}"></i>
+                                ${order.mode_livraison === 'mondialrelay' ? 'Mondial Relay' : 'Colissimo'}
+                            </span>
+                        </div> 
+
                         <h3 class="client-name">${order.client}</h3>
                         <div class="client-contact">
                             <div><i class="fa-solid fa-envelope"></i> <strong>${order.email}</strong></div>
@@ -345,17 +188,6 @@ const currentYear = new Date().getFullYear();
                                 <i class="fa-solid fa-file-invoice"></i> Facture
                             </button>
                         </div>
-
-                        <div class="badges-row">
-                            <span class="badge badge-paid">Payé</span>
-                            <span class="badge ${order.statut_livraison === 'expedie' ? 'badge-shipped' : 'badge-wait'}">
-                                ${order.statut_livraison === 'expedie' ? 'Expédié' : 'En attente'}
-                            </span>
-                            <span class="badge ${order.mode_livraison === 'mondialrelay' ? 'badge-mondialrelay' : 'badge-colissimo'}">
-                                <i class="fa-solid ${order.mode_livraison === 'mondialrelay' ? 'fa-shop' : 'fa-truck'}"></i>
-                                ${order.mode_livraison === 'mondialrelay' ? 'Mondial Relay' : 'Colissimo'}
-                            </span>
-                        </div> 
 
                         <div class="order-info-block">
                             <strong>Adresse de livraison</strong>
@@ -378,7 +210,7 @@ const currentYear = new Date().getFullYear();
                         <!-- Retour aux boutons empilés en bas de carte -->
                         ${!order.archived ? `
                         <button 
-                            class="btn ${order.statut_livraison === 'expedie' ? 'btn-wait' : 'btn-add'} admin-action-btn-status" 
+                            class="btn ${order.statut_livraison === 'expedie' ? 'btn-wait' : 'btn-add'} admin-action-btn-status ${!order.archived && !canArchive && !canUnarchive ? 'first-action-btn' : ''}" 
                             onclick="updateStatus(event, '${order.paymentIntentId}', '${order.statut_livraison}')"
                         >
                             <i class="fa-solid ${order.statut_livraison === 'expedie' ? 'fa-rotate-left' : 'fa-truck-fast'}"></i>
@@ -393,7 +225,7 @@ const currentYear = new Date().getFullYear();
                         ` : ''}
 
                         ${canUnarchive ? `
-                            <button class="btn btn-archive-secondary" onclick="unarchiveOrder(event, '${order.paymentIntentId}')">
+                            <button class="btn btn-archive-secondary ${!order.archived && !canArchive ? 'first-action-btn' : ''}" onclick="unarchiveOrder(event, '${order.paymentIntentId}')">
                                 <i class="fa-solid fa-arrow-up-from-bracket"></i> Désarchiver la commande
                             </button>
                         ` : ''}

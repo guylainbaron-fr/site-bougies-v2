@@ -24,7 +24,13 @@ const activePage = Astro.url.searchParams.get('page') || '1';
     <title>Gestion Boutique | Admin</title>
     <style>
         /* TABLEAU */
-        table { width: 100%; border-collapse: collapse; }
+        .table-wrapper { 
+            width: 100%; 
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch; 
+            margin-bottom: 20px;
+        }
+        table { width: 100%; min-width: 750px; border-collapse: collapse; }
         th { text-align: left; background: #fcfcfc; padding: 15px; font-size: 0.75rem; text-transform: uppercase; color: var(--sable-dore); letter-spacing: 1px; border-bottom: 1px solid #eee; }
         td { padding: 15px; border-bottom: 1px solid #f5f5f5; vertical-align: middle; }
         .mini-cadre { width: 50px; height: 50px; background: #fafafa; border: 1px solid #eee; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
@@ -37,7 +43,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
         .btn-ordre:hover { background: var(--sable-dore); color: white; border-color: var(--sable-dore); }
 
         /* FILTRES */
-        .filter-bar { display: flex; gap: 10px; margin-bottom: 25px; padding: 10px; background: #fafafa; border-radius: 8px; border: 1px solid #eee; }
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 25px; padding: 10px; background: #fafafa; border-radius: 8px; border: 1px solid #eee; flex-wrap: wrap; }
         .filter-btn { padding: 8px 16px; border: 1px solid var(--sable-dore); border-radius: 20px; background: white; cursor: pointer; font-size: 0.75rem; font-weight: 800; color: var(--brun-coco); text-transform: uppercase; transition: 0.2s; letter-spacing: 1px; }
         .filter-btn.active { background: var(--brun-coco); color: white; border-color: var(--brun-coco); }
 
@@ -215,6 +221,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
         ))}
     </div>
 
+    <div class="table-wrapper">
     <table>
         <thead>
             <tr>
@@ -278,6 +285,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
             ))}
         </tbody>
     </table>
+    </div>
 
     <div id="pagination-wrapper"></div>
 

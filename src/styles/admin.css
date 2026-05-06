@@ -35,7 +35,7 @@ body {
 }
 
 .dashboard-container {
-    width: 1200px; /* On force la largeur sur grand écran pour la stabilité */
+    /* width: 1200px; */ /* Supprimé pour une meilleure flexibilité sur mobile */
     max-width: 95vw; /* Sécurité pour les écrans plus petits */
     margin: 0 auto;
     background: white;
@@ -126,6 +126,7 @@ body {
     gap: 10px;
     min-height: 52px; /* Réserve la hauteur pour éviter le saut au chargement */
     align-items: center;
+    flex-wrap: wrap;
 }
 
 @media (max-width: 900px) {
@@ -133,6 +134,10 @@ body {
     .admin-nav { justify-content: center; }
     .social-mini-nav { border-right: none; padding-right: 0; }
     .header-bottom { justify-content: center; text-align: center; }
+    .dashboard-container { padding: 15px; max-width: 100%; width: 100%; border-radius: 0; }
+    body { padding: 10px 5px; }
+    .actions-row { flex-direction: column; }
+    .filter-btn.archive-tab { margin-left: 0; }
 }
 
 /* Buttons (Reused from component) */
@@ -307,28 +312,35 @@ body {
     opacity: 0.6; 
 }
 
-/* Orders Grid (commandes.astro) */
+/* ==========================================================================
+   ORDERS GRID & CARDS - FINAL UNIFIED STRUCTURE
+   ========================================================================== */
+
+/* 1. Grille : Alignement strict des cartes sur une ligne */
 .orders-grid { 
     display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
-    gap: 25px; 
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: 20px; 
+    align-items: stretch; 
 }
-@media (max-width: 600px) { .orders-grid { grid-template-columns: 1fr; } }
 
-/* Order Card (commandes.astro) - Unified with form-section style */
+/* 2. Carte : Structure Flex complète */
 .order-card { 
-    background: #fff; 
-    border-radius: 8px; 
-    border: 1px solid var(--sable-dore); 
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
-    display: flex; 
-    flex-direction: column; 
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid var(--sable-dore);
     transition: all 0.3s ease;
 }
+
 .order-card:hover { 
     box-shadow: 0 10px 20px rgba(0,0,0,0.08); 
+    transform: translateY(-2px);
 }
 
+/* 3. En-tête de carte */
 .card-top { 
     background: var(--fond-ecume); 
     padding: 15px 20px; 
@@ -337,107 +349,267 @@ body {
     justify-content: space-between; 
     align-items: center; 
 }
+
+.date-ref-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
 .order-date { 
-    font-size: 0.75rem; 
+    font-size: 0.9rem; 
     font-weight: 800; 
-    color: var(--sable-dore); 
+    color: var(--brun-coco); 
     text-transform: uppercase; 
 }
+
+.order-ref {
+    font-size: 0.65rem;
+    color: var(--bois-flotte);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
 .order-total { 
     font-weight: 900; 
     color: var(--brun-coco); 
     font-size: 1.1rem; 
 }
 
+/* --- Card Body : Structure Flex pour l'alignement --- */
 .card-body { 
-    padding: 20px; 
-    flex-grow: 1; 
-    /* NEW: Make card-body a flex container to push elements to bottom */
+    padding: 15px 20px; /* Respecte ta marge de 15px pour les badges en haut */
     display: flex;
     flex-direction: column;
-}
-.client-name { 
-    font-size: 1.2rem; 
-    margin: 0 0 5px 0; 
-    color: var(--brun-coco); 
-    text-transform: capitalize; 
-}
-.client-contact { 
-    font-size: 0.85rem; 
-    color: var(--bois-flotte); 
-    margin-bottom: 15px; 
-    border-bottom: 1px dashed var(--sable-dore); 
-    padding-bottom: 10px; 
+    flex-grow: 1; /* Remplit l'espace pour que le bouton puisse aller au fond */
 }
 
+.client-name { 
+    font-size: 1.4rem; 
+    font-weight: 700;
+    margin: 0 0 8px 0; 
+    color: var(--brun-profond); 
+    text-transform: capitalize; 
+    overflow-wrap: break-word; 
+}
+
+.client-contact { 
+    font-size: 0.95rem; 
+    color: var(--brun-coco); 
+    margin-bottom: 15px; 
+    border-bottom: 1.5px dashed var(--sable-dore); 
+    padding-bottom: 10px;
+    line-height: 1.6;
+    overflow-wrap: break-word; 
+}
+
+.client-contact i {
+    color: var(--sable-dore);
+    width: 20px;
+    margin-right: 5px;
+}
+
+/* --- Bloc Articles - Style Atelier --- */
+.order-items-summary {
+    background: #fff;
+    border: 1px dashed var(--sable-dore);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.order-items-summary strong {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--brun-profond);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.order-items-summary strong i {
+    font-size: 1rem;
+    color: var(--sable-dore);
+}
+
+.order-items-list {
+    font-family: "Georgia", serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--brun-coco);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.prep-item {
+    margin-bottom: 6px;
+    display: block;
+}
+
+.prep-qty {
+    color: var(--brun-profond);
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin-right: 6px;
+    font-family: var(--font-principale);
+}
+
+.btn-invoice-inline {
+    margin-top: 12px;
+    background: white;
+    color: var(--brun-coco);
+    border: 1px solid var(--sable-dore);
+    font-size: 0.7rem;
+    padding: 6px 12px;
+    width: auto;
+}
+
+/* 5. Bloc Adresse : Zéro hauteur fixe pour éviter les trous blancs */
 .order-info-block { 
     background: var(--fond-ecume); 
-    padding: 12px; 
+    padding: 10px; 
     border-radius: 4px; 
     font-size: 0.85rem; 
-    margin-bottom: 15px; 
     border: 1px solid var(--sable-dore); 
+    overflow-wrap: break-word;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-top: auto; /* Pousse l'adresse et les boutons vers le bas */
+    margin-bottom: 15px;
 }
+
 .order-info-block strong { 
-    display: block; 
-    font-size: 0.65rem; 
+    font-size: 0.75rem; 
     text-transform: uppercase; 
-    color: var(--sable-dore); 
+    color: var(--brun-coco); 
     margin-bottom: 5px; 
     letter-spacing: 1px; 
 }
 
-/* Badges */
-.badges-row { 
-    display: flex; gap: 8px; margin-bottom: 15px; 
-    margin-top: auto; /* This pushes the badges and subsequent elements to the bottom */
+.address-text {
+    font-size: 1.05rem;
+    line-height: 1.5;
+    font-weight: 600;
+    font-family: var(--font-secondaire);
+    color: var(--brun-coco);
 }
+
+/* --- Badges : Désormais en haut, sous l'en-tête --- */
+.badges-row { 
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap; 
+    gap: 6px; 
+    margin-top: 0;        /* Collé au haut du card-body */
+    margin-bottom: 15px;  /* Espace constant avant le nom du client */
+    overflow-x: auto; 
+    scrollbar-width: none; 
+}
+.badges-row::-webkit-scrollbar { display: none; }
+
 .badge { 
-    padding: 4px 10px; 
+    padding: 4px 8px; 
     border-radius: 20px; 
-    font-size: 0.65rem; 
+    font-size: 0.6rem; 
     font-weight: 800; 
     text-transform: uppercase; 
+    white-space: nowrap;
+    flex-shrink: 0;
 }
+
+/* Couleurs Badges */
 .badge-paid { background: #e8f5e9; color: var(--vert); border: 1px solid #c8e6c9; } 
 .badge-wait { background: #fff3e0; color: #ef6c00; border: 1px solid #ffe0b2; }
 .badge-shipped { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
 .badge-colissimo { background: #e1f5fe; color: #0277bd; border: 1px solid #b3e5fc; }
 .badge-mondialrelay { background: #f3e5f5; color: #7b1fa2; border: 1px solid #e1bee7; }
 
-/* --- Spécificités Commandes (Cartes) --- */
+/* 7. Bouton d'action final - Alignement automatique en bas */
 .admin-action-btn-status {
     width: 100%;
     justify-content: center;
-    padding: 10px;
+    padding: 12px;
+    margin-top: 0; /* On retire le margin-top auto ici pour éviter le conflit */
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
-.btn-wait {
-    background: var(--sable-dore);
-    color: var(--brun-coco);
-    text-transform: uppercase;
+.btn-wait { 
+    background: var(--brun-coco); 
+    color: white; 
+    text-transform: uppercase; 
 }
 
-.btn-wait:hover {
-    background: var(--vanille-pure);
+.btn-wait:hover { 
+    background: var(--brun-profond); 
     transform: translateY(-2px);
 }
 
+.btn-archive-secondary {
+    margin-top: 10px;
+    width: 100%;
+    background: transparent;
+    border: 1px dashed var(--sable-dore);
+    color: var(--bois-flotte);
+    font-size: 0.65rem;
+    padding: 8px 12px;
+    justify-content: center;
+}
+
+/* --- Pagination Standardisée --- */
+.pagination-list {
+    display: flex;
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+}
+
+.pagination-list button {
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid var(--sable-dore);
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 700;
+    color: var(--brun-coco);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-list button.active {
+    background: var(--brun-profond);
+    color: white;
+    border-color: var(--brun-profond);
+}
+
+/* 8. Utilitaires & Mobile */
 .loading { 
     text-align: center; 
     padding: 150px 50px; 
-    min-height: 600px; /* Réserve une grande hauteur pour que la scrollbar soit là dès le début */
+    min-height: 600px; 
     font-weight: bold; 
     color: var(--sable-dore); 
-    grid-column: 1 / -1; /* Force le centrage sur toute la largeur de la grille */
+    grid-column: 1 / -1; 
     width: 100%;
 }
 
-/* --- GLOBAL PRINT STYLES FOR ADMIN --- */
+@media (max-width: 600px) { 
+    .orders-grid { grid-template-columns: 1fr; gap: 15px; } 
+    .order-info-block { min-height: auto; }
+}
+
 @media print {
-    .header-top,
-    .actions-bar,
-    .dashboard-footer {
-        display: none !important;
+    .header-top, .actions-bar, .dashboard-footer, .admin-action-btn-status { 
+        display: none !important; 
     }
 }
