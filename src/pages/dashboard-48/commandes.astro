@@ -48,22 +48,24 @@ const currentYear = new Date().getFullYear();
     <AdminHeader currentPage="commandes" title="Gestion des Commandes" />
 
     <div class="actions-row">
-        <div class="ca-pill">
-            <i class="fa-solid fa-sack-dollar icon-encaisse"></i>
-            <div class="ca-info">
-                <span>Déjà Encaissé</span>
-                <b id="stats-encaissé">0.00 €</b>
-            </div>
-        </div>
-
-        <div class="ca-pill">
-            <i class="fa-solid fa-hourglass-half icon-attente"></i>
-            <div class="ca-info">
-                <span>À Préparer (Valeur)</span>
-                <b id="stats-attente">0.00 €</b>
-            </div>
+    <!-- CE QUI EST FINI -->
+    <div class="ca-pill">
+        <i class="fa-solid fa-circle-check icon-encaisse"></i>
+        <div class="ca-info">
+            <span>Envoyé / Terminé</span>
+            <b id="stats-encaissé">0.00 €</b>
         </div>
     </div>
+
+    <!-- CE QU'IL RESTE À FAIRE -->
+    <div class="ca-pill">
+        <i class="fa-solid fa-box-open icon-attente"></i>
+        <div class="ca-info">
+            <span>Reste à expédier</span>
+            <b id="stats-attente">0.00 €</b>
+        </div>
+    </div>
+</div>
 
     <div class="filter-bar">
         <button class="filter-btn active" onclick="setTab('prepare', this)">À préparer</button>
