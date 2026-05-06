@@ -287,7 +287,8 @@ const pageId = "panier";
     }
 
     function saveCartItems(items) {
-        localStorage.setItem('panier-atelier', JSON.stringify({ items, date: Date.now() }));
+        localStorage.setItem('panier-atelier', JSON.stringify(items));
+        localStorage.setItem('panier-atelier-timestamp', Date.now().toString());
     }
 
     // État global du mode de livraison
@@ -690,17 +691,33 @@ window.closeMRModal = () => {
     async function initPage() {
         // 1. GESTION DE L'EXPIRATION (48h)
         const rawData = localStorage.getItem('panier-atelier');
-        if (rawData) {
-            const parsed = JSON.parse(rawData);
-            const now = Date.now();
-            const EXPIRATION_DELAY = 48 * 60 * 60 * 1000; 
+        const rawTimestamp = localStorage.getItem('panier-atelier-timestamp');
 
-            if (Array.isArray(parsed)) {
-                // Migration automatique vers le nouveau format avec date
-                saveCartItems(parsed);
-            } else if (now - parsed.date > EXPIRATION_DELAY) {
-                localStorage.removeItem('panier-atelier');
-                showToast("Votre panier a été réinitialisé après une période d'inactivité.", "delete");
+        if (rawData) {
+            try {
+                const parsed = JSON.parse(rawData);
+                let items = [];
+                let timestamp = rawTimestamp ? parseInt(rawTimestamp) : Date.now();
+
+                if (Array.isArray(parsed)) {
+                    items = parsed;
+                } else if (parsed.items && parsed.date) {
+                    // Migration automatique : on repasse au format tableau pour la compatibilité boutique
+                    items = parsed.items;
+                    timestamp = parsed.date;
+                    saveCartItems(items); 
+                }
+
+                const now = Date.now();
+                const EXPIRATION_DELAY = 48 * 60 * 60 * 1000; 
+
+                if (now - timestamp > EXPIRATION_DELAY) {
+                    localStorage.removeItem('panier-atelier');
+                    localStorage.removeItem('panier-atelier-timestamp');
+                    showToast("Votre panier a été réinitialisé après une période d'inactivité.", "delete");
+                }
+            } catch (e) {
+                console.error("Erreur de synchronisation panier", e);
             }
         }
 
