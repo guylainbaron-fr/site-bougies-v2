@@ -47,22 +47,22 @@ const currentYear = new Date().getFullYear();
 <div class="dashboard-container">
     <AdminHeader currentPage="commandes" title="Gestion des Commandes" />
 
-    <div class="actions-row">
-    <!-- CE QUI EST FINI -->
-    <div class="ca-pill">
-        <i class="fa-solid fa-circle-check icon-encaisse"></i>
-        <div class="ca-info">
-            <span>Envoyé / Terminé</span>
-            <b id="stats-encaissé">0.00 €</b>
-        </div>
-    </div>
-
-    <!-- CE QU'IL RESTE À FAIRE -->
+<div class="actions-row">
+    <!-- PRIORITÉ : CE QU'IL RESTE À FAIRE (À GAUCHE) -->
     <div class="ca-pill">
         <i class="fa-solid fa-box-open icon-attente"></i>
         <div class="ca-info">
             <span>Reste à expédier</span>
             <b id="stats-attente">0.00 €</b>
+        </div>
+    </div>
+
+    <!-- BILAN : CE QUI EST FINI (À DROITE) -->
+    <div class="ca-pill">
+        <i class="fa-solid fa-circle-check icon-encaisse"></i>
+        <div class="ca-info">
+            <span>Envoyé / Terminé</span>
+            <b id="stats-encaissé">0.00 €</b>
         </div>
     </div>
 </div>
