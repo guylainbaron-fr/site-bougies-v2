@@ -6,6 +6,8 @@ const pageId = "index";
 
 import { Image } from 'astro:assets';
 
+// Imports des composants
+import DuelOuverture from '../components/DuelOuverture.astro';
 // Imports d'images
 import heroHome from "../assets/images/hero-home.webp";
 import accueilImg from "../assets/images/accueil-h2-1.webp";
@@ -88,6 +90,8 @@ const schemaData = JSON.stringify({
             <a href="/bougies" class="btn large-btn" title="Accéder à notre collection de bougies"> Découvrir l'univers</a>
         </div>
     </section>
+
+    <DuelOuverture />
 
     <section id="accueil">
         <div class="container text-center"> <div class="section-top-image">

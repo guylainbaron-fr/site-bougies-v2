@@ -1,0 +1,372 @@
+---
+import { Image } from 'astro:assets';
+import photoDuel from '../assets/images/duel_cepes.webp';
+---
+
+<section class="duel-section">
+    <div class="container">
+        <div class="header-atelier">
+            <h2>La Boutique est Ouverte</h2>
+            <p class="description-atelier">Découvrez l'excellence de l'<strong>artisanat d'art en Lozère (48)</strong>. Notre atelier de Chasseradès façonne des <strong>sculptures sur bois</strong> uniques et des bougies naturelles<strong> à la vanille gourmande</strong> au réalisme saisissant. Chaque création est une pièce d'exception, réalisée à la main pour capturer l'essence sauvage du terroir lozérien et sublimer votre décoration intérieure avec authenticité.</p>
+            <a href="/boutique" class="nav-brick boutique-gold">Visiter la boutique</a>
+        </div>
+
+        <div class="duel-container" id="duel-poll-container">
+            <!-- Script inline immédiat pour éviter le flash visuel si déjà voté -->
+            <script is:inline>
+                if (localStorage.getItem('atelier_voted_id')) {
+                    document.getElementById('duel-poll-container').classList.add('voted');
+                }
+            </script>
+            
+            <div class="duel-grid">
+                <div class="visual-box">
+                    <Image 
+                        src={photoDuel} 
+                        alt="Sculptures Jean-François & Aniuta" 
+                        class="img-atelier" 
+                        width={600} 
+                        height={820} 
+                    />
+                    <span class="img-tag tag-majestueux">Le Majestueux</span>
+                    <span class="img-tag tag-curieux">Le Curieux</span>
+                </div>
+
+                <div class="poll-box">
+                    <div class="poll-intro">
+                        <h3 class="duel-title">Le Duel de l'Artisan</h3>
+                        <p class="instruction">Deux expressions, une même âme. Laquelle préférez-vous ?</p>
+                    </div>
+
+                    <div class="vote-stack">
+                        <button class="vote-brick" onclick="handleAtelierVote('majestueux')">
+                            <div class="brick-header">
+                                <span class="choice">Le Majestueux</span>
+                                <span id="label-maj" class="vote-perc">0%</span>
+                            </div>
+                            <div class="brick-text">
+                                <span class="detail">L'élégance et la force du bois local.</span>
+                            </div>
+                            <div class="progress-container"><div id="bar-maj" class="progress-fill"></div></div>
+                        </button>
+
+                        <button class="vote-brick" onclick="handleAtelierVote('curieux')">
+                            <div class="brick-header">
+                                <span class="choice">Le Curieux</span>
+                                <span id="label-cur" class="vote-perc">0%</span>
+                            </div>
+                            <div class="brick-text">
+                                <span class="detail">Une forme atypique qui attire l'œil.</span>
+                            </div>
+                            <div class="progress-container"><div id="bar-cur" class="progress-fill"></div></div>
+                        </button>
+                    </div>
+
+                    <div id="vote-thanks" class="thanks-fade">
+                        Merci pour votre participation.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .duel-section {
+        padding: 80px 0;
+        background-color: var(--fond-sable);
+    }
+
+    .header-atelier {
+        text-align: center;
+    }
+    .description-atelier {
+        max-width: 650px;
+        margin: 0 auto 40px; /* Harmonisé avec style.css */
+    }
+
+    /* BOUTON NAV STYLE ATELIER */
+    .nav-brick {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px 35px;
+        color: var(--vanille-eclat);
+        border: 2px solid var(--vanille-eclat);
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 2px;
+        transition: all 0.5s ease;
+        text-decoration: none;
+        margin-bottom: 40px;
+    }
+
+    .nav-brick:hover {
+        background-color: var(--vanille-eclat);
+        color: white !important;
+    }
+
+    /* CONTENEUR DUEL */
+    .duel-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        background: white;
+        border: 1px solid var(--sable-dore);
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(74, 55, 40, 0.03);
+    }
+
+    .duel-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        align-items: center;
+    }
+
+    .visual-box {
+        position: relative;
+    }
+
+    .img-tag {
+        position: absolute;
+        background-color: var(--vanille-pure);
+        color: var(--brun-coco);
+        padding: 6px 12px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 1px solid var(--sable-dore);
+        border-radius: 2px;
+        box-shadow: 0 4px 12px rgba(45, 34, 26, 0.2);
+        z-index: 10;
+    }
+
+    .tag-majestueux { top: 20px; left: 20px; }
+    .tag-curieux { top: 20px; right: 20px; }
+
+    .img-atelier {
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--sable-dore);
+        display: block;
+    }
+
+    .duel-title {
+        font-family: var(--font-secondaire);
+        font-size: 1.6rem;
+        color: var(--brun-coco);
+        margin-bottom: 10px;
+    }
+
+    .instruction {
+        font-style: italic;
+        font-weight: 300;
+        margin-bottom: 35px;
+        color: var(--texte-galet);
+    }
+
+    /* VOTE BRICKS (VERSION FIXE & ÉPURÉE) */
+    .vote-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .vote-brick {
+        background: var(--fond-ecume);
+        border: 1px solid var(--brun-coco);
+        padding: 22px;
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+        transition: border-color 0.4s ease, background-color 0.4s ease;
+    }
+
+    .vote-brick:hover {
+        border-color: var(--vanille-eclat);
+        background-color: white;
+    }
+
+    .brick-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .choice {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        color: var(--brun-profond);
+    }
+
+    .detail {
+        display: block;
+        font-size: 0.85rem;
+        margin-top: 6px;
+        color: var(--texte-galet);
+        font-weight: 300;
+    }
+
+    /* JAUGES MINIMALISTES */
+    .progress-container {
+        height: 4px;
+        background: rgba(224, 194, 151, 0.2);
+        margin-top: 15px;
+        visibility: hidden; /* Réserve l'espace sans afficher */
+        overflow: hidden;
+    }
+
+    .voted .progress-container {
+        visibility: visible;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: var(--vanille-eclat);
+        width: 0;
+        transition: width 2.5s cubic-bezier(0.1, 0.5, 0.2, 1);
+    }
+
+    .thanks-fade {
+        opacity: 0;
+        margin-top: 40px;
+        padding: 25px;
+        text-align: center;
+        background-color: var(--vanille-brume);
+        border: 1px dashed var(--sable-dore);
+        border-radius: 8px;
+        color: var(--brun-coco);
+        transition: opacity 1s ease, transform 0.6s ease;
+        transform: translateY(10px);
+        min-height: 100px;
+    }
+
+    .vote-perc {
+        font-weight: 800;
+        color: var(--vanille-eclat);
+        opacity: 0; /* Réserve l'espace pour le chiffre */
+        transition: opacity 0.5s ease;
+    }
+
+    .voted .vote-perc { opacity: 1; }
+    .voted .thanks-fade { 
+        opacity: 1; 
+        transform: translateY(0);
+        display: block; 
+    }
+
+    .voted .vote-brick { 
+        cursor: default; 
+        pointer-events: none;
+        background-color: white;
+    }
+    
+    .voted .vote-brick:hover {
+        border-color: var(--brun-coco);
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    @media (max-width: 850px) {
+        .duel-grid { grid-template-columns: 1fr; }
+        .duel-container { padding: 20px; }
+    }
+</style>
+
+<script is:inline>
+    const labels = {
+        'majestueux': 'Le Majestueux',
+        'curieux': 'Le Curieux'
+    };
+
+    function displayPollResults(data) {
+        if (!data) return;
+        const container = document.querySelector('.duel-container');
+        if (container) container.classList.add('voted');
+        
+        const votedChoice = localStorage.getItem('atelier_voted_choice');
+        const messageEl = document.getElementById('vote-thanks');
+        
+        // On s'assure d'avoir des nombres pour éviter NaN, et on traite 0 comme une vraie valeur
+        const pMaj = Number.isInteger(data.perMaj) ? data.perMaj : 0;
+        const pCur = Number.isInteger(data.perCur) ? data.perCur : 0;
+
+        if (messageEl) {
+            const sculptureName = labels[votedChoice] || "votre sculpture préférée";
+            messageEl.innerHTML = `
+                <div class="thanks-content">
+                    <p style="font-family: var(--font-secondaire); font-style: italic; font-size: 1.1rem; margin-bottom: 10px;">Merci pour votre participation !</p>
+                    <p style="margin-bottom: 15px;">Retrouvez <strong>${sculptureName}</strong> et nos créations artisanales dans la boutique.</p>
+                    <div style="font-weight: 800; color: var(--vanille-eclat); letter-spacing: 1px; font-size: 0.9rem; text-transform: uppercase; border-top: 1px solid rgba(224, 194, 151, 0.3); padding-top: 15px;">
+                        Résultats : Majestueux ${pMaj}% — Curieux ${pCur}%
+                    </div>
+                </div>
+            `;
+        }
+        
+        const majBar = document.getElementById('bar-maj');
+        const curBar = document.getElementById('bar-cur');
+        const majLabel = document.getElementById('label-maj');
+        const curLabel = document.getElementById('label-cur');
+
+        if (majBar) majBar.style.width = pMaj + '%';
+        if (curBar) curBar.style.width = pCur + '%';
+        if (majLabel) majLabel.innerText = pMaj + '%';
+        if (curLabel) curLabel.innerText = pCur + '%';
+
+        const buttons = document.querySelectorAll('.vote-brick');
+        buttons.forEach(btn => btn.style.pointerEvents = 'none');
+    }
+
+    // Fonction pour charger les résultats sans voter
+    async function refreshResults() {
+        try {
+            const res = await fetch('/api/vote');
+            const data = await res.json();
+            displayPollResults(data);
+        } catch (e) { console.error("Erreur de chargement", e); }
+    }
+
+    window.handleAtelierVote = async function(choice) {
+        const messageEl = document.getElementById('vote-thanks');
+        
+        if (localStorage.getItem('atelier_voted_id')) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/vote', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ choice })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('atelier_voted_id', 'true');
+                localStorage.setItem('atelier_voted_choice', choice);
+                displayPollResults(data);
+            } else {
+                messageEl.innerText = data.error || "Une erreur est survenue.";
+            }
+        } catch (err) {
+            messageEl.innerText = "Impossible de joindre le serveur.";
+        }
+    };
+
+    // Initialisation au chargement de la page
+    const initPoll = () => {
+        if (localStorage.getItem('atelier_voted_id')) {
+            refreshResults();
+        }
+    };
+
+    document.addEventListener('astro:page-load', initPoll);
+    if (document.readyState === 'complete') initPoll();
+    else window.addEventListener('load', initPoll);
+</script>
