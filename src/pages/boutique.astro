@@ -356,11 +356,10 @@ if (queryString) {
           target.classList.add('is-highlighted'); // Activer la surbrillance manuelle
           setTimeout(() => {
             target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            // Nettoyage final de l'URL après le défilement
-            window.history.replaceState({}, '', baseUrl);
             
-            // On retire le surlignage automatiquement après 4 secondes
+            // On retire le surlignage et l'ancre de l'URL après 4 secondes
             setTimeout(() => {
+              window.history.replaceState({}, '', baseUrl);
               target.classList.remove('is-highlighted');
             }, 4000);
           }, 300);
