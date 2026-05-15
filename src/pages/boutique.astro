@@ -339,14 +339,21 @@ if (queryString) {
       else url.searchParams.set('cat', currentFilter);
       if (currentPage === 1) url.searchParams.delete('page');
       else url.searchParams.set('page', currentPage.toString());
-      // IMPORTANT : url.toString() préserve l'ancre (#id) contrairement à l'ancienne version
-      window.history.replaceState({}, '', url.toString());
+
+      // On construit l'URL de base sans l'ancre
+      const baseUrl = url.origin + url.pathname + url.search;
+      // On ne préserve l'ancre que si on n'a pas encore défilé vers elle
+      window.history.replaceState({}, '', hasScrolledToHash ? baseUrl : baseUrl + url.hash);
 
       if (!hasScrolledToHash && window.location.hash) {
         const target = document.querySelector(window.location.hash);
         if (target && target.style.display !== 'none') {
           hasScrolledToHash = true;
-          setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+          setTimeout(() => {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Nettoyage final de l'URL après le défilement
+            window.history.replaceState({}, '', baseUrl);
+          }, 300);
         }
       }
     }
@@ -362,6 +369,7 @@ if (queryString) {
         if (i === currentPage) btn.classList.add('active');
         btn.onclick = (e) => {
           e.preventDefault();
+          hasScrolledToHash = true; // L'utilisateur navigue, on oublie l'ancre
           currentPage = i;
           updateDisplay();
           const sectionTitle = document.querySelector('#boutique-liste h2');
@@ -377,6 +385,7 @@ if (queryString) {
         filterBtns.forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         currentFilter = this.getAttribute('data-category');
+        hasScrolledToHash = true; // L'utilisateur filtre, on oublie l'ancre
         currentPage = 1; 
         updateDisplay();
       };
