@@ -454,8 +454,16 @@ const activePage = Astro.url.searchParams.get('page') || '1';
     // Fonction pour recharger la page en conservant le filtre et la pagination
     function reloadWithState() {
         const url = new URL(window.location.href);
-        url.searchParams.set('cat', currentCategory);
-        url.searchParams.set('page', currentPage.toString());
+        
+        if (currentCategory === 'Tous') {
+            url.searchParams.delete('cat');
+        } else {
+            url.searchParams.set('cat', currentCategory);
+        }
+
+        if (currentPage === 1) url.searchParams.delete('page');
+        else url.searchParams.set('page', currentPage.toString());
+
         window.location.href = url.pathname + url.search;
     }
 
@@ -479,6 +487,22 @@ const activePage = Astro.url.searchParams.get('page') || '1';
         visibleRows.slice(start, end).forEach(r => r.style.display = '');
 
         renderPagination(totalPages);
+
+        // Persistance de l'état dans l'URL (sans recharger la page)
+        const url = new URL(window.location.href);
+        
+        if (currentCategory === 'Tous') {
+            url.searchParams.delete('cat');
+        } else {
+            url.searchParams.set('cat', currentCategory);
+        }
+
+        if (currentPage === 1) {
+            url.searchParams.delete('page');
+        } else {
+            url.searchParams.set('page', currentPage.toString());
+        }
+        window.history.replaceState({}, '', url.pathname + url.search);
     }
 
     function renderPagination(totalPages: number) {
@@ -528,8 +552,13 @@ const activePage = Astro.url.searchParams.get('page') || '1';
 
         // Mise à jour de l'URL sans recharger pour maintenir l'état du filtre
         const url = new URL(window.location.href);
-        url.searchParams.set('cat', currentCategory);
-        url.searchParams.set('page', '1');
+        
+        if (currentCategory === 'Tous') {
+            url.searchParams.delete('cat');
+        } else {
+            url.searchParams.set('cat', currentCategory);
+        }
+        url.searchParams.delete('page');
         window.history.replaceState({}, '', url.pathname + url.search);
 
         updatePagination();
@@ -597,7 +626,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
 
         if (!nom) return alert("Le nom est obligatoire.");
 
-        const finalId = id || nom.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        const finalId = id || nom.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
         const currentList = (window as any).allProduitsData || [];
         
         let finalOrdre = 1;
@@ -685,12 +714,11 @@ const activePage = Astro.url.searchParams.get('page') || '1';
         if (result && result.success) {
             reloadWithState();
         } else {
-        alert("Erreur lors du déplacement");
-        (window as any).isOrdering = false;
-        document.body.style.cursor = 'default';
-    }
-};
-
+            alert("Erreur lors du déplacement");
+            (window as any).isOrdering = false;
+            document.body.style.cursor = 'default';
+        }
+    };
 updatePagination();
 </script>
 </body>

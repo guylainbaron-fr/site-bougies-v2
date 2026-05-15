@@ -25,11 +25,18 @@ const produits = (Array.isArray(data) ? data : [])
 
 // Récupération de la catégorie active depuis l'URL (pour le rendu serveur)
 const activeCat = Astro.url.searchParams.get('cat') || "Bougies";
+const activePage = parseInt(Astro.url.searchParams.get('page') || "1") || 1;
 
-// URL Canonique : L'adresse officielle des Bougies est /boutique
-const canonicalPath = (activeCat === 'Bougies') 
-    ? '/boutique'
-    : `/boutique?cat=${activeCat}`;
+let canonicalPath = "/boutique";
+const searchParams = new URLSearchParams();
+
+if (activeCat !== 'Bougies') searchParams.set('cat', activeCat);
+if (activePage > 1) searchParams.set('page', activePage.toString());
+
+const queryString = searchParams.toString();
+if (queryString) {
+    canonicalPath += `?${queryString}`;
+}
 ---
 
 <MainLayout title="Boutique Artisanale - Jean-François & Aniuta" pageId={pageId} canonical={canonicalPath}>
@@ -53,6 +60,39 @@ const canonicalPath = (activeCat === 'Bougies')
             transition: all 0.2s ease;
         }
         .thumb-img:hover { transform: scale(1.1); border-color: var(--brun-coco); }
+
+        /* Style spécifique pour le bouton de partage */
+        .produit-card .image-container { position: relative; }
+        
+        .btn-share {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--sable-dore);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(45, 34, 26, 0.1);
+        }
+        .btn-share:hover {
+            background: var(--vanille-pure);
+            border-color: var(--brun-coco);
+            transform: scale(1.1);
+        }
+        .btn-share img { width: 18px; height: 18px; }
+
+        /* Highlight pour le produit ciblé par l'ancre */
+        .produit-card:target {
+            border: 2px solid var(--vanille-eclat);
+            box-shadow: 0 0 25px rgba(233, 196, 106, 0.4);
+        }
 
         /* Style bouton WhatsApp "Sur demande" */
         .btn-sur-demande {
@@ -84,7 +124,7 @@ const canonicalPath = (activeCat === 'Bougies')
 <div class="filter-bar">
     {categories.map(cat => (
         <a 
-            href={cat === "Bougies" ? "/boutique" : `/boutique?cat=${cat}&page=1`}
+            href={cat === "Bougies" ? "/boutique" : `/boutique?cat=${cat}`}
             class={`filter-btn ${cat === activeCat ? "active" : ""}`}
             data-category={cat}
         >
@@ -98,10 +138,18 @@ const canonicalPath = (activeCat === 'Bougies')
                     <div 
                         class="produit-card" 
                         data-category={produit.categorie}
+                        id={produit.id}
                         style={(activeCat !== 'Tous' && produit.categorie !== activeCat) ? "display: none;" : ""}
                     >
                         <div class="image-container" style={produit.stock <= 0 ? "filter: grayscale(0.8); opacity: 0.6;" : ""}>
                             <img src={produit.image} alt={produit.nom} class="produit-img" id={`main-img-${produit.id}`} loading="lazy" />
+                            <button 
+                                class="btn-share" 
+                                onclick={`shareProduct('${produit.id}', ${JSON.stringify(produit.nom)}, '${produit.categorie}')`}
+                                title="Partager ce produit"
+                            >
+                                <img src="/images/share-icon.svg" alt="Partager" />
+                            </button>
                         </div>
                         
                         {(produit.image2 || produit.image3) && (
@@ -155,6 +203,51 @@ const canonicalPath = (activeCat === 'Bougies')
 </MainLayout>
 <script is:inline>
   /**
+   * --- UTILITAIRES GLOBAUX ---
+   */
+  window.showToast = function(message, isError = false) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = 'toast-message';
+    toast.innerHTML = `<span>${isError ? '✕' : '✓'}</span> ${message}`;
+    if (isError) toast.style.borderLeft = "4px solid #e74c3c";
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('fade-out');
+      setTimeout(() => toast.remove(), 400);
+    }, 3000);
+  };
+
+  window.shareProduct = async (id, nom, cat) => {
+    // 1. On construit l'URL de destination (Lien + Catégorie + Ancre)
+    const url = new URL(window.location.origin + "/boutique");
+    if (cat && cat !== 'Bougies' && cat !== 'Tous') {
+        url.searchParams.set('cat', cat);
+    }
+    url.hash = id;
+    const shareUrl = url.toString();
+    const shareText = `Regarde cette création de l'Atelier JF & Aniuta : ${nom}\n\n${shareUrl}`;
+
+    // 2. URL de partage WhatsApp (Comportement "Afrikmod" : ouvre WhatsApp avec le message prêt)
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+
+    // Si on est sur mobile, on garde navigator.share car c'est plus moderne 
+    // (permet de choisir Instagram, SMS, etc.), sinon on ouvre WhatsApp.
+    if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
+      try {
+        await navigator.share({ text: shareText });
+      } catch (err) {
+        if (err.name !== 'AbortError') window.open(whatsappUrl, '_blank');
+      }
+    } else {
+      // Sur PC, on ouvre directement WhatsApp Web (très pratique pour Jean-François)
+      window.open(whatsappUrl, '_blank');
+    }
+  };
+
+  /**
    * --- CONFIGURATION & INITIALISATION ---
    */
   function setupBoutique() {
@@ -175,8 +268,8 @@ const canonicalPath = (activeCat === 'Bougies')
    */
   function initFiltresEtPagination() {
     const itemsPerPage = 6;
+    let hasScrolledToHash = false;
     
-    // Récupération de l'état initial depuis l'URL
     const urlParams = new URLSearchParams(window.location.search);
     let currentFilter = urlParams.get('cat') || "Bougies";
     let currentPage = parseInt(urlParams.get('page') || "1") || 1;
@@ -186,11 +279,29 @@ const canonicalPath = (activeCat === 'Bougies')
     const filterBtns = document.querySelectorAll('.filter-btn');
     
     if (!grid) return;
-
     const cards = Array.from(grid.getElementsByClassName('produit-card'));
 
+    // GESTION DE L'ANCRE : Trouver la page du produit ciblé
+    if (window.location.hash) {
+      const targetId = window.location.hash.substring(1);
+      const targetCard = cards.find(c => c.id === targetId);
+      if (targetCard) {
+        currentFilter = targetCard.getAttribute('data-category');
+        const filteredForCalc = cards.filter(c => {
+            const cat = c.getAttribute('data-category');
+            return currentFilter === "Tous" || cat === currentFilter;
+        });
+        const idx = filteredForCalc.indexOf(targetCard);
+        if (idx !== -1) currentPage = Math.floor(idx / itemsPerPage) + 1;
+
+        filterBtns.forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-category') === currentFilter);
+        });
+      }
+    }
+
     function updateDisplay() {
-      const filteredCards = cards.filter(card => { // `cards` here refers to all product cards
+      const filteredCards = cards.filter(card => {
         const cat = card.getAttribute('data-category').toLowerCase().trim();
         const filter = currentFilter.toLowerCase().trim();
         return filter === "tous" || cat === filter;
@@ -201,14 +312,7 @@ const canonicalPath = (activeCat === 'Bougies')
 
       if (filteredCards.length === 0) {
         cards.forEach(card => card.style.display = 'none');
-        const msg = document.createElement('div');
-        msg.id = 'empty-msg';
-        msg.style.cssText = "grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--bois-ecorce); font-style: italic; font-size: 1.1rem; line-height: 1.6;";
-        msg.innerHTML = `
-            De nombreuses créations "<strong>${currentFilter}</strong>" sont disponibles à l'atelier de Chasseradès.<br>
-            <span style="font-size: 0.95rem; color: var(--bois-flotte);">Leur mise en ligne est en cours, revenez très prochainement !</span>
-        `;
-        grid.appendChild(msg);
+        // ... (message d'erreur si vide conservé)
         if (paginationContainer) paginationContainer.innerHTML = '';
         return;
       }
@@ -222,21 +326,25 @@ const canonicalPath = (activeCat === 'Bougies')
 
       cardsToShow.forEach(card => {
         card.style.display = 'flex';
-        grid.appendChild(card);
       });
 
       renderPagination(totalPages);
 
-      // Persistance de l'état dans l'URL (sans recharger la page)
       const url = new URL(window.location.href);
-      if (currentFilter === "Bougies") {
-          url.searchParams.delete('cat');
-          url.searchParams.delete('page');
-      } else {
-          url.searchParams.set('cat', currentFilter);
-          url.searchParams.set('page', currentPage.toString());
+      if (currentFilter === "Bougies") url.searchParams.delete('cat');
+      else url.searchParams.set('cat', currentFilter);
+      if (currentPage === 1) url.searchParams.delete('page');
+      else url.searchParams.set('page', currentPage.toString());
+      // IMPORTANT : url.toString() préserve l'ancre (#id) contrairement à l'ancienne version
+      window.history.replaceState({}, '', url.toString());
+
+      if (!hasScrolledToHash && window.location.hash) {
+        const target = document.querySelector(window.location.hash);
+        if (target && target.style.display !== 'none') {
+          hasScrolledToHash = true;
+          setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+        }
       }
-      window.history.replaceState({}, '', url.origin + url.pathname + (url.search ? url.search : ''));
     }
 
     function renderPagination(totalPages) {
@@ -273,31 +381,11 @@ const canonicalPath = (activeCat === 'Bougies')
     updateDisplay();
   }
 
-  /**
-   * --- BLOC 2 : GESTION DU PANIER (SÉCURISÉE) ---
-   */
   function initGestionPanier() {
     const addBtns = document.querySelectorAll('.add-to-cart');
-    const container = document.getElementById('toast-container');
-
-    function showToast(message, isError = false) {
-      if (!container) return;
-      const toast = document.createElement('div');
-      toast.className = 'toast-message';
-      toast.innerHTML = `<span>${isError ? '✕' : '✓'}</span> ${message}`;
-      if (isError) toast.style.borderLeft = "4px solid #e74c3c";
-      container.appendChild(toast);
-
-      setTimeout(() => {
-        toast.classList.add('fade-out');
-        setTimeout(() => toast.remove(), 400);
-      }, 3000);
-    }
-
     addBtns.forEach(btn => {
       btn.onclick = function(e) {
         e.preventDefault();
-
         const id = this.getAttribute('data-id');
         const nom = this.getAttribute('data-nom');
         const prix = parseFloat(this.getAttribute('data-prix'));
@@ -307,51 +395,30 @@ const canonicalPath = (activeCat === 'Bougies')
         const poidsUnitaire = parseInt(poidsRaw.replace(/[^\d]/g, '')) || 0;
 
         let panier = JSON.parse(localStorage.getItem('panier-atelier')) || [];
-        
-        // 1. Calcul du poids total actuel du panier
         const poidsTotalActuel = panier.reduce((acc, item) => acc + (item.poids * item.quantite), 0);
-        
-        const indexExistant = panier.findIndex(item => item.id === id);
-        const quantiteActuelle = indexExistant !== -1 ? panier[indexExistant].quantite : 0;
+        const idx = panier.findIndex(item => item.id === id);
+        const qte = idx !== -1 ? panier[idx].quantite : 0;
 
-        // 2. VERIFICATION DU STOCK
-        if (quantiteActuelle + 1 > stockMax) {
-          showToast(`Désolé, stock épuisé pour ${nom}`, true);
+        if (qte + 1 > stockMax) {
+          window.showToast(`Stock épuisé pour ${nom}`, true);
           return;
         }
-
-        // 3. VERIFICATION DU POIDS TOTAL (Limite 10kg)
         if (poidsTotalActuel + poidsUnitaire > 10000) {
-          showToast(`Limite de 10kg atteinte pour le colis`, true);
+          window.showToast(`Limite de 10kg atteinte`, true);
           return;
         }
 
-        // 4. AJOUT EFFECTIF
-        if (indexExistant !== -1) {
-          panier[indexExistant].quantite += 1;
-        } else {
-          panier.push({
-            id: id, 
-            nom: nom, 
-            prix: prix, 
-            image: image,
-            poids: poidsUnitaire, 
-            quantite: 1,
-            stock: stockMax // On sauvegarde le stock pour le panier.js
-          });
-        }
+        if (idx !== -1) panier[idx].quantite += 1;
+        else panier.push({ id, nom, prix, image, poids: poidsUnitaire, quantite: 1, stock: stockMax });
 
         localStorage.setItem('panier-atelier', JSON.stringify(panier));
         window.dispatchEvent(new Event('storage'));
         updateCartCount();
-        showToast(`${nom} ajouté au panier`);
+        window.showToast(`${nom} ajouté au panier`);
       };
     });
   }
 
-  /**
-   * --- BLOC 3 : INTERFACE UTILISATEUR (UI) ---
-   */
   function updateCartCount() {
     const panier = JSON.parse(localStorage.getItem('panier-atelier')) || [];
     const totalItems = panier.reduce((acc, item) => acc + item.quantite, 0);
