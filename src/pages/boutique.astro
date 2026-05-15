@@ -89,7 +89,8 @@ if (queryString) {
         .btn-share img { width: 18px; height: 18px; }
 
         /* Highlight pour le produit ciblé par l'ancre */
-        .produit-card:target {
+        .produit-card:target,
+        .produit-card.is-highlighted {
             border: 2px solid var(--vanille-eclat);
             box-shadow: 0 0 25px rgba(233, 196, 106, 0.4);
         }
@@ -311,6 +312,9 @@ if (queryString) {
         return filter === "tous" || cat === filter;
       });
 
+      // Nettoyer les surbrillances de partage (ancre)
+      cards.forEach(card => card.classList.remove('is-highlighted'));
+
       const oldMsg = document.getElementById('empty-msg');
       if (oldMsg) oldMsg.remove();
 
@@ -349,6 +353,7 @@ if (queryString) {
         const target = document.querySelector(window.location.hash);
         if (target && target.style.display !== 'none') {
           hasScrolledToHash = true;
+          target.classList.add('is-highlighted'); // Activer la surbrillance manuelle
           setTimeout(() => {
             target.scrollIntoView({ behavior: 'smooth', block: 'center' });
             // Nettoyage final de l'URL après le défilement
