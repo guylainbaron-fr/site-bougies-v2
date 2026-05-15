@@ -221,29 +221,33 @@ if (queryString) {
   };
 
   window.shareProduct = async (id, nom, cat) => {
-    // 1. On construit l'URL de destination (Lien + Catégorie + Ancre)
+    // 1. Construction de l'URL propre (Lien + Catégorie + Ancre)
     const url = new URL(window.location.origin + "/boutique");
     if (cat && cat !== 'Bougies' && cat !== 'Tous') {
         url.searchParams.set('cat', cat);
     }
     url.hash = id;
     const shareUrl = url.toString();
-    const shareText = `Regarde cette création de l'Atelier JF & Aniuta : ${nom}\n\n${shareUrl}`;
 
-    // 2. URL de partage WhatsApp (Comportement "Afrikmod" : ouvre WhatsApp avec le message prêt)
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-
-    // Si on est sur mobile, on garde navigator.share car c'est plus moderne 
-    // (permet de choisir Instagram, SMS, etc.), sinon on ouvre WhatsApp.
-    if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    // 2. Partage Natif (Mobile) : Plus direct, pas de main sur le message
+    if (navigator.share) {
       try {
-        await navigator.share({ text: shareText });
+        await navigator.share({
+          title: `Atelier JF & Aniuta - ${nom}`,
+          text: `Découvrez cette création : ${nom}`,
+          url: shareUrl
+        });
       } catch (err) {
-        if (err.name !== 'AbortError') window.open(whatsappUrl, '_blank');
+        if (err.name !== 'AbortError') window.showToast("Erreur de partage", true);
       }
     } else {
-      // Sur PC, on ouvre directement WhatsApp Web (très pratique pour Jean-François)
-      window.open(whatsappUrl, '_blank');
+      // Fallback Desktop : Copie directe pour partage manuel
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        window.showToast("Lien copié dans le presse-papier !");
+      } catch (err) {
+        window.showToast("Impossible de copier le lien.", true);
+      }
     }
   };
 
