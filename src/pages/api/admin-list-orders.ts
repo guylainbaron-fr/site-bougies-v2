@@ -23,22 +23,23 @@ export const GET: APIRoute = async () => {
                 .join('');
             
             return {
-            id: session.id,
-            created: session.created, // Timestamp brut pour calcul d'ancienneté
-            paymentIntentId: paymentIntent?.id,
-            date: new Date(session.created * 1000).toLocaleDateString('fr-FR'),
-            client: session.customer_details?.name,
-            email: session.customer_details?.email,
-            telephone: session.customer_details?.phone,
-            adresse: paymentIntent?.shipping?.address || session.customer_details?.address,
-            total: session.amount_total ? session.amount_total / 100 : 0,
-            panier: panierDescription || session.metadata?.details_commande || null,
-            mode_livraison: session.metadata?.mode_livraison || 'colissimo',
-            infos_relais: session.metadata?.infos_relais || null,
-            statut_paiement: session.payment_status,
-            statut_livraison: paymentIntent?.metadata?.statut_livraison || 'en_attente',
-            archived: paymentIntent?.metadata?.archived === 'true'
-        }});
+                id: session.id,
+                created: session.created, // Timestamp brut pour calcul d'ancienneté
+                paymentIntentId: paymentIntent?.id,
+                date: new Date(session.created * 1000).toLocaleDateString('fr-FR'),
+                client: session.customer_details?.name,
+                email: session.customer_details?.email,
+                telephone: session.customer_details?.phone,
+                adresse: paymentIntent?.shipping?.address || session.customer_details?.address,
+                total: session.amount_total ? session.amount_total / 100 : 0,
+                panier: panierDescription || session.metadata?.details_commande || null,
+                mode_livraison: session.metadata?.mode_livraison || 'colissimo',
+                infos_relais: session.metadata?.infos_relais || null,
+                statut_paiement: session.payment_status,
+                statut_livraison: paymentIntent?.metadata?.statut_livraison || 'en_attente',
+                archived: paymentIntent?.metadata?.archived === 'true'
+            }
+        });
 
         return new Response(JSON.stringify(orders), { status: 200 });
     } catch (error) {
