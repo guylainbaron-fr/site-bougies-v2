@@ -61,6 +61,87 @@ const pageId = "panier-success";
             }
         }
     </style>
+
+<script type="application/ld+json" slot="head">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "name": "Jean-François & Aniuta",
+      "url": "https://jf-aniuta.vercel.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://jf-aniuta.vercel.app/#logo",
+        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "width": 512,
+        "height": 512
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "149 Route du Pont du Vallat, Chasseradès",
+        "addressLocality": "Mont Lozère et Goulet",
+        "postalCode": "48250",
+        "addressRegion": "Occitanie",
+        "addressCountry": "FR"
+      },
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
+        "https://www.instagram.com/jean_francois_aniuta/",
+        "https://www.tiktok.com/@jeanfrancoisbaron2"
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://jf-aniuta.vercel.app/panier-success#webpage",
+      "url": "https://jf-aniuta.vercel.app/panier-success",
+      "name": "Paiement Réussi - Jean-François & Aniuta",
+      "description": "Votre commande a été validée avec succès. Retrouvez le récapitulatif de vos achats et téléchargez votre facture.",
+      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Accueil",
+            "item": "https://jf-aniuta.vercel.app/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Panier",
+            "item": "https://jf-aniuta.vercel.app/panier"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Confirmation",
+            "item": "https://jf-aniuta.vercel.app/panier-success"
+          }
+        ]
+      }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+      "name": "Jean-François & Aniuta",
+      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "149 Route du Pont du Vallat, Chasseradès",
+        "addressLocality": "Mont Lozère et Goulet",
+        "postalCode": "48250",
+        "addressCountry": "FR"
+      },
+      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+    }
+  ]
+}
+</script>
+
     <section id="panier-success-page" style="background-color: var(--fond-ecume); padding: 80px 0;">
         <div class="container">
             <div class="panier-header">
