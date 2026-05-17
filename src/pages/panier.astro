@@ -119,6 +119,38 @@ const pageId = "panier";
         font-size: 0.75rem;
         color: var(--bois-flotte);
     }
+
+    /* Style "Facture Boutique" : Alignement pro et lisibilité maximale */
+    .recap-line {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: baseline !important;
+        gap: 15px !important;
+        margin-bottom: 8px;
+    }
+
+    .recap-total {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: baseline !important;
+        gap: 10px !important;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px solid var(--sable-dore); /* Ligne de séparation plus marquée */
+    }
+
+    .total-label {
+        font-weight: 700;
+        color: var(--brun-coco);
+        font-size: 1rem;
+    }
+    
+    #res-total {
+        white-space: nowrap;
+        font-weight: 800;
+        font-size: 1.4rem; /* Met le prix final bien en évidence */
+        color: var(--brun-coco);
+    }
 </style>
 
     <section id="panier-page" style="background-color: var(--fond-ecume);">
