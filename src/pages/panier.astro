@@ -151,6 +151,47 @@ const pageId = "panier";
         font-size: 1.4rem; /* Met le prix final bien en évidence */
         color: var(--brun-coco);
     }
+    /* Mention légale d'acceptation des CGV */
+    .checkout-cgv-notice {
+        margin-top: 12px;
+        font-size: 0.75rem;
+        line-height: 1.4;
+        color: var(--bois-flotte);
+        text-align: center;
+    }
+    .checkout-cgv-notice a {
+        color: var(--brun-coco);
+        text-decoration: underline;
+        font-weight: 500;
+    }
+    .checkout-cgv-notice a:hover { color: var(--sable-dore); }
+
+    /* Bouton Continuer mes achats : Plus visible et élégant */
+    .btn-continue-shopping {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 15px;
+        padding: 14px;
+        text-decoration: none;
+        color: var(--brun-coco);
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 1px solid var(--sable-dore);
+        border-radius: 8px;
+        background: white;
+        transition: all 0.3s ease;
+    }
+
+    .btn-continue-shopping:hover {
+        background: var(--fond-sable);
+        border-color: var(--brun-coco);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
 </style>
 
     <section id="panier-page" style="background-color: var(--fond-ecume);">
@@ -230,6 +271,11 @@ const pageId = "panier";
         <button id="checkout-btn" class="btn-checkout-final">
             Valider la commande
         </button>
+
+        <p class="checkout-cgv-notice">
+            En validant votre commande, vous acceptez sans réserve nos 
+            <a href="/mentions-legales" target="_blank">Conditions Générales de Vente</a>.
+        </p>
 
         <a href="/boutique" class="btn-continue-shopping">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
