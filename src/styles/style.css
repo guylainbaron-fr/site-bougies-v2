@@ -3076,6 +3076,18 @@ h2::after {
     animation: icon-line-long 0.75s ease-in-out; 
 }
 
+/* --- STYLE NOTE DE RÉTRACTATION (Même esprit que Bienveillance) --- */
+.note-retractation {
+    margin: 3rem 0;
+    padding: 2.5rem;
+    background-color: var(--vanille-brume);
+    border-left: 3px solid var(--bois-flotte); /* Teinte bois flotté pour le côté formel */
+    border-radius: 12px;
+    position: relative;
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+
 /* --- NOTE DE BIENVEILLANCE (L'ESPRIT DE L'ATELIER) --- */
 .note-bienveillance {
     padding: 40px 30px; /* Un peu plus d'espace en haut/bas pour l'élégance */
@@ -3121,6 +3133,18 @@ h2::after {
     font-size: 1.3rem;
     font-style: italic;
 }
+
+.last-update {
+    text-align: center;
+    margin-top: 40px;
+    font-family: 'Bradley Hand', 'Segoe Print', 'Zapfino', cursive;
+    color: var(--brun-coco);
+    font-size: 0.9em;
+    font-weight: 400; /* Un trait fin, comme une plume */
+    letter-spacing: 0.8px; /* On aère un peu pour la lisibilité */
+    opacity: 0.8;
+}
+
 /* --- SECTION AVIS GOOGLE --- */
 #avis-google-unique {
     background-color: var(--fond-page);
