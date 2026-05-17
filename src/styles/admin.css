@@ -456,14 +456,37 @@ body {
     font-family: var(--font-principale);
 }
 
-.btn-invoice-inline {
-    margin-top: 12px;
-    background: white;
-    color: var(--brun-coco);
-    border: 1px solid var(--sable-dore);
-    font-size: 0.7rem;
-    padding: 6px 12px;
+/* --- Boutons d'Action Secondaires (Facture & Étiquette) --- */
+.invoice-actions-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--sable-dore);
+}
+
+.btn-secondary-action {
+    background-color: #ffffff !important;
+    color: var(--brun-coco) !important;
+    border: 1.5px solid var(--sable-dore) !important; /* Le cadre "Artisanal" */
+    padding: 6px 14px !important;
+    border-radius: 4px;
     width: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-weight: 700 !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+}
+
+.btn-secondary-action:hover {
+    background-color: var(--fond-ecume) !important;
+    border-color: var(--brun-coco) !important;
 }
 
 /* 5. Bloc Adresse : Zéro hauteur fixe pour éviter les trous blancs */
