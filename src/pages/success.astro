@@ -19,9 +19,17 @@ const pageId = "panier-success";
         }
 
         @media print {
-            :global(nav), :global(footer), :global(.main-nav), :global(.footer-divider), :global(.panier-header), :global(.filter-btn), :global(.btn-continue-shopping), :global(.panier-tag), :global(.success-checkmark), :global(.no-print), :global(.site-header), :global(.header-actions), :global(.container > h1), :global(.container > p) {
-                display: none !important;
-            }
+    /* On masque la holiday-bar et tous les éléments de navigation/UI pour l'impression */
+    :global(nav), :global(footer), :global(.main-nav), :global(.footer-divider), :global(.panier-header), :global(.filter-btn), :global(.btn-continue-shopping), :global(.panier-tag), :global(.success-checkmark), :global(.no-print), :global(.site-header), :global(.header-actions), :global(.container > h1), :global(.container > p), :global(.line-signature), :global([slot="head"]), :global(.header-border), :global(.holiday-bar) {
+        display: none !important;
+    }
+
+    :global(main), :global(.container), #panier-success-page {
+        border: none !important;
+        box-shadow: none !important;
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
 
             @page {
                 size: A4;
@@ -35,22 +43,24 @@ const pageId = "panier-success";
                 color: black !important;
             }
             
-            #panier-success-page {
+            :global(#panier-success-page) {
                 padding: 0 !important;
                 background: white !important;
             }
 
-            /* Suppression des styles d'étiquette globale pour l'impression */
-            #printable-invoice {
+            /* On force le fond blanc sur l'élément de la facture */
+            :global(#printable-invoice) {
                 color: black !important;
                 background: white !important;
             }
 
-            #order-summary {
+            /* Correction : utilisation de :global pour cibler le conteneur injecté par JS */
+            :global(#order-summary) {
                 margin: 0 !important;
                 padding: 0 !important;
-                border: none !important;
+                border: none !important; /* Supprime la bordure beige dashed */
                 width: 100% !important;
+                background: white !important;
             }
 
             :global(.legal-mentions-print) {
