@@ -84,25 +84,25 @@ const currentYear = new Date().getFullYear();
     <div class="ca-pill">
         <i class="fa-solid fa-box-open icon-attente"></i>
         <div class="ca-info">
-            <span>Reste à expédier</span>
+            <span>À préparer</span>
             <b id="stats-attente">0.00 €</b>
-            <span class="ca-help">Total brut encaissé sur Stripe</span>
+            <span class="ca-help">Total encaissé sur Stripe</span>
         </div>
     </div>
 
     <div class="ca-pill">
         <i class="fa-solid fa-circle-check icon-encaisse"></i>
         <div class="ca-info">
-            <span>Envoyé / Terminé</span>
+            <span>Expédiées</span>
             <b id="stats-encaissé">0.00 €</b>
-            <span class="ca-help">Montant brut pour l'URSSAF</span>
+            <span class="ca-help">Déclaration URSSAF</span>
         </div>
     </div>
 
     <div class="ca-pill" style="border-color: #2ecc71; background: #f4fbf7;">
         <i class="fa-solid fa-bank" style="color: #2ecc71; font-size: 1.5rem;"></i>
         <div class="ca-info">
-            <span>Sur mon compte bancaire</span>
+            <span>Virements à venir</span>
             <b id="stats-virement" style="color: #2ecc71;">0.00 €</b>
             <span id="date-virement" class="ca-help">Aucun virement à venir</span>
         </div>
@@ -160,13 +160,13 @@ const currentYear = new Date().getFullYear();
             document.getElementById('stats-attente').innerText = `${totalAttente.toFixed(2)} €`;
 
 
-            // --- LE NOUVEAU COMPTEUR BANQUE AUTO-RESET (Délai 7 jours) ---
+            // --- LE NOUVEAU COMPTEUR BANQUE SÉCURISÉ (Basé UNIQUEMENT sur le temps, pas le statut) ---
             const maintenant = new Date();
             let cumulNetFutur = 0;
             let datesVirement = [];
 
-            // On fait le calcul UNIQUEMENT sur les commandes qui attendent d'être livrées
-            allOrders.filter(o => o.statut_livraison === 'en_attente').forEach(o => {
+            // IMPORTANT : On parcourt TOUTES les commandes pour ne pas perdre l'argent au changement de statut logistique
+            allOrders.forEach(o => {
                 if (o.created) {
                     const dateCommande = new Date(o.created * 1000);
                     
@@ -176,7 +176,7 @@ const currentYear = new Date().getFullYear();
                     
                     // Si le virement est prévu aujourd'hui ou dans le futur, on le comptabilise
                     if (dateVirement >= maintenant) {
-                        // Formule Stripe exacte : 1.5% de frais + 0.25€ de fixe
+                        // Utilisation sécurisée de o.total (avec ta formule de calcul des frais Stripe)
                         const netCommande = o.total > 0 ? (o.total * 0.985) - 0.25 : 0;
                         cumulNetFutur += netCommande;
                         datesVirement.push(dateVirement);
@@ -371,7 +371,6 @@ const currentYear = new Date().getFullYear();
         updatePagination();
     };
 
-    // ACTION : REDIRECTION VERS SITES DE LIVRAISON (PARTICULIERS)
     (window as any).generateLabel = (piId: string) => {
         const targetOrder = allOrders.find(o => o.paymentIntentId === piId);
         if (!targetOrder) {
@@ -379,7 +378,6 @@ const currentYear = new Date().getFullYear();
             return;
         }
 
-        // Liens vers les interfaces "Particuliers" (Jean-François n'utilise pas de compte pro)
         const url = targetOrder.mode_livraison === 'mondialrelay' 
             ? 'https://www.mondialrelay.fr/envoi-de-colis/' 
             : 'https://www.laposte.fr/colissimo-en-ligne';
