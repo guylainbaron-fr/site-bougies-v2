@@ -25,18 +25,45 @@ const currentYear = new Date().getFullYear();
         .filter-btn.archive-tab { border-style: dashed; margin-left: auto; }
 
         /* COMPTEUR CA (Motivation) */
-        .actions-row { display: flex; gap: 20px; margin-bottom: 30px; }
+        .actions-row { display: flex; gap: 20px; margin-bottom: 30px; width: 100%; }
+        
         .ca-pill { 
-            display: flex; align-items: center; gap: 15px; 
-            background: white; padding: 12px 25px; border-radius: 12px; 
-            border: 1px solid var(--sable-dore); box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex; 
+            align-items: center; /* ← Re-centrer verticalement l'icône maintenant qu'ils ont tous 3 lignes */
+            gap: 15px; 
+            background: white; 
+            padding: 12px 25px; 
+            border-radius: 12px; 
+            border: 1px solid var(--sable-dore); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             min-width: 220px;
         }
+
+        /* On pousse le troisième compteur tout à droite, comme l'onglet archives */
+        .ca-pill:last-child {
+            margin-left: auto;
+        }
+
         .ca-info span { display: block; font-size: 0.65rem; text-transform: uppercase; font-weight: 800; color: var(--bois-flotte); letter-spacing: 1px; }
-        .ca-info b { font-size: 1.3rem; color: var(--brun-coco); }
+        .ca-info b { display: block; font-size: 1.3rem; color: var(--brun-coco); line-height: 1.2; margin: 2px 0; }
+        
+        /* ← C'EST CETTE NOUVELLE RÈGLE QUI VA HARMONISER ET METTRE EN MAJUSCULES LA 3ème LIGNE PARTOUT */
+        .ca-info .ca-help { 
+            display: block; 
+            font-size: 0.65rem; 
+            text-transform: uppercase; 
+            font-weight: 800; 
+            color: var(--bois-flotte); /* Même couleur grise que la première ligne */
+            letter-spacing: 1px;
+        }
+
         .icon-encaisse { color: var(--vert); font-size: 1.5rem; }
         .icon-attente { color: var(--sable-dore); font-size: 1.5rem; }
-        @media (max-width: 600px) { .actions-row { flex-direction: column; } }
+        
+        @media (max-width: 768px) { 
+            .actions-row { flex-direction: column; gap: 10px; } 
+            .ca-pill:last-child { margin-left: 0; } /* Reset sur mobile */
+        }
 
         /* PAGINATION - Identique à la boutique */
         #pagination-wrapper {
@@ -59,6 +86,7 @@ const currentYear = new Date().getFullYear();
         <div class="ca-info">
             <span>Reste à expédier</span>
             <b id="stats-attente">0.00 €</b>
+            <span class="ca-help">Total brut encaissé sur Stripe</span>
         </div>
     </div>
 
@@ -67,6 +95,16 @@ const currentYear = new Date().getFullYear();
         <div class="ca-info">
             <span>Envoyé / Terminé</span>
             <b id="stats-encaissé">0.00 €</b>
+            <span class="ca-help">Montant brut pour l'URSSAF</span>
+        </div>
+    </div>
+
+    <div class="ca-pill" style="border-color: #2ecc71; background: #f4fbf7;">
+        <i class="fa-solid fa-bank" style="color: #2ecc71; font-size: 1.5rem;"></i>
+        <div class="ca-info">
+            <span>Sur mon compte bancaire</span>
+            <b id="stats-virement" style="color: #2ecc71;">0.00 €</b>
+            <span id="date-virement" class="ca-help">Aucun virement à venir</span>
         </div>
     </div>
 </div>
@@ -110,6 +148,7 @@ const currentYear = new Date().getFullYear();
                 return;
             }
 
+            // --- TES CALCULS D'ORIGINE (Inchangés pour l'URSSAF) ---
             const totalEncaissé = allOrders
                 .filter(o => o.statut_livraison === 'expedie')
                 .reduce((acc, curr) => acc + curr.total, 0);
@@ -119,6 +158,49 @@ const currentYear = new Date().getFullYear();
 
             document.getElementById('stats-encaissé').innerText = `${totalEncaissé.toFixed(2)} €`;
             document.getElementById('stats-attente').innerText = `${totalAttente.toFixed(2)} €`;
+
+
+            // --- LE NOUVEAU COMPTEUR BANQUE AUTO-RESET (Délai 7 jours) ---
+            const maintenant = new Date();
+            let cumulNetFutur = 0;
+            let datesVirement = [];
+
+            // On fait le calcul UNIQUEMENT sur les commandes qui attendent d'être livrées
+            allOrders.filter(o => o.statut_livraison === 'en_attente').forEach(o => {
+                if (o.created) {
+                    const dateCommande = new Date(o.created * 1000);
+                    
+                    // Calcul de la date de virement (+7 jours)
+                    const dateVirement = new Date(dateCommande);
+                    dateVirement.setDate(dateVirement.getDate() + 7);
+                    
+                    // Si le virement est prévu aujourd'hui ou dans le futur, on le comptabilise
+                    if (dateVirement >= maintenant) {
+                        // Formule Stripe exacte : 1.5% de frais + 0.25€ de fixe
+                        const netCommande = o.total > 0 ? (o.total * 0.985) - 0.25 : 0;
+                        cumulNetFutur += netCommande;
+                        datesVirement.push(dateVirement);
+                    }
+                }
+            });
+
+            // Affichage du montant cumulé net
+            document.getElementById('stats-virement').innerText = `${cumulNetFutur.toFixed(2)} €`;
+
+            // Affichage de la date du tout prochain virement
+            if (datesVirement.length > 0) {
+                // On trie pour choper la date la plus proche chronologiquement
+                datesVirement.sort((a, b) => a - b);
+                const prochainVirement = datesVirement[0];
+                
+                const options = { weekday: 'long', day: 'numeric', month: 'long' };
+                let dateFormatee = prochainVirement.toLocaleDateString('fr-FR', options);
+                dateFormatee = dateFormatee.charAt(0).toUpperCase() + dateFormatee.slice(1);
+                
+                document.getElementById('date-virement').innerText = `Arrivée estimée le ${dateFormatee}`;
+            } else {
+                document.getElementById('date-virement').innerText = `Aucun virement à venir`;
+            }
 
             updatePagination();
         } catch (err) {
