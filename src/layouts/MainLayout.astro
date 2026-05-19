@@ -94,7 +94,7 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
     if (isDev || window.location.pathname.includes('dashboard')) return;
     if (sessionStorage.getItem('site_visited')) return;
 
-    const botPatterns = /bot|spider|crawler|lighthouse|inspect|googlebot|bingbot|yandex|baiduspider|facebookexternalhit/i;
+    const botPatterns = /bot|spider|crawler|lighthouse|inspect|googlebot|bingbot|yandex|baiduspider|facebookexternalhit|whatsapp|twitter/i;
     const isBot = botPatterns.test(navigator.userAgent);
 
     const sendLog = async () => {
