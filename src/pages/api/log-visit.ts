@@ -28,10 +28,6 @@ function sanitizeString(input: string | undefined | null, maxLength: number = 25
     return sanitized;
 }
 
-// Supprimer le ts-ignore si le problème est résolu ou si les types sont corrects
-// Si le problème persiste, il peut être lié à la configuration TypeScript ou à la version de @vercel/kv
-// Pour l'instant, on le laisse si nécessaire, mais l'objectif est de le supprimer.
-
 export const POST: APIRoute = async ({ request }) => {
     try {
         // 0. PROTECTION CONTRE LES PAYLOADS TROP LOURDS
@@ -89,6 +85,11 @@ export const POST: APIRoute = async ({ request }) => {
         const countryCodeRaw = request.headers.get('x-vercel-ip-country');
         const countryCode = sanitizeString(countryCodeRaw, 2).toLowerCase(); // Country codes are 2 chars
 
+        // --- CORRECTION ET SÉCURITÉ DE DÉTECTION GOOGLE (IP + USER-AGENT) ---
+        const isBotUA = /(googlebot|google-favicon|adsbot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|linkedinbot|telegrambot|slackbot|ia_archiver|chrome-lighthouse|lighthouse)/i.test(ua);
+        const isGoogleIP = ip.startsWith('66.249.');
+        const isBot = isBotUA || isGoogleIP;
+
         // 2. LOGIQUE DE DÉTECTION DE LA SOURCE + FIX QR CODE
         let sourceName = "Direct";
         const refLower = referrer.toLowerCase();
@@ -96,8 +97,12 @@ export const POST: APIRoute = async ({ request }) => {
         // On récupère la source envoyée par le script du front
         const manualSource = sanitizeString(data.testSource || data.utmSource);
 
+        // PRIORITÉ O : Si c'est l'IP officielle de Google, on force le label proprement
+        if (isGoogleIP) {
+            sourceName = "Google";
+        }
         // PRIORITÉ 1 : Paramètre manuel ou détection automatique via URL (fbclid, igshid)
-        if (manualSource && manualSource !== "") {
+        else if (manualSource && manualSource !== "") {
             const s = manualSource.toLowerCase();
             if (s === 'qr') {
                 sourceName = "Scan QR";
@@ -130,20 +135,19 @@ export const POST: APIRoute = async ({ request }) => {
             }
         }
         sourceName = sanitizeString(sourceName, 50); // Ensure final sourceName is also sanitized
-        // On ne garde que les robots "légitimes" qui ont survécu au blocage Vercel
-        const isBot = /(googlebot|google-favicon|adsbot|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|linkedinbot|telegrambot|slackbot|ia_archiver|chrome-lighthouse|lighthouse)/i.test(ua);
 
         // 4. DÉTERMINATION DE L'APPAREIL
         let dev = "PC";
         if (isBot) {
             if (/google-favicon/i.test(ua)) dev = "Google (Favicon)";
-            else if (/googlebot/i.test(ua)) dev = "Googlebot";
+            // Si c'est l'IP de Google mais que le UA fait sa feinte, on le badge quand même proprement Googlebot
+            else if (/googlebot/i.test(ua) || isGoogleIP) dev = "Googlebot";
             else if (/lighthouse|chrome-lighthouse/i.test(ua)) dev = "Lighthouse";
             else if (/facebookexternalhit|facebook/i.test(ua)) dev = "Meta / FB Bot";
             else if (/bingbot/i.test(ua)) dev = "Bingbot";
             else dev = "Robot"; 
         } else if (/android/i.test(ua)) {
-            dev = "Android"; // Max length 20 chars
+            dev = "Android"; 
         } else if (/iPad|iPhone|iPod/i.test(ua)) {
             dev = "iOS";
         }
@@ -163,11 +167,11 @@ export const POST: APIRoute = async ({ request }) => {
             isQR: finalIsQR
         };
 
-        // Incrémentations KV
+        // Incrémentations KV (On n'incrémente plus le compteur des "visites_totales" pour les robots)
         if (!isBot) {
             await kv.incr('visites_totales');
             if (finalIsQR) {
-                await kv.incr('visites_qr'); // On incrémente aussi le compteur global QR
+                await kv.incr('visites_qr'); 
             }
         }
 
@@ -180,4 +184,4 @@ export const POST: APIRoute = async ({ request }) => {
         console.error("Erreur API Log:", e);
         return new Response(JSON.stringify({ error: "Erreur serveur" }), { status: 500 });
     }
-}
+};
