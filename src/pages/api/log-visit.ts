@@ -50,6 +50,21 @@ export const POST: APIRoute = async ({ request }) => {
 
         const ua = sanitizeString(data.ua || request.headers.get('user-agent'), 500);
 
+        // 1. RÉCUPÉRATION IP, PAYS ET REFERRER
+        const rawIp = request.headers.get('x-real-ip') || request.headers.get('x-forwarded-for') || "Anonyme";
+        const ip = sanitizeString(rawIp.split(',')[0].trim(), 45);
+
+        // --- LE FILTRE RADICAL ANTI-AMAZON (Version Blindée) ---
+        const amazonRanges = ['13.', '18.', '3.', '34.', '35.', '44.', '50.', '52.', '54.', '100.', '204.'];
+        const isAmazonIP = amazonRanges.some(range => ip.startsWith(range));
+        const isAmazonUA = /(amazon|aws|amzn|compute.amazonaws.com)/i.test(ua);
+
+        if (isAmazonIP || isAmazonUA) {
+            // On stoppe TOUT immédiatement avant de toucher au KV quota.
+            return new Response(JSON.stringify({ success: true, ignored: "AWS-Block" }), { status: 200 });
+        }
+        // -------------------------------------------------------------------
+
         // --- PROTECTION GLOBALE (KV QUOTA) ---
         // Empêche de saturer le KV si une attaque massive survient (max 1000 logs/heure au total)
         const globalLimit = await kv.get('global_log_rate_limit');
@@ -58,10 +73,6 @@ export const POST: APIRoute = async ({ request }) => {
         }
         await kv.incr('global_log_rate_limit');
         await kv.expire('global_log_rate_limit', 3600); // Reset toutes les heures
-
-        // 1. RÉCUPÉRATION IP, PAYS ET REFERRER
-        const rawIp = request.headers.get('x-real-ip') || request.headers.get('x-forwarded-for') || "Anonyme";
-        const ip = sanitizeString(rawIp.split(',')[0].trim(), 45);
 
         // --- MODE FANTÔME (BUREAU) ---
         const GHOST_IP = import.meta.env.GHOST_MODE_IP; // Utilisation de la variable d'environnement définie sur Vercel
