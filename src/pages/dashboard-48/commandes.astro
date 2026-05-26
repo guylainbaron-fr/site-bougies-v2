@@ -172,6 +172,16 @@ const currentYear = new Date().getFullYear();
                     const dateVirement = new Date(dateCommande);
                     dateVirement.setDate(dateVirement.getDate() + 7);
                     
+                    const jourSemaine = dateVirement.getDay(); // 6 = Samedi, 0 = Dimanche
+
+                    if (jourSemaine === 6) { 
+                    // Si c'est un samedi, on pousse de 2 jours pour arriver au Lundi
+                    dateVirement.setDate(dateVirement.getDate() + 2);
+                    } else if (jourSemaine === 0) { 
+                    // Si c'est un dimanche, on pousse de 1 jour pour arriver au Lundi
+                    dateVirement.setDate(dateVirement.getDate() + 1);
+                    }
+
                     // Si le virement est prévu aujourd'hui ou dans le futur, on le comptabilise
                     if (dateVirement >= maintenant) {
                         // Utilisation sécurisée de o.total (avec ta formule de calcul des frais Stripe)
