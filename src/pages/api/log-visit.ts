@@ -188,7 +188,7 @@ export const POST: APIRoute = async ({ request }) => {
 
         // Sauvegarde dans le journal
         await kv.lpush('journal_visites', JSON.stringify(log));
-        await kv.ltrim('journal_visites', 0, 99);
+        await kv.ltrim('journal_visites', 0, 137);
 
         return new Response(JSON.stringify({ success: true }), { status: 200 });
     } catch (e) {

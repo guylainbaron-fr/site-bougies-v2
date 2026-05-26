@@ -79,7 +79,7 @@ try {
     totalVisites = (await kv.get<number>('visites_totales')) || 0;
     lastResetDate = await kv.get<string>('date_dernier_reset') || "Inconnue";
     lastCleanBotsDate = await kv.get<string>('date_dernier_clean_bots') || "Jamais";
-    const rawLogs = (await kv.lrange('journal_visites', 0, 99)) || []; 
+    const rawLogs = (await kv.lrange('journal_visites', 0, 137)) || []; 
     
     logs = rawLogs.map((item: any) => {
         const log: LogEntry = typeof item === 'string' ? JSON.parse(item) : item;
@@ -460,7 +460,7 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
 
         <div class="logs-section">
             <div style="font-weight:900; text-transform:uppercase; font-size:0.65rem; margin-bottom:12px; border-bottom:1px solid var(--vanille-pure); padding-bottom:8px; color: var(--brun-coco);">
-                Journal des passages (100 DERNIERS)
+                Journal des passages (138 DERNIERS)
             </div>
 
             <div class="filter-bar">
