@@ -68,8 +68,6 @@ const currentYear = new Date().getFullYear();
         /* PAGINATION - Identique à la boutique */
         #pagination-wrapper {
             margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px dashed var(--sable-dore);
             display: flex;
             justify-content: center;
         }
@@ -133,7 +131,7 @@ const currentYear = new Date().getFullYear();
     let allOrders = [];
     let currentPage = 1;
     let currentTab = 'prepare'; // prepare, shipped, all, archives
-    const itemsPerPage = 6;
+    const itemsPerPage = 9;
 
     async function fetchOrders() {
         const container = document.getElementById('orders-container');
