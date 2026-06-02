@@ -9,6 +9,7 @@ import SecureLogoImage from '../components/SecureLogoImage.astro';
 import troisCepesImg from '../assets/images/trois-cepes-bois.webp';
 import presseImg from '../assets/images/presse.webp';
 import souvenirsImg from '../assets/images/guylain-et-jeanfrancois.webp';
+import mairieActuImg from '../assets/images/actu-mairie-chasserades.webp';
 ---
 
 <MainLayout 
@@ -112,6 +113,37 @@ import souvenirsImg from '../assets/images/guylain-et-jeanfrancois.webp';
             <section id="presse-section">
                 <h2>On Parle de Nous dans la Presse !</h2>
                 
+            <!-- Publication Officielle de la Mairie de Chasseradès -->
+            <article class="presse-item-recent">
+                <div class="mairie-image-focus">
+                    <Image 
+                        src={mairieActuImg} 
+                        alt="Mise à l'honneur de Jean-François et Aniuta - Actualités Mont-Lozère et Goulet et Chasseradès" 
+                        width={600} 
+                        height={503} 
+                        quality={85}
+                        loading="lazy"
+                    />
+                </div>
+
+                <h3>« À la découverte d’un savoir-faire artisanal de Chasseradès » — Mont-Lozère et Goulet</h3>
+                <p>
+                    La commune de <strong>Chasseradès</strong> et la communauté de communes de <strong>Mont Lozère et Goulet</strong> mettent à l'honneur le talent local :
+                </p>
+                
+                <blockquote class="citation-presse-moderne">
+                    « Mont Lozère et Goulet met à l’honneur le talent local avec Jean François et Aniuta, artisans installés à Chasseradès. Ils façonnent avec passion des pièces uniques qui mettent en lumière le savoir-faire de notre territoire. »
+                </blockquote>
+
+                <div class="presse-infos">
+                    <p class="info-attente">Retrouvez la publication d'origine :</p>
+                    <a href="https://www.facebook.com/permalink.php?story_fbid=pfbid02yAK7GqPrtkY2MCJ7nqsUUR1xPyUhDBgERkJPn3fWp72PNjWr7PbhzH3LPwWjCoFWl&id=61577438311019" target="_blank" rel="noopener noreferrer" class="poetic-link">
+                        Voir la publication sur le Facebook de la Mairie
+                    </a>
+                </div>
+            </article>
+
+                    <!-- Article : Terres de Lozère -->
                 <article class="presse-item-recent">
                     <div class="presse-content">
                         <h3>« La bougie cèpe » — Magazine Terres de Lozère (N°4 Hiver 2025)</h3>
@@ -183,8 +215,9 @@ import souvenirsImg from '../assets/images/guylain-et-jeanfrancois.webp';
 
 <script>
     const setupLoupe = () => {
-        const imgContainer = document.querySelector('.article-image-container');
-        const img = document.querySelector('.article-image') as HTMLElement;
+        // Cible uniquement l'article de la Lozère Nouvelle via sa classe générique existante
+        const imgContainer = document.querySelector('.article-wrapper .article-image-container');
+        const img = document.querySelector('.article-wrapper .article-image') as HTMLElement;
         const hasMouse = window.matchMedia('(pointer: fine)').matches;
 
         if (imgContainer && img && hasMouse) {

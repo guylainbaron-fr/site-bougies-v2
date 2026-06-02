@@ -1242,10 +1242,6 @@ h2::after {
         line-height: 1.6;
     }
 }
-/* ==========================================================================
-   SECTION PRESSE JF & A - STYLE ÉPURÉ (SANS LISERETS)
-   ========================================================================== */
-
 #presse-section {
     margin-top: 80px;
     padding-bottom: 40px;
@@ -1273,27 +1269,17 @@ h2::after {
     position: absolute;
     top: -5px;
     left: 15px;
-    font-size: 80px; /* Réduit un peu la taille */
+    font-size: 80px;
     color: var(--sable-dore);
-    opacity: 0.15; /* Plus discret pour ne pas gêner le texte */
+    opacity: 0.15;
     font-family: var(--font-secondaire);
     line-height: 1;
-    pointer-events: none; /* Pour que le clic passe à travers */
+    pointer-events: none;
 }
 
 .presse-item-recent h3 {
     color: var(--brun-coco);
     margin-top: 0;
-    position: relative;
-}
-
-.citation-presse-moderne {
-    font-family: var(--font-secondaire);
-    font-style: italic;
-    color: var(--texte-galet);
-    font-size: 1.1rem;
-    margin: 20px 0;
-    line-height: 1.8;
     position: relative;
 }
 
@@ -1307,6 +1293,96 @@ h2::after {
 
 .presse-infos {
     margin-top: 25px;
+}
+
+.mairie-image-focus {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 30px auto;
+    max-width: 550px; /* Image plus petite comme demandé */
+}
+
+.mairie-image-focus img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(45, 34, 26, 0.1);
+}
+
+/* Téléphone en gras */
+.direct-phone {
+    font-weight: bold;
+}
+
+/* ----------------------------------------------------
+   ICÔNES DESSINÉES EN PUR CSS (GÉOMÉTRIE)
+   ---------------------------------------------------- */
+
+/* Base d'alignement pour toutes les icônes */
+.pure-css-icon {
+    display: inline-block;
+    position: relative;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    vertical-align: middle;
+    box-sizing: border-box;
+    transition: all 0.4s ease; /* Pour suivre le rythme du lien poetic */
+}
+
+/* --- GLOBE (Cercle + quadrillage interne) --- */
+.icon-globe {
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+}
+/* Ligne équateur horizontale */
+.icon-globe::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background-color: currentColor;
+    transform: translateY(-50%) scaleX(0.8);
+}
+/* Lignes de méridiens ovales verticales */
+.icon-globe::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 6px;
+    height: 100%;
+    border-left: 1.5px solid currentColor;
+    border-right: 1.5px solid currentColor;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    box-sizing: border-box;
+}
+
+/* --- MARQUEUR / PIN (Goutte inversée tournée à -45°) --- */
+.icon-pin {
+    background-color: currentColor;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    width: 13px;
+    height: 13px;
+    margin-bottom: 3px;
+    margin-left: 2px;
+}
+/* Le point intérieur vide (prend la couleur du fond de la page) */
+.icon-pin::before {
+    content: "";
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background-color: var(--fond-sable); /* Fond de la section */
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 /* Article La Lozère Nouvelle */
@@ -1409,24 +1485,23 @@ h2::after {
 /* La photo souvenir (Style Polaroid des îles) - CENTRAGE FORCÉ */
 .concepteur-photo {
     margin-top: 40px;
-    display: flex;           /* Active le mode Flex pour le centrage */
-    justify-content: center; /* Centre horizontalement l'image */
-    align-items: center;     /* Aligne verticalement */
-    width: 100%;             /* Utilise toute la largeur disponible */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 .photo-souvenir {
     max-width: 320px;
     width: 100%;
     height: auto;
-    display: block;          /* Supprime les marges fantômes sous l'image */
+    display: block;
     border-radius: 4px; 
     border: 10px solid #ffffff; 
     box-shadow: 0 15px 35px rgba(45, 34, 26, 0.2);
     
-    /* On garde ton inclinaison Polaroid */
     transform: rotate(-2deg);
-    transform-origin: center; /* Assure que la rotation se fait sur le centre */
+    transform-origin: center;
     transition: transform 0.5s ease;
 }
 
