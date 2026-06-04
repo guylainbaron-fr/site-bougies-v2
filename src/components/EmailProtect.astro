@@ -6,17 +6,34 @@ interface Props {
 
 const { class: className = "" } = Astro.props;
 
-const p1 = "bm9yYWJzaW9jbmFyZm5hZWo="; 
-const p2 = "dGVuLmV0c29wYWw=";
+const XOR_KEY = 244; 
+
+const encrypt = (text: string) => {
+  const reversed = text.split('').reverse().join('');
+  const xorred = reversed.split('').map(char => 
+    String.fromCharCode(char.charCodeAt(0) ^ XOR_KEY)
+  ).join('');
+  
+  return Buffer.from(xorred, 'binary')
+    .toString('base64')
+    .replace(/=/g, '')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
+};
+
+const p1 = encrypt("jeanfrancoisbaron");     
+const p2 = encrypt("laposte.net"); 
 ---
 
 <span class={`email-placeholder ${className}`}
       data-p1={p1} 
       data-p2={p2}>
-    <noscript><small style="font-size: 0.85em; opacity: 0.7;">Email protégé</small></noscript>
+    <slot /><noscript><small style="font-size: 0.85em; opacity: 0.7;">[Email protégé]</small></noscript>
 </span>
 
 <script>
+    const XOR_KEY = 244; 
+
     const revealEmails = () => {
         const placeholders = document.querySelectorAll('.email-placeholder');
         
@@ -29,15 +46,37 @@ const p2 = "dGVuLmV0c29wYWw=";
             
             if (part1 && part2) {
                 try {
-                    const user = atob(part1).split('').reverse().join('');
-                    const domain = atob(part2).split('').reverse().join('');
+                    const decrypt = (encodedBase64: string) => {
+                        let base64 = encodedBase64
+                            .replace(/-/g, '+')
+                            .replace(/_/g, '/');
+                        
+                        while (base64.length % 4) {
+                            base64 += '=';
+                        }
+                        
+                        const decodedBase64 = atob(base64);
+                        const dexorred = decodedBase64.split('').map(char => 
+                            String.fromCharCode(char.charCodeAt(0) ^ XOR_KEY)
+                        ).join('');
+                        return dexorred.split('').reverse().join('');
+                    };
+
+                    const user = decrypt(part1);
+                    const domain = decrypt(part2);
                     const email = `${user}@${domain}`;
+
+                    const noscriptChild = htmlEl.querySelector('noscript');
+                    if (noscriptChild) noscriptChild.remove();
+
+                    const originalContent = htmlEl.innerHTML;
+                    const hasSlot = htmlEl.innerText.trim().length > 0;
                     
                     const link = document.createElement('a');
                     link.href = `mailto:${email}`;
-                    // On copie toutes les classes sauf le placeholder pour être 100% propre
                     link.className = htmlEl.className.replace('email-placeholder', '').trim();
-                    link.textContent = email;
+                    
+                    link.innerHTML = hasSlot ? originalContent : email;
                     
                     htmlEl.setAttribute('data-filled', 'true');
                     htmlEl.replaceWith(link);
@@ -54,9 +93,6 @@ const p2 = "dGVuLmV0c29wYWw=";
 
 <style>
     .email-placeholder {
-        display: inline-block;
-        vertical-align: middle;
-        /* On évite que le span vide ne prenne de la place avant le JS */
-        min-width: 0;
+        display: contents;
     }
 </style>

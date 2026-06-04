@@ -8,74 +8,117 @@ interface Props {
   ariaLabel?: string;
 }
 
-const { class: className = "", isWhatsApp = false, onlyLink = false, title = "", ariaLabel = "" } = Astro.props;
+const { 
+  class: className = "", 
+  isWhatsApp = false, 
+  onlyLink = false, 
+  title = "", 
+  ariaLabel = "" 
+} = Astro.props;
 
-const p1 = "MDkgODUgNjA="; 
-const p2 = "NTMgODk=";
-const w1 = "NTMgODkgMDkgODUgNjA="; 
+const XOR_KEY = 84;
+
+const encrypt = (text: string) => {
+  const reversed = text.split('').reverse().join('');
+  const xorred = reversed.split('').map(char => 
+    String.fromCharCode(char.charCodeAt(0) ^ XOR_KEY)
+  ).join('');
+  
+  return Buffer.from(xorred, 'binary')
+    .toString('base64')
+    .replace(/=/g, '')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
+};
+
+const p1 = encrypt("06 58 90");      
+const p2 = encrypt("98 35");      
+const w1 = encrypt("06 58 90 98 35"); 
 ---
 
-{onlyLink ? (
-  <a href="#" 
-     class={`phone-placeholder ${className}`}
-     data-p1={isWhatsApp ? w1 : p1} 
-     data-p2={isWhatsApp ? "" : p2}
-     data-type={isWhatsApp ? "whatsapp" : "tel"}
-     data-onlylink="true"
-     target="_blank"
-     rel="noopener noreferrer"
-     title={title}
-     aria-label={ariaLabel}
-  >
+<a href="#" 
+   class={`phone-placeholder ${className}`}
+   data-p1={isWhatsApp ? w1 : p1} 
+   data-p2={isWhatsApp ? "" : p2}
+   data-type={isWhatsApp ? "whatsapp" : "tel"}
+   title={title}
+   aria-label={ariaLabel}>
     <slot />
-  </a>
-) : (
-  <span class={`phone-placeholder ${className}`}
-        data-p1={p1} 
-        data-p2={p2}
-        data-type="tel"
-        data-onlylink="false">
-      <noscript><small style="font-size: 0.8em; opacity: 0.6;">Tel protégé</small></noscript>
-  </span>
-)}
+    <noscript>
+        {onlyLink ? (
+            <span style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;">
+                [Numéro protégé]
+            </span>
+        ) : (
+            <small style="font-size: 0.85em; opacity: 0.7;">[Numéro protégé]</small>
+        )}
+    </noscript>
+</a>
 
 <script>
+    const XOR_KEY = 84;
+
     const revealPhones = () => {
-        const elements = document.querySelectorAll('.phone-placeholder');
+        const placeholders = document.querySelectorAll('.phone-placeholder');
         
-        elements.forEach(el => {
-            const htmlEl = el as HTMLElement;
-            if (htmlEl.getAttribute('data-filled') === 'true') return;
+        placeholders.forEach(el => {
+            const linkEl = el as HTMLAnchorElement;
+            if (linkEl.getAttribute('data-filled') === 'true') return;
 
-            const part1 = htmlEl.getAttribute('data-p1') || "";
-            const part2 = htmlEl.getAttribute('data-p2') || "";
-            const type = htmlEl.getAttribute('data-type');
-            const onlyLink = htmlEl.getAttribute('data-onlylink') === "true";
+            const part1 = linkEl.getAttribute('data-p1') || "";
+            const part2 = linkEl.getAttribute('data-p2') || "";
+            const type = linkEl.getAttribute('data-type');
+            
+            if (part1) {
+                try {
+                    const decrypt = (encodedBase64: string) => {
+                        let base64 = encodedBase64
+                            .replace(/-/g, '+')
+                            .replace(/_/g, '/');
+                        
+                        while (base64.length % 4) {
+                            base64 += '=';
+                        }
+                        
+                        const decodedBase64 = atob(base64);
+                        const dexorred = decodedBase64.split('').map(char => 
+                            String.fromCharCode(char.charCodeAt(0) ^ XOR_KEY)
+                        ).join('');
+                        return dexorred.split('').reverse().join('');
+                    };
 
-            try {
-                const start = atob(part1).split('').reverse().join('');
-                const end = (part2 && part2 !== "") ? atob(part2).split('').reverse().join('') : "";
-                const fullPhone = end ? `${start} ${end}` : start;
-                const cleanNumber = fullPhone.replace(/\s/g, '');
+                    const s = decrypt(part1);
+                    const e = (part2 && part2 !== "") ? decrypt(part2) : "";
+                    const fullDisplay = e ? `${s} ${e}` : s;
+                    const digits = fullDisplay.replace(/\D/g, '');
 
-                if (type === "whatsapp") {
-                    const anchor = htmlEl as HTMLAnchorElement;
-                    const waNumber = cleanNumber.startsWith('0') ? '33' + cleanNumber.substring(1) : cleanNumber;
-                    anchor.href = `https://wa.me/${waNumber}`;
-                } else if (onlyLink) {
-                    const anchor = htmlEl as HTMLAnchorElement;
-                    anchor.href = `tel:${cleanNumber}`;
-                } else {
-                    const link = document.createElement('a');
-                    link.className = htmlEl.className;
-                    link.href = `tel:${cleanNumber}`;
-                    link.textContent = fullPhone;
-                    htmlEl.replaceWith(link);
-                    return;
+                    // 1. On nettoie le noscript
+                    const noscriptChild = linkEl.querySelector('noscript');
+                    if (noscriptChild) noscriptChild.remove();
+
+                    // 2. On vérifie s'il y a un slot (texte ou icône)
+                    const hasSlot = linkEl.innerHTML.trim().length > 0;
+
+                    // 3. On injecte le numéro uniquement si le composant a été appelé vide
+                    if (!hasSlot) {
+                        linkEl.innerHTML = fullDisplay;
+                    }
+                    
+                    // 4. On configure les bons liens sur la balise <a> existante
+                    if (type === "whatsapp") {
+                        const waNumber = digits.startsWith('0') ? '33' + digits.substring(1) : digits;
+                        linkEl.href = `https://wa.me/${waNumber}`;
+                        linkEl.target = "_blank";
+                        linkEl.rel = "noopener noreferrer";
+                    } else {
+                        const telNumber = digits.startsWith('0') ? '+33' + digits.substring(1) : `+${digits}`;
+                        linkEl.href = `tel:${telNumber}`;
+                    }
+
+                    linkEl.setAttribute('data-filled', 'true');
+                } catch (e) {
+                    console.error("Erreur PhoneProtect:", e);
                 }
-                htmlEl.setAttribute('data-filled', 'true');
-            } catch (e) {
-                console.error("Erreur PhoneProtect:", e);
             }
         });
     }
