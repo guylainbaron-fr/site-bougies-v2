@@ -369,6 +369,87 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
 
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
+
+    /* MODAL UTM GENERATOR */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(42, 34, 26, 0.7);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(4px);
+    }
+    .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 500px;
+        border: 1px solid var(--sable);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--vanille);
+        padding-bottom: 10px;
+    }
+    .utm-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 20px 0;
+    }
+    .utm-btn {
+        padding: 15px;
+        border: 1px solid var(--sable);
+        background: var(--fond);
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        transition: all 0.2s;
+    }
+    .utm-btn:hover { background: var(--vanille); border-color: var(--coco); transform: translateY(-2px); }
+    .utm-custom-box {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px dashed var(--sable);
+    }
+    .utm-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--sable);
+        border-radius: 6px;
+        margin-bottom: 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    /* Transition pour éviter les sauts et animer les changements d'état */
+    .utm-input, .utm-btn, .btn-add {
+        transition: all 0.3s ease !important;
+    }
+    .success-state {
+        border-color: var(--vert) !important;
+        color: var(--vert) !important;
+    }
+    .btn-success-state {
+        background-color: var(--vert) !important;
+        border-color: var(--vert) !important;
+        color: white !important;
+    }
 </style>
 </head>
 <body>
@@ -376,6 +457,9 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
         <AdminHeader currentPage="stats" title="Dashboard" />
 
         <div class="actions-bar">
+            <button onclick="openUtmModal()" class="btn btn-add" style="background: var(--color-ios);">
+                <i class="fa-solid fa-link"></i> GÉNÉRATEUR DE LIENS
+            </button>
             <button onclick="window.print()" class="btn btn-add">
                 <i class="fa-solid fa-file-pdf"></i> RAPPORT
             </button>
@@ -606,7 +690,10 @@ return (
                     )}
 
                     {log.source && !['Instagram', 'Facebook', 'WhatsApp', 'TikTok', 'Pinterest', 'Direct', 'Inconnue'].includes(log.source) && (
-                        <span>{log.source}</span>
+                        <>
+                            <i class="fa-solid fa-link" style="color: var(--color-direct);"></i>
+                            <span style="color: var(--color-direct);">{log.source}</span>
+                        </>
                     )}
                 </>
             )}
@@ -636,6 +723,37 @@ return (
 <footer class="dashboard-footer">
     <p>&copy; {currentYear} Jean François & Aniuta — Dashboard Atelier</p>
 </footer>
+    </div>
+
+    <!-- MODAL GÉNÉRATEUR DE LIENS -->
+    <div id="utmModal" class="modal-overlay" onclick="if(event.target === this) closeUtmModal()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="margin:0; font-size:1rem; color: var(--coco);">GÉNÉRATEUR DE LIENS</h3>
+                <button onclick="closeUtmModal()" style="background:none; border:none; cursor:pointer; font-size:1.5rem; color: var(--sable);">&times;</button>
+            </div>
+            
+            <p style="font-size:0.7rem; color: var(--coco); opacity:0.8; line-height:1.4;">
+                Cliquez sur un bouton pour copier le lien spécial. Collez-le ensuite dans vos bios ou publications pour suivre les visites.
+            </p>
+
+            <div class="utm-grid">
+                <button class="utm-btn" onclick="copyUtm('fb', this)"><i class="fa-brands fa-facebook" style="color:#1877F2"></i> Facebook</button>
+                <button class="utm-btn" onclick="copyUtm('ig', this)"><i class="fa-brands fa-instagram" style="color:#E1306C"></i> Instagram</button>
+                <button class="utm-btn" onclick="copyUtm('wa', this)"><i class="fa-brands fa-whatsapp" style="color:#25D366"></i> WhatsApp</button>
+                <button class="utm-btn" onclick="copyUtm('tk', this)"><i class="fa-brands fa-tiktok" style="color:#000"></i> TikTok</button>
+                <button class="utm-btn" onclick="copyUtm('pin', this)"><i class="fa-brands fa-pinterest" style="color:#E60023"></i> Pinterest</button>
+                <button class="utm-btn" onclick="copyUtm('qr', this)"><i class="fa-solid fa-qrcode" style="color:var(--color-qr)"></i> QR Code</button>
+            </div>
+
+            <div class="utm-custom-box">
+                <span style="font-size:0.6rem; font-weight:800; text-transform:uppercase; display:block; margin-bottom:8px;">Source Personnalisée (ex: Partenaire)</span>
+                <input type="text" id="customSourceName" class="utm-input" placeholder="NOM DU PARTENAIRE">
+                <button class="btn btn-add" style="width:100%; justify-content:center;" onclick="copyCustomUtm(this)">
+                    COPIER LE LIEN PARTENAIRE
+                </button>
+            </div>
+        </div>
     </div>
 
 <script>
@@ -681,40 +799,50 @@ return (
         }
     });
 
-    // Export CSV
-    (window as any).exportLogsToCSV = () => {
-        const entries = document.querySelectorAll('.log-entry');
-        const activeFilterBtn = document.querySelector('.filter-btn.active');
-        let filterName = "Tous";
-        if (activeFilterBtn) {
-            filterName = (activeFilterBtn as HTMLElement).innerText.replace(/[0-9]/g, '').trim();
-        }
+    // --- LOGIQUE GÉNÉRATEUR UTM ---
+    (window as any).openUtmModal = () => {
+        document.getElementById('utmModal')!.style.display = 'flex';
+    };
 
-        let csvContent = "N°;SOURCE_IP;TYPE;PAYS;HEURE;DATE\r\n"; 
-        entries.forEach(el => {
-            const entry = el as HTMLElement;
-            if (entry.style.display !== 'none') {
-                const num = entry.querySelector('.log-cell-num')?.textContent?.trim() || "";
-                const sourceIP = entry.querySelector('a')?.textContent?.trim() || "Privé";
-                const sourceType = entry.querySelector('div[style*="font-size:0.6rem"]')?.textContent?.trim() || "";
-                const pays = entry.getAttribute('data-country') || "Inconnu";
-                const rightCell = entry.querySelector('.log-cell-right');
-                const timeDate = rightCell ? rightCell.textContent?.split('\n').map(t => t.trim()) : ["", ""];
-                
-                csvContent += `"${num}";"${sourceIP}";"${sourceType}";"${pays}";"${timeDate ? timeDate[0] : ""}";"${timeDate ? timeDate[1] : ""}"\r\n`;
-            }
+    (window as any).closeUtmModal = () => {
+        document.getElementById('utmModal')!.style.display = 'none';
+    };
+
+    (window as any).copyUtm = (source: string, btn: HTMLElement) => {
+        const baseUrl = window.location.origin;
+        const finalUrl = `${baseUrl}/?utm_source=${source}`;
+        navigator.clipboard.writeText(finalUrl).then(() => {
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> COPIÉ !';
+            btn.classList.add('success-state');
+            setTimeout(() => {
+                btn.innerHTML = original;
+                btn.classList.remove('success-state');
+            }, 2000);
         });
+    };
 
-        const BOM = "\uFEFF";
-        const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        const dateFile = new Date().toLocaleDateString('fr-FR').replace(/\//g, '-');
-        link.setAttribute("href", url);
-        link.setAttribute("download", `logs_${filterName}_${dateFile}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    (window as any).copyCustomUtm = (btn: HTMLElement) => {
+        const input = document.getElementById('customSourceName') as HTMLInputElement;
+        const source = input.value.trim() || "Partenaire";
+        const baseUrl = window.location.origin;
+        // On remplace les espaces par des tirets pour l'URL
+        const sanitizedSource = source.toLowerCase().replace(/\s+/g, '-');
+        const finalUrl = `${baseUrl}/?utm_source=${sanitizedSource}`;
+        
+        navigator.clipboard.writeText(finalUrl).then(() => {
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> LIEN COPIÉ !';
+            btn.classList.add('btn-success-state');
+            input.classList.add('success-state');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalBtnText;
+                btn.classList.remove('btn-success-state');
+                input.classList.remove('success-state');
+                input.value = "";
+            }, 2000);
+        });
     };
 </script>
 <script is:inline>
@@ -732,7 +860,7 @@ function updateBadges() {
         
         // 2. DÉFINITION DES GROUPES
         const isBot = !['iOS', 'Android', 'PC', 'Ordinateur'].includes(device);
-        const isSocial = ['Instagram', 'Facebook', 'WhatsApp', 'TikTok', 'Twitter'].includes(source);
+        const isSocial = ['Instagram', 'Facebook', 'WhatsApp', 'TikTok', 'Twitter', 'Pinterest'].includes(source);
 
         counts.all++;
         
@@ -747,8 +875,10 @@ function updateBadges() {
             if (device === 'PC' || device === 'Ordinateur') counts.pc++;
         }
 
-        if (country.toUpperCase() === 'FRANCE') counts.france++;
-        else counts.intl++;
+        if (!isBot) {
+            if (country.toUpperCase() === 'FRANCE') counts.france++;
+            else counts.intl++;
+        }
     });
 
     // Mise à jour visuelle des badges
@@ -786,7 +916,7 @@ entries.forEach(entry => {
     const country = entry.getAttribute('data-country') || 'INCONNU';
     
     const isBot = !['iOS', 'Android', 'PC', 'Ordinateur'].includes(device);
-    const isSocial = ['Instagram', 'Facebook', 'WhatsApp', 'TikTok', 'Twitter'].includes(source);
+    const isSocial = ['Instagram', 'Facebook', 'WhatsApp', 'TikTok', 'Twitter', 'Pinterest'].includes(source);
 
     // 2. LOGIQUE DE FILTRAGE
     let show = false;
@@ -809,11 +939,10 @@ entries.forEach(entry => {
     else if (type === 'pc' && !isBot && (device === 'PC' || device === 'Ordinateur')) {
         show = true;
     } 
-    // MODIFICATION ICI : On enlève le !isBot pour la France et l'International
-    else if (type === 'france' && country.toUpperCase() === 'FRANCE') {
+    else if (type === 'france' && !isBot && country.toUpperCase() === 'FRANCE') {
         show = true;
     } 
-    else if (type === 'international' && country.toUpperCase() !== 'FRANCE') {
+    else if (type === 'international' && !isBot && country.toUpperCase() !== 'FRANCE') {
         show = true;
     }
 
@@ -836,36 +965,22 @@ function exportLogsToCSV() {
         filterName = activeFilterBtn.innerText.replace(/[0-9]/g, '').trim();
     }
 
-    // On définit les colonnes : N°, IP, TYPE (Scan/Robot), PAYS, HEURE, DATE
-    let csvContent = "N°;SOURCE_IP;TYPE;PAYS;HEURE;DATE\r\n"; 
+    // On définit les colonnes : N°, IP, SOURCE, APPAREIL, PAYS, HEURE, DATE
+    let csvContent = "N°;IP;SOURCE;APPAREIL;PAYS;HEURE;DATE\r\n"; 
 
     entries.forEach(entry => {
         if (entry.style.display !== 'none') {
-            // 1. Le Numéro (log-cell-num)
             const num = entry.querySelector('.log-cell-num')?.innerText.trim() || "";
-            
-            // 2. La cellule centrale (le div qui contient les 2 lignes)
-            const centerCell = entry.querySelector('div[style*="flex-direction: column"]');
-            
-            // LIGNE 1 : L'IP (on la prend dans la balise <a>)
-            const sourceIP = centerCell?.querySelector('a')?.innerText.trim() || "Privé";
-            
-            // LIGNE 2 : Le TYPE (Scan QR, Lien Web, ou Nom du Robot)
-            const typeDiv = centerCell?.querySelector('div[style*="font-size:0.6rem"]');
-            const sourceType = typeDiv?.innerText.trim() || "";
-            
-            // 3. Le PAYS
-            const pays = entry.querySelector('div:not(.log-cell-num):not(.log-cell-right) span[title], .log-entry > span:nth-of-type(2)')?.innerText.trim() 
-                         || entry.getAttribute('data-country') || "Inconnu";
-            
-            // 4. HEURE & DATE (log-cell-right)
+            const sourceIP = entry.querySelector('a')?.innerText.trim() || "Privé";
+            const source = entry.getAttribute('data-source') || "Direct";
+            const device = entry.getAttribute('data-device') || "Inconnu";
+            const pays = entry.getAttribute('data-country') || "Inconnu";
             const rightCell = entry.querySelector('.log-cell-right');
-            const timeDate = rightCell ? rightCell.innerText.split('\n').map(t => t.trim()) : ["", ""];
-            const heure = timeDate[0] || "";
-            const date = timeDate[1] || "";
+            const heure = rightCell?.querySelector('span:first-child')?.innerText.trim() || "";
+            const date = rightCell?.querySelector('span:last-child')?.innerText.trim() || "";
 
             // On assemble tout proprement
-            const rowData = [num, sourceIP, sourceType, pays, heure, date]
+            const rowData = [num, sourceIP, source, device, pays, heure, date]
                 .map(text => `"${text.replace(/"/g, '""')}"`)
                 .join(";");
             

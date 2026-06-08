@@ -117,6 +117,16 @@ export const POST: APIRoute = async ({ request }) => {
             const s = manualSource.toLowerCase();
             if (s === 'qr') {
                 sourceName = "Scan QR";
+            } else if (s === 'fb' || s === 'facebook') {
+                sourceName = "Facebook";
+            } else if (s === 'ig' || s === 'insta' || s === 'instagram') {
+                sourceName = "Instagram";
+            } else if (s === 'wa' || s === 'whatsapp') {
+                sourceName = "WhatsApp";
+            } else if (s === 'tk' || s === 'tiktok') {
+                sourceName = "TikTok";
+            } else if (s === 'pt' || s === 'pin' || s === 'pinterest') {
+                sourceName = "Pinterest";
             } else {
                 sourceName = s.charAt(0).toUpperCase() + s.slice(1);
             }
@@ -134,6 +144,7 @@ export const POST: APIRoute = async ({ request }) => {
             else if (refLower.includes('facebook.com') || refLower.includes('fb.me')) sourceName = "Facebook";
             else if (refLower.includes('whatsapp.com')) sourceName = "WhatsApp";
             else if (refLower.includes('tiktok.com')) sourceName = "TikTok";
+            else if (refLower.includes('pinterest.')) sourceName = "Pinterest";
             else if (refLower.includes('google.')) sourceName = "Google";
             else {
                 // Ensure referrer is a valid URL before parsing
