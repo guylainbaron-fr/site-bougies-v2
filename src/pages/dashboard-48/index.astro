@@ -71,6 +71,9 @@ let androidCount = 0;
 let pcCount = 0;
 let botCount = 0; 
 let qrCount = 0;
+let socialCount = 0;
+let partnerCount = 0;
+let directCount = 0;
 let lastResetDate = "";
 let lastCleanBotsDate = "";
 
@@ -84,6 +87,8 @@ try {
     logs = rawLogs.map((item: any) => {
         const log: LogEntry = typeof item === 'string' ? JSON.parse(item) : item;
         
+        const source = log.source || 'Direct';
+        const isSocial = ['Instagram', 'Facebook', 'WhatsApp', 'TikTok', 'Twitter', 'Pinterest'].includes(source);
         // Logique : Si c'est dans la liste, c'est humain. Sinon, c'est un Bot.
         const isHuman = ['iOS', 'Android', 'PC', 'Ordinateur'].includes(log.device);
         
@@ -93,9 +98,19 @@ try {
             if (log.device === "iOS") iosCount++;
             else if (log.device === "Android") androidCount++;
             else if (log.device === "Ordinateur" || log.device === "PC") pcCount++;
+
+            // Distribution Origine (Humains uniquement)
+            if (log.isQR === true || String(log.isQR) === 'true') {
+                qrCount++;
+            } else if (isSocial) {
+                socialCount++;
+            } else if (source === 'Direct' || source === 'Inconnue') {
+                directCount++;
+            } else {
+                partnerCount++;
+            }
         }
         
-        if (log.isQR === true || String(log.isQR) === 'true') qrCount++;
         return log;
     });
 } catch (e) {
@@ -117,7 +132,11 @@ if (botPct < 0) botPct = 0; // Sécurité
 
 // --- 3. CALCULS POUR LA BARRE ORIGINE (Humains uniquement) ---
 let qrPct = totalVisitesHumaines > 0 ? Math.round((qrCount / totalVisitesHumaines) * 100) : 0;
-let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
+let socialPct = totalVisitesHumaines > 0 ? Math.round((socialCount / totalVisitesHumaines) * 100) : 0;
+let directPct = totalVisitesHumaines > 0 ? Math.round((directCount / totalVisitesHumaines) * 100) : 0;
+// Le segment Partenaire prend le reste pour assurer 100%
+let partnerPct = totalVisitesHumaines > 0 ? (100 - qrPct - socialPct - directPct) : 0;
+if (partnerPct < 0) partnerPct = 0;
 ---
 
 <!DOCTYPE html>
@@ -140,6 +159,8 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
         --color-pc: #7f8c8d;
         --color-qr: #d35400; 
         --color-direct: #2c3e50;
+        --color-social: #e84393;
+        --color-partner: #6c5ce7;
     }
 
     .stats-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 25px; }
@@ -163,6 +184,8 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
     .bg-pc { background-color: var(--color-pc); }
     .bg-qr { background-color: var(--color-qr); }
     .bg-direct { background-color: var(--color-direct); }
+    .bg-social { background-color: var(--color-social); }
+    .bg-partner { background-color: var(--color-partner); }
 
     .bar-legend { display: flex; flex-wrap: wrap; gap: 15px; }
     .legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 0.6rem; font-weight: bold; text-transform: uppercase; }
@@ -499,12 +522,16 @@ let directPct = totalVisitesHumaines > 0 ? (100 - qrPct) : 0;
 <div class="dist-section">
     <div class="dist-header">Origine</div>
     <div class="distribution-bar">
-        {qrCount > 0 && <div class="segment bg-qr" style={`width: ${qrPct}%`}>{qrPct > 10 ? `${qrPct}%` : ''}</div>}
-        {directPct > 0 && <div class="segment bg-direct" style={`width: ${directPct}%`}>{directPct > 10 ? `${directPct}%` : ''}</div>}
+        {qrCount > 0 && <div class="segment bg-qr" style={`width: ${qrPct}%`}>{qrPct > 5 ? `${qrPct}%` : ''}</div>}
+        {socialCount > 0 && <div class="segment bg-social" style={`width: ${socialPct}%`}>{socialPct > 5 ? `${socialPct}%` : ''}</div>}
+        {directCount > 0 && <div class="segment bg-direct" style={`width: ${directPct}%`}>{directPct > 5 ? `${directPct}%` : ''}</div>}
+        {partnerCount > 0 && <div class="segment bg-partner" style={`width: ${partnerPct}%`}>{partnerPct > 5 ? `${partnerPct}%` : ''}</div>}
     </div>
     <div class="bar-legend">
         <span class="legend-item"><span class="dot bg-qr"></span> Scan QR ({qrPct}%)</span>
-        <span class="legend-item"><span class="dot bg-direct"></span> Lien Web ({directPct}%)</span>
+        <span class="legend-item"><span class="dot bg-social"></span> Social ({socialPct}%)</span>
+        <span class="legend-item"><span class="dot bg-direct"></span> Accès Direct ({directPct}%)</span>
+        <span class="legend-item"><span class="dot bg-partner"></span> Partenaire ({partnerPct}%)</span>
     </div>
 </div>
 
