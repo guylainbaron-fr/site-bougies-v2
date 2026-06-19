@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "@astrojs/tailwind": "^6.0.2",
-    "@astrojs/vercel": "^10.0.5",
+    "@astrojs/vercel": "^10.0.8",
     "@fontsource/poppins": "^5.2.7",
     "@vercel/analytics": "^2.0.1",
     "@vercel/kv": "^1.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "astro": "^6.1.9",
+    "astro": "^6.4.8",
     "crypto-js": "^4.2.0",
     "qrcode": "^1.5.4",
     "stripe": "^22.1.0",
@@ -30,6 +30,7 @@
     "path-to-regexp": "^6.3.0",
     "picomatch": "^4.0.1",
     "postcss": "^8.5.10",
-    "yaml": "^2.8.3"
+    "yaml": "^2.8.3",
+    "esbuild": "^0.28.1"
   }
 }
