@@ -25,23 +25,25 @@ const currentYear = new Date().getFullYear();
         .filter-btn.archive-tab { border-style: dashed; margin-left: auto; }
 
         /* COMPTEUR CA (Motivation) */
-        .actions-row { display: flex; gap: 20px; margin-bottom: 30px; width: 100%; }
+        .actions-row { display: flex; gap: 15px; margin-bottom: 30px; width: 100%; flex-wrap: wrap; }
         
         .ca-pill { 
             display: flex; 
-            align-items: center; /* ← Re-centrer verticalement l'icône maintenant qu'ils ont tous 3 lignes */
+            align-items: center; 
             gap: 15px; 
             background: white; 
-            padding: 12px 25px; 
+            padding: 12px 20px; 
             border-radius: 12px; 
             border: 1px solid var(--sable-dore); 
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            min-width: 220px;
+            flex: 1;
+            min-width: 200px;
         }
 
-        /* On pousse le troisième compteur tout à droite, comme l'onglet archives */
+        /* On cible la dernière pilule (Stripe) pour qu'elle prenne un peu plus de place et se mette à droite */
         .ca-pill:last-child {
             margin-left: auto;
+            flex-grow: 1.2;
         }
 
         .ca-info span { display: block; font-size: 0.65rem; text-transform: uppercase; font-weight: 800; color: var(--bois-flotte); letter-spacing: 1px; }
@@ -71,6 +73,10 @@ const currentYear = new Date().getFullYear();
             display: flex;
             justify-content: center;
         }
+
+        @media (max-width: 1024px) {
+            .ca-pill:last-child { margin-left: 0; }
+        }
     </style>
 </head>
 <body>
@@ -91,9 +97,18 @@ const currentYear = new Date().getFullYear();
     <div class="ca-pill">
         <i class="fa-solid fa-file-invoice-dollar" style="color: #4a90e2; font-size: 1.5rem;"></i>
         <div class="ca-info">
-            <span>Expédiées</span>
+            <span>Expédiées {currentYear}</span>
             <b id="stats-encaissé">0.00 €</b>
             <span class="ca-help">Déclaration URSSAF</span>
+        </div>
+    </div>
+
+    <div class="ca-pill" style="border-color: #e67e22; background: #fffaf5;">
+        <i class="fa-solid fa-history" style="color: #e67e22; font-size: 1.5rem;"></i>
+        <div class="ca-info">
+            <span style="color: #d35400;">Expédiées {currentYear - 1}</span>
+            <b id="stats-archive-annee" style="color: #d35400;">0.00 €</b>
+            <span class="ca-help" style="color: #e67e22;">Année précédente</span>
         </div>
     </div>
 
@@ -146,17 +161,35 @@ const currentYear = new Date().getFullYear();
                 return;
             }
 
-            // --- TES CALCULS D'ORIGINE (Inchangés pour l'URSSAF) ---
-            const totalEncaissé = allOrders
-                .filter(o => o.statut_livraison === 'expedie')
-                .reduce((acc, curr) => acc + curr.total, 0);
+            const anneeActuelle = new Date().getFullYear();
+            const anneePrecedente = anneeActuelle - 1;
+
             const totalAttente = allOrders
                 .filter(o => o.statut_livraison === 'en_attente')
                 .reduce((acc, curr) => acc + curr.total, 0);
 
-            document.getElementById('stats-encaissé').innerText = `${totalEncaissé.toFixed(2)} €`;
-            document.getElementById('stats-attente').innerText = `${totalAttente.toFixed(2)} €`;
+            // Filtrage sur l'année en cours
+            const totalEncaisséAnneeEnCours = allOrders
+                .filter(o => {
+                    if (!o.created || o.statut_livraison !== 'expedie') return false;
+                    const anneeCommande = new Date(o.created * 1000).getFullYear();
+                    return anneeCommande === anneeActuelle;
+                })
+                .reduce((acc, curr) => acc + curr.total, 0);
 
+            // Filtrage sur l'année précédente
+            const totalEncaisséAnneePrecedente = allOrders
+                .filter(o => {
+                    if (!o.created || o.statut_livraison !== 'expedie') return false;
+                    const anneeCommande = new Date(o.created * 1000).getFullYear();
+                    return anneeCommande === anneePrecedente;
+                })
+                .reduce((acc, curr) => acc + curr.total, 0);
+
+            // Injection dans le HTML
+            document.getElementById('stats-attente').innerText = `${totalAttente.toFixed(2)} €`;
+            document.getElementById('stats-encaissé').innerText = `${totalEncaisséAnneeEnCours.toFixed(2)} €`;
+            document.getElementById('stats-archive-annee').innerText = `${totalEncaisséAnneePrecedente.toFixed(2)} €`;
 
             // --- LE NOUVEAU COMPTEUR BANQUE SÉCURISÉ (Basé UNIQUEMENT sur le temps, pas le statut) ---
             const maintenant = new Date();
