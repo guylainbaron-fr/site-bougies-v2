@@ -776,14 +776,16 @@ window.closeMRModal = () => {
                 const parsed = JSON.parse(rawData);
                 let items = [];
                 let timestamp = rawTimestamp ? parseInt(rawTimestamp) : Date.now();
+                let forceSaveTimestamp = !rawTimestamp; // On lève un drapeau si le timestamp était absent
 
                 if (Array.isArray(parsed)) {
                     items = parsed;
                 } else if (parsed.items && parsed.date) {
-                    // Migration automatique : on repasse au format tableau pour la compatibilité boutique
+                    // Migration automatique
                     items = parsed.items;
                     timestamp = parsed.date;
                     saveCartItems(items); 
+                    forceSaveTimestamp = true; // On force la réécriture après migration
                 }
 
                 const now = Date.now();
@@ -793,6 +795,9 @@ window.closeMRModal = () => {
                     localStorage.removeItem('panier-atelier');
                     localStorage.removeItem('panier-atelier-timestamp');
                     showToast("Votre panier a été réinitialisé après une période d'inactivité.", "delete");
+                } else if (forceSaveTimestamp) {
+                    // Si le panier est valide mais que le timestamp était manquant/migré, on le fixe à maintenant
+                    localStorage.setItem('panier-atelier-timestamp', now.toString());
                 }
             } catch (e) {
                 console.error("Erreur de synchronisation panier", e);
