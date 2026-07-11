@@ -687,6 +687,9 @@ window.closeMRModal = () => {
                 // Mise à jour des options de livraison en fonction du pays du relais
                 updateShippingOptions(selectedRelay.country);
                 
+                // On force le recalcul immédiat du panier avec le bon pays
+                renderPanier();
+
                 // 2. Fermeture automatique après un court délai pour laisser le temps de voir la coche
                 setTimeout(() => {
                     closeMRModal();
@@ -824,7 +827,9 @@ window.closeMRModal = () => {
         
         let shippingCountry = 'FR';
         if (currentShippingMethod === 'mondialrelay') {
-            shippingCountry = selectedRelay?.country || document.getElementById('modal-country-select')?.value || 'FR';
+            // CORRECTION : On utilise EXCLUSIVEMENT le pays du relais sélectionné s'il existe.
+            // Sinon, on se base sur le pays de la recherche en cours.
+            shippingCountry = selectedRelay ? selectedRelay.country : currentSearchCountry;
         } else {
             shippingCountry = document.getElementById('colissimo-country')?.value || 'FR';
         }
@@ -861,6 +866,29 @@ window.closeMRModal = () => {
         if(document.getElementById('res-count')) document.getElementById('res-count').textContent = nombreArticles;
         if(document.getElementById('res-weight')) document.getElementById('res-weight').textContent = poidsTotal + 'g';
         if(document.getElementById('res-subtotal')) document.getElementById('res-subtotal').textContent = totalCommande.toFixed(2) + ' €';
+
+        // --- LOGIQUE D'AFFICHAGE DYNAMIQUE DE MONDIAL RELAY ---
+        const colissimoBlock = document.getElementById('colissimo-block');
+        const mondialRelayBlock = document.getElementById('mondialrelay-block');
+        const colissimoRadio = document.getElementById('shipping-colissimo');
+        const mondialRelayCountries = ['FR', 'BE', 'LU', 'NL', 'ES', 'PT', 'IT'];
+
+        if (mondialRelayBlock && colissimoBlock) {
+            const isMRAvailable = mondialRelayCountries.includes(shippingCountry);
+            
+            // Affiche ou masque le bloc Mondial Relay
+            mondialRelayBlock.style.display = isMRAvailable ? 'block' : 'none';
+            // Affiche ou masque la ligne de séparation et son espacement
+            colissimoBlock.style.borderBottom = isMRAvailable ? '1px dashed var(--sable-dore)' : 'none';
+            colissimoBlock.style.paddingBottom = isMRAvailable ? '15px' : '0';
+
+            // Si Mondial Relay n'est pas disponible et qu'il était sélectionné,
+            // on force le retour à Colissimo.
+            if (!isMRAvailable && currentShippingMethod === 'mondialrelay') {
+                if (colissimoRadio) colissimoRadio.checked = true;
+                handleShippingChange('colissimo');
+            }
+        }
     }
 
     /**

@@ -22,7 +22,7 @@ const PAYS_AUTORISES_STRIPE: Stripe.Checkout.SessionCreateParams.ShippingAddress
  * Le serveur ne doit JAMAIS faire confiance aux frais de port envoyés par le client.
  */
 function calculFraisPortServeur(weight: number, method: string = 'colissimo', country: string = 'FR'): number {
-    const totalWeight = weight > 0 ? weight + 300 : 0;
+    const totalWeight = weight > 0 ? weight + 300 : 0; // Harmonisé à 300g comme sur le client
     if (totalWeight <= 0) return 0;
 
     if (method === 'mondialrelay') {
