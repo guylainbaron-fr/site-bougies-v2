@@ -205,7 +205,7 @@ if (queryString) {
 <div class="filter-bar">
     {categories.map(cat => (
         <a 
-            href={cat === "Bougies" ? "/boutique" : `/boutique?cat=${cat}`}
+            href={cat === "Bougies" ? "/boutique" : `/boutique?cat=${encodeURIComponent(cat)}`}
             class={`filter-btn ${cat === activeCat ? "active" : ""}`}
             data-category={cat}
         >
