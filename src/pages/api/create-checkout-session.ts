@@ -8,9 +8,68 @@ export const prerender = false;
 // Initialise Stripe avec votre clé secrète
 const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY); // Retiré apiVersion pour utiliser la version par défaut de la librairie
 
+/** Source unique de vérité pour tous les pays de livraison autorisés */
+const PAYS_AUTORISES_STRIPE: Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[] = [
+    // Pays principaux
+    'FR', 'BE', 'LU', 'CH', 'DE', 'NL', 'ES', 'IT', 'PT', 'GB', 'US', 'CA',
+    // Extension pour couvrir "Autre pays"
+    'AU', 'AT', 'DK', 'FI', 'GR', 'IE', 'NO', 'SE', // Europe + Australie
+    'JP', 'NZ', 'SG' // Asie-Pacifique
+];
+
+/**
+ * Copie de la fonction de calcul des frais de port côté serveur pour la sécurité.
+ * Le serveur ne doit JAMAIS faire confiance aux frais de port envoyés par le client.
+ */
+function calculFraisPortServeur(weight: number, method: string = 'colissimo', country: string = 'FR'): number {
+    const totalWeight = weight > 0 ? weight + 300 : 0;
+    if (totalWeight <= 0) return 0;
+
+    if (method === 'mondialrelay') {
+        if (country === 'FR') {
+            if (totalWeight <= 500) return 4.90; if (totalWeight <= 1000) return 5.50; if (totalWeight <= 2000) return 7.20; if (totalWeight <= 3000) return 8.50; if (totalWeight <= 5000) return 11.90; if (totalWeight <= 7000) return 14.50; if (totalWeight <= 10000) return 16.50; return -1;
+        }
+        if (['BE', 'LU'].includes(country)) {
+            if (totalWeight <= 500) return 5.20; if (totalWeight <= 1000) return 5.90; if (totalWeight <= 2000) return 7.90; if (totalWeight <= 5000) return 12.90; return -1;
+        }
+        if (['ES', 'PT', 'NL', 'IT'].includes(country)) {
+            if (totalWeight <= 500) return 9.90; if (totalWeight <= 1000) return 10.90; if (totalWeight <= 2000) return 12.90; if (totalWeight <= 5000) return 15.90; return -1;
+        }
+        return -1;
+    }
+
+    // Tarifs Colissimo par zones (miroir de la version client)
+    const zoneUE = ['BE', 'LU', 'DE', 'NL', 'IT', 'ES', 'PT', 'CH', 'AT', 'IE', 'SE', 'DK', 'FI', 'GR'];
+    const zoneEuropeEst = ['GB'];
+    const zoneAmeriques = ['US', 'CA'];
+    const zoneAsieOceanie = ['JP', 'AU', 'NZ', 'SG'];
+
+    if (country === 'FR') {
+        if (totalWeight <= 250) return 6.00; if (totalWeight <= 500) return 8.00; if (totalWeight <= 1000) return 10.00; if (totalWeight <= 2000) return 11.50; if (totalWeight <= 5000) return 18.00; if (totalWeight <= 10000) return 26.50; return -1;
+    } else if (zoneUE.includes(country)) {
+        if (totalWeight <= 500) return 14.00; if (totalWeight <= 1000) return 17.00; if (totalWeight <= 2000) return 19.50; if (totalWeight <= 5000) return 26.00; return -1;
+    } else if (zoneEuropeEst.includes(country)) {
+        if (totalWeight <= 500) return 18.00; if (totalWeight <= 1000) return 22.00; if (totalWeight <= 2000) return 25.00; if (totalWeight <= 5000) return 32.00; return -1;
+    } else if (zoneAmeriques.includes(country)) {
+        if (totalWeight <= 500) return 29.00; if (totalWeight <= 1000) return 33.00; if (totalWeight <= 2000) return 45.00; if (totalWeight <= 5000) return 65.00; return -1;
+    } else if (zoneAsieOceanie.includes(country) || country === 'WORLD') {
+        if (totalWeight <= 500) return 29.00; if (totalWeight <= 1000) return 33.00; if (totalWeight <= 2000) return 45.00; if (totalWeight <= 5000) return 65.00; return -1;
+    }
+
+    return -1;
+}
+
+function parseWeight(weightInput: any): number {
+    if (typeof weightInput === 'number') return weightInput;
+    if (!weightInput) return 0;
+    const cleaned = weightInput.toString().replace(/[^\d.]/g, '');
+    return parseFloat(cleaned) || 0;
+}
+
 export const POST: APIRoute = async ({ request }) => {
     try {
-        const { cartItems, shippingFee, packagingFee, shippingMethod, relayData } = await request.json();
+        // On ne récupère plus shippingFee du client
+        const { cartItems, shippingMethod, relayData, colissimoCountry } = await request.json();
         
         let siteUrl = import.meta.env.SITE;
 
@@ -41,6 +100,7 @@ export const POST: APIRoute = async ({ request }) => {
         const productMap = new Map<string, Produit>();
         storedProducts.forEach(p => productMap.set(p.id, p));
 
+        let totalWeight = 0;
         const line_items: any[] = []; // Utilisation de any pour contourner les erreurs de types liées aux versions de la lib Stripe
 
         for (const item of cartItems) {
@@ -66,6 +126,9 @@ export const POST: APIRoute = async ({ request }) => {
             // On s'assure que l'URL de l'image est absolue pour Stripe
             const imageUrl = product.image?.startsWith('http') ? product.image : `${siteUrl}${product.image}`;
 
+            // Calcul du poids total côté serveur
+            totalWeight += (parseWeight(product.poids) * quantity);
+
             line_items.push({
                 price_data: {
                     currency: 'eur',
@@ -80,31 +143,26 @@ export const POST: APIRoute = async ({ request }) => {
             });
         }
 
-        // Ajout des frais de livraison (si présents et supérieurs à 0)
-        if (shippingFee && Number(shippingFee) > 0) {
+        // SÉCURITÉ : Calcul des frais de port côté serveur
+        let shippingCountry = 'FR';
+        if (shippingMethod === 'mondialrelay') {
+            shippingCountry = relayData?.country || 'FR';
+        } else {
+            shippingCountry = colissimoCountry || 'FR';
+        }
+
+        const shippingFee = calculFraisPortServeur(totalWeight, shippingMethod, shippingCountry);
+
+        if (shippingFee > 0) {
             const methodLabel = shippingMethod === 'mondialrelay' ? 'Mondial Relay' : 'Colissimo';
             line_items.push({
                 price_data: {
                     currency: 'eur',
                     product_data: {
                         name: `Livraison ${methodLabel}`,
-                        description: shippingMethod === 'mondialrelay' ? 'Livraison en Point Relais' : 'Livraison à domicile',
+                        description: shippingMethod === 'mondialrelay' ? `Livraison en Point Relais (${shippingCountry})` : `Livraison à domicile (${shippingCountry})`,
                     },
-                    unit_amount: Math.round(Number(shippingFee) * 100), // Conversion en centimes
-                },
-                quantity: 1,
-            });
-        }
-
-        // Ajout des frais d'emballage (si présents et supérieurs à 0)
-        if (packagingFee && Number(packagingFee) > 0) {
-            line_items.push({
-                price_data: {
-                    currency: 'eur',
-                    product_data: {
-                        name: 'Frais d\'emballage',
-                    },
-                    unit_amount: Math.round(Number(packagingFee) * 100), // Conversion en centimes
+                    unit_amount: Math.round(shippingFee * 100),
                 },
                 quantity: 1,
             });
@@ -125,29 +183,63 @@ export const POST: APIRoute = async ({ request }) => {
             .substring(0, 500); // Limite de Stripe pour une valeur de metadata
 
         const infosRelais = relayData ? `${relayData.name} (${relayData.id}) - ${relayData.address}` : '';
+        const paysRelais = relayData ? relayData.country : '';
+
+        // SÉCURITÉ : Vérification de la cohérence de la livraison et détermination du pays de livraison final
+        // On définit un type plus strict pour s'assurer que la valeur est un code pays valide pour Stripe.
+        let finalShippingCountry: Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry = 'FR';
+
+        if (shippingMethod === 'mondialrelay' && !infosRelais) {
+            return new Response(JSON.stringify({ error: "Aucun point relais n'a été sélectionné pour la livraison." }), { status: 400 });
+        } else if (shippingMethod === 'mondialrelay') {
+            // On s'assure que le pays du relais est un code valide
+            finalShippingCountry = paysRelais as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry;
+        } else { // Colissimo
+            // Si le client a choisi "Autre pays", on ne restreint pas la liste pour Stripe.
+            if (colissimoCountry === 'WORLD') {
+                // Laisser Stripe gérer tous les pays autorisés dans ce cas
+            } else {
+                finalShippingCountry = (colissimoCountry || 'FR') as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry;
+            }
+        }
+
+        // Ajout dynamique des méthodes de paiement locales
+        const paymentMethodTypes: Stripe.Checkout.SessionCreateParams.PaymentMethodType[] = ['card'];
+        if (finalShippingCountry === 'BE') {
+            paymentMethodTypes.push('bancontact');
+        }
+        if (finalShippingCountry === 'NL') {
+            paymentMethodTypes.push('ideal');
+        }
 
         const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
+            payment_method_types: paymentMethodTypes,
             line_items: line_items,
             mode: 'payment',
             // --- AJOUTS ICI ---
-            metadata: {
+            metadata: { // Pour le dashboard
                 details_commande: orderSummary,
                 mode_livraison: shippingMethod || 'colissimo',
-                infos_relais: infosRelais
+                infos_relais: infosRelais,
+                pays_relais: paysRelais
             },
             shipping_address_collection: {
-                allowed_countries: ['FR'], // Uniquement la France
+                // SÉCURITÉ RENFORCÉE : On n'autorise QUE le pays de destination calculé.
+                // Si c'est 'WORLD', on autorise la liste complète, sinon on verrouille sur le pays choisi.
+                allowed_countries: (colissimoCountry === 'WORLD' && shippingMethod === 'colissimo')
+                    ? PAYS_AUTORISES_STRIPE
+                    : [finalShippingCountry],
             },
             phone_number_collection: {
                 enabled: true, // Optionnel mais recommandé pour le livreur
             },
             // ------------------
-            payment_intent_data: {
+            payment_intent_data: { // Pour la facture
                 metadata: {
                     details_commande: orderSummary,
                     mode_livraison: shippingMethod || 'colissimo',
-                    infos_relais: infosRelais
+                    infos_relais: infosRelais,
+                    pays_relais: paysRelais
                 }
             },
             success_url: `${siteUrl}/success?session_id={CHECKOUT_SESSION_ID}`, // Redirection après succès

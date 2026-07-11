@@ -202,6 +202,18 @@ const pageId = "panier-success";
     // 1. On initialise la variable globale immédiatement
     window.currentInvoiceId = 'FACTURE';
 
+    const getCountryFullName = (code) => {
+        const countryMap = {
+            'FR': 'France',
+            'BE': 'Belgique',
+            'LU': 'Luxembourg',
+            'NL': 'Pays-Bas',
+            'ES': 'Espagne',
+            'PT': 'Portugal',
+            'IT': 'Italie'
+        };
+        return countryMap[code] || code;
+    };
     function clearCartAndNotify() {
         localStorage.removeItem('panier-atelier');
         // On émet l'événement pour mettre à jour l'icône du panier dans le header
@@ -238,6 +250,7 @@ const pageId = "panier-success";
             // On normalise la détection (si vide ou absent -> colissimo)
             const shippingMethod = (metadata.mode_livraison || 'colissimo').toLowerCase();
             const relayInfo = metadata.infos_relais || null;
+            const relayCountryCode = metadata.pays_relais || null;
                                  
             const isMR = shippingMethod === 'mondialrelay';
 
@@ -250,13 +263,16 @@ const pageId = "panier-success";
 
                 const isMRLine = desc.includes('mondial relay');
 
+                const relayCountryName = relayCountryCode ? getCountryFullName(relayCountryCode) : (relayInfo ? 'France' : '');
+
                 return `
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 8px 0; text-align: left;">
                         ${item.description}
-                        ${isMRLine && relayInfo ? `
+                        ${isMRLine && relayInfo ? ` 
                             <div style="font-size: 8.5pt; color: #6b564a; font-style: italic; margin-top: 5px; padding-left: 10px; border-left: 2px solid #e0c297;">
                                 ${relayInfo}
+                                ${relayCountryName ? `<br><strong>${relayCountryName}</strong>` : ''}
                             </div>
                         ` : ''}
                         ${isFrais ? '' : `<br><small style="color:#888; font-size:0.75em;">${(item.amount_total / 100 / item.quantity).toFixed(2)} € / unité</small>`}
@@ -317,7 +333,7 @@ const pageId = "panier-success";
                                     <div style="font-size: 9pt; margin-top: 5px;">
                                         ${data.customer_details.address.line1 || ''}<br>
                                         ${data.customer_details.address.postal_code || ''} ${data.customer_details.address.city || ''}<br>
-                                        ${data.customer_details.address.country || ''}
+                                        <strong>${getCountryFullName(data.customer_details.address.country || 'FR')}</strong>
                                     </div>
                                 ` : '<span style="font-style: italic; opacity: 0.5;">Adresse de livraison</span>'}
                                 <div style="margin-top: 8px; border-top: 1px solid #f5f5f5; padding-top: 5px;">

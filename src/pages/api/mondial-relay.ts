@@ -3,7 +3,20 @@ import { parseStringPromise } from 'xml2js';
 
 const ENSEIGNE = "TTMRSDBX";
 const KEY = "9ytnxVCC";
-const PAYS = "FR";
+
+const PAYS_CONFIG: Record<string, { regex: RegExp, example: string }> = {
+    "FR": { regex: /^\d{5}$/, example: "75001" },
+    "BE": { regex: /^\d{4}$/, example: "1000" },
+    "LU": { regex: /^\d{4}$/, example: "L-1234" },
+    "NL": { regex: /^\d{4} ?[A-Z]{2}$/i, example: "1012 AB" },
+    "ES": { regex: /^\d{5}$/, example: "28001" },
+    "PT": { regex: /^\d{4}-\d{3}$/, example: "1000-001" },
+    "IT": { regex: /^\d{5}$/, example: "00100" },
+};
+
+const PAYS_AUTORISES = Object.keys(PAYS_CONFIG);
+
+
 
 /**
  * Formate les horaires issus du XML WSI4
@@ -31,12 +44,30 @@ function formatHoraires(horaireNode: any): string {
 }
 
 export async function GET({ url }: { url: URL }) {
-    const cp = url.searchParams.get('cp');
+    let cp = url.searchParams.get('cp');
     const poids = url.searchParams.get('poids') || "0";
     const nombreResultats = "10";
 
+    const paysParam = (url.searchParams.get('pays') || "FR").toUpperCase();
+
     if (!cp) {
         return new Response(JSON.stringify({ error: "Code postal manquant" }), { status: 400 });
+    }
+
+    if (!PAYS_AUTORISES.includes(paysParam)) {
+        return new Response(JSON.stringify({ error: `Le pays '${paysParam}' n'est pas desservi.` }), { status: 400 });
+    }
+
+    // Nettoyage et validation du code postal
+    cp = cp.trim().toUpperCase();
+    if (paysParam === 'LU' && /^\d{4}$/.test(cp)) {
+        cp = `L-${cp}`; // Ajoute le préfixe pour le Luxembourg si manquant
+    }
+
+    const countryConfig = PAYS_CONFIG[paysParam];
+    if (countryConfig && !countryConfig.regex.test(cp)) {
+        const errorMsg = `Format de code postal invalide pour ${paysParam}. Exemple attendu : ${countryConfig.example}.`;
+        return new Response(JSON.stringify({ error: errorMsg }), { status: 400 });
     }
 
     /**
@@ -46,7 +77,7 @@ export async function GET({ url }: { url: URL }) {
      */
     const chaineSecurite = 
         ENSEIGNE + 
-        PAYS + 
+        paysParam + 
         "" + // NumPointRelais
         "" + // Ville
         cp + 
@@ -69,7 +100,7 @@ export async function GET({ url }: { url: URL }) {
   <soap:Body>
     <WSI4_PointRelais_Recherche xmlns="http://www.mondialrelay.fr/webservice/">
       <Enseigne>${ENSEIGNE}</Enseigne>
-      <Pays>${PAYS}</Pays>
+      <Pays>${paysParam}</Pays>
       <NumPointRelais></NumPointRelais>
       <Ville></Ville>
       <CP>${cp}</CP>
@@ -110,6 +141,10 @@ export async function GET({ url }: { url: URL }) {
             return new Response(JSON.stringify({ error: `Erreur MR STAT ${searchResult.STAT}` }), { status: 200 });
         }
 
+        // Si aucun point relais n'est retourné, on renvoie une liste vide proprement
+        if (!searchResult.PointsRelais || !searchResult.PointsRelais.PointRelais_Details) {
+            return new Response(JSON.stringify({ points: [] }), { status: 200 });
+        }
         let pointsBruts = searchResult.PointsRelais.PointRelais_Details;
         if (!Array.isArray(pointsBruts)) pointsBruts = [pointsBruts];
 

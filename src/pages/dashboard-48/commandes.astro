@@ -148,6 +148,18 @@ const currentYear = new Date().getFullYear();
     let currentTab = 'prepare'; // prepare, shipped, all, archives
     const itemsPerPage = 9;
 
+    const getCountryFullName = (code) => {
+        const countryMap = {
+            'FR': 'France',
+            'BE': 'Belgique',
+            'LU': 'Luxembourg',
+            'NL': 'Pays-Bas',
+            'ES': 'Espagne',
+            'PT': 'Portugal',
+            'IT': 'Italie'
+        };
+        return countryMap[code] || code;
+    };
     async function fetchOrders() {
         const container = document.getElementById('orders-container');
         try {
@@ -327,14 +339,21 @@ const currentYear = new Date().getFullYear();
                                 ${order.adresse && (order.adresse.line1 || order.adresse.city) ? `
                                     ${order.adresse.line1 || ''}${order.adresse.line2 ? ', ' + order.adresse.line2 : ''}<br>
                                     ${order.adresse.postal_code || ''} ${order.adresse.city || ''}
-                                ` : 'Non renseignée'}
+                                    <br><strong>${getCountryFullName(order.adresse.country || 'FR')}</strong>
+                                ` : (order.mode_livraison === 'mondialrelay' && order.infos_relais ? 'Livraison en point relais' : 'Adresse non renseignée')}
                             </div>
                             ${order.infos_relais ? `
                                 <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--sable-dore); color: var(--brun-profond); font-size: 0.9rem;">
                                     <strong style="color: var(--sable-dore); font-size: 0.65rem; text-transform: uppercase; display: block; margin-bottom: 4px;">
                                         <i class="fa-solid fa-location-dot"></i> Point Relais Sélectionné
                                     </strong>
-                                    ${order.infos_relais}
+                                    ${order.infos_relais.replace(/, ([A-Z]{2})$/, '')}
+                                    ${(() => {
+                                        const paysCode = order.pays_relais || order.infos_relais.match(/, ([A-Z]{2})$/)?.[1];
+                                        return paysCode 
+                                            ? `<br><strong>${getCountryFullName(paysCode)}</strong>` 
+                                            : (order.mode_livraison === 'mondialrelay' ? `<br><strong>France</strong>` : '');
+                                    })()}
                                 </div>
                             ` : ''}
                         </div>

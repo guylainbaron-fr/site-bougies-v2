@@ -7,9 +7,12 @@ import photoDuel from '../assets/images/duel_cepes.webp';
     <div class="container">
         <div class="header-atelier">
     <h2>La Boutique est Ouverte</h2>
-    <p class="description-atelier">
-        <strong>Bienvenue dans notre boutique artisanale.</strong> Profitez de nos services de livraison en <strong>Colissimo</strong> ou <strong>Mondial Relay</strong> pour découvrir notre collection de <strong>6 bougies "Cèpes et Morilles"</strong> au parfum signature <strong>Vanille Gourmande</strong>, ainsi que nos sculptures uniques en bois <strong>"Le Curieux"</strong> et <strong>"Le Majestueux"</strong>. Retrouvez également nos <strong>porte-clés hôteliers personnalisés</strong> ; pour ces modèles sur-mesure, un bouton de contact direct vous permettra d'échanger avec l'artisan pour finaliser votre projet.
-    </p>
+    <div class="intro-text-block">
+        <p class="description-atelier">
+            <strong>Bienvenue dans notre boutique artisanale.</strong> Profitez de nos services de livraison en <strong>Colissimo</strong> ou <strong>Mondial Relay</strong>, disponibles pour la France et de nombreux pays à l'international (liste complète dans les mentions légales), pour découvrir notre collection de <strong>6 bougies "Cèpes et Morilles"</strong> au parfum signature <strong>Vanille Gourmande</strong>, ainsi que nos sculptures uniques en bois <strong>"Le Curieux"</strong> et <strong>"Le Majestueux"</strong>.
+        </p>
+        <p class="description-atelier">Retrouvez également nos <strong>porte-clés hôteliers personnalisés</strong> ; pour ces modèles sur-mesure, un bouton de contact direct vous permettra d'échanger avec l'artisan pour finaliser votre projet.</p>
+    </div>
     <a href="/boutique" class="nav-brick boutique-gold">Visiter la boutique</a>
 </div>
 
@@ -83,8 +86,15 @@ import photoDuel from '../assets/images/duel_cepes.webp';
         text-align: center;
     }
     .description-atelier {
-        max-width: 650px;
-        margin: 0 auto 40px; /* Harmonisé avec style.css */
+        max-width: 700px; /* Légèrement plus large pour mieux respirer */
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .intro-text-block .description-atelier {
+        margin-bottom: 1.5rem; /* Espace réduit entre les deux paragraphes */
+    }
+    .intro-text-block {
+        margin-bottom: 40px; /* Marge globale du bloc de texte */
     }
 
     /* BOUTON NAV STYLE ATELIER */

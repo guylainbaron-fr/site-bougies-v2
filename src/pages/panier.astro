@@ -192,6 +192,32 @@ const pageId = "panier";
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
+
+    /* Style du sélecteur de pays dans la modal */
+    :global(.modal-search-group select) {
+        padding: 12px;
+        border: 1px solid var(--sable-dore);
+        border-radius: 6px;
+        background: white;
+        font-family: inherit;
+        font-size: 0.9rem;
+        color: var(--brun-coco);
+        cursor: pointer;
+    }
+
+    /* Ajustement responsive pour inclure le select sur mobile */
+    @media (max-width: 576px) {
+        :global(.modal-search-group select) {
+            width: 100% !important;
+            box-sizing: border-box;
+        }
+    }
+
+    /* Empêche le bouton de recherche de se rétrécir ou de déborder */
+    :global(.modal-search-group .btn) {
+        flex-shrink: 0 !important;
+        white-space: nowrap !important;
+    }
 </style>
 
     <section id="panier-page" style="background-color: var(--fond-ecume);">
@@ -215,39 +241,53 @@ const pageId = "panier";
 <aside class="panier-summary-sidebar">
     <div class="recap-card">
         <h3>Résumé de la commande</h3>
-        
-        <!-- SECTION LIVRAISON -->
-        <div class="shipping-selector" style="margin-bottom: 20px; padding: 15px; background: var(--fond-sable); border-radius: 8px; border: 1px solid var(--sable-dore);">
-    <strong style="display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 12px; color: var(--brun-coco);">Mode de livraison</strong>
-    
-    <label for="shipping-colissimo" style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.9rem; margin-bottom: 8px;">
-        <input type="radio" id="shipping-colissimo" name="shipping-method" value="colissimo" checked onchange="handleShippingChange('colissimo')">
-        <span>Colissimo (Domicile)</span>
-    </label>
-    
-    <label for="shipping-mondialrelay" style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.9rem;">
-        <input type="radio" id="shipping-mondialrelay" name="shipping-method" value="mondialrelay" onchange="handleShippingChange('mondialrelay')">
-        <span>Mondial Relay</span>
-    </label>
+        <div class="shipping-selector" style="margin-bottom: 20px; padding: 20px; background: var(--fond-sable); border-radius: 8px; border: 1px solid var(--sable-dore);">
+            <strong style="display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 12px; color: var(--brun-coco);">Mode de livraison</strong>
+            
+            <!-- Bloc Colissimo -->
+            <div id="colissimo-block" style="padding-bottom: 15px; border-bottom: 1px dashed var(--sable-dore);">
+                <label for="shipping-colissimo" style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.9rem;">
+                    <input type="radio" id="shipping-colissimo" name="shipping-method" value="colissimo" checked onchange="handleShippingChange('colissimo')">
+                    <span>Colissimo (Domicile)</span>
+                </label>
+                <div id="colissimo-country-selector" style="margin-top: 10px;">
+                    <label for="colissimo-country" class="sr-only">Pays de livraison</label>
+                    <select id="colissimo-country" onchange="renderPanier()" style="width: 100%; padding: 12px; border: 1px solid var(--sable-dore); border-radius: 6px; background: white; font-size: 0.9rem; color: var(--brun-coco);">
+                        <option value="FR" selected>France</option>
+                        <option value="BE">Belgique</option>
+                        <option value="LU">Luxembourg</option>
+                        <option value="CH">Suisse</option>
+                        <option value="DE">Allemagne</option>
+                        <option value="NL">Pays-Bas</option>
+                        <option value="ES">Espagne</option>
+                        <option value="IT">Italie</option>
+                        <option value="PT">Portugal</option>
+                        <option value="GB">Royaume-Uni</option>
+                        <option value="US">États-Unis</option>
+                        <option value="CA">Canada</option>
+                        <option value="WORLD">Autre pays</option>
+                    </select>
+                </div>
+            </div>
 
-    <!-- Bouton pour ouvrir la modal -->
-    <div id="mr-selection-area" class="mr-selection-wrapper hidden">
-        <!-- On supprime la marge du .btn global pour un alignement précis via le padding du wrapper -->
-        <style>
-            #mr-selection-area .btn.filter-btn { margin: 0 !important; }
-        </style>
-        <button type="button" class="btn filter-btn active" onclick="openMRModal()" style="width: 100%; padding: 12px; font-size: 0.85rem;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Choisir mon point relais
-        </button>
-        
-        <!-- Petit rappel du point sélectionné sous le bouton -->
-        <div id="relay-display" class="selected-relay-box hidden">
-            <span id="relay-info-text" style="color: var(--brun-coco);"></span>
+            <!-- Bloc Mondial Relay -->
+            <div id="mondialrelay-block" style="padding-top: 15px;">
+                <label for="shipping-mondialrelay" style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.9rem;">
+                    <input type="radio" id="shipping-mondialrelay" name="shipping-method" value="mondialrelay" onchange="handleShippingChange('mondialrelay')">
+                    <span>Mondial Relay</span>
+                </label>
+                <div id="mr-selection-area" class="hidden" style="margin-top: 10px;">
+                    <!-- Le style 'margin: 0 !important' est crucial pour contrer la règle globale dans style.css -->
+                    <button type="button" class="btn filter-btn active" onclick="openMRModal()" style="width: 100%; padding: 12px; font-size: 0.85rem; margin: 0; display: flex; align-items: center; justify-content: center;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; flex-shrink: 0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        <span style="white-space: nowrap;">Choisir mon point relais</span>
+                    </button>
+                    <div id="relay-display" class="selected-relay-box hidden">
+                        <span id="relay-info-text" style="color: var(--brun-coco);"></span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-
-        <!-- RÉCAPITULATIF FINANCIER -->
         <div class="recap-details">
             <div class="recap-line">
                 <span>Articles (<span id="res-count">0</span>)</span>
@@ -305,27 +345,40 @@ const pageId = "panier";
 
 <!-- MODAL MONDIAL RELAY -->
 <div id="mr-modal" class="modal" style="display:none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px);">
-    <div class="modal-content" style="background: white; margin: 10vh auto; padding: 25px; border-radius: 12px; max-width: 500px; width: 90%; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center;">
+    <div class="modal-content" style="background: white; margin: 10vh auto; padding: 25px; border-radius: 12px; max-width: 650px; width: 90%; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center;">
         <span onclick="closeMRModal()" style="position: absolute; right: 20px; top: 15px; cursor: pointer; font-size: 24px; color: #999;">&times;</span>
         
         <h3 style="margin-bottom: 20px; color: var(--brun-coco);">Choisir un Point Relais</h3>
         
         <div class="modal-search-group">
-    <!-- Ajout d'un label invisible pour l'accessibilité -->
-    <label for="modal-zip-input" class="sr-only" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">
-        Code Postal
-    </label>
-    <input type="text" id="modal-zip-input" aria-label="Code Postal" placeholder="Code Postal (ex: 48800)"
-           inputmode="numeric" 
-           pattern="[0-9]*" 
-           maxlength="5"
-           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-           style="flex: 1; padding: 12px; border: 1px solid var(--sable-dore); border-radius: 6px; font-weight: 400;">
-    <button onclick="fetchRelays()" class="btn filter-btn active" aria-label="Rechercher des points relais">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <span>Rechercher</span>
-    </button>
-</div>
+            <!-- Sélecteur de pays -->
+            <label for="modal-country-select" class="sr-only" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">
+                Pays
+            </label>
+            <select id="modal-country-select" aria-label="Pays de livraison" onchange="handleCountryChangeInModal()">
+                <option value="FR" selected>France</option>
+                <option value="BE">Belgique</option>
+                <option value="LU">Luxembourg</option>
+                <option value="NL">Pays-Bas</option>
+                <option value="ES">Espagne</option>
+                <option value="PT">Portugal</option>
+                <option value="IT">Italie</option>
+            </select>
+
+            <!-- Code Postal -->
+            <label for="modal-zip-input" class="sr-only" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">
+                Code Postal
+            </label>
+            <input type="text" id="modal-zip-input" aria-label="Code Postal" placeholder="Code Postal (ex: 48800)"
+                   inputmode="numeric" 
+                   pattern="[0-9]*" 
+                   maxlength="10"
+                   style="flex: 1; padding: 12px; border: 1px solid var(--sable-dore); border-radius: 6px; font-weight: 400; text-transform: uppercase;">
+            <button onclick="fetchRelays()" class="btn filter-btn active" aria-label="Rechercher des points relais">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>Rechercher</span>
+            </button>
+        </div>
 
         <div id="mr-custom-results"></div>
     </div>
@@ -373,10 +426,100 @@ const pageId = "panier";
     let currentShippingMethod = 'colissimo';
     let selectedRelay = null;
     let cartPoidsTotal = 0; 
+    let currentSearchCountry = 'FR'; // Variable pour mémoriser le pays de la recherche
+    // Ajout pour mémoriser le pays Colissimo
+    let colissimoCountry = 'FR';
+
+
 
     /**
      * --- UTILITAIRES DE CALCUL ---
      */
+    function calculFraisPort(weight, method = 'colissimo', country = 'FR') {
+        // On ajoute 200g de sécurité (emballage artisanal robuste)
+        const totalWeight = weight > 0 ? weight + 300 : 0;
+
+        if (totalWeight <= 0)     return 0;
+
+        if (method === 'mondialrelay') {
+            // Zone 1: France
+            if (country === 'FR') {
+                if (totalWeight <= 500)   return 4.90;
+                if (totalWeight <= 1000)  return 5.50; 
+                if (totalWeight <= 2000)  return 7.20; 
+                if (totalWeight <= 3000)  return 8.50; 
+                if (totalWeight <= 5000)  return 11.90;
+                if (totalWeight <= 7000)  return 14.50;
+                if (totalWeight <= 10000) return 16.50;
+                return -1; // Trop lourd
+            }
+            // Zone 2: Belgique, Luxembourg
+            if (['BE', 'LU'].includes(country)) {
+                if (totalWeight <= 500)   return 5.20;
+                if (totalWeight <= 1000)  return 5.90;
+                if (totalWeight <= 2000)  return 7.90;
+                if (totalWeight <= 5000)  return 12.90;
+                return -1; // Trop lourd pour cette zone
+            }
+            // Zone 3: Espagne, Portugal, Pays-Bas, Italie
+            if (['ES', 'PT', 'NL', 'IT'].includes(country)) {
+                if (totalWeight <= 500)   return 9.90;
+                if (totalWeight <= 1000)  return 10.90;
+                if (totalWeight <= 2000)  return 12.90;
+                if (totalWeight <= 5000)  return 15.90;
+                return -1; // Trop lourd pour cette zone
+            }
+            return -1; // Pays non géré
+        }
+
+        // Tarifs Colissimo par zones
+        const zoneUE = ['BE', 'LU', 'DE', 'NL', 'IT', 'ES', 'PT', 'CH', 'AT', 'IE', 'SE', 'DK', 'FI', 'GR'];
+        const zoneEuropeEst = ['GB']; // Le Royaume-Uni est souvent plus cher
+        const zoneAmeriques = ['US', 'CA'];
+        const zoneAsieOceanie = ['JP', 'AU', 'NZ', 'SG'];
+
+        if (country === 'FR') { // Zone 1: France
+            if (totalWeight <= 250)   return 6.00;
+            if (totalWeight <= 500)   return 8.00;
+            if (totalWeight <= 1000)  return 10.00;
+            if (totalWeight <= 2000)  return 11.50;
+            if (totalWeight <= 5000)  return 18.00;
+            if (totalWeight <= 10000) return 26.50;
+            return -1;
+        } else if (zoneUE.includes(country)) { // Zone 2: Union Européenne & Suisse
+            if (totalWeight <= 500)   return 14.00;
+            if (totalWeight <= 1000)  return 17.00;
+            if (totalWeight <= 2000)  return 19.50;
+            if (totalWeight <= 5000)  return 26.00;
+            return -1;
+        } else if (zoneEuropeEst.includes(country)) { // Zone 3: UK & Europe de l'Est
+            if (totalWeight <= 500)   return 18.00;
+            if (totalWeight <= 1000)  return 22.00;
+            if (totalWeight <= 2000)  return 25.00;
+            if (totalWeight <= 5000)  return 32.00;
+            return -1;
+        } else if (zoneAmeriques.includes(country)) { // Zone 4: Amériques, Afrique, etc.
+            if (totalWeight <= 500)   return 29.00;
+            if (totalWeight <= 1000)  return 33.00;
+            if (totalWeight <= 2000)  return 45.00;
+            if (totalWeight <= 5000)  return 65.00;
+            return -1;
+        } else if (zoneAsieOceanie.includes(country) || country === 'WORLD') { // Zone 5: Asie, Océanie (et "Autre pays" par défaut)
+            if (totalWeight <= 500)   return 29.00;
+            if (totalWeight <= 1000)  return 33.00;
+            if (totalWeight <= 2000)  return 45.00;
+            if (totalWeight <= 5000)  return 65.00;
+            return -1;
+        }
+
+        return -1; // Pays non géré ou poids trop élevé
+    }
+
+    function updateShippingOptions(country) {
+        // Cette fonction n'est plus nécessaire car Colissimo est toujours disponible.
+        // On la garde vide pour ne pas casser les appels existants.
+    }
+
     function parseWeight(weightInput) {
         if (typeof weightInput === 'number') return weightInput;
         if (!weightInput) return 0;
@@ -384,64 +527,65 @@ const pageId = "panier";
         return parseFloat(cleaned) || 0;
     }
 
-    function calculFraisPort(weight, method = 'colissimo') {
-        // On ajoute 200g de sécurité (emballage artisanal robuste)
-        const totalWeight = weight > 0 ? weight + 300 : 0;
-
-        if (totalWeight <= 0)     return 0;
-
-        // Tarifs Mondial Relay (Exemple 2024 France)
-        if (method === 'mondialrelay') {
-        if (totalWeight <= 500)   return 4.90;
-        if (totalWeight <= 1000)  return 5.50; 
-        if (totalWeight <= 2000)  return 7.20; 
-        if (totalWeight <= 3000)  return 8.50; 
-        if (totalWeight <= 5000)  return 11.90;
-        if (totalWeight <= 7000)  return 14.50;
-        if (totalWeight <= 10000) return 16.50;
-        return -1;
-    }
-        
-        // Paliers petits poids
-        if (totalWeight <= 250)   return 6.00;
-        if (totalWeight <= 500)   return 8.00;
-        if (totalWeight <= 750)   return 9.50;
-        if (totalWeight <= 1000)  return 10.00;
-        
-        // Paliers moyens poids (resserrés)
-        if (totalWeight <= 2000)  return 11.50;
-        if (totalWeight <= 3000)  return 14.50; // Nouveau palier
-        if (totalWeight <= 4000)  return 16.50; // Nouveau palier
-        if (totalWeight <= 5000)  return 18.00;
-        
-        // Paliers lourds (sécurisés)
-        if (totalWeight <= 7000)  return 22.50;
-        if (totalWeight <= 8500)  return 24.50; // Nouveau palier
-        if (totalWeight <= 10000) return 26.50; // Arrondi sup pour 10kg
-        
-        return -1; // Trop lourd (> 10kg emballé)
-    }
-
     window.handleShippingChange = (method) => {
     currentShippingMethod = method;
     const mrArea = document.getElementById('mr-selection-area');
     const relayDisplay = document.getElementById('relay-display');
+    const colissimoSelector = document.getElementById('colissimo-country-selector');
     const infoText = document.getElementById('relay-info-text');
 
-    if (mrArea) {
-        mrArea.classList.toggle('hidden', method !== 'mondialrelay');
-        if (method !== 'mondialrelay') {
-            selectedRelay = null;
-            relayDisplay?.classList.add('hidden');
-            if (infoText) infoText.innerHTML = '';
-        }
+    // On affiche ou masque les options détaillées de chaque bloc
+    mrArea?.classList.toggle('hidden', method !== 'mondialrelay');
+    colissimoSelector?.classList.toggle('hidden', method !== 'colissimo');
+
+    if (method !== 'mondialrelay') {
+        selectedRelay = null;
+        relayDisplay?.classList.add('hidden');
+        if (infoText) infoText.innerHTML = '';
     }
     renderPanier();
+}
+window.openMRModal = () => {
+    const modal = document.getElementById('mr-modal');
+    if (modal) {
+        // On réinitialise la modale à chaque ouverture pour éviter les confusions
+        const resultsDiv = document.getElementById('mr-custom-results');
+        const cpInput = document.getElementById('modal-zip-input');
+        const countrySelect = document.getElementById('modal-country-select');
+
+        if (resultsDiv) resultsDiv.innerHTML = ''; // Vide les anciens résultats
+        if (cpInput) cpInput.value = ''; // Vide le champ du code postal
+        if (countrySelect) countrySelect.value = 'FR'; // Réinitialise le pays sur "France"
+
+        modal.style.display = 'block';
+    }
 };
+
+function handleCountryChangeInModal() {
+    const resultsDiv = document.getElementById('mr-custom-results');
+    const cpInput = document.getElementById('modal-zip-input');
+
+    if (resultsDiv) resultsDiv.innerHTML = ''; // Vide les anciens résultats
+    if (cpInput) {
+        cpInput.value = ''; // Vide le champ du code postal
+        cpInput.focus(); // Met le focus sur le champ pour une nouvelle saisie
+    }
+}
 
 window.openMRModal = () => {
     const modal = document.getElementById('mr-modal');
-    if (modal) modal.style.display = 'block';
+    if (modal) {
+        // On réinitialise la modale à chaque ouverture pour éviter les confusions
+        const resultsDiv = document.getElementById('mr-custom-results');
+        const cpInput = document.getElementById('modal-zip-input');
+        const countrySelect = document.getElementById('modal-country-select');
+
+        if (resultsDiv) resultsDiv.innerHTML = ''; // Vide les anciens résultats
+        if (cpInput) cpInput.value = ''; // Vide le champ du code postal
+        if (countrySelect) countrySelect.value = 'FR'; // Réinitialise le pays sur "France"
+
+        modal.style.display = 'block';
+    }
 };
 
 window.closeMRModal = () => {
@@ -451,21 +595,31 @@ window.closeMRModal = () => {
 
     window.fetchRelays = async () => {
     const cpInput = document.getElementById('modal-zip-input');
+    const countrySelect = document.getElementById('modal-country-select'); // Ajout
     const cp = cpInput?.value.trim();
+    const country = countrySelect?.value || 'FR'; // Valeur du pays
+    currentSearchCountry = country; // On mémorise le pays utilisé pour cette recherche
+    const poids = cartPoidsTotal;
     const resultsDiv = document.getElementById('mr-custom-results');
 
     if (!resultsDiv) return;
 
-    if (!cp || cp.length !== 5) {
-        showToast("Code postal invalide (5 chiffres)", "delete");
+    if (!cp) {
+        showToast("Veuillez saisir un code postal.", "delete");
         return;
     }
 
     resultsDiv.innerHTML = '<p style="font-size:0.8rem; text-align:center; padding:10px;">Recherche...</p>';
     
     try {
-        const response = await fetch(`/api/mondial-relay?cp=${cp}&poids=${cartPoidsTotal}`);
+        // Ajout du paramètre country dans l'appel
+        const response = await fetch(`/api/mondial-relay?cp=${cp}&pays=${country}&poids=${poids}`);
         const data = await response.json();
+
+        if (data.error) {
+            resultsDiv.innerHTML = `<p style="color:red; font-size:0.8rem; text-align:center;">Erreur : ${data.error}</p>`;
+            return;
+        }
 
         if (!data.points || data.points.length === 0) {
             resultsDiv.innerHTML = '<p style="font-size:0.8rem; text-align:center;">Aucun point trouvé.</p>';
@@ -510,13 +664,28 @@ window.closeMRModal = () => {
                 selectedRelay = { 
                     id: point.id, 
                     name: point.nom, 
-                    address: `${point.adresse}, ${point.cp} ${point.ville}` 
+                    address: `${point.adresse}, ${point.cp} ${point.ville}`,
+                    country: currentSearchCountry // On utilise le pays mémorisé, pas la valeur actuelle du select
                 };
+
+                const countryMap = {
+                    'FR': 'France', 'BE': 'Belgique', 'LU': 'Luxembourg',
+                    'NL': 'Pays-Bas', 'ES': 'Espagne', 'PT': 'Portugal', 'IT': 'Italie'
+                };
+                const countryCode = selectedRelay.country || 'FR';
+                const countryName = countryMap[countryCode] || countryCode;
+
                 const infoText = document.getElementById('relay-info-text');
                 const relayDisplay = document.getElementById('relay-display');
 
-                if (infoText) infoText.innerHTML = `<strong>${point.nom}</strong><br>${point.adresse}`;
+                if (infoText) {
+                    infoText.innerHTML = `<strong>${point.nom}</strong><br>${point.adresse}, ${point.cp} ${point.ville}<br><strong>${countryName}</strong>`;
+                }
+
                 relayDisplay?.classList.remove('hidden');
+
+                // Mise à jour des options de livraison en fonction du pays du relais
+                updateShippingOptions(selectedRelay.country);
                 
                 // 2. Fermeture automatique après un court délai pour laisser le temps de voir la coche
                 setTimeout(() => {
@@ -526,7 +695,7 @@ window.closeMRModal = () => {
             resultsDiv.appendChild(card);
         });
     } catch (e) {
-        resultsDiv.innerHTML = '<p style="color:red; font-size:0.8rem; text-align:center;">Erreur de recherche</p>';
+        resultsDiv.innerHTML = `<p style="color:red; font-size:0.8rem; text-align:center;">Erreur de recherche: ${e.message}</p>`;
     }
 };
 
@@ -652,7 +821,17 @@ window.closeMRModal = () => {
 
         // Récapitulatif
         cartPoidsTotal = poidsTotal;
-        const fraisPort = calculFraisPort(cartPoidsTotal, currentShippingMethod);
+        
+        let shippingCountry = 'FR';
+        if (currentShippingMethod === 'mondialrelay') {
+            shippingCountry = selectedRelay?.country || document.getElementById('modal-country-select')?.value || 'FR';
+        } else {
+            shippingCountry = document.getElementById('colissimo-country')?.value || 'FR';
+        }
+        colissimoCountry = shippingCountry; // On sauvegarde pour le checkout
+
+        const fraisPort = calculFraisPort(cartPoidsTotal, currentShippingMethod, shippingCountry);
+
         const shippingElem = document.getElementById('res-shipping');
         const shippingLabelElem = document.getElementById('res-shipping-label');
         const totalElem = document.getElementById('res-total');
@@ -748,7 +927,8 @@ window.closeMRModal = () => {
                     cartItems: cart,
                     shippingMethod: currentShippingMethod,
                     relayData: selectedRelay, 
-                    shippingFee: calculFraisPort(cartPoidsTotal, currentShippingMethod) // Utilise cartPoidsTotal
+                    // SÉCURITÉ : On envoie le pays, pas les frais. Le serveur recalculera.
+                    colissimoCountry: colissimoCountry
                     })
                 });
                 const data = await response.json();
@@ -807,6 +987,11 @@ window.closeMRModal = () => {
         await syncStocks(); // On vérifie les stocks réels AVANT d'afficher
         renderPanier();
         initCheckout();
+
+        // Afficher le bon sélecteur au chargement de la page
+        const initialMethod = document.querySelector('input[name="shipping-method"]:checked').value;
+        handleShippingChange(initialMethod);
+
     }
 
     document.addEventListener('astro:page-load', initPage);
