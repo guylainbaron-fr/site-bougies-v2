@@ -217,7 +217,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
     </div>
 
     <div class="filter-bar">
-        {['Tous', 'Bougies', 'Sculptures', 'Accessoires'].map(cat => (
+        {['Tous', 'Bougies', 'Sculptures', 'Tableaux', 'Accessoires'].map(cat => (
             <button 
                 class={`filter-btn ${activeCat === cat ? 'active' : ''}`} 
                 onclick={`filterCategory('${cat}', this)`}
@@ -317,6 +317,16 @@ const activePage = Astro.url.searchParams.get('page') || '1';
             </p>
         </div>
 
+        <div style="margin-bottom: 25px; padding: 15px; background: var(--fond-sable); border-radius: 10px; border: 1px dashed var(--sable-dore);">
+            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; color: var(--brun-profond); font-weight: 800; text-transform: none; letter-spacing: 0;">
+                <input type="checkbox" id="p-is-unique" style="width: 20px; height: 20px; cursor: pointer;" />
+                <span><i class="fa-solid fa-gem"></i> PIÈCE UNIQUE (Ex: Tableau, sculpture non reproductible)</span>
+            </label>
+            <p style="margin: 5px 0 0 32px; font-size: 0.75rem; color: var(--bois-ecorce); text-align: left;">
+                Cochez cette case si l'article est unique. Une fois vendu (stock à 0), il disparaîtra automatiquement de la boutique publique.
+            </p>
+        </div>
+
         <div class="modal-layout">
             <div class="img-side">
                 <div class="img-preview-container">
@@ -336,6 +346,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
                         <select id="p-cat" onchange="toggleParfumField()">
                             <option value="Bougies">Bougies</option>
                             <option value="Sculptures">Sculptures</option>
+                            <option value="Tableaux">Tableaux</option>
                             <option value="Accessoires">Accessoires</option>
                         </select>
                     </div>
@@ -606,6 +617,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
             (document.getElementById('prev-img') as HTMLImageElement).src = data.image || "";
             (document.getElementById('p-poids-num') as HTMLInputElement).value = data.poids ? data.poids.replace('g', '') : '';
             (document.getElementById('p-store-only') as HTMLInputElement).checked = data.enMagasinUniquement === true;
+            (document.getElementById('p-is-unique') as HTMLInputElement).checked = data.isUnique === true;
             
             // Note : p-ordre a été supprimé ici car il n'est plus dans la modale
         } else {
@@ -618,6 +630,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
             (document.getElementById('p-img-2') as HTMLInputElement).value = "";
             (document.getElementById('p-img-3') as HTMLInputElement).value = "";
             (document.getElementById('p-store-only') as HTMLInputElement).checked = false;
+            (document.getElementById('p-is-unique') as HTMLInputElement).checked = false;
         }
         (window as any).toggleParfumField();
         modal.style.display = 'flex';
@@ -659,7 +672,8 @@ const activePage = Astro.url.searchParams.get('page') || '1';
             ordre: finalOrdre,
             poids: poidsFinal,
             prix: Math.max(0, parseFloat((document.getElementById('p-prix') as HTMLInputElement).value) || 0),
-            enMagasinUniquement: (document.getElementById('p-store-only') as HTMLInputElement).checked
+            enMagasinUniquement: (document.getElementById('p-store-only') as HTMLInputElement).checked,
+            isUnique: (document.getElementById('p-is-unique') as HTMLInputElement).checked
         };
 
         const result = await secureApiCall('upsert', payload);

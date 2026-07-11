@@ -8,12 +8,19 @@ import PhoneProtect from '../components/PhoneProtect.astro';
 export const prerender = false;
 
 const pageId = "boutique";
-const categories = ["Bougies", "Sculptures", "Accessoires", "Tous"];
+const categories = ["Bougies", "Sculptures", "Tableaux", "Accessoires", "Tous"];
 
 // RÉCUPÉRATION DES DONNÉES
 const data = await kv.get("boutique:produits");
 const produits = (Array.isArray(data) ? data : [])
-    .filter(p => p && p.id)
+    .filter(p => {
+        if (!p || !p.id) return false; // Filtre de base
+        // Si le produit est une pièce unique et que le stock est à 0, on ne l'affiche plus.
+        if (p.isUnique && p.stock <= 0) {
+            return false;
+        }
+        return true;
+    })
     .sort((a, b) => (Number(a.ordre) || 0) - (Number(b.ordre) || 0))
     .map(p => ({
         ...p,
