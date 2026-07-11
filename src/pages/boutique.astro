@@ -471,12 +471,9 @@ if (queryString) {
     filterBtns.forEach(btn => {
       btn.onclick = function(e) {
         e.preventDefault();
-        filterBtns.forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        currentFilter = this.getAttribute('data-category');
-        hasScrolledToHash = true; // L'utilisateur filtre, on oublie l'ancre
-        currentPage = 1; 
-        updateDisplay();
+        // Redirige vers la bonne URL de catégorie, ce qui relancera le script
+        // avec les bons paramètres. C'est la méthode la plus propre.
+        window.location.href = this.href;
       };
     });
 
