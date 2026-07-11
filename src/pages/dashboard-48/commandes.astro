@@ -349,7 +349,7 @@ const currentYear = new Date().getFullYear();
                                     </strong>
                                     ${order.infos_relais.replace(/, ([A-Z]{2})$/, '')}
                                     ${(() => {
-                                        const paysCode = order.pays_relais || order.infos_relais.match(/, ([A-Z]{2})$/)?.[1];
+                                        const paysCode = order.pays_relais || order.adresse?.country || order.infos_relais.match(/, ([A-Z]{2})$/)?.[1];
                                         return paysCode 
                                             ? `<br><strong>${getCountryFullName(paysCode)}</strong>` 
                                             : (order.mode_livraison === 'mondialrelay' ? `<br><strong>France</strong>` : '');
