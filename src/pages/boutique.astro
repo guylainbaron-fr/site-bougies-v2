@@ -34,6 +34,16 @@ const produits = (Array.isArray(data) ? data : [])
 const activeCat = Astro.url.searchParams.get('cat') || "Bougies";
 const activePage = parseInt(Astro.url.searchParams.get('page') || "1") || 1;
 
+// --- SEO Dynamique ---
+let pageTitle = "Boutique Artisanale - Jean-François & Aniuta";
+let pageDescription = "Découvrez nos créations artisanales : sculptures, tableaux et bougies parfumées coulées à la main dans notre atelier en Lozère.";
+
+if (activeCat !== 'Tous' && activeCat !== 'Bougies') {
+    pageTitle = `Catégorie ${activeCat} | Boutique Artisanale JF & Aniuta`;
+    pageDescription = `Découvrez tous nos produits de la catégorie '${activeCat}'. Créations artisanales uniques, faites à la main en Lozère.`;
+}
+// --- Fin SEO ---
+
 let canonicalPath = "/boutique";
 const searchParams = new URLSearchParams();
 
@@ -46,7 +56,7 @@ if (queryString) {
 }
 ---
 
-<MainLayout title="Boutique Artisanale - Jean-François & Aniuta" pageId={pageId} canonical={canonicalPath}>
+<MainLayout title={pageTitle} description={pageDescription} pageId={pageId} canonical={canonicalPath}>
     <style>
         /* Style spécifique pour les miniatures d'images */
         .thumbnails-gallery {
