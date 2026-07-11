@@ -39,7 +39,7 @@ function calculFraisPortServeur(weight: number, method: string = 'colissimo', co
     }
 
     // Tarifs Colissimo par zones (miroir de la version client)
-    const zoneUE = ['BE', 'LU', 'DE', 'NL', 'IT', 'ES', 'PT', 'CH', 'AT', 'IE', 'SE', 'DK', 'FI', 'GR'];
+    const zoneUE = ['BE', 'LU', 'DE', 'NL', 'IT', 'ES', 'PT', 'CH', 'AT', 'IE', 'SE', 'DK', 'FI', 'GR', 'NO'];
     const zoneEuropeEst = ['GB'];
     const zoneAmeriques = ['US', 'CA'];
     const zoneAsieOceanie = ['JP', 'AU', 'NZ', 'SG'];
@@ -50,9 +50,7 @@ function calculFraisPortServeur(weight: number, method: string = 'colissimo', co
         if (totalWeight <= 500) return 14.00; if (totalWeight <= 1000) return 17.00; if (totalWeight <= 2000) return 19.50; if (totalWeight <= 5000) return 26.00; return -1;
     } else if (zoneEuropeEst.includes(country)) {
         if (totalWeight <= 500) return 20.00; if (totalWeight <= 1000) return 24.00; if (totalWeight <= 2000) return 28.00; if (totalWeight <= 5000) return 35.00; return -1;
-    } else if (zoneAmeriques.includes(country)) {
-        if (totalWeight <= 500) return 29.00; if (totalWeight <= 1000) return 33.00; if (totalWeight <= 2000) return 45.00; if (totalWeight <= 5000) return 65.00; return -1;
-    } else if (zoneAsieOceanie.includes(country) || country === 'WORLD') {
+    } else if (zoneAmeriques.includes(country) || zoneAsieOceanie.includes(country)) {
         if (totalWeight <= 500) return 29.00; if (totalWeight <= 1000) return 33.00; if (totalWeight <= 2000) return 45.00; if (totalWeight <= 5000) return 65.00; return -1;
     }
 
