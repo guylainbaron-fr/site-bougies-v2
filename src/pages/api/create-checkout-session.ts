@@ -49,7 +49,7 @@ function calculFraisPortServeur(weight: number, method: string = 'colissimo', co
     } else if (zoneUE.includes(country)) {
         if (totalWeight <= 500) return 14.00; if (totalWeight <= 1000) return 17.00; if (totalWeight <= 2000) return 19.50; if (totalWeight <= 5000) return 26.00; return -1;
     } else if (zoneEuropeEst.includes(country)) {
-        if (totalWeight <= 500) return 18.00; if (totalWeight <= 1000) return 22.00; if (totalWeight <= 2000) return 25.00; if (totalWeight <= 5000) return 32.00; return -1;
+        if (totalWeight <= 500) return 20.00; if (totalWeight <= 1000) return 24.00; if (totalWeight <= 2000) return 28.00; if (totalWeight <= 5000) return 35.00; return -1;
     } else if (zoneAmeriques.includes(country)) {
         if (totalWeight <= 500) return 29.00; if (totalWeight <= 1000) return 33.00; if (totalWeight <= 2000) return 45.00; if (totalWeight <= 5000) return 65.00; return -1;
     } else if (zoneAsieOceanie.includes(country) || country === 'WORLD') {
@@ -194,13 +194,8 @@ export const POST: APIRoute = async ({ request }) => {
         } else if (shippingMethod === 'mondialrelay') {
             // On s'assure que le pays du relais est un code valide
             finalShippingCountry = paysRelais as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry;
-        } else { // Colissimo
-            // Si le client a choisi "Autre pays", on ne restreint pas la liste pour Stripe.
-            if (colissimoCountry === 'WORLD') {
-                // Laisser Stripe gérer tous les pays autorisés dans ce cas
-            } else {
-                finalShippingCountry = (colissimoCountry || 'FR') as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry;
-            }
+        } else { // Colissimo : on utilise directement le pays choisi
+            finalShippingCountry = (colissimoCountry || 'FR') as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry;
         }
 
         // Ajout dynamique des méthodes de paiement locales
@@ -225,10 +220,7 @@ export const POST: APIRoute = async ({ request }) => {
             },
             shipping_address_collection: {
                 // SÉCURITÉ RENFORCÉE : On n'autorise QUE le pays de destination calculé.
-                // Si c'est 'WORLD', on autorise la liste complète, sinon on verrouille sur le pays choisi.
-                allowed_countries: (colissimoCountry === 'WORLD' && shippingMethod === 'colissimo')
-                    ? PAYS_AUTORISES_STRIPE
-                    : [finalShippingCountry],
+                allowed_countries: [finalShippingCountry],
             },
             phone_number_collection: {
                 enabled: true, // Optionnel mais recommandé pour le livreur

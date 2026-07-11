@@ -253,19 +253,24 @@ const pageId = "panier";
                 <div id="colissimo-country-selector" style="margin-top: 10px;">
                     <label for="colissimo-country" class="sr-only">Pays de livraison</label>
                     <select id="colissimo-country" onchange="renderPanier()" style="width: 100%; padding: 12px; border: 1px solid var(--sable-dore); border-radius: 6px; background: white; font-size: 0.9rem; color: var(--brun-coco);">
-                        <option value="FR" selected>France</option>
-                        <option value="BE">Belgique</option>
-                        <option value="LU">Luxembourg</option>
-                        <option value="CH">Suisse</option>
-                        <option value="DE">Allemagne</option>
-                        <option value="NL">Pays-Bas</option>
-                        <option value="ES">Espagne</option>
-                        <option value="IT">Italie</option>
-                        <option value="PT">Portugal</option>
-                        <option value="GB">Royaume-Uni</option>
-                        <option value="US">États-Unis</option>
-                        <option value="CA">Canada</option>
-                        <option value="WORLD">Autre pays</option>
+                        <optgroup label="Europe (Zone 1)">
+                            <option value="FR" selected>France</option>
+                            <option value="BE">Belgique</option>
+                            <option value="LU">Luxembourg</option>
+                            <option value="CH">Suisse</option>
+                            <option value="DE">Allemagne</option>
+                            <option value="NL">Pays-Bas</option>
+                            <option value="ES">Espagne</option>
+                            <option value="IT">Italie</option>
+                            <option value="PT">Portugal</option>
+                        </optgroup>
+                        <optgroup label="Europe (Zone 2)">
+                            <option value="GB">Royaume-Uni</option>
+                        </optgroup>
+                        <optgroup label="Amérique du Nord">
+                            <option value="US">États-Unis</option>
+                            <option value="CA">Canada</option>
+                        </optgroup>
                     </select>
                 </div>
             </div>
@@ -492,11 +497,11 @@ const pageId = "panier";
             if (totalWeight <= 2000)  return 19.50;
             if (totalWeight <= 5000)  return 26.00;
             return -1;
-        } else if (zoneEuropeEst.includes(country)) { // Zone 3: UK & Europe de l'Est
-            if (totalWeight <= 500)   return 18.00;
-            if (totalWeight <= 1000)  return 22.00;
-            if (totalWeight <= 2000)  return 25.00;
-            if (totalWeight <= 5000)  return 32.00;
+        } else if (zoneEuropeEst.includes(country)) { // Zone 3: UK & Europe de l'Est (Tarifs ajustés)
+            if (totalWeight <= 500)   return 20.00;
+            if (totalWeight <= 1000)  return 24.00;
+            if (totalWeight <= 2000)  return 28.00;
+            if (totalWeight <= 5000)  return 35.00;
             return -1;
         } else if (zoneAmeriques.includes(country)) { // Zone 4: Amériques, Afrique, etc.
             if (totalWeight <= 500)   return 29.00;
