@@ -260,7 +260,7 @@ export const POST: APIRoute = async ({ request }) => {
                 }
             },
             success_url: `${siteUrl}/success?session_id={CHECKOUT_SESSION_ID}`, // Redirection après succès
-            cancel_url: `${siteUrl}/cancel`, // Redirection après annulation
+            cancel_url: `${siteUrl}/cancel?session_id={CHECKOUT_SESSION_ID}`, // Redirection après annulation
         });
 
         return new Response(JSON.stringify({ sessionId: session.id, url: session.url }), { status: 200 });

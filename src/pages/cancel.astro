@@ -1,10 +1,49 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
-const pageId = "panier-cancel";
+const pageId = "cancel";
+
+const sessionId = Astro.url.searchParams.get('session_id');
+let errorMessage = null;
+
+if (sessionId) {
+    try {
+        // On appelle la nouvelle API côté serveur pour annuler et restocker
+        const response = await fetch(`${Astro.url.origin}/api/cancel-session`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Erreur lors de l'annulation de la session.");
+        }
+    } catch (error) {
+        console.error("Erreur sur la page d'annulation:", error);
+        errorMessage = "Une erreur est survenue lors de la mise à jour du stock. Veuillez nous contacter si le problème persiste.";
+    }
+}
 ---
 
 <MainLayout title="Paiement Annulé - Jean-François & Aniuta" pageId={pageId}>
-    
+    <!-- Le JSON-LD a été déplacé dans une nouvelle version de la page -->
+    <section id="cancel-page" style="background-color: var(--fond-ecume); min-height: 60vh; display: flex; align-items: center;">
+        <div class="container" style="text-align: center;">
+            {errorMessage ? (
+                <>
+                    <h1>Erreur Technique</h1>
+                    <p>{errorMessage}</p>
+                </>
+            ) : (
+                <>
+                    <h1>Paiement annulé</h1>
+                    <p>Votre commande a été annulée et votre panier a été restauré. Vous pouvez retourner à la boutique pour continuer vos achats.</p>
+                </>
+            )}
+            <a href="/boutique" class="btn" style="margin-top: 30px;">Retourner à la boutique</a>
+        </div>
+    </section>
+</MainLayout>
     <script type="application/ld+json" slot="head">
 {
   "@context": "https://schema.org",
