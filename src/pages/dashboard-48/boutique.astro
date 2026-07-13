@@ -319,7 +319,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
 
         <div style="margin-bottom: 25px; padding: 15px; background: var(--fond-sable); border-radius: 10px; border: 1px dashed var(--sable-dore);">
             <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; color: var(--brun-profond); font-weight: 800; text-transform: none; letter-spacing: 0;">
-                <input type="checkbox" id="p-is-unique" style="width: 20px; height: 20px; cursor: pointer;" />
+                <input type="checkbox" id="p-is-unique" style="width: 20px; height: 20px; cursor: pointer;" onchange="handleUniqueChange()" />
                 <span><i class="fa-solid fa-gem"></i> PIÈCE UNIQUE (Ex: Tableau, sculpture non reproductible)</span>
             </label>
             <p style="margin: 5px 0 0 32px; font-size: 0.75rem; color: var(--bois-ecorce); text-align: left;">
@@ -361,8 +361,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
                     <div class="field">
                         <label>État du Stock</label>
                         <select id="p-stock">
-                            <option value="100">Disponible</option>
-                            <option value="0">Épuisé</option>
+                            <!-- Les options seront générées par JS -->
                         </select>
                     </div>
                     <div class="field full" id="parfum-field-container">
@@ -581,6 +580,28 @@ const activePage = Astro.url.searchParams.get('page') || '1';
         updatePagination();
     };
 
+    (window as any).handleUniqueChange = () => {
+        const isUnique = (document.getElementById('p-is-unique') as HTMLInputElement).checked;
+        const stockSelect = document.getElementById('p-stock') as HTMLSelectElement;
+        const currentStockValue = parseInt(stockSelect.value);
+
+        stockSelect.innerHTML = ''; // Vide les options actuelles
+
+        if (isUnique) {
+            stockSelect.innerHTML = `
+                <option value="1">Disponible (stock: 1)</option>
+                <option value="0">Épuisé (stock: 0)</option>
+            `;
+            stockSelect.value = (currentStockValue > 0) ? "1" : "0";
+        } else {
+            stockSelect.innerHTML = `
+                <option value="100">Disponible</option>
+                <option value="0">Épuisé</option>
+            `;
+            stockSelect.value = (currentStockValue > 0) ? "100" : "0";
+        }
+    };
+
     (window as any).toggleParfumField = () => {
         const cat = (document.getElementById('p-cat') as HTMLSelectElement).value;
         const container = document.getElementById('parfum-field-container') as HTMLElement;
@@ -608,7 +629,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
             (document.getElementById('p-nom') as HTMLInputElement).value = data.nom || "";
             (document.getElementById('p-cat') as HTMLSelectElement).value = data.categorie || "Bougies";
             (document.getElementById('p-prix') as HTMLInputElement).value = data.prix ? Number(data.prix).toFixed(2) : "0.00";
-            (document.getElementById('p-stock') as HTMLSelectElement).value = (data.stock > 0) ? "100" : "0";
+            // La valeur du stock sera définie après l'appel à handleUniqueChange
             parfumInput.value = data.parfum || "";
             (document.getElementById('p-img') as HTMLInputElement).value = data.image || "";
             (document.getElementById('p-img-2') as HTMLInputElement).value = data.image2 || "";
@@ -618,12 +639,15 @@ const activePage = Astro.url.searchParams.get('page') || '1';
             (document.getElementById('p-poids-num') as HTMLInputElement).value = data.poids ? data.poids.replace('g', '') : '';
             (document.getElementById('p-store-only') as HTMLInputElement).checked = data.enMagasinUniquement === true;
             (document.getElementById('p-is-unique') as HTMLInputElement).checked = data.isUnique === true;
-            
+
+            // On met à jour les options du select AVANT de définir sa valeur
+            (window as any).handleUniqueChange();
+            (document.getElementById('p-stock') as HTMLSelectElement).value = data.stock > 0 ? (data.isUnique ? "1" : "100") : "0";
+
             // Note : p-ordre a été supprimé ici car il n'est plus dans la modale
         } else {
             (document.getElementById('modal-title') as HTMLElement).innerHTML = '<i class="fa-solid fa-circle-plus"></i> Nouvel Article';
-            (document.getElementById('p-id') as HTMLInputElement).value = "";
-            (document.getElementById('p-stock') as HTMLSelectElement).value = "100";
+            (document.getElementById('p-id') as HTMLInputElement).value = ""; // Laissé vide pour la création
             (document.getElementById('p-cat') as HTMLSelectElement).value = "Bougies";
             parfumInput.value = "Vanille Gourmande";
             (document.getElementById('prev-img') as HTMLImageElement).src = "";
@@ -631,6 +655,10 @@ const activePage = Astro.url.searchParams.get('page') || '1';
             (document.getElementById('p-img-3') as HTMLInputElement).value = "";
             (document.getElementById('p-store-only') as HTMLInputElement).checked = false;
             (document.getElementById('p-is-unique') as HTMLInputElement).checked = false;
+
+            // Initialise le select de stock pour un nouvel article non-unique
+            (window as any).handleUniqueChange();
+            (document.getElementById('p-stock') as HTMLSelectElement).value = "100";
         }
         (window as any).toggleParfumField();
         modal.style.display = 'flex';

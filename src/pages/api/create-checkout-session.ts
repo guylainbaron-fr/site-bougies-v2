@@ -100,6 +100,7 @@ export const POST: APIRoute = async ({ request }) => {
 
         let totalWeight = 0;
         const line_items: any[] = []; // Utilisation de any pour contourner les erreurs de types liées aux versions de la lib Stripe
+        const uniqueItemsToLock: string[] = []; // Pour suivre les pièces uniques à "verrouiller"
 
         for (const item of cartItems) {
             const productId = item.id;
@@ -114,6 +115,19 @@ export const POST: APIRoute = async ({ request }) => {
             // SÉCURITÉ : Bloque les articles exclusifs à l'atelier
             if (product?.enMagasinUniquement) {
                 return new Response(JSON.stringify({ error: `L'article "${item.nom}" est disponible uniquement à l'atelier.` }), { status: 400 });
+            }
+
+            // SÉCURITÉ : Bloque si la quantité d'une pièce unique est > 1
+            if (product?.isUnique) {
+                if (quantity > 1) {
+                    return new Response(JSON.stringify({ error: `L'article "${item.nom}" est une pièce unique et ne peut être commandé qu'en un seul exemplaire.` }), { status: 400 });
+                }
+                // SÉCURITÉ RACE CONDITION : On vérifie si le stock est bien à 1 avant de le réserver
+                if (product.stock <= 0) {
+                    return new Response(JSON.stringify({ error: `Désolé, l'article "${item.nom}" vient d'être vendu.` }), { status: 400 });
+                }
+                // On marque cet article comme devant être verrouillé
+                uniqueItemsToLock.push(product.id);
             }
 
             if (!product || product.stock < quantity) {
@@ -141,6 +155,16 @@ export const POST: APIRoute = async ({ request }) => {
             });
         }
 
+        // SÉCURITÉ RACE CONDITION : On met à jour le stock des pièces uniques AVANT de créer la session
+        if (uniqueItemsToLock.length > 0) {
+            uniqueItemsToLock.forEach(idToLock => {
+                const productToLock = productMap.get(idToLock);
+                if (productToLock) {
+                    productToLock.stock = 0; // On réserve l'article
+                }
+            });
+            await kv.set("boutique:produits", Array.from(productMap.values()));
+        }
         // SÉCURITÉ : Calcul des frais de port côté serveur
         let shippingCountry = 'FR';
         if (shippingMethod === 'mondialrelay') {
@@ -183,6 +207,7 @@ export const POST: APIRoute = async ({ request }) => {
         const infosRelais = relayData ? `${relayData.name} (${relayData.id}) - ${relayData.address}` : '';
         const paysRelais = relayData ? relayData.country : '';
 
+        const uniqueItemsMetadata = uniqueItemsToLock.join(',');
         // SÉCURITÉ : Vérification de la cohérence de la livraison et détermination du pays de livraison final
         // On définit un type plus strict pour s'assurer que la valeur est un code pays valide pour Stripe.
         let finalShippingCountry: Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry = 'FR';
@@ -214,7 +239,8 @@ export const POST: APIRoute = async ({ request }) => {
                 details_commande: orderSummary,
                 mode_livraison: shippingMethod || 'colissimo',
                 infos_relais: infosRelais,
-                pays_relais: paysRelais
+                pays_relais: paysRelais,
+                locked_unique_items: uniqueItemsMetadata // On sauvegarde les ID des articles verrouillés
             },
             shipping_address_collection: {
                 // SÉCURITÉ RENFORCÉE : On n'autorise QUE le pays de destination calculé.
@@ -229,7 +255,8 @@ export const POST: APIRoute = async ({ request }) => {
                     details_commande: orderSummary,
                     mode_livraison: shippingMethod || 'colissimo',
                     infos_relais: infosRelais,
-                    pays_relais: paysRelais
+                    pays_relais: paysRelais,
+                    locked_unique_items: uniqueItemsMetadata
                 }
             },
             success_url: `${siteUrl}/success?session_id={CHECKOUT_SESSION_ID}`, // Redirection après succès

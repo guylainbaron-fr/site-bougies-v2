@@ -749,6 +749,7 @@ window.closeMRModal = () => {
                 // 3. Mise à jour des métadonnées (prix/poids)
                 item.stock = live.stock;
                 item.prix = live.prix;
+                item.isUnique = live.isUnique; // Ajout crucial
                 return true;
             });
 
