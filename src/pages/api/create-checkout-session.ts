@@ -230,10 +230,14 @@ export const POST: APIRoute = async ({ request }) => {
             paymentMethodTypes.push('ideal');
         }
 
+        // On définit un délai d'expiration de 30 minutes (1800 secondes) au lieu des 24h par défaut.
+        const expiresAt = Math.floor(Date.now() / 1000) + 1800;
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: paymentMethodTypes,
             line_items: line_items,
             mode: 'payment',
+            expires_at: expiresAt,
             // --- AJOUTS ICI ---
             metadata: { // Pour le dashboard
                 details_commande: orderSummary,
