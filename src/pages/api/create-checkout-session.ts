@@ -130,7 +130,7 @@ export const POST: APIRoute = async ({ request }) => {
                 uniqueItemsToLock.push(product.id);
             }
 
-            if (!product || product.stock < quantity) {
+            if (!product || (!product.isUnique && product.stock < quantity)) {
                 // Gère les produits en rupture de stock ou invalides
                 return new Response(JSON.stringify({ error: `Produit "${item.nom}" indisponible ou stock insuffisant.` }), { status: 400 });
             }
@@ -160,7 +160,7 @@ export const POST: APIRoute = async ({ request }) => {
             uniqueItemsToLock.forEach(idToLock => {
                 const productToLock = productMap.get(idToLock);
                 if (productToLock) {
-                    productToLock.stock = 0; // On réserve l'article
+                    productToLock.stock = -1; // On réserve l'article en le passant à -1 (réservé)
                 }
             });
             await kv.set("boutique:produits", Array.from(productMap.values()));

@@ -102,6 +102,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
         /* BADGES DANS LE TABLEAU */
         .badge-atelier { background: var(--vanille-pure); color: var(--brun-profond); font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--sable-dore); margin-left: 8px; vertical-align: middle; text-transform: uppercase; font-weight: 800; }
         .badge-multi-img { color: var(--sable-dore); font-size: 0.8rem; margin-left: 5px; }
+        .badge-unique { background: var(--brun-profond); color: var(--vanille-pure); border: 1px solid var(--sable-dore); }
         .row-store-only { background-color: #fffdf5; }
 
         /* FORMULAIRE */
@@ -272,6 +273,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
                     <td>
                         <strong>{p.nom}</strong>
                         {p.enMagasinUniquement && <span class="badge-atelier"><i class="fa-solid fa-shop"></i> ATELIER</span>}
+                        {p.isUnique && <span class="badge-atelier badge-unique"><i class="fa-solid fa-gem"></i> UNIQUE</span>}
                         {(p.image2 || p.image3) && <i class="fa-solid fa-images badge-multi-img" title="Plusieurs images"></i>}
                         <br/>
                         <small style="color:#888">{p.categorie}</small>

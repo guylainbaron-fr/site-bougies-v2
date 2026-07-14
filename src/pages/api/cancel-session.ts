@@ -34,8 +34,8 @@ export const POST: APIRoute = async ({ request }) => {
             idsToUnlock.forEach(idToUnlock => {
                 const productToUnlock = allProducts.find(p => p.id === idToUnlock);
 
-                // On remet le stock à 1 UNIQUEMENT si le stock était à 0 (sécurité)
-                if (productToUnlock && productToUnlock.stock === 0) {
+                // On remet le stock à 1 UNIQUEMENT si le stock était à -1 (réservé)
+                if (productToUnlock && productToUnlock.stock === -1) {
                     console.log(`Restocking unique item ${idToUnlock} from cancelled session ${session.id}`);
                     productToUnlock.stock = 1;
                     wasModified = true;

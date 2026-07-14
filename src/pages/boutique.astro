@@ -14,12 +14,8 @@ const categories = ["Bougies", "Sculptures", "Tableaux", "Accessoires", "Tous"];
 const data = await kv.get("boutique:produits");
 const produits = (Array.isArray(data) ? data : [])
     .filter(p => {
-        if (!p || !p.id) return false; // Filtre de base
-        // Si le produit est une pièce unique et que le stock est à 0, on ne l'affiche plus.
-        if (p.isUnique && p.stock <= 0) {
-            return false;
-        }
-        return true;
+        // On ne filtre plus les articles uniques vendus, on les affichera avec un statut spécial.
+        return p && p.id;
     })
     .sort((a, b) => (Number(a.ordre) || 0) - (Number(b.ordre) || 0))
     .map(p => ({
@@ -58,6 +54,28 @@ if (queryString) {
 
 <MainLayout title={pageTitle} description={pageDescription} pageId={pageId} canonical={canonicalPath}>
     <style>
+        /* --- BADGES DE STATUT POUR PIÈCES UNIQUES --- */
+        .status-badge-container {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .status-badge {
+            background: var(--brun-profond); color: var(--vanille-pure); border: 1px solid var(--sable-dore);
+            padding: 5px 10px; font-size: 0.65rem; border-radius: 4px; font-weight: 800; text-transform: uppercase;
+        }
+        /* Style pour les boutons "Vendu" ou "Réservé" */
+        .btn-disabled-status {
+            background-color: var(--bois-flotte) !important;
+            border: none !important;
+            cursor: not-allowed !important;
+            opacity: 0.7 !important;
+            color: white !important;
+        }
         /* Style spécifique pour les miniatures d'images */
         .thumbnails-gallery {
             display: flex;
@@ -233,6 +251,21 @@ if (queryString) {
                         style={(activeCat !== 'Tous' && produit.categorie !== activeCat) ? "display: none;" : ""}
                     >
                         <div class="image-container" style={produit.stock <= 0 ? "filter: grayscale(0.8); opacity: 0.6;" : ""}>
+                            
+                            <div class="status-badge-container">
+                                {produit.isUnique && <span class="status-badge"><i class="fa-solid fa-gem"></i> Pièce Unique</span>}
+                                {produit.isUnique && produit.stock === -1 && (
+                                    <span class="status-badge" style="background-color: var(--vanille-eclat); color: var(--brun-profond);">
+                                        <i class="fa-solid fa-lock"></i> Réservé
+                                    </span>
+                                )}
+                                {produit.isUnique && produit.stock === 0 && (
+                                    <span class="status-badge" style="background-color: var(--bois-flotte); color: var(--vanille-pure);">
+                                        <i class="fa-solid fa-check"></i> Vendu
+                                    </span>
+                                )}
+                            </div>
+
                             <img src={produit.image} alt={produit.nom} class="produit-img" id={`main-img-${produit.id}`} loading="lazy" />
                             <button 
                                 class="btn-share" 
@@ -265,20 +298,27 @@ if (queryString) {
                                     >
                                         Disponible sur demande
                                     </PhoneProtect>
-                                ) : produit.stock > 0 ? (
+                                ) : (produit.stock > 0 || (produit.isUnique && produit.stock === -1)) ? (
                                     <button 
-                                        class="btn add-to-cart" 
+                                        class:list={["btn", "add-to-cart", { "btn-disabled-status": produit.stock <= 0 }]}
                                         data-id={produit.id}
                                         data-nom={produit.nom}
                                         data-prix={produit.prix}
                                         data-poids={produit.poids}
                                         data-image={produit.image}
                                         data-stock={produit.stock || 0} 
+                                        disabled={produit.stock <= 0}
                                     >
-                                        Ajouter au panier
+                                        {produit.stock > 0 ? "Ajouter au panier" : "Réservé"}
+                                    </button>
+                                ) : produit.isUnique && produit.stock === 0 ? (
+                                    <button class="btn add-to-cart btn-disabled-status" disabled title="Cet article n'est plus disponible">
+                                        Vendu
                                     </button>
                                 ) : (
-                                    <button class="btn" style="background-color: var(--bois-flotte); border: none; cursor: not-allowed; opacity: 0.7;" disabled>Revient bientôt</button>
+                                    <button class="btn add-to-cart btn-disabled-status" disabled title="Cet article est en cours de réapprovisionnement">
+                                        Revient bientôt
+                                    </button>
                                 )}
                             </div>
                         </div>
