@@ -139,6 +139,38 @@ if (queryString) {
             text-decoration: none !important;
             margin: 0 !important;
         }
+
+        /* --- STYLE LIGHTBOX (VISIONNEUSE D'IMAGES) --- */
+        .lightbox-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(45, 34, 26, 0.85); /* Fond Brun Profond semi-transparent */
+            display: flex; justify-content: center; align-items: center;
+            z-index: 2000; cursor: pointer;
+            animation: fadeIn 0.3s ease;
+        }
+        .lightbox-content {
+            max-width: 90%; max-height: 85%;
+            object-fit: contain;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border: 4px solid var(--vanille-pure);
+            border-radius: 4px;
+            cursor: default;
+        }
+        .lightbox-close {
+            position: absolute; top: 20px; right: 35px;
+            color: var(--vanille-pure); font-size: 40px; font-weight: bold;
+            cursor: pointer; transition: color 0.3s ease;
+        }
+        .lightbox-close:hover { color: var(--vanille-eclat); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        /* Ajout du curseur pour indiquer que l'image est cliquable */
+        .produit-card .image-container {
+            cursor: zoom-in;
+        }
     </style>
 <script type="application/ld+json" slot="head">
 {
@@ -250,8 +282,10 @@ if (queryString) {
                         id={produit.id}
                         style={(activeCat !== 'Tous' && produit.categorie !== activeCat) ? "display: none;" : ""}
                     >
-                        <div class="image-container" style={produit.stock <= 0 ? "filter: grayscale(0.8); opacity: 0.6;" : ""}>
-                            
+                        <div 
+                            class="image-container" 
+                            style={produit.stock <= 0 ? "filter: grayscale(0.8); opacity: 0.6;" : ""}
+                        >
                             <div class="status-badge-container">
                                 {produit.isUnique && <span class="status-badge"><i class="fa-solid fa-gem"></i> Pièce Unique</span>}
                                 {produit.isUnique && produit.stock === -1 && (
@@ -278,9 +312,9 @@ if (queryString) {
                         
                         {(produit.image2 || produit.image3) && (
                             <div class="thumbnails-gallery">
-                                <img src={produit.image} class="thumb-img" onclick={`document.getElementById('main-img-${produit.id}').src='${produit.image}'`} alt="Miniature 1" />
-                                {produit.image2 && <img src={produit.image2} class="thumb-img" onclick={`document.getElementById('main-img-${produit.id}').src='${produit.image2}'`} alt="Miniature 2" />}
-                                {produit.image3 && <img src={produit.image3} class="thumb-img" onclick={`document.getElementById('main-img-${produit.id}').src='${produit.image3}'`} alt="Miniature 3" />}
+                                <img src={produit.image} class="thumb-img" onclick={`event.stopPropagation(); document.getElementById('main-img-${produit.id}').src='${produit.image}'`} alt="Miniature 1" />
+                                {produit.image2 && <img src={produit.image2} class="thumb-img" onclick={`event.stopPropagation(); document.getElementById('main-img-${produit.id}').src='${produit.image2}'`} alt="Miniature 2" />}
+                                {produit.image3 && <img src={produit.image3} class="thumb-img" onclick={`event.stopPropagation(); document.getElementById('main-img-${produit.id}').src='${produit.image3}'`} alt="Miniature 3" />}
                             </div>
                         )}
 
@@ -336,6 +370,12 @@ if (queryString) {
         </div>
     </section>
     <div id="toast-container" class="toast-container"></div>
+
+    <!-- Structure de la Lightbox (Visionneuse d'images) -->
+    <div id="lightbox" class="lightbox-overlay" style="display: none;">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-content" id="lightbox-img">
+    </div>
 </MainLayout>
 <script is:inline>
   /**
@@ -388,12 +428,46 @@ if (queryString) {
   };
 
   /**
+   * --- GESTION LIGHTBOX ---
+   */
+  window.openLightbox = (src, alt) => {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    if (lightbox && lightboxImg) {
+      lightboxImg.src = src;
+      lightboxImg.alt = alt;
+      lightbox.style.display = 'flex';
+      document.body.style.overflow = 'hidden'; // Empêche le scroll de la page derrière
+    }
+  };
+
+  function closeLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox) lightbox.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
+  /**
    * --- CONFIGURATION & INITIALISATION ---
    */
   function setupBoutique() {
     initFiltresEtPagination();
     initGestionPanier();
     updateCartCount();
+
+    // Listeners pour la lightbox
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox) lightbox.addEventListener('click', closeLightbox);
+
+    // On attache l'événement de clic pour la lightbox à toutes les images principales
+    // C'est plus robuste que de le mettre en inline, surtout avec le filtrage.
+    document.querySelectorAll('.produit-card .image-container').forEach(container => {
+        container.onclick = () => {
+            const img = container.querySelector('.produit-img');
+            if (img) window.openLightbox(img.src, img.alt);
+        };
+    });
+    document.querySelector('.lightbox-close')?.addEventListener('click', closeLightbox);
   }
 
   window.addEventListener('DOMContentLoaded', setupBoutique);
@@ -472,6 +546,17 @@ if (queryString) {
       });
 
       renderPagination(totalPages);
+      
+      // IMPORTANT : On doit ré-attacher les listeners de la lightbox aux cartes qui sont maintenant visibles
+      cardsToShow.forEach(card => {
+        const container = card.querySelector('.image-container');
+        if (container) {
+            container.onclick = () => {
+                const img = container.querySelector('.produit-img');
+                if (img) window.openLightbox(img.src, img.alt);
+            };
+        }
+      });
 
       const url = new URL(window.location.href);
       if (currentFilter === "Bougies") url.searchParams.delete('cat');
