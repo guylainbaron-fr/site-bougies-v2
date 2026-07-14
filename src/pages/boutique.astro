@@ -167,6 +167,24 @@ if (queryString) {
             from { opacity: 0; }
             to { opacity: 1; }
         }
+
+        /* Style pour les flèches de navigation de la lightbox */
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            color: var(--vanille-pure);
+            cursor: pointer;
+            padding: 20px;
+            user-select: none;
+            transition: background-color 0.3s ease;
+        }
+        .lightbox-nav:hover { background-color: rgba(0,0,0,0.2); }
+        .lightbox-prev { left: 15px; }
+        .lightbox-next { right: 15px; }
+        .lightbox-nav.hidden { display: none; }
+
         /* Ajout du curseur pour indiquer que l'image est cliquable */
         .produit-card .image-container {
             cursor: zoom-in;
@@ -374,7 +392,9 @@ if (queryString) {
     <!-- Structure de la Lightbox (Visionneuse d'images) -->
     <div id="lightbox" class="lightbox-overlay" style="display: none;">
         <span class="lightbox-close">&times;</span>
+        <span class="lightbox-nav lightbox-prev hidden" id="lightbox-prev">&#10094;</span>
         <img class="lightbox-content" id="lightbox-img">
+        <span class="lightbox-nav lightbox-next hidden" id="lightbox-next">&#10095;</span>
     </div>
 </MainLayout>
 <script is:inline>
@@ -430,15 +450,42 @@ if (queryString) {
   /**
    * --- GESTION LIGHTBOX ---
    */
-  window.openLightbox = (src, alt) => {
+  let lightboxState = {
+    images: [],
+    currentIndex: 0
+  };
+
+  window.openLightbox = (images, startIndex = 0, alt) => {
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
-    if (lightbox && lightboxImg) {
-      lightboxImg.src = src;
+    const prevBtn = document.getElementById('lightbox-prev');
+    const nextBtn = document.getElementById('lightbox-next');
+
+    if (lightbox && lightboxImg && prevBtn && nextBtn) {
+      lightboxState.images = images;
+      lightboxState.currentIndex = startIndex;
+
+      lightboxImg.src = images[startIndex];
       lightboxImg.alt = alt;
       lightbox.style.display = 'flex';
       document.body.style.overflow = 'hidden'; // Empêche le scroll de la page derrière
+
+      // Affiche ou masque les flèches
+      const showNav = images.length > 1;
+      prevBtn.classList.toggle('hidden', !showNav);
+      nextBtn.classList.toggle('hidden', !showNav);
     }
+  };
+
+  const showNextImage = (e) => {
+    e.stopPropagation(); // Empêche la fermeture de la lightbox
+    lightboxState.currentIndex = (lightboxState.currentIndex + 1) % lightboxState.images.length;
+    document.getElementById('lightbox-img').src = lightboxState.images[lightboxState.currentIndex];
+  };
+  const showPrevImage = (e) => {
+    e.stopPropagation();
+    lightboxState.currentIndex = (lightboxState.currentIndex - 1 + lightboxState.images.length) % lightboxState.images.length;
+    document.getElementById('lightbox-img').src = lightboxState.images[lightboxState.currentIndex];
   };
 
   function closeLightbox() {
@@ -458,13 +505,22 @@ if (queryString) {
     // Listeners pour la lightbox
     const lightbox = document.getElementById('lightbox');
     if (lightbox) lightbox.addEventListener('click', closeLightbox);
+    document.getElementById('lightbox-prev')?.addEventListener('click', showPrevImage);
+    document.getElementById('lightbox-next')?.addEventListener('click', showNextImage);
 
     // On attache l'événement de clic pour la lightbox à toutes les images principales
     // C'est plus robuste que de le mettre en inline, surtout avec le filtrage.
     document.querySelectorAll('.produit-card .image-container').forEach(container => {
-        container.onclick = () => {
+        container.onclick = (e) => {
+            // Empêche le clic sur les miniatures de déclencher la lightbox
+            if (e.target.classList.contains('thumb-img')) return;
+
             const img = container.querySelector('.produit-img');
-            if (img) window.openLightbox(img.src, img.alt);
+            const card = container.closest('.produit-card');
+            const allThumbs = Array.from(card.querySelectorAll('.thumb-img')).map(t => t.src);
+            const imageGallery = allThumbs.length > 0 ? allThumbs : [img.src];
+            const currentImageIndex = imageGallery.indexOf(img.src);
+            if (img) window.openLightbox(imageGallery, currentImageIndex > -1 ? currentImageIndex : 0, img.alt);
         };
     });
     document.querySelector('.lightbox-close')?.addEventListener('click', closeLightbox);
@@ -551,9 +607,13 @@ if (queryString) {
       cardsToShow.forEach(card => {
         const container = card.querySelector('.image-container');
         if (container) {
-            container.onclick = () => {
+            container.onclick = (e) => {
+                if (e.target.classList.contains('thumb-img')) return;
                 const img = container.querySelector('.produit-img');
-                if (img) window.openLightbox(img.src, img.alt);
+                const allThumbs = Array.from(card.querySelectorAll('.thumb-img')).map(t => t.src);
+                const imageGallery = allThumbs.length > 0 ? allThumbs : [img.src];
+                const currentImageIndex = imageGallery.indexOf(img.src);
+                if (img) window.openLightbox(imageGallery, currentImageIndex > -1 ? currentImageIndex : 0, img.alt);
             };
         }
       });
