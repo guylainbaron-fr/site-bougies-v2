@@ -278,8 +278,11 @@ const activePage = Astro.url.searchParams.get('page') || '1';
                         <br/>
                         <small style="color:#888">{p.categorie}</small>
                     </td>
-                    <td>{Number(p.prix).toFixed(2)} €</td>
-                    <td><span style={p.stock <= 0 ? "color:var(--rouge); font-weight:bold" : "color:green; font-weight:bold"}>{p.stock > 0 ? 'Disponible' : 'Épuisé'}</span></td>
+                    <td>{Number(p.prix).toFixed(2)} €</td><td>
+                        {p.stock > 0 && <span style="color:var(--vert); font-weight:bold;">Disponible</span>}
+                        {p.stock === 0 && <span style="color:var(--rouge); font-weight:bold;">Épuisé</span>}
+                        {p.stock === -1 && <span style="color:#ef6c00; font-weight:bold;">Réservé</span>}
+                    </td>
                     <td>{p.poids}</td>
                     <td class="action-cell">
                       <button class="btn btn-edit" onclick={`openModal(${JSON.stringify(p)})`}>
