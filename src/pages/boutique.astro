@@ -288,8 +288,13 @@ if (queryString) {
                             <h3>{produit.nom}</h3>
                             <p class="poids">{produit.poids} - {produit.parfum}</p>
                             <p class="produit-description">{produit.description}</p>
-                            <div class="prix-action">
-                                <span class="prix">{Number(produit.prix).toFixed(2)} €</span>
+                            <div 
+                                class="prix-action"
+                                style={produit.isUnique && produit.stock === 0 ? 'border-top: none; padding-top: 25px;' : ''}
+                            >
+                                {!(produit.isUnique && produit.stock === 0) && (
+                                    <span class="prix">{Number(produit.prix).toFixed(2)} €</span>
+                                )}
                                 {produit.enMagasinUniquement ? (
                                     <PhoneProtect 
                                         isWhatsApp={true}
