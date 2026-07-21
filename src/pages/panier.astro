@@ -733,17 +733,22 @@ window.closeMRModal = () => {
             const produitsBD = await response.json();
             let cart = getCartItems();
             const avantModif = JSON.stringify(cart);
+            let hasMeaningfulChange = false; // Drapeau pour les changements importants
 
             // Filtrage : on ne garde que ce qui est en stock réel
             const panierFiltre = cart.filter(item => {
                 const live = produitsBD.find(p => p.id === item.id);
                 
                 // 1. Si plus en BD ou stock à 0 -> On supprime l'article du panier
-                if (!live || live.stock <= 0) return false;
+                if (!live || live.stock <= 0) {
+                    if (item.isUnique) hasMeaningfulChange = true;
+                    return false;
+                }
 
                 // 2. Si le client en a 8 mais que la BD dit 1 -> On redescend à 1
                 if (item.quantite > live.stock) {
                     item.quantite = live.stock;
+                    if (item.isUnique) hasMeaningfulChange = true;
                 }
 
                 // 3. Mise à jour des métadonnées (prix/poids)
@@ -754,14 +759,14 @@ window.closeMRModal = () => {
             });
 
             // Sauvegarde seulement si le panier a été modifié
-            if (JSON.stringify(panierFiltre) !== avantModif) {
+            if (hasMeaningfulChange) {
                 saveCartItems(panierFiltre);
                 
                 // Rafraîchissement du design
                 renderPanier(); 
                 
                 // Notification pour le reste du site
-                window.dispatchEvent(new Event('storage'));
+                window.dispatchEvent(new Event('storage')); // On notifie les autres onglets
                 showToast("Panier actualisé selon les stocks réels", "delete");
             }
         } catch (error) {
