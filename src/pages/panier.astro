@@ -1019,9 +1019,12 @@ window.closeMRModal = () => {
                 const EXPIRATION_DELAY = 48 * 60 * 60 * 1000; 
 
                 if (now - timestamp > EXPIRATION_DELAY) {
+                    // On ne montre la notification que si le panier n'était pas déjà vide
+                    if (items.length > 0) {
+                        showToast("Votre panier a été réinitialisé après une période d'inactivité.", "delete");
+                    }
                     localStorage.removeItem('panier-atelier');
                     localStorage.removeItem('panier-atelier-timestamp');
-                    showToast("Votre panier a été réinitialisé après une période d'inactivité.", "delete");
                 } else if (forceSaveTimestamp) {
                     // Si le panier est valide mais que le timestamp était manquant/migré, on le fixe à maintenant
                     localStorage.setItem('panier-atelier-timestamp', now.toString());

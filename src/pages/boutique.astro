@@ -711,6 +711,7 @@ if (queryString) {
         else panier.push({ id, nom, prix, image, poids: poidsUnitaire, quantite: 1, stock: stockMax });
 
         localStorage.setItem('panier-atelier', JSON.stringify(panier));
+        localStorage.setItem('panier-atelier-timestamp', Date.now().toString()); // On met à jour la date d'activité
         window.dispatchEvent(new Event('storage'));
         updateCartCount();
         window.showToast(`${nom} ajouté au panier`);
