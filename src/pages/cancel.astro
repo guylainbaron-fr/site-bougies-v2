@@ -26,24 +26,6 @@ if (sessionId) {
 ---
 
 <MainLayout title="Paiement Annulé - Jean-François & Aniuta" pageId={pageId}>
-    <!-- Le JSON-LD a été déplacé dans une nouvelle version de la page -->
-    <section id="cancel-page" style="background-color: var(--fond-ecume); min-height: 60vh; display: flex; align-items: center;">
-        <div class="container" style="text-align: center;">
-            {errorMessage ? (
-                <>
-                    <h1>Erreur Technique</h1>
-                    <p>{errorMessage}</p>
-                </>
-            ) : (
-                <>
-                    <h1>Paiement annulé</h1>
-                    <p>Votre commande a été annulée et votre panier a été restauré. Vous pouvez retourner à la boutique pour continuer vos achats.</p>
-                </>
-            )}
-            <a href="/boutique" class="btn" style="margin-top: 30px;">Retourner à la boutique</a>
-        </div>
-    </section>
-</MainLayout>
     <script type="application/ld+json" slot="head">
 {
   "@context": "https://schema.org",
@@ -128,13 +110,19 @@ if (sessionId) {
         <div class="container">
             <div class="panier-header">
                 <span class="panier-tag">Oups, quelque chose s'est mal passé</span>
-                <h1>Paiement annulé</h1>
+                {errorMessage ? <h1>Erreur Technique</h1> : <h1>Paiement annulé</h1>}
             </div>
 
             <div class="empty-boutique-style" style="max-width: 700px; margin: 40px auto;">
-                <p style="font-size: 1.15rem; line-height: 1.8; margin-bottom: 30px;">
-                    Votre commande n'a pas pu être finalisée. Cela peut être dû à une annulation de votre part ou à un problème technique.
-                </p>
+                {errorMessage ? (
+                    <p style="font-size: 1.15rem; line-height: 1.8; margin-bottom: 30px; color: #c0392b;">
+                        {errorMessage}
+                    </p>
+                ) : (
+                    <p style="font-size: 1.15rem; line-height: 1.8; margin-bottom: 30px;">
+                        Votre commande n'a pas pu être finalisée. Cela peut être dû à une annulation de votre part ou à un problème technique.
+                    </p>
+                )}
                 <p style="font-size: 1rem; color: var(--bois-ecorce);">
                     Votre panier a été conservé. Vous pouvez réessayer ou nous contacter si le problème persiste.
                 </p>
