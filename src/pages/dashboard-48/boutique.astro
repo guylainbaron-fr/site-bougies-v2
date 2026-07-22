@@ -428,6 +428,12 @@ const activePage = Astro.url.searchParams.get('page') || '1';
             sources: ['local', 'url', 'camera'],
             showAdvancedOptions: false,
             cropping: true, // JF peut recadrer ses photos au format portrait
+            // --- AJOUT DE LA TRANSFORMATION ---
+            // On force le redimensionnement après le recadrage pour optimiser le poids.
+            // w_800: largeur max 800px, q_auto: qualité auto, f_auto: format auto (webp, avif...)
+            transformation: [
+                { width: 800, crop: "limit" }, { quality: "auto" }, { fetch_format: "auto" }
+            ],
             multiple: false,
             defaultSource: 'local',
             styles: { palette: { window: "#FDFDFD", sourceBg: "#F9F1E7", windowBorder: "#E0C297", tabIcon: "#4A3728", inactiveTabIcon: "#967969", menuIcons: "#4A3728", link: "#E9C46A", action: "#2D221A", inProgress: "#E9C46A", complete: "#2D221A", error: "#C0392B", textDark: "#2D221A", textLight: "#FFFFFF" }}
