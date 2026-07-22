@@ -439,7 +439,11 @@ const activePage = Astro.url.searchParams.get('page') || '1';
             styles: { palette: { window: "#FDFDFD", sourceBg: "#F9F1E7", windowBorder: "#E0C297", tabIcon: "#4A3728", inactiveTabIcon: "#967969", menuIcons: "#4A3728", link: "#E9C46A", action: "#2D221A", inProgress: "#E9C46A", complete: "#2D221A", error: "#C0392B", textDark: "#2D221A", textLight: "#FFFFFF" }}
         }, (error: any, result: any) => {
             if (!error && result && result.event === "success") {
-                const url = result.info.secure_url;
+                // CORRECTION : L'URL transformée est dans `eager`, pas dans `secure_url` directement.
+                // On prend l'URL de la première transformation "eager" si elle existe, sinon on se rabat sur l'URL originale.
+                const url = (result.info.eager && result.info.eager[0]?.secure_url) 
+                    ? result.info.eager[0].secure_url 
+                    : result.info.secure_url;
                 (document.getElementById(inputId) as HTMLInputElement).value = url;
                 // Mise à jour immédiate de l'aperçu si c'est l'image principale
                 if (inputId === 'p-img') (document.getElementById('prev-img') as HTMLImageElement).src = url;
