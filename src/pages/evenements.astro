@@ -35,14 +35,10 @@ const mendeFallback: EventData = {
 const eventStatus = await kv.get<string>('event_status') || 'attente';
 const savedData = await kv.get<EventData>('event_data');
 
-// Sécurité : On fusionne pour éviter les cases horaires vides si tu n'en saisis qu'une seule
+// On fusionne les données : on utilise les données sauvegardées si elles existent, sinon le modèle de secours.
 const eventData = (savedData && savedData.titre_annonce) ? {
-    ...savedData,
-    horaires: [
-        savedData.horaires?.[0] || mendeFallback.horaires[0],
-        savedData.horaires?.[1] || mendeFallback.horaires[1],
-        savedData.horaires?.[2] || mendeFallback.horaires[2]
-    ]
+    ...mendeFallback, // On prend d'abord le fallback pour s'assurer que tous les champs existent
+    ...savedData      // Puis on écrase avec les données sauvegardées (y compris le tableau d'horaires)
 } : mendeFallback;
 
 const pastMarkets = await kv.get<EventData[]>('past_markets') || [];
