@@ -321,7 +321,7 @@ if (queryString) {
                             <img src={produit.image} alt={produit.nom} class="produit-img" id={`main-img-${produit.id}`} loading="lazy" />
                             <button 
                                 class="btn-share" 
-                                onclick={`shareProduct('${produit.id}', ${JSON.stringify(produit.nom)}, '${produit.categorie}')`}
+                                onclick={`event.stopPropagation(); shareProduct('${produit.id}', ${JSON.stringify(produit.nom)}, '${produit.categorie}')`}
                                 title="Partager ce produit"
                             >
                                 <img src="/images/share-icon.svg" alt="Partager" />
