@@ -43,6 +43,10 @@ const eventData = (savedData && savedData.titre_annonce) ? {
 
 const pastMarkets = await kv.get<EventData[]>('past_markets') || [];
 
+// Logique pour accorder les libellés en fonction du contenu
+const isPluralDate = /et|&|au|Du/i.test(eventData.dates);
+const isPluralHoraires = eventData.horaires && eventData.horaires.length > 1;
+
 // Imports des images fixes
 import afficheMende from '../assets/images/marches/marche_noel_mende_750.webp';
 import miniature1 from '../assets/images/miniature-evenement-1.webp';
@@ -163,11 +167,11 @@ const galleryImages = Object.values(galleryFiles).map((img: any) => img.default)
                         
                         <div class="luxe-meta">
                             <div class="meta-row date">
-                                <strong>Dates :</strong> {eventData.dates}
+                                <strong>{isPluralDate ? 'Dates' : 'Date'} :</strong> {eventData.dates}
                             </div>
                             {eventData.horaires && eventData.horaires.length > 0 && (
                                 <div class="meta-row time">
-                                    <strong>Horaires :</strong> {eventData.horaires.join(' • ')}
+                                    <strong>{isPluralHoraires ? 'Horaires' : 'Horaire'} :</strong> {eventData.horaires.join(' • ')}
                                 </div>
                             )}
                         </div>
