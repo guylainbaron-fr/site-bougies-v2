@@ -17,14 +17,7 @@ const produits = (Array.isArray(data) ? data : [])
         // On ne filtre plus les articles uniques vendus, on les affichera avec un statut spécial.
         return p && p.id;
     })
-    .sort((a, b) => (Number(a.ordre) || 0) - (Number(b.ordre) || 0))
-    .map(p => ({
-        ...p,
-        // On injecte l'optimisation Cloudinary (f_auto: format, q_auto: qualité)
-        image: p.image?.includes('cloudinary.com') ? p.image.replace('upload/', 'upload/f_auto,q_auto,w_800/') : p.image,
-        image2: p.image2?.includes('cloudinary.com') ? p.image2.replace('upload/', 'upload/f_auto,q_auto,w_400/') : p.image2,
-        image3: p.image3?.includes('cloudinary.com') ? p.image3.replace('upload/', 'upload/f_auto,q_auto,w_400/') : p.image3
-    }));
+    .sort((a, b) => (Number(a.ordre) || 0) - (Number(b.ordre) || 0));
 
 // Récupération de la catégorie active depuis l'URL (pour le rendu serveur)
 const activeCat = Astro.url.searchParams.get('cat') || "Bougies";
