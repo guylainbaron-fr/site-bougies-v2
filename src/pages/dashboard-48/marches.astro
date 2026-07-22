@@ -25,6 +25,21 @@ function sanitize(str: any, max: number = 500) {
     return sanitized.trim().substring(0, max);
 }
 
+// Helper pour "décoder" les entités HTML avant de les afficher dans un formulaire
+function decodeForInput(str: string | undefined) {
+    if (!str) return "";
+    const map: Record<string, string> = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&#x27;': "'",
+        '&#x2F;': '/',
+    };
+    // On remplace les entités par leurs caractères correspondants
+    return str.replace(/&amp;|&lt;|&gt;|&quot;|&#x27;|&#x2F;/g, (m: string) => map[m]);
+}
+
 // Validation stricte de l'URL Google Maps
 function validateMapUrl(url: string) {
     try {
@@ -99,7 +114,7 @@ if (Astro.request.method === "POST") {
                     sanitize(formData.get("h1"), 50),
                     sanitize(formData.get("h2"), 50),
                     sanitize(formData.get("h3"), 50)
-                ].filter(h => h !== ""),
+                ].filter(h => h && h.trim() !== ""), // On ne garde que les horaires non-vides
                 description: sanitize(formData.get("description"), 500),
                 map_url: validateExternalLink(formData.get("map_url")?.toString() || ""),
                 map_iframe: validateMapUrl(finalUrl) || mendeModel.map_iframe
@@ -198,9 +213,9 @@ const pastMarkets: any[] = await kv.get('past_markets') || [];
                     
                     <div class="form-group">
                         <label class="admin-label">Horaires</label>
-                        <input class="admin-input" type="text" name="h1" value={currentData.horaires?.[0] || ""} placeholder="Jour 1" style="margin-bottom:5px" />
-                        <input class="admin-input" type="text" name="h2" value={currentData.horaires?.[1] || ""} placeholder="Jour 2" style="margin-bottom:5px" />
-                        <input class="admin-input" type="text" name="h3" value={currentData.horaires?.[2] || ""} placeholder="Jour 3" />
+                        <input class="admin-input" type="text" name="h1" value={decodeForInput(currentData.horaires?.[0])} placeholder="Jour 1" style="margin-bottom:5px" />
+                        <input class="admin-input" type="text" name="h2" value={decodeForInput(currentData.horaires?.[1])} placeholder="Jour 2" style="margin-bottom:5px" />
+                        <input class="admin-input" type="text" name="h3" value={decodeForInput(currentData.horaires?.[2])} placeholder="Jour 3" />
                     </div>
                 </div>
 
