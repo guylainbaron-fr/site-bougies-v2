@@ -11,6 +11,7 @@ import { kv } from "../lib/kv";
 interface EventData {
   titre_annonce: string;
   dates: string;
+  poster_url?: string; // URL de l'affiche (optionnel)
   horaires: string[];
   description: string;
   map_url: string;
@@ -21,6 +22,7 @@ interface EventData {
 const mendeFallback: EventData = {
     titre_annonce: "Marché Couvert de Mende",
     dates: "Du 23 au 26 Janvier",
+    poster_url: "", // Pas d'affiche par défaut
     horaires: [
         "Ven. : 08h00 - 13h00",
         "Sam. & Dim. : 09h00 - 19h00",
@@ -50,6 +52,7 @@ const isPluralHoraires = eventData.horaires && eventData.horaires.length > 1;
 // Imports des images fixes
 import afficheMende from '../assets/images/marches/marche_noel_mende_750.webp';
 import miniature1 from '../assets/images/miniature-evenement-1.webp';
+import afficheToques from '../assets/images/marches/affiche_toques.webp';
 import miniature2 from '../assets/images/miniature-evenement-2.webp';
 
 // 1. On récupère les fichiers (méthode moderne)
@@ -188,11 +191,25 @@ const galleryImages = Object.values(galleryFiles).map((img: any) => img.default)
                     </div>
 
                     <div class="luxe-map">
-                        <iframe 
-                            src={eventData.map_iframe} 
-                            loading="lazy"
-                            allowfullscreen="">
-                        </iframe>
+                        {eventData.poster_url ? (
+                            <Image 
+                                src={eventData.poster_url}
+                                alt={`Affiche pour l'événement : ${eventData.titre_annonce}`}
+                                width={700}
+                                height={1000}
+                                loading="eager"
+                                fetchpriority="high"
+                                decoding="async"
+                                quality={85}
+                                class="luxe-event-poster"
+                            />
+                        ) : (
+                            <iframe 
+                                src={eventData.map_iframe} 
+                                loading="lazy"
+                                allowfullscreen="">
+                            </iframe>
+                        )}
                     </div>
                 </div>
             </div>

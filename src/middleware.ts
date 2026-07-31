@@ -23,8 +23,21 @@ function withSecurityHeaders(response: Response): Response {
   // HSTS (Force HTTPS pendant 1 an)
   headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   // CSP renforcée : Ajout de cdnjs.cloudflare.com pour FontAwesome et sécurisation accrue
-  headers.set('Content-Security-Policy', "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://ajax.googleapis.com https://widget.mondialrelay.com https://maps.googleapis.com https://upload-widget.cloudinary.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https: https://*.google.com https://*.googleapis.com; frame-src 'self' https://www.google.com https://upload-widget.cloudinary.com https://js.stripe.com; connect-src 'self' https:; upgrade-insecure-requests;");
   
+  const cspDirectives = {
+    "default-src": ["'self'", "https:"],
+    "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdnjs.cloudflare.com", "https://ajax.googleapis.com", "https://widget.mondialrelay.com", "https://maps.googleapis.com", "https://upload-widget.cloudinary.com", "https://js.stripe.com"],
+    "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+    "font-src": ["'self'", "data:", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+    "img-src": ["'self'", "data:", "blob:", "https:", "https://*.google.com", "https://*.googleapis.com", "https://res.cloudinary.com"],
+    "frame-src": ["'self'", "https://www.google.com", "https://upload-widget.cloudinary.com", "https://js.stripe.com"],
+    "connect-src": ["'self'", "https:", "https://api.cloudinary.com"],
+    "upgrade-insecure-requests": [],
+  };
+
+  const cspString = Object.entries(cspDirectives).map(([key, values]) => `${key} ${values.join(' ')}`).join('; ');
+  headers.set('Content-Security-Policy', cspString);
+
   // Indique aux caches que la réponse dépend de l'authentification
   headers.set('Vary', 'Authorization');
 

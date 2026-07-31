@@ -11,8 +11,17 @@ interface ImportMetaEnv {
   readonly SITE: string;
   readonly STRIPE_SECRET_KEY: string;
   readonly STRIPE_PUBLISHABLE_KEY: string;
+  readonly STRIPE_WEBHOOK_SECRET: string;
 }
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
+}
+
+// On étend l'interface Window pour déclarer nos fonctions globales
+interface Window {
+    openUploadWidget: (inputId: string) => void;
+    archiveEvent: () => void;
+    deleteHistory: () => void;
+    cloudinary: any; // On déclare aussi l'objet cloudinary
 }

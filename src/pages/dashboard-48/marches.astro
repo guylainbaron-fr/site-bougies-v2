@@ -3,26 +3,15 @@ export const prerender = false;
 import { kv } from "../../lib/kv";
 import AdminHeader from "../../components/AdminHeader.astro";
 import '../../styles/admin.css';
-const currentYear = new Date().getFullYear();
 
-// Helper pour assainir les entrées
-function sanitize(str: any, max: number = 500) {
-    if (!str) return "";
-    
-    let sanitized = str.toString().replace(/[\x00-\x1F\x7F-\x9F]/g, '');
-    
-    // Échappement des caractères HTML (XSS Protection)
-    const map: Record<string, string> = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#x27;',
-        "/": '&#x2F;',
-    };
-    sanitized = sanitized.replace(/[&<>"'/]/g, (m: string) => map[m]);
-    
-    return sanitized.trim().substring(0, max);
+interface EventData {
+  titre_annonce: string;
+  dates: string;
+  poster_url?: string; // Champ pour l'affiche (optionnel)
+  horaires: string[];
+  description: string;
+  map_url: string;
+  map_iframe: string; // Champ pour la carte
 }
 
 // Helper pour "décoder" les entités HTML avant de les afficher dans un formulaire
@@ -40,32 +29,6 @@ function decodeForInput(str: string | undefined) {
     return str.replace(/&amp;|&lt;|&gt;|&quot;|&#x27;|&#x2F;/g, (m: string) => map[m]);
 }
 
-// Validation stricte de l'URL Google Maps
-function validateMapUrl(url: string) {
-    try {
-        if (!url) return "";
-        const parsed = new URL(url);
-        const isSecure = parsed.protocol === "https:";
-        const isGoogle = parsed.hostname.endsWith('google.com') || parsed.hostname.endsWith('google.fr');
-        const isEmbed = parsed.pathname.startsWith('/maps/embed');
-        
-        return (isSecure && isGoogle && isEmbed) ? url : "";
-    } catch {
-        return "";
-    }
-}
-
-// Validation pour les liens externes (Bouton GPS)
-function validateExternalLink(url: string) {
-    try {
-        if (!url) return "";
-        const parsed = new URL(url);
-        return (parsed.protocol === "https:" || parsed.protocol === "http:") ? url : "";
-    } catch {
-        return "";
-    }
-}
-
 // 1. MODÈLE RÉEL PAR DÉFAUT (Mende avec ses 3 créneaux)
 const mendeModel = {
     titre_annonce: "Marché Couvert de Mende",
@@ -75,6 +38,7 @@ const mendeModel = {
         "Sam. & Dim. : 09h00 - 19h00", // Case 2
         "Lun. : 08h00 - 13h00"         // Case 3
     ],
+    poster_url: "", // Pas d'affiche par défaut
     description: "Retrouvez-nous au cœur du marché couvert de Mende pour découvrir nos dernières sculptures sur bois et nos bougies artisanales.",
     map_url: "https://maps.app.goo.gl/pSesTFPPLNPwGptb7",
     map_iframe: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2844.9865659534867!2d3.4955737760506964!3d44.515428571074295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12b36de0792c499d%3A0xca92c4b3a1a2ef3e!2sMarch%C3%A9%20Couvert%20De%20Mende!5e0!3m2!1sfr!2sfr!4v1769263957380!5m2!1sfr!2sfr'
@@ -86,45 +50,21 @@ if (Astro.request.method === "POST") {
         const formData = await Astro.request.formData();
         const action = formData.get("action");
 
-        // 1. ACTION : MISE À JOUR OU ENREGISTREMENT
         if (action === "update_market") {
-            const status = formData.get("status");
-            const newTitle = sanitize(formData.get("titre_annonce"), 100);
-            
-            const oldMarket: any = await kv.get('event_data');
-            const pastMarkets: any[] = await kv.get('past_markets') || [];
-
-            if (oldMarket && oldMarket.titre_annonce && oldMarket.titre_annonce !== newTitle) {
-                pastMarkets.unshift(oldMarket);
-                await kv.set('past_markets', pastMarkets.slice(0, 3));
-            }
-
-            let rawInput = formData.get("map_iframe")?.toString() || "";
-            let finalUrl = rawInput;
-
-            // Extraction automatique de l'URL du src de l'iframe si l'utilisateur colle tout le code Google
-            // On utilise une expression régulière pour être sûr de bien capturer le lien
-            const srcMatch = rawInput.match(/src=["']([^"']+)["']/i);
-            finalUrl = srcMatch ? srcMatch[1] : rawInput.replace(/["']/g, '').trim();
-
-            const eventData = {
-                titre_annonce: sanitize(newTitle, 100),
-                dates: sanitize(formData.get("dates"), 50),
-                horaires: [
-                    sanitize(formData.get("h1"), 50),
-                    sanitize(formData.get("h2"), 50),
-                    sanitize(formData.get("h3"), 50)
-                ].filter(h => h && h.trim() !== ""), // On ne garde que les horaires non-vides
-                description: sanitize(formData.get("description"), 500),
-                map_url: validateExternalLink(formData.get("map_url")?.toString() || ""),
-                map_iframe: validateMapUrl(finalUrl) || mendeModel.map_iframe
+            const eventData: EventData = {
+                titre_annonce: formData.get("titre_annonce")?.toString() || "",
+                dates: formData.get("dates")?.toString() || "",
+                horaires: formData.get("horaires")?.toString().split('\n').filter(h => h.trim() !== "") || [],
+                description: formData.get("description")?.toString() || "",
+                poster_url: formData.get("poster_url")?.toString() || "",
+                map_url: formData.get("map_url")?.toString() || "",
+                map_iframe: formData.get("map_iframe")?.toString() || ""
             };
 
-            await kv.set('event_status', status);
+            await kv.set('event_status', formData.get("status"));
             await kv.set('event_data', eventData);
         }
 
-        // 2. ACTION : ARCHIVAGE MANUEL (Remet Mende par défaut)
         if (action === "archive_market") {
             const currentData: any = await kv.get('event_data');
             const pastMarkets: any[] = await kv.get('past_markets') || [];
@@ -138,7 +78,6 @@ if (Astro.request.method === "POST") {
             await kv.set('event_status', 'attente');
         }
 
-        // 3. ACTION : SUPPRESSION DE L'HISTORIQUE
         if (action === "delete_history") {
             await kv.del('past_markets');
         }
@@ -149,19 +88,16 @@ if (Astro.request.method === "POST") {
 }
 
 // --- RÉCUPÉRATION DES DONNÉES ET FUSION POUR L'AFFICHAGE ---
-const currentStatus = await kv.get<string>('event_status') || 'attente';
-const savedData: any = await kv.get('event_data');
+const eventStatus = await kv.get<string>('event_status') || 'attente';
+const savedData = await kv.get<EventData>('event_data');
 
 // Fusion intelligente : si une donnée manque en base, on utilise Mende
-const currentData = {
+const eventData = {
     titre_annonce: savedData?.titre_annonce || mendeModel.titre_annonce,
     dates: savedData?.dates || mendeModel.dates,
-    horaires: [
-        savedData?.horaires?.[0] || mendeModel.horaires[0],
-        savedData?.horaires?.[1] || mendeModel.horaires[1],
-        savedData?.horaires?.[2] || mendeModel.horaires[2]
-    ],
+    horaires: savedData?.horaires && savedData.horaires.length > 0 ? savedData.horaires : mendeModel.horaires,
     description: savedData?.description || mendeModel.description,
+    poster_url: savedData?.poster_url || mendeModel.poster_url,
     map_url: savedData?.map_url || mendeModel.map_url,
     map_iframe: savedData?.map_iframe || mendeModel.map_iframe
 };
@@ -179,94 +115,153 @@ const pastMarkets: any[] = await kv.get('past_markets') || [];
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
-
     <meta name="theme-color" content="#fdfaf7">
+    <!-- Chargement du Widget Cloudinary -->
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 </head>
 <body>
     <div class="dashboard-container">
         <AdminHeader currentPage="marches" title="Gestion Événements" />
 
-        <div class={`status-banner ${currentStatus === 'actif' ? 'bg-actif' : 'bg-attente'}`}>
-            Statut actuel : {currentStatus === 'actif' ? 'Événement en ligne' : 'Mode attente (Cœur affiché)'}
+        <div class={`status-banner ${eventStatus === 'actif' ? 'bg-actif' : 'bg-attente'}`}>
+            Statut actuel : {eventStatus === 'actif' ? 'Événement en ligne' : 'Mode attente (Cœur affiché)'}
         </div>
 
-        <form method="POST">
+        <form id="market-form" method="POST">
+            <input type="hidden" name="action" value="update_market" />
+
             <div class="market-form-grid">
                 <div class="form-section">
                     <div class="form-group">
                         <label class="admin-label">Visibilité sur le site</label>
                         <select class="admin-select" name="status">
-                            <option value="attente" selected={currentStatus === 'attente'}>Désactivé (Affiche "Bientôt")</option>
-                            <option value="actif" selected={currentStatus === 'actif'}>Activé (Affiche les détails)</option>
+                            <option value="attente" selected={eventStatus === 'attente'}>Désactivé (Affiche "Bientôt")</option>
+                            <option value="actif" selected={eventStatus === 'actif'}>Activé (Affiche les détails)</option>
                         </select>
                     </div>
                     
                     <div class="form-group">
                         <label class="admin-label">Titre de l'annonce</label>
-                        <input class="admin-input" type="text" name="titre_annonce" value={currentData.titre_annonce} placeholder="Ex: Marché de Mende" required />
+                        <input class="admin-input" type="text" name="titre_annonce" value={eventData.titre_annonce} placeholder="Ex: Marché de Mende" required />
                     </div>
                     
                     <div class="form-group">
                         <label class="admin-label">Dates</label>
-                        <input class="admin-input" type="text" name="dates" value={currentData.dates} placeholder="Ex: 14 & 15 Janvier" required />
+                        <input class="admin-input" type="text" name="dates" value={eventData.dates} placeholder="Ex: 14 & 15 Janvier" required />
                     </div>
                     
                     <div class="form-group">
-                        <label class="admin-label">Horaires</label>
-                        <input class="admin-input" type="text" name="h1" value={decodeForInput(currentData.horaires?.[0])} placeholder="Jour 1" style="margin-bottom:5px" />
-                        <input class="admin-input" type="text" name="h2" value={decodeForInput(currentData.horaires?.[1])} placeholder="Jour 2" style="margin-bottom:5px" />
-                        <input class="admin-input" type="text" name="h3" value={decodeForInput(currentData.horaires?.[2])} placeholder="Jour 3" />
+                        <label class="admin-label">Horaires (un par ligne)</label>
+                        <textarea class="admin-textarea" name="horaires" rows="3">{decodeForInput(eventData.horaires.join('\n'))}</textarea>
                     </div>
                 </div>
 
                 <div class="form-section">
                     <div class="form-group">
                         <label class="admin-label">Description (Étiquette)</label>
-                        <textarea class="admin-textarea" name="description" rows="3">{currentData.description}</textarea>
+                        <textarea class="admin-textarea" name="description" rows="3">{eventData.description}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="poster_url" class="admin-label">Affiche de l'événement (Prioritaire)</label>
+                        <input type="text" id="poster_url" name="poster_url" class="admin-input" value={eventData.poster_url} placeholder="URL de l'image de l'affiche">
+                        <button type="button" class="btn-upload" onclick="openUploadWidget('poster_url')" style="margin-top: 8px;"><i class="fa-solid fa-cloud-arrow-up"></i> Télécharger via Cloudinary</button>
                     </div>
                     
                     <div class="form-group">
                         <label class="admin-label">Lien Bouton GPS</label>
-                        <input class="admin-input" type="text" name="map_url" value={currentData.map_url} placeholder="https://goo.gl/maps/..." />
+                        <input class="admin-input" type="text" name="map_url" value={eventData.map_url} placeholder="https://goo.gl/maps/..." />
                     </div>
                     
                     <div class="form-group">
-                        <label class="admin-label">Code Carte (Iframe Google Maps)</label>
-                        <textarea class="admin-textarea" name="map_iframe" rows="4">{currentData.map_iframe}</textarea>
+                        <label class="admin-label">Code Carte (Iframe Google Maps - Secours)</label>
+                        <textarea class="admin-textarea" name="map_iframe" rows="4" placeholder="Code <iframe src=...">{eventData.map_iframe}</textarea>
                     </div>
-                    
-                    {pastMarkets.length > 0 && (
-                        <div class="archive-list">
-                            <div class="archive-header">
-                                <label class="admin-label" style="margin:0">Derniers marchés terminés</label>
-                                <button type="submit" name="action" value="delete_history" class="btn-delete-history" onclick="return confirm('Effacer tout l\'historique ?');">
-                                    Effacer tout
-                                </button>
-                            </div>
-                            {pastMarkets.map(m => (
-                                <div class="archive-item">
-                                    <span>{m.titre_annonce}</span>
-                                    <span style="opacity:0.5">{m.dates}</span>
-                                </div>
-                            ))}
-                        </div>
-                    )}
                 </div>
-            </div>
-
-            <div class="action-buttons">
-                <button type="submit" name="action" value="update_market" class="btn btn-add btn-save-market">
-                    <i class="fa-solid fa-floppy-disk"></i> Enregistrer et mettre à jour
-                </button>
-                <button type="submit" name="action" value="archive_market" class="btn btn-archive-market" onclick="return confirm('Archiver ce marché et réinitialiser ?');">
-                    <i class="fa-solid fa-box-archive"></i> Archiver le marché
-                </button>
             </div>
         </form>
 
-        <footer class="dashboard-footer">
-            <p>© {currentYear} Jean François & Aniuta — Dashboard Atelier</p>
-        </footer>
+        <div class="action-buttons">
+            <button type="submit" form="market-form" class="btn btn-add btn-save-market">
+                <i class="fa-solid fa-floppy-disk"></i> Enregistrer les modifications
+            </button>
+            <button class="btn btn-archive-market" onclick="archiveEvent()">
+                <i class="fa-solid fa-box-archive"></i> Archiver et réinitialiser
+            </button>
+        </div>
+
+        <div class="archive-list" style={pastMarkets.length === 0 ? 'display:none' : ''}>
+            <div class="archive-header">
+                <label class="admin-label" style="margin:0">Derniers marchés terminés</label>
+                <button class="btn-delete-history" onclick="deleteHistory()">Effacer tout</button>
+            </div>
+            {pastMarkets.map(m => (
+                <div class="archive-item">
+                    <span>{m.titre_annonce}</span>
+                    <span style="opacity:0.5">{m.dates}</span>
+                </div>
+            ))}
+        </div>
     </div>
+
+<script is:inline define:vars={{ eventStatus, pastMarkets }}>
+    // 1. On passe les variables du serveur au client de manière sécurisée
+    window.eventStatus = eventStatus;
+    window.pastMarkets = pastMarkets;
+</script>
+<script>
+    // --- CONFIGURATION CLOUDINARY ---
+    const CLOUD_NAME = import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME || "dksok1rxg"; 
+    const UPLOAD_PRESET = import.meta.env.PUBLIC_CLOUDINARY_UPLOAD_PRESET || "boutique_preset";
+
+    window.openUploadWidget = (inputId) => {
+        if (!window.cloudinary) {
+            return alert("Le module de téléchargement n'est pas prêt. Patientez ou vérifiez votre connexion.");
+        }
+        window.cloudinary.openUploadWidget({
+            cloudName: CLOUD_NAME,
+            uploadPreset: UPLOAD_PRESET,
+            sources: ['local', 'url', 'camera'],
+            showAdvancedOptions: false,
+            cropping: true,
+            croppingAspectRatio: 700 / 1000, // Force le ratio de l'affiche (700x1000)
+            transformation: [
+                { width: 700, crop: "limit" }, { quality: "auto" }, { fetch_format: "auto" }
+            ],
+            multiple: false,
+            defaultSource: 'local',
+            styles: { palette: { window: "#FDFDFD", sourceBg: "#F9F1E7", windowBorder: "#E0C297", tabIcon: "#4A3728", inactiveTabIcon: "#967969", menuIcons: "#4A3728", link: "#E9C46A", action: "#2D221A", inProgress: "#E9C46A", complete: "#2D221A", error: "#C0392B", textDark: "#2D221A", textLight: "#FFFFFF" }}
+        }, (error, result) => {
+            if (!error && result && result.event === "success") {
+                const url = (result.info.eager && result.info.eager[0]?.secure_url) 
+                    ? result.info.eager[0].secure_url 
+                    : result.info.secure_url;
+                (document.getElementById(inputId) as HTMLInputElement).value = url;
+            }
+        });
+    };
+
+    window.archiveEvent = () => {
+        if (confirm('Archiver ce marché et réinitialiser ?')) {
+            const form = document.getElementById('market-form') as HTMLFormElement;
+            if (form) {
+                const actionInput = form.querySelector('input[name="action"]') as HTMLInputElement;
+                if(actionInput) actionInput.value = 'archive_market';
+                form.submit();
+            }
+        }
+    }
+
+    window.deleteHistory = () => {
+        if (confirm('Effacer tout l\'historique des marchés ?')) {
+            const form = document.getElementById('market-form') as HTMLFormElement;
+            if (form) {
+                const actionInput = form.querySelector('input[name="action"]') as HTMLInputElement;
+                if(actionInput) actionInput.value = 'delete_history';
+                form.submit();
+            }
+        }
+    }
+</script>
 </body>
 </html>
