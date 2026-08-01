@@ -15,7 +15,7 @@ import imgCollection from '../assets/images/bougies-champignons-lozere-collectio
 import atelierImg from "../assets/images/accueil-h2-2.webp";
 import aproposImg from "../assets/images/accueil-h2-3.webp";
 
-// --- DONNÉES STRUCTURÉES (Optimisées et Sécurisées) ---
+// --- DONNÉES STRUCTURÉES ---
 const schemaData = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
@@ -65,9 +65,9 @@ const schemaData = JSON.stringify({
 ---
 
 <MainLayout 
-    title="Jean Francois & ANIUTA Artisans Sculpteurs Lozere 48"
-    description="Artisanat du bois et de la bougie de J.F. et Aniuta. Sculptures sur bois local et bougies naturelles ultra-réalistes à Chasseradès."
-    pageId={pageId}  >
+    title="Jean François & ANIUTA Artisans Sculpteurs Lozere 48"
+    description="Artisanat du bois et de la bougie. Sculptures sur bois local, bougies champignons, tableaux, cèpes séchés et accessoires à Chasseradès."
+    pageId={pageId}>
 <script type="application/ld+json" slot="head" set:html={schemaData} />
 
     <section id="hero">
@@ -85,33 +85,27 @@ const schemaData = JSON.stringify({
             decoding="sync"
         />
         <div class="container">
-            <h1>L'Héritage Lozérien : Maîtres Sculpteurs et Créateurs de Bougies Artisanales.</h1> 
-            <p>Chaleur du bois sculpté, réconfort de la flamme parfumée. L'artisanat conçu pour enrichir votre intérieur.</p>
-            <a href="/bougies" class="btn large-btn" title="Accéder à notre collection de bougies"> Découvrir l'univers</a>
+            <h1>L'Héritage Lozérien : Maîtres Sculpteurs et Créateurs d'Artisanat.</h1> 
+            <p>Chaleur du bois sculpté, réconfort de la flamme parfumée et objets d'art du quotidien façonnés à la main.</p>
+            <a href="/boutique" class="btn large-btn" title="Accéder à notre boutique">Découvrir l'univers</a>
         </div>
     </section>
 
     <DuelOuverture />
 
     <section id="accueil">
-        <div class="container text-center"> <div class="section-top-image">
+        <div class="container text-center">
+            <div class="section-top-image">
                 <Image src={accueilImg} alt="Artisanat Lozère" class="intro-image-1" width={600} height={669} />
             </div>
             
-            <h2>L'Art du Bois et le Parfum des Sens.</h2>               
+            <h2>L'Art du Bois, de la Matière et des Saveurs.</h2>             
             
-            <p>
-                Découvrez l'harmonie entre la chaleur du bois sculpté et le réalisme saisissant de nos créations. Nos <strong>bougies champignons</strong>, conçues en <strong>cire 100% naturelle</strong>, se distinguent par une durabilité exceptionnelle et un rendu plus vrai que nature.
-                Bienvenue dans notre boutique artisanale. Profitez de nos services de livraison en <strong>Colissimo ou Mondial Relay</strong>, disponibles pour la France et de nombreux pays à l'international. Découvrez notre collection de 6 bougies "Cèpes et Morilles" au parfum signature Vanille Gourmande, ainsi que nos sculptures uniques en bois "Le Curieux" et "Le Majestueux".
-            </p>
-
-            <p>
-                Retrouvez également nos porte-clés hôteliers personnalisés ; pour ces modèles sur-mesure, un bouton de contact direct vous permettra d'échanger avec l'artisan pour finaliser votre projet.
-            </p>
+            <p>Découvrez l'harmonie entre le bois brut, les matières nobles et le réalisme de nos créations. Notre catalogue s'enrichit de <strong>tableaux originaux</strong>, de <strong>cèpes séchés</strong> pour sublimer votre cuisine, ainsi que d'objets uniques du quotidien : <strong>boîtes de mouchoirs sculptées, miroirs de poche et crayons en bois naturel</strong>.</p>
 
             <Image 
                 src={imgCollection} 
-                alt="Collection de 6 bougies champignons artisanales - Cèpes et Morilles" 
+                alt="Collection de bougies champignons et artisanat de Lozère" 
                 class="img-collection-elevate"
                 width={800} 
                 height={629} 
@@ -122,10 +116,14 @@ const schemaData = JSON.stringify({
             />
 
             <p>
-                Chaque pièce est coulée à la main dans notre atelier, garantissant une qualité artisanale unique et une diffusion longue durée de notre parfum signature Vanille Gourmande.
+                Retrouvez également nos incontournables <strong>bougies champignons</strong> en cire 100% naturelle au parfum signature Vanille Gourmande, nos sculptures en bois ("Le Curieux", "Le Majestueux"), ainsi que nos porte-clés hôteliers personnalisables sur demande.
             </p>
 
-            <a href="/bougies" class="btn">Découvrir les Bougies et Tarifs</a> 
+            <p>
+                Chaque pièce est façonnée à la main dans notre atelier à Chasseradès. Profitez de nos services de livraison rapide en <strong>Colissimo ou Mondial Relay</strong> pour la France et l'international.
+            </p>
+
+            <a href="/boutique" class="btn">Explorer la Boutique</a> 
         </div>
     </section>
 
@@ -136,7 +134,7 @@ const schemaData = JSON.stringify({
             </div>
             <h2>Notre Atelier : Là où la Magie Opère</h2>
             <p>
-                Situé à Chasseradès, au cœur de la Lozère, notre atelier est le lieu de rencontre entre le bois brut et la cire artisanale. Loin des produits industriels, nous façonnons des objets durables, du cèpe sculpté à la <strong>bougie champignon plus vraie que nature</strong>, avec un savoir-faire authentique.
+                Situé à Chasseradès, au cœur de la Lozère, notre atelier rassemble le travail du bois, de la cire et des arts décoratifs. Loin de la fabrication industrielle, nous façonnons des objets authentiques et durables avec la passion du savoir-faire traditionnel.
             </p>
             <a href="/atelier" class="btn">Visiter l'Atelier</a>
         </div>
@@ -149,7 +147,7 @@ const schemaData = JSON.stringify({
             </div>
             <h2>À Propos de l'Artisan et Notre Histoire</h2>
             <p>
-                Artisans passionnés, Jean François & Aniuta se consacrent à la matière noble. Nous privilégions les essences locales pour le bois et des finitions naturelles pour nos bougies. Chaque création est le fruit d'une démarche exigeante pour vous offrir une qualité et un esthétisme unique, reflets de notre terroir.
+                Artisans passionnés, Jean-François & Aniuta se consacrent aux trésors du terroir et à la création artisanale. Des essences locales aux finitions soignées, chaque pièce reflète une démarche exigeante guidée par le plaisir de créer et d'embellir votre quotidien.
             </p>
             <a href="/apropos" class="btn">En Savoir Plus sur Nous</a> 
         </div>
