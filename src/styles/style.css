@@ -137,6 +137,15 @@ p {
     color: var(--texte-galet);
     min-height: 1.2em;
 }
+
+.conclusion-paragraphe {
+    margin-bottom: 0 !important;
+}
+
+.section-conclusion {
+    padding-bottom: 0 !important;
+}
+
 /* ==========================================================================
    SÉPARATEURS & SECTIONS GÉNÉRALES
    ========================================================================== */
