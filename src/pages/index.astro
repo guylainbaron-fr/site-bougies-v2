@@ -102,41 +102,43 @@ const schemaData = JSON.stringify({
             
             <h2>L'Art du Bois, de la Matière et des Saveurs.</h2>             
             
-            <p>Découvrez l'harmonie entre le bois brut, les matières nobles et le réalisme de nos créations. Notre catalogue s'enrichit de <strong>tableaux originaux</strong>, de <strong>cèpes séchés</strong> pour sublimer votre cuisine, ainsi que d'objets uniques du quotidien : <strong>boîtes de mouchoirs sculptées et miroirs de poche peints à la main</strong>.</p>
-
-            <Image 
-                src={tableau3d} 
-                alt="Tableau 3D sculpture de champignons sur bois" 
-                class="img-collection-elevate"
-                width={600} 
-                height={800} 
-                widths={[480, 600]} 
-                sizes="(max-width: 600px) 480px, 600px"
-                loading="lazy"
-                decoding="async"
-            />
-
-            <p>
-                Retrouvez également nos incontournables <strong>bougies champignons</strong> en cire 100% naturelle au parfum signature Vanille Gourmande, nos sculptures en bois ("Le Curieux", "Le Majestueux"), ainsi que nos porte-clés hôteliers personnalisables sur demande.
-            </p>
-
-            <Image 
-                src={imgCollection} 
-                alt="Collection de bougies champignons et artisanat de Lozère" 
-                class="img-collection-elevate"
-                width={800} 
-                height={629} 
-                widths={[480, 650, 800]} 
-                sizes="(max-width: 600px) 480px, (max-width: 800px) 650px, 800px"
-                loading="lazy"
-                decoding="async"
-            />
-
+            <div class="content-block">
+                <p>Découvrez l'harmonie entre le bois brut, les matières nobles et le réalisme de nos créations. Notre catalogue s'enrichit de <strong>tableaux originaux</strong>, de <strong>cèpes séchés</strong> pour sublimer votre cuisine, ainsi que d'objets uniques du quotidien : <strong>boîtes de mouchoirs sculptées et miroirs de poche peints à la main</strong>.</p>
+                <Image 
+                    src={tableau3d} 
+                    alt="Tableau 3D sculpture de champignons sur bois" 
+                    class="img-collection-elevate"
+                    width={600} 
+                    height={800} 
+                    widths={[480, 600]} 
+                    sizes="(max-width: 600px) 480px, 600px"
+                    loading="lazy"
+                    decoding="async"
+                />
+                <a href="/boutique" class="btn">Explorer la Boutique</a> 
+            </div>
+            
+            <div class="content-block">
+                <p>
+                    Retrouvez également nos incontournables <strong>bougies champignons</strong> en cire 100% naturelle au parfum signature Vanille Gourmande, nos sculptures en bois ("Le Curieux", "Le Majestueux"), ainsi que nos porte-clés hôteliers personnalisables sur demande.
+                </p>
+                <Image 
+                    src={imgCollection} 
+                    alt="Collection de bougies champignons et artisanat de Lozère" 
+                    class="img-collection-elevate"
+                    width={800} 
+                    height={629} 
+                    widths={[480, 650, 800]} 
+                    sizes="(max-width: 600px) 480px, (max-width: 800px) 650px, 800px"
+                    loading="lazy"
+                    decoding="async"
+                />
+                <a href="/bougies" class="btn">Voir nos bougies</a>
+            </div>
+            
             <p>
                 Chaque pièce est façonnée à la main dans notre atelier à Chasseradès. Profitez de nos services de livraison rapide en <strong>Colissimo ou Mondial Relay</strong> pour la France et l'international.
             </p>
-
-            <a href="/boutique" class="btn">Explorer la Boutique</a> 
         </div>
     </section>
 

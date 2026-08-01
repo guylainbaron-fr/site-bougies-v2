@@ -3642,6 +3642,16 @@ h2::after {
     border-radius: 8px;
 }
 
+/* --- BLOC DE CONTENU HOMEPAGE (POUR L'HARMONIE) --- */
+.content-block {
+    margin-bottom: 80px; /* Espace de respiration entre les blocs */
+}
+
+.content-block .btn {
+    margin-top: 40px; /* Espace contrôlé sous l'image, avant le bouton */
+    margin-bottom: 0;
+}
+
 /* ==========================================================================
     RESPONSIVE GLOBAL & FIX TABLETTES (IPAD, SURFACE, MOBILE)
    ========================================================================== */
