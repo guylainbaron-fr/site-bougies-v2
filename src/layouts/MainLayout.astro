@@ -149,6 +149,51 @@ const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel
       window.addEventListener('load', setupTrigger);
     }
   })();
+
+  /**
+   * --- GESTION GLOBALE DE L'ICÔNE DU PANIER ---
+   * Ce script, placé dans le layout principal, s'assure que l'icône
+   * et le compteur du panier sont toujours à jour sur l'ensemble du site.
+   */
+  function updateCartStatus() {
+    const cartIconWrapper = document.querySelector('.header-actions');
+    const cartCountBadge = document.getElementById('cart-count');
+
+    if (!cartIconWrapper || !cartCountBadge) return;
+
+    const raw = localStorage.getItem('panier-atelier');
+    let cart = [];
+    try {
+        const parsed = raw ? JSON.parse(raw) : [];
+        // Gère l'ancien et le nouveau format du panier
+        cart = Array.isArray(parsed) ? parsed : (parsed.items || []);
+    } catch (e) {
+        console.error("Erreur de lecture du panier:", e);
+        cart = [];
+    }
+
+    // On calcule le nombre total d'articles en sommant les quantités
+    const totalItems = cart.reduce((sum, item) => sum + (item.quantite || 0), 0);
+
+    // On masque l'icône entière si le panier est vide
+    cartIconWrapper.classList.toggle('hidden', totalItems === 0);
+
+    if (totalItems > 0) {
+        cartCountBadge.textContent = totalItems;
+        cartCountBadge.style.display = 'flex'; // On s'assure que le badge est visible
+    } else {
+        cartCountBadge.style.display = 'none'; // On masque le badge
+    }
+  }
+
+  // Mettre à jour l'icône au chargement de la page
+  document.addEventListener('astro:page-load', updateCartStatus);
+
+  // Mettre à jour l'icône si le panier est modifié (dans cet onglet ou un autre)
+  window.addEventListener('storage', updateCartStatus);
+
+  // Appel initial pour le premier chargement de la page
+  updateCartStatus();
 </script>
 </body>
 </html>
