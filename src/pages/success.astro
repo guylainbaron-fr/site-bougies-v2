@@ -229,6 +229,7 @@ const pageId = "panier-success";
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session_id'); // Pour le client
         const adminPi = urlParams.get('admin_pi'); // Pour l'admin depuis le dashboard
+        const adminToken = urlParams.get('token'); // Jeton de sécurité pour l'admin
         const summaryDiv = document.getElementById('order-summary');
 
         if ((!sessionId && !adminPi) || !summaryDiv) return;
@@ -240,7 +241,7 @@ const pageId = "panier-success";
 
         // On construit l'URL de l'API en fonction du paramètre présent
         const apiUrl = adminPi 
-            ? `/api/claim-invoice?admin_pi=${adminPi}`
+            ? `/api/claim-invoice?admin_pi=${adminPi}&token=${adminToken}`
             : `/api/claim-invoice?session_id=${sessionId}`;
         try {
             const response = await fetch(apiUrl);

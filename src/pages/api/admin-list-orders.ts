@@ -25,6 +25,7 @@ export const GET: APIRoute = async () => {
             return {
                 id: session.id,
                 created: session.created, // Timestamp brut pour calcul d'ancienneté
+                sessionId: session.id, // Ajout de l'ID de session pour le lien client
                 paymentIntentId: paymentIntent?.id,
                 date: new Date(session.created * 1000).toLocaleString('fr-FR', { 
     day: '2-digit', 
