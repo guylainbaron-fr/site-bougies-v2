@@ -1,7 +1,6 @@
 ---
 export const prerender = false;
 import AdminHeader from "../../components/AdminHeader.astro";
-const ADMIN_INVOICE_TOKEN = import.meta.env.ADMIN_INVOICE_TOKEN;
 import '../../styles/admin.css';
 const currentYear = new Date().getFullYear();
 ---
@@ -144,14 +143,6 @@ const currentYear = new Date().getFullYear();
 </div>
 
 <script>
-    // On passe la variable du serveur (Astro) au client (JavaScript)
-    const ADMIN_INVOICE_TOKEN = "${ADMIN_INVOICE_TOKEN}";
-
-    let allOrders = [];
-    let currentPage = 1;
-    let currentTab = 'prepare'; // prepare, shipped, all, archives
-    const itemsPerPage = 9;
-
     const getCountryFullName = (code) => {
         const countryMap = {
             'FR': 'France',
@@ -164,6 +155,12 @@ const currentYear = new Date().getFullYear();
         };
         return countryMap[code] || code;
     };
+
+    let allOrders = [];
+    let currentPage = 1;
+    let currentTab = 'prepare'; // prepare, shipped, all, archives
+    const itemsPerPage = 9;
+
     async function fetchOrders() {
         const container = document.getElementById('orders-container');
         try {
@@ -325,12 +322,12 @@ const currentYear = new Date().getFullYear();
                                     <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
                                         <button
                                             class="btn btn-secondary-action"
-                                            onclick="(window as any).openAdminInvoice('${order.paymentIntentId}')">
+                                            onclick="openAdminInvoice('${order.paymentIntentId}')">
                                             <i class="fa-solid fa-file-invoice"></i> Facture
                                         </button>
                                         <button
                                             class="btn btn-secondary-action"
-                                            onclick="(window as any).openClientInvoice('${order.sessionId}')"
+                                            onclick="openClientInvoice('${order.sessionId}')"
                                         >
                                             <i class="fa-solid fa-user-check"></i> Lien Client
                                         </button>
@@ -338,7 +335,7 @@ const currentYear = new Date().getFullYear();
 
                                     <button
                                         class="btn btn-secondary-action"
-                                        onclick="(window as any).generateLabel('${order.paymentIntentId}')"
+                                        onclick="generateLabel('${order.paymentIntentId}')"
                                     >
                                         <i class="fa-solid fa-print"></i> Étiquette
                                     </button>
@@ -437,38 +434,37 @@ const currentYear = new Date().getFullYear();
     }
 
     // Helper functions for opening invoice links
-    (window as any).openAdminInvoice = (paymentIntentId) => {
-        const encodedToken = encodeURIComponent(ADMIN_INVOICE_TOKEN);
-        window.open(`/success?admin_pi=${paymentIntentId}&token=${encodedToken}`, '_blank');
-    };
+    function openAdminInvoice(paymentIntentId) {
+        window.open(`/success?admin_pi=${paymentIntentId}`, '_blank');
+    }
 
-    (window as any).openClientInvoice = (sessionId) => {
+    function openClientInvoice(sessionId) {
         window.open(`/success?session_id=${sessionId}`, '_blank');
-    };
+    }
 
-    (window as any).setTab = (tab, btn) => {
+    function setTab(tab, btn) {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentTab = tab;
         currentPage = 1;
         updatePagination();
-    };
+    }
 
-    (window as any).generateLabel = (piId) => {
+    function generateLabel(piId) {
         const targetOrder = allOrders.find(o => o.paymentIntentId === piId);
         if (!targetOrder) {
             alert("Commande introuvable");
             return;
         }
-
+    
         const url = targetOrder.mode_livraison === 'mondialrelay' 
             ? 'https://www.mondialrelay.fr/envoi-de-colis/' 
             : 'https://www.laposte.fr/colissimo-en-ligne';
         
         window.open(url, '_blank');
-    };
+    }
 
-    (window as any).updateStatus = async (event, piId, currentStatus) => {
+    async function updateStatus(event, piId, currentStatus) {
         const isCurrentlyShipped = currentStatus === 'expedie';
         const newStatus = isCurrentlyShipped ? 'en_attente' : 'expedie';
         
@@ -478,7 +474,7 @@ const currentYear = new Date().getFullYear();
         try {
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>...';
             btn.style.pointerEvents = 'none';
-
+    
             const res = await fetch('/api/admin-update-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -495,9 +491,9 @@ const currentYear = new Date().getFullYear();
             btn.innerHTML = originalContent;
             btn.style.pointerEvents = 'auto';
         }
-    };
+    }
 
-    (window as any).unarchiveOrder = async (event, piId) => {
+    async function unarchiveOrder(event, piId) {
         const btn = event.currentTarget as HTMLElement;
         const originalContent = btn.innerHTML;
         try {
@@ -517,9 +513,9 @@ const currentYear = new Date().getFullYear();
             btn.innerHTML = originalContent;
             btn.style.pointerEvents = 'auto';
         }
-    };
+    }
 
-    (window as any).archiveOrder = async (event, piId) => {
+    async function archiveOrder(event, piId) {
         const btn = event.currentTarget as HTMLElement;
         try {
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>...';
@@ -537,7 +533,16 @@ const currentYear = new Date().getFullYear();
             alert("Erreur lors de l'archivage.");
             btn.style.pointerEvents = 'auto';
         }
-    };
+    }
+
+    // On rend les fonctions accessibles globalement pour les `onclick`
+    (window as any).openAdminInvoice = openAdminInvoice;
+    (window as any).openClientInvoice = openClientInvoice;
+    (window as any).setTab = setTab;
+    (window as any).generateLabel = generateLabel;
+    (window as any).updateStatus = updateStatus;
+    (window as any).unarchiveOrder = unarchiveOrder;
+    (window as any).archiveOrder = archiveOrder;
 
     fetchOrders();
 </script>

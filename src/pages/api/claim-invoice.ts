@@ -16,7 +16,6 @@ const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY);
  *    - C'est sécurisé car la page du dashboard est protégée par mot de passe.
  */
 export const GET: APIRoute = async ({ request }) => {
-    const ADMIN_INVOICE_TOKEN = import.meta.env.ADMIN_INVOICE_TOKEN;
     const url = new URL(request.url);
     const sessionId = url.searchParams.get('session_id');
     const adminPi = url.searchParams.get('admin_pi');
@@ -30,11 +29,6 @@ export const GET: APIRoute = async ({ request }) => {
     try {
         if (adminPi) {
             // --- MODE ADMIN ---
-            const token = url.searchParams.get('token');
-            if (!token || token !== ADMIN_INVOICE_TOKEN) {
-                return new Response(JSON.stringify({ error: "Accès non autorisé pour l'administrateur." }), { status: 403 });
-            }
-
             const sessions = await stripe.checkout.sessions.list({ payment_intent: adminPi, limit: 1 });
             if (sessions.data.length === 0) {
                 return new Response(JSON.stringify({ error: "Aucune session de paiement trouvée pour cet identifiant." }), { status: 404 });
