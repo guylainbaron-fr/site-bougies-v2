@@ -331,7 +331,7 @@ const currentYear = new Date().getFullYear();
                                         </button>
                                         <button
                                             class="btn btn-secondary-action"
-                                            onclick="(window as any).openClientInvoice('${order.sessionId}')"
+                                            onclick="openClientInvoice('${order.sessionId}')"
                                         >
                                             <i class="fa-solid fa-user-check"></i> Lien Client
                                         </button>
@@ -339,7 +339,7 @@ const currentYear = new Date().getFullYear();
 
                                     <button
                                         class="btn btn-secondary-action"
-                                        onclick="generateLabel('${order.paymentIntentId}')"
+                                        onclick="(window as any).generateLabel('${order.paymentIntentId}')"
                                     >
                                         <i class="fa-solid fa-print"></i> Étiquette
                                     </button>
@@ -382,7 +382,7 @@ const currentYear = new Date().getFullYear();
                         </button>
                         ` : ''}
 
-                        ${canArchive ? `
+                        ${canArchive ? ` 
                             <button class="btn btn-archive-secondary" onclick="archiveOrder(event, '${order.paymentIntentId}')">
                                 <i class="fa-solid fa-box-archive"></i> Archiver la commande
                             </button>
@@ -443,11 +443,11 @@ const currentYear = new Date().getFullYear();
         window.open(`/success?admin_pi=${paymentIntentId}&token=${encodedToken}`, '_blank');
     }
 
-    function openClientInvoice(sessionId) {
+    (window as any).openClientInvoice = (sessionId) => {
         window.open(`/success?session_id=${sessionId}`, '_blank');
     };
 
-    (window as any).setTab = (tab, btn) => {
+    function setTab(tab, btn) {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentTab = tab;
@@ -469,7 +469,7 @@ const currentYear = new Date().getFullYear();
         window.open(url, '_blank');
     };
 
-    (window as any).updateStatus = async (event, piId, currentStatus) => {
+    async function updateStatus(event, piId, currentStatus) {
         const isCurrentlyShipped = currentStatus === 'expedie';
         const newStatus = isCurrentlyShipped ? 'en_attente' : 'expedie';
         
@@ -498,7 +498,7 @@ const currentYear = new Date().getFullYear();
         }
     };
 
-    (window as any).unarchiveOrder = async (event, piId) => {
+    async function unarchiveOrder(event, piId) {
         const btn = event.currentTarget as HTMLElement;
         const originalContent = btn.innerHTML;
         try {
@@ -520,7 +520,7 @@ const currentYear = new Date().getFullYear();
         }
     };
 
-    (window as any).archiveOrder = async (event, piId) => {
+    async function archiveOrder(event, piId) {
         const btn = event.currentTarget as HTMLElement;
         try {
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>...';
@@ -539,6 +539,14 @@ const currentYear = new Date().getFullYear();
             btn.style.pointerEvents = 'auto';
         }
     };
+
+    // On rend les fonctions accessibles globalement pour les `onclick`
+    (window as any).setTab = setTab;
+    (window as any).updateStatus = updateStatus;
+    (window as any).archiveOrder = archiveOrder;
+    (window as any).unarchiveOrder = unarchiveOrder;
+    (window as any).openAdminInvoice = openAdminInvoice;
+    // openClientInvoice et generateLabel sont déjà sur window
 
     fetchOrders();
 </script>

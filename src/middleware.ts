@@ -26,12 +26,12 @@ function withSecurityHeaders(response: Response): Response {
   
   const cspDirectives = {
     "default-src": ["'self'", "https:"],
-    "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdnjs.cloudflare.com", "https://ajax.googleapis.com", "https://widget.mondialrelay.com", "https://maps.googleapis.com", "https://upload-widget.cloudinary.com", "https://js.stripe.com"],
+    "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdnjs.cloudflare.com", "https://ajax.googleapis.com", "https://widget.mondialrelay.com", "https://maps.googleapis.com", "https://upload-widget.cloudinary.com", "https://js.stripe.com", "https://*.vercel-scripts.com", "https://*.vercel-insights.com"],
     "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
     "font-src": ["'self'", "data:", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
     "img-src": ["'self'", "data:", "blob:", "https:", "https://*.google.com", "https://*.googleapis.com", "https://res.cloudinary.com"],
     "frame-src": ["'self'", "https://www.google.com", "https://upload-widget.cloudinary.com", "https://js.stripe.com"],
-    "connect-src": ["'self'", "https:", "https://api.cloudinary.com"],
+    "connect-src": ["'self'", "https:", "https://api.cloudinary.com", "https://*.vercel-insights.com", "https://*.upstash.io", "https://*.upstash.com"],
     "upgrade-insecure-requests": [],
   };
 
