@@ -319,7 +319,7 @@ const currentYear = new Date().getFullYear();
                             <div class="invoice-actions-group">
                                 <button 
                                     class="btn btn-secondary-action" 
-                                    onclick="window.open('/success?session_id=${order.id}', '_blank')"
+                                    onclick="window.open('/success?admin_pi=${order.paymentIntentId}', '_blank')"
                                 >
                                     <i class="fa-solid fa-file-invoice"></i> Facture
                                 </button>

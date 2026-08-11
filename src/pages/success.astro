@@ -227,18 +227,23 @@ const pageId = "panier-success";
     // Récupération des détails de la commande
     async function fetchOrderDetails() {
         const urlParams = new URLSearchParams(window.location.search);
-        const sessionId = urlParams.get('session_id');
+        const sessionId = urlParams.get('session_id'); // Pour le client
+        const adminPi = urlParams.get('admin_pi'); // Pour l'admin depuis le dashboard
         const summaryDiv = document.getElementById('order-summary');
 
-        if (!sessionId || !summaryDiv) return;
+        if ((!sessionId && !adminPi) || !summaryDiv) return;
 
         summaryDiv.innerHTML = '<p style="text-align:center; opacity:0.6;">Chargement de votre récapitulatif...</p>';
         
         // Variable globale pour stocker l'ID de facture pour le renommage PDF
         window.currentInvoiceId = 'FACTURE';
 
+        // On construit l'URL de l'API en fonction du paramètre présent
+        const apiUrl = adminPi 
+            ? `/api/claim-invoice?admin_pi=${adminPi}`
+            : `/api/claim-invoice?session_id=${sessionId}`;
         try {
-            const response = await fetch(`/api/stripe-session-details?session_id=${sessionId}`);
+            const response = await fetch(apiUrl);
             const data = await response.json();
 
             if (data.error) throw new Error(data.error);
@@ -385,7 +390,11 @@ const pageId = "panier-success";
 
         } catch (err) {
             console.error("Erreur lors de la récupération ou de l'affichage de la facture :", err);
-            summaryDiv.innerHTML = ''; // On cache si erreur pour ne pas polluer l'expérience
+            // Affiche un message d'erreur clair si la facture n'est plus accessible
+            summaryDiv.innerHTML = `
+                <p style="text-align:center; color: var(--bois-ecorce); font-style: italic; padding: 20px; background: var(--fond-sable); border-radius: 8px;">
+                    Ce lien de confirmation a expiré ou est invalide. Pour des raisons de sécurité, les détails de la commande ne sont plus accessibles via cette page.
+                </p>`;
         }
     }
 
