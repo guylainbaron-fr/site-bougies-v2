@@ -103,40 +103,40 @@ const schemaData = JSON.stringify({
             <h2>L'Art du Bois, de la Matière et des Saveurs.</h2>             
             
             <div class="content-block">
-                <p>
-                    Découvrez l'harmonie entre le bois brut, les matières nobles et le réalisme de nos créations. Notre catalogue s'enrichit de <strong>tableaux originaux</strong>, de <strong>cèpes séchés</strong> pour sublimer votre cuisine, ainsi que d'objets uniques du quotidien : <strong>boîtes de mouchoirs décorées à la main et miroirs de poche peints</strong>.
-                </p>
-                <Image 
-                    src={tableau3d} 
-                    alt="Tableau 3D sculpture de champignons sur bois" 
-                    class="img-collection-elevate"
-                    width={600} 
-                    height={800} 
-                    widths={[480, 600]} 
-                    sizes="(max-width: 600px) 480px, 600px"
-                    loading="lazy"
-                    decoding="async"
-                />
-                <a href="/boutique" class="btn">Explorer la Boutique</a> 
-            </div>
-            
-            <div class="content-block">
-                <p>
-                    Retrouvez également nos incontournables <strong>bougies champignons</strong> en cire 100% naturelle au parfum signature Vanille Gourmande, nos sculptures en bois ("Le Curieux", "Le Majestueux"), ainsi que nos porte-clés hôteliers personnalisables sur demande.
-                </p>
-                <Image 
-                    src={imgCollection} 
-                    alt="Collection de bougies champignons et artisanat de Lozère" 
-                    class="img-collection-elevate"
-                    width={800} 
-                    height={629} 
-                    widths={[480, 650, 800]} 
-                    sizes="(max-width: 600px) 480px, (max-width: 800px) 650px, 800px"
-                    loading="lazy"
-                    decoding="async"
-                />
-                <a href="/bougies" class="btn">Voir nos bougies</a>
-            </div>
+    <p>
+        Découvrez l'harmonie entre le bois brut, la cire parfumée et l'art pictural. De nos sculptures sur bois aux toiles peintes à la main, chaque pièce reflète la richesse et le savoir-faire de notre atelier.
+    </p>
+    <Image 
+        src={tableau3d} 
+        alt="Tableau 3D sculpture de champignons sur bois" 
+        class="img-collection-elevate"
+        width={600} 
+        height={800} 
+        widths={[480, 600]} 
+        sizes="(max-width: 600px) 480px, 600px"
+        loading="lazy"
+        decoding="async"
+    />
+    <a href="/boutique" class="btn">Explorer la Boutique</a> 
+</div>
+
+<div class="content-block">
+    <p>
+        Laissez-vous charmer par la chaleur de nos bougies sculptées en cire 100% naturelle au parfum signature Vanille Gourmande, façonnées pour faire entrer un brin de nature chez vous.
+    </p>
+    <Image 
+        src={imgCollection} 
+        alt="Collection de bougies champignons et artisanat de Lozère" 
+        class="img-collection-elevate"
+        width={800} 
+        height={629} 
+        widths={[480, 650, 800]} 
+        sizes="(max-width: 600px) 480px, (max-width: 800px) 650px, 800px"
+        loading="lazy"
+        decoding="async"
+    />
+    <a href="/bougies" class="btn">Voir nos bougies</a>
+</div>
             
             <p class="conclusion-paragraphe">
                 Chaque pièce est façonnée à la main dans notre atelier à Chasseradès. Profitez de nos services de livraison rapide en <strong>Colissimo ou Mondial Relay</strong> pour la France et l'international.
@@ -158,16 +158,16 @@ const schemaData = JSON.stringify({
     </section>
 
     <section id="apropos">
-        <div class="container">
-            <div class="section-top-image">
-                <Image src={aproposImg} alt="Portrait de l'artisan Jean-François BARON" class="intro-image-3" width={600} height={669} />
-            </div>
-            <h2>À Propos de l'Artisan et Notre Histoire</h2>
-            <p>
-                Artisans passionnés, Jean-François & Aniuta se consacrent aux trésors du terroir et à la création artisanale. Des essences locales aux finitions soignées, chaque pièce reflète une démarche exigeante guidée par le plaisir de créer et d'embellir votre quotidien.
-            </p>
-            <a href="/apropos" class="btn">En Savoir Plus sur Nous</a> 
+    <div class="container">
+        <div class="section-top-image">
+            <Image src={aproposImg} alt="Portrait de l'artisan Jean-François BARON" class="intro-image-3" width={600} height={669} />
         </div>
-    </section>
+        <h2>Notre Histoire & Notre Passion</h2>
+        <p>
+            Derrière chaque création se cache l'alliance de deux sensibilités : le travail minutieux du bois par Jean-François et la touche artistique d'Aniuta. Ensemble, nous façonnons des pièces uniques inspirées par la nature et l'amour du travail bien fait.
+        </p>
+        <a href="/apropos" class="btn">En Savoir Plus sur Nous</a> 
+    </div>
+</section>
 
 </MainLayout>
