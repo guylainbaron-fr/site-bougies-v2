@@ -5,6 +5,10 @@ const pageId = "bougies";
 
 import { Image } from 'astro:assets';
 
+// Nouvelles créations (Amanite & Girolle)
+import amaniteImg from '../assets/images/bougie-amanite.webp';
+import girolleImg from '../assets/images/bougie-girolle.webp';
+
 // Nouveautés 2026
 import tarifsGamme2026 from '../assets/images/bougie-gamme-2026.webp'; 
 import petiteMorille from '../assets/images/morille-petite.webp';
@@ -29,8 +33,8 @@ import poster3 from '../assets/images/miniature-cadeau-3.webp';
 ---
 
 <MainLayout 
-    title="Bougie Champignon Lozère : Morilles et Grand Cèpe Sublime Vanille"
-    description="Découvrez nos bougies champignons d'exception en Lozère. Morilles réalistes et notre Grand Cèpe Sublime de 1,2kg, parfumés à la Vanille Gourmande."
+    title="Bougies Champignons Lozère : Amanite, Girolle, Morilles et Cèpes"
+    description="Découvrez nos 8 bougies champignons d'exception sculptées en Lozère : Amanite tue-mouches, Girolle, Morilles et Grand Cèpe Sublime au parfum Vanille Gourmande."
     pageId={pageId}
 >
     <Fragment slot="head">
@@ -106,6 +110,41 @@ import poster3 from '../assets/images/miniature-cadeau-3.webp';
 </script>
     </Fragment>
 
+<!-- Rubrique Nouveautés : Amanite tue-mouches & Girolle -->
+<section id="nouveautes-amanite-girolle" style="background-color: var(--fond-ecume);">
+    <div class="container">
+        <h2>Nouveautés : L'Amanite Tue-Mouches & La Girolle</h2>
+        <p>
+            La collection s'agrandit ! L'atelier Jean-François & Aniuta présente ses deux dernières créations sculptées à la main : l'emblématique <strong>Amanite tue-mouches</strong> au chapeau écarlate moucheté et la délicate <strong>Girolle</strong> aux plissements réalistes. 
+            Coulées en cire 100% naturelle, elles diffusent notre envoûtant parfum signature <strong>Vanille Gourmande</strong>.
+        </p>
+
+        <div class="galerie-signature-duo">
+            <Image 
+                src={amaniteImg} 
+                alt="Bougie Champignon Amanite tue-mouches artisanale Lozère" 
+                class="img-signature-full" 
+                width={600} 
+                height={600} 
+                loading="eager"
+                fetchpriority="high"
+            />
+            <Image 
+                src={girolleImg} 
+                alt="Bougie Girolle en cire naturelle parfumée" 
+                class="img-signature-full" 
+                width={600} 
+                height={600} 
+                loading="eager"
+            />
+        </div>
+
+        <div class="cta-container" style="margin-top: 2rem;">
+            <a href="/boutique" class="btn">Commander les nouvelles bougies dans la boutique</a>
+        </div>
+    </div>
+</section>
+
     <section id="nouvelle-gamme" style="background-color: var(--fond-sable);">
         <div class="container">
             <h2>Collection 2026 : Morilles et Grand Cèpe Sublime</h2>
@@ -134,9 +173,9 @@ import poster3 from '../assets/images/miniature-cadeau-3.webp';
             </div>
 
             <div class="etiquette-signature">
-                <h3>Nos 6 Bougies Champignons de Lozère</h3>
+                <h3>Nos 8 Bougies Champignons de Lozère</h3>
                 <p>
-                    L'intégralité de notre savoir-faire réuni : <strong>cèpes et morilles</strong> plus vrais que nature. 
+                    L'intégralité de notre savoir-faire réuni : <strong>cèpes, morilles, girolles et amanites</strong> plus vrais que nature. 
                     Fabriquées artisanalement à Chasseradès, ces bougies sont sculptées pour capturer chaque détail du champignon sauvage. 
                     Leur signature ? Un parfum de <strong>Vanille Gourmande</strong> intense et envoûtant. 
                     Le cadeau de prestige pour les amoureux de la nature et de la Lozère.
@@ -151,7 +190,6 @@ import poster3 from '../assets/images/miniature-cadeau-3.webp';
                     width={600} 
                     height={600} 
                     loading="eager"
-                        fetchpriority="high"
                 />
                 <Image 
                     src={duoMorilles} 
