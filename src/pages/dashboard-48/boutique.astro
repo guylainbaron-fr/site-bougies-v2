@@ -278,7 +278,13 @@ const activePage = Astro.url.searchParams.get('page') || '1';
                         <br/>
                         <small style="color:#888">{p.categorie}</small>
                     </td>
-                    <td>{Number(p.prix).toFixed(2)} €</td><td>
+                    <td style="text-align: center;">
+  {p.enMagasinUniquement ? (
+    <span style="color: #888; font-style: italic;">—</span>
+  ) : (
+    `${Number(p.prix).toFixed(2)} €`
+  )}
+</td><td>
                         {p.stock > 0 && <span style="color:var(--vert); font-weight:bold;">Disponible</span>}
                         {p.stock === 0 && <span style="color:var(--rouge); font-weight:bold;">Épuisé</span>}
                         {p.stock === -1 && <span style="color:#ef6c00; font-weight:bold;">Réservé</span>}
@@ -313,14 +319,14 @@ const activePage = Astro.url.searchParams.get('page') || '1';
         <input type="hidden" id="p-id" />
         
         <div style="margin-bottom: 25px; padding: 15px; background: var(--vanille-brume); border-radius: 10px; border: 1px dashed var(--sable-dore);">
-            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; color: var(--brun-profond); font-weight: 800; text-transform: none; letter-spacing: 0;">
-                <input type="checkbox" id="p-store-only" style="width: 20px; height: 20px; cursor: pointer;" />
-                <span><i class="fa-solid fa-phone"></i> DISPONIBLE SUR DEMANDE (Pros / Hôtels)</span>
-            </label>
-            <p style="margin: 5px 0 0 32px; font-size: 0.75rem; color: var(--bois-ecorce); text-align: left;">
-                Cochez cette case pour les articles réservés aux professionnels (hôteliers, etc.). Le bouton d'achat sera remplacé par un lien d'appel.
-            </p>
-        </div>
+    <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; color: var(--brun-profond); font-weight: 800; text-transform: none; letter-spacing: 0;">
+        <input type="checkbox" id="p-store-only" style="width: 20px; height: 20px; cursor: pointer;" onchange="togglePrixField()" />
+        <span><i class="fa-solid fa-store"></i> DISPONIBLE EN MAGASIN</span>
+    </label>
+    <p style="margin: 5px 0 0 32px; font-size: 0.75rem; color: var(--bois-ecorce); text-align: left;">
+        Cochez cette case pour les articles disponibles uniquement en magasin ou sur demande. Le prix sera masqué et le bouton d'achat sera remplacé par un lien de contact.
+    </p>
+</div>
 
         <div style="margin-bottom: 25px; padding: 15px; background: var(--fond-sable); border-radius: 10px; border: 1px dashed var(--sable-dore);">
             <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; color: var(--brun-profond); font-weight: 800; text-transform: none; letter-spacing: 0;">
@@ -355,10 +361,10 @@ const activePage = Astro.url.searchParams.get('page') || '1';
                             <option value="Accessoires">Accessoires</option>
                         </select>
                     </div>
-                    <div class="field">
-                        <label>Prix (€)</label>
-                        <input type="number" step="0.01" min="0" id="p-prix" />
-                    </div>
+                    <div class="field" id="prix-field-container">
+    <label>Prix (€)</label>
+    <input type="number" step="0.01" min="0" id="p-prix" />
+</div>
                     <div class="field">
                         <label>Poids (Grammes)</label>
                         <input type="number" min="0" id="p-poids-num" placeholder="300" />
@@ -480,7 +486,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
     const urlParams = new URLSearchParams(window.location.search);
     let currentCategory = urlParams.get('cat') || 'Tous';
     let currentPage = parseInt(urlParams.get('page') || '1') || 1;
-    const itemsPerPage = 6;
+    const itemsPerPage = 9;
 
     // Fonction pour recharger la page en conservant le filtre et la pagination
     function reloadWithState() {
@@ -632,6 +638,21 @@ const activePage = Astro.url.searchParams.get('page') || '1';
         }
     };
 
+    (window as any).togglePrixField = () => {
+        const isStoreOnly = (document.getElementById('p-store-only') as HTMLInputElement).checked;
+        const prixContainer = document.getElementById('prix-field-container') as HTMLElement;
+        const prixInput = document.getElementById('p-prix') as HTMLInputElement;
+
+        if (prixContainer) {
+            if (isStoreOnly) {
+                prixContainer.style.display = 'none';
+                prixInput.value = "0.00";
+            } else {
+                prixContainer.style.display = 'block';
+            }
+        }
+    };
+
     (window as any).openModal = (data: any = null) => {
         // Nettoyage préalable de tous les champs
         document.querySelectorAll('.modal-content input, .modal-content textarea').forEach(el => (el as HTMLInputElement).value = "");
@@ -676,6 +697,7 @@ const activePage = Astro.url.searchParams.get('page') || '1';
             (document.getElementById('p-stock') as HTMLSelectElement).value = "100";
         }
         (window as any).toggleParfumField();
+        (window as any).togglePrixField();
         modal.style.display = 'flex';
     };
 

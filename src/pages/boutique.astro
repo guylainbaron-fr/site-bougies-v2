@@ -133,6 +133,93 @@ if (queryString) {
             margin: 0 !important;
         }
 
+/* Ciblage global pour percer l'isolation CSS d'Astro */
+.prix-action :global(.phone-placeholder),
+.prix-action :global(a.btn-whatsapp-simple) {
+    background: #25D366 !important;
+    background-color: #25D366 !important;
+    color: #ffffff !important;
+    border: none !important;
+    text-align: center !important;
+    border-radius: 4px !important;
+    padding: 12px 10px !important;
+    text-decoration: none !important;
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.prix-action :global(.phone-placeholder:hover),
+.prix-action :global(a.btn-whatsapp-simple:hover) {
+    background: #1eb855 !important;
+    background-color: #1eb855 !important;
+    color: #ffffff !important;
+}
+
+/* Style spécifique pour les miniatures d'images avec réservation d'espace */
+        .thumbnails-gallery {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 15px;
+            background: #fff;
+            border-bottom: 1px solid var(--fond-sable);
+            min-height: 72px; /* Hauteur fixe réservée pour toutes les cartes */
+            box-sizing: border-box;
+        }
+
+        .thumb-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            cursor: pointer;
+            border-radius: 6px;
+            border: 1.5px solid var(--sable-dore);
+            transition: all 0.2s ease;
+        }
+        .thumb-img:hover { transform: scale(1.1); border-color: var(--brun-coco); }
+
+        /* --- ALIGNEMENT DES CARTES ET DES BLOCS PRIX/ACTION --- */
+        .produit-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: border 0.6s ease, box-shadow 0.6s ease;
+            border: 2px solid transparent;
+        }
+
+        .produit-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1; /* Absorbe l'espace vertical */
+        }
+
+        .produit-description {
+            flex: 1; /* Pousse la section prix-action tout en bas */
+        }
+
+        .prix-action {
+            margin-top: auto;
+            border-top: 1px dashed var(--sable-dore);
+            padding-top: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; /* Pousse les boutons vers le bas */
+            min-height: 193px; /* Verrouille la hauteur pour aligner la ligne pointillée */
+        }
+
+        .prix-action .prix {
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .prix-action .btn,
+        .prix-action .btn-whatsapp-simple,
+        .prix-action :global(.phone-placeholder) {
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
         /* --- STYLE LIGHTBOX (VISIONNEUSE D'IMAGES) --- */
         .lightbox-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -182,6 +269,18 @@ if (queryString) {
         .produit-card .image-container {
             cursor: zoom-in;
         }
+        /* Miniature sélectionnée / active */
+.thumb-img.active {
+    border-color: var(--brun-coco) !important;
+    box-shadow: 0 0 0 2px var(--vanille-eclat);
+    transform: scale(1.08);
+}
+
+/* Survol des miniatures non actives */
+.thumb-img:not(.active):hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
     </style>
 <script type="application/ld+json" slot="head">
 {
@@ -295,6 +394,11 @@ if (queryString) {
                             style={produit.stock <= 0 ? "filter: grayscale(0.8); opacity: 0.6;" : ""}
                         >
                             <div class="status-badge-container">
+                              {produit.enMagasinUniquement && (
+    <span class="status-badge" style="background-color: var(--bois-flotte, #8c6d53); color: var(--vanille-pure, #fdfdfd);">
+        <i class="fa-solid fa-pen-ruler"></i> Sur Mesure
+    </span>
+)}
                                 {produit.isUnique && <span class="status-badge"><i class="fa-solid fa-gem"></i> Pièce Unique</span>}
                                 {produit.isUnique && produit.stock === -1 && (
                                     <span class="status-badge" style="background-color: var(--vanille-eclat); color: var(--brun-profond);">
@@ -318,32 +422,56 @@ if (queryString) {
                             </button>
                         </div>
                         
-                        {(produit.image2 || produit.image3) && (
-                            <div class="thumbnails-gallery">
-                                <img src={produit.image} class="thumb-img" onclick={`event.stopPropagation(); document.getElementById('main-img-${produit.id}').src='${produit.image}'`} alt="Miniature 1" />
-                                {produit.image2 && <img src={produit.image2} class="thumb-img" onclick={`event.stopPropagation(); document.getElementById('main-img-${produit.id}').src='${produit.image2}'`} alt="Miniature 2" />}
-                                {produit.image3 && <img src={produit.image3} class="thumb-img" onclick={`event.stopPropagation(); document.getElementById('main-img-${produit.id}').src='${produit.image3}'`} alt="Miniature 3" />}
-                            </div>
-                        )}
+                        {/* Le div .thumbnails-gallery s'affiche TOUJOURS pour réserver l'espace */}
+                        <div class="thumbnails-gallery">
+    { (produit.image2 || produit.image3) && (
+        <>
+            <img 
+                src={produit.image} 
+                class="thumb-img active" 
+                onclick={`event.stopPropagation(); changeMainImage('${produit.id}', '${produit.image}', this)`} 
+                alt="Miniature 1" 
+            />
+            {produit.image2 && (
+                <img 
+                    src={produit.image2} 
+                    class="thumb-img" 
+                    onclick={`event.stopPropagation(); changeMainImage('${produit.id}', '${produit.image2}', this)`} 
+                    alt="Miniature 2" 
+                />
+            )}
+            {produit.image3 && (
+                <img 
+                    src={produit.image3} 
+                    class="thumb-img" 
+                    onclick={`event.stopPropagation(); changeMainImage('${produit.id}', '${produit.image3}', this)`} 
+                    alt="Miniature 3" 
+                />
+            )}
+        </>
+    )}
+</div>
 
                         <div class="produit-info">
                             <h3>{produit.nom}</h3>
                             <p class="poids">{produit.poids} - {produit.parfum}</p>
                             <p class="produit-description">{produit.description}</p>
-                            <div 
-                                class="prix-action"
-                                style={produit.isUnique && produit.stock === 0 ? 'border-top: none; padding-top: 25px;' : ''}
-                            >
-                                {!(produit.isUnique && produit.stock === 0) && (
-                                    <span class="prix">{Number(produit.prix).toFixed(2)} €</span>
-                                )}
+                            <div class="prix-action">
+                                <span 
+                                    class="prix" 
+                                    style={(produit.isUnique && produit.stock === 0) || produit.enMagasinUniquement ? 'visibility: hidden;' : ''}
+                                >
+                                    {Number(produit.prix).toFixed(2)} €
+                                </span>
+
                                 {produit.enMagasinUniquement ? (
                                     <PhoneProtect 
                                         isWhatsApp={true}
                                         onlyLink={true}
-                                        class="btn btn-sur-demande"
+                                        class="btn btn-whatsapp-simple"
+                                        title="Commander via WhatsApp"
                                     >
-                                        Disponible sur demande
+                                        <i class="fab fa-whatsapp"></i> Discuter sur WhatsApp
                                     </PhoneProtect>
                                 ) : (produit.stock > 0 || (produit.isUnique && produit.stock === -1)) ? (
                                     <button 
@@ -391,6 +519,20 @@ if (queryString) {
   /**
    * --- UTILITAIRES GLOBAUX ---
    */
+
+   window.changeMainImage = function(produitId, newSrc, thumbEl) {
+  // 1. Mise à jour de la grande image
+  const mainImg = document.getElementById(`main-img-${produitId}`);
+  if (mainImg) mainImg.src = newSrc;
+
+  // 2. Gestion de la classe active sur les miniatures
+  const gallery = thumbEl.closest('.thumbnails-gallery');
+  if (gallery) {
+    gallery.querySelectorAll('.thumb-img').forEach(img => img.classList.remove('active'));
+    thumbEl.classList.add('active');
+  }
+};
+
   window.showToast = function(message, isError = false) {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -527,7 +669,7 @@ if (queryString) {
    * --- BLOC 1 : FILTRES ET PAGINATION ---
    */
   function initFiltresEtPagination() {
-    const itemsPerPage = 6;
+    const itemsPerPage = 9;
     let hasScrolledToHash = false;
     
     const urlParams = new URLSearchParams(window.location.search);
