@@ -1324,6 +1324,102 @@ h2::after {
     font-weight: bold;
 }
 
+/* Image presse réduite */
+.presse-zoom-wrapper {
+    position: relative;
+    display: block;
+    max-width: 600px;
+    margin: 0 auto 1.5rem auto;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.presse-zoom-wrapper img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: filter 0.2s ease;
+}
+
+.presse-zoom-wrapper:hover img {
+    filter: brightness(0.95);
+}
+
+/* Badge CSS Loupe */
+.presse-zoom-badge {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.75);
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    pointer-events: none;
+    backdrop-filter: blur(4px);
+}
+
+.presse-zoom-badge svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+/* Lightbox / Fenêtre modale centrée au milieu de l'écran */
+.presse-lightbox {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    max-width: 95vw;
+    max-height: 95vh;
+    outline: none;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.presse-lightbox::backdrop {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+}
+
+.presse-lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: block;
+}
+
+/* Désactive l'indicateur "Agrandir" sur les écrans tactiles/mobiles */
+@media (hover: none) or (max-width: 768px) {
+    .presse-zoom-badge {
+        display: none; /* Inutile sur mobile */
+    }
+
+    .presse-zoom-wrapper {
+        max-width: 100%; /* L'image prend toute la largeur du mobile au repos */
+        margin-bottom: 1rem;
+    }
+
+    .presse-lightbox img {
+        max-width: 100vw;
+        max-height: 90vh;
+        border-radius: 4px;
+    }
+}
+
 /* ----------------------------------------------------
    ICÔNES DESSINÉES EN PUR CSS (GÉOMÉTRIE)
    ---------------------------------------------------- */

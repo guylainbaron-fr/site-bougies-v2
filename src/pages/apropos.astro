@@ -7,6 +7,7 @@ import { Image } from 'astro:assets';
 import SecureLogoImage from '../components/SecureLogoImage.astro';
 // Importation des images
 import troisCepesImg from '../assets/images/trois-cepes-bois.webp';
+import midiLibreImg from '../assets/images/midi-libre.webp';
 import presseImg from '../assets/images/presse.webp';
 import souvenirsImg from '../assets/images/guylain-et-jeanfrancois.webp';
 import mairieActuImg from '../assets/images/actu-mairie-chasserades.webp';
@@ -113,6 +114,47 @@ import mairieActuImg from '../assets/images/actu-mairie-chasserades.webp';
             <section id="presse-section">
                 <h2>On Parle de Nous dans la Presse !</h2>
                 
+                <!-- Article : Midi Libre Lozère -->
+<article class="presse-item-recent">
+    <div class="presse-zoom-wrapper" id="open-lightbox-midi" title="Cliquer pour zoomer">
+        <Image 
+            src={midiLibreImg} 
+            alt="Article de presse Midi Libre : La recette gagnante de l'art et de l'artisanat au bon parfum de Lozère" 
+            width={600} 
+            height={450} 
+            quality={80}
+            loading="lazy"
+            decoding="async"
+        />
+        <span class="presse-zoom-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0s208 93.1 208 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
+            </svg>
+            Agrandir
+        </span>
+    </div>
+
+    <!-- Lightbox Modale -->
+    <dialog id="lightbox-midi" class="presse-lightbox">
+        <Image 
+            src={midiLibreImg} 
+            alt="Article de presse Midi Libre en grand" 
+            width={1200} 
+            height={900} 
+            quality={80}
+        />
+    </dialog>
+
+    <h3>« La recette gagnante de l'art et de l'artisanat au bon parfum de Lozère » — Midi Libre</h3>
+    <p>
+        Installés à <strong>Chasseradès</strong>, Jean-François et Aniuta façonnent avec passion des <strong>sculptures sur bois</strong> et des <strong>bougies artisanales</strong> en cire 100% naturelle au parfum vanille gourmande. Le journal <em>Midi Libre</em> met en avant leur savoir-faire unique et leur amour pour le terroir lozérien.
+    </p>
+    
+    <blockquote class="citation-presse-moderne">
+        « S'il n'y avait pas la mèche qui dépasse au sommet du champignon, on pourrait penser que ce sont des vrais. »
+    </blockquote>
+</article>
+
             <!-- Publication Officielle de la Mairie de Chasseradès -->
             <article class="presse-item-recent">
                 <div class="mairie-image-focus">
@@ -215,7 +257,7 @@ import mairieActuImg from '../assets/images/actu-mairie-chasserades.webp';
 
 <script>
     const setupLoupe = () => {
-        // Cible uniquement l'article de la Lozère Nouvelle via sa classe générique existante
+        // Cible uniquement l'article portrait de la Lozère Nouvelle
         const imgContainer = document.querySelector('.article-wrapper .article-image-container');
         const img = document.querySelector('.article-wrapper .article-image') as HTMLElement;
         const hasMouse = window.matchMedia('(pointer: fine)').matches;
@@ -245,4 +287,23 @@ import mairieActuImg from '../assets/images/actu-mairie-chasserades.webp';
 
     setupLoupe();
     document.addEventListener('astro:page-load', setupLoupe);
+
+    const setupLightbox = () => {
+    const trigger = document.getElementById('open-lightbox-midi');
+    const lightbox = document.getElementById('lightbox-midi') as HTMLDialogElement | null;
+
+    if (trigger && lightbox) {
+        trigger.addEventListener('click', () => {
+            lightbox.showModal();
+        });
+
+        // Un seul clic n'importe où sur la lightbox la ferme immédiatement
+        lightbox.addEventListener('click', () => {
+            lightbox.close();
+        });
+    }
+};
+
+setupLightbox();
+document.addEventListener('astro:page-load', setupLightbox);
 </script>

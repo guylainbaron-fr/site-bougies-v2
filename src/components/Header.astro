@@ -1,4 +1,4 @@
----
+&---
 //src/components/Headaer.astro
 
 import HolidayBar from './HolidayBar.astro';
@@ -69,53 +69,67 @@ const { pageId } = Astro.props;
 </div>
 <script>
   function updateCartCountGlobal() {
+    const currentPath = window.location.pathname;
+    const cartWrapper = document.querySelector('.header-actions') as HTMLElement | null;
+    const badge = document.getElementById('cart-count');
+
+    // 1. Si on est sur la page panier (ex: /panier ou /panier/), on masque tout l'ensemble panier/badge
+    if (currentPath === '/panier' || currentPath === '/panier/') {
+      if (cartWrapper) {
+        cartWrapper.style.display = 'none';
+      }
+      return; // On s'arrête là, pas besoin de calculer le badge
+    } else {
+      // Si on quitte la page panier vers une autre page, on réaffiche le bloc
+      if (cartWrapper) {
+        cartWrapper.style.display = 'block';
+      }
+    }
+
+    // 2. Lecture du localStorage et calcul des articles
     const raw = localStorage.getItem('panier-atelier');
     let items = [];
     if (raw) {
       try {
         const parsed = JSON.parse(raw);
-        // Support de l'ancien format (array) et du nouveau (objet avec clé items)
         items = Array.isArray(parsed) ? parsed : (parsed.items || []);
       } catch (e) {
         items = [];
       }
     }
     const totalItems = items.reduce((acc, item) => acc + (Number(item.quantite) || 0), 0);
-    const badge = document.getElementById('cart-count');
-    
+
+    // 3. Gestion de l'affichage du badge (Masqué si vide, visible si > 0)
     if (badge) {
-      badge.textContent = totalItems;
+      badge.textContent = totalItems.toString();
       badge.style.display = totalItems > 0 ? 'flex' : 'none';
     }
   }
 
-  // Se lance au chargement de n'importe quelle page
+  // Événements de chargement et de navigation Astro (View Transitions)
   document.addEventListener('DOMContentLoaded', updateCartCountGlobal);
   document.addEventListener('astro:page-load', updateCartCountGlobal);
   document.addEventListener('astro:after-swap', updateCartCountGlobal);
 
-  // ICI : On écoute le clic "Ajouter au panier" de la boutique
+  // Écoute des mises à jour du panier
   window.addEventListener('storage', updateCartCountGlobal);
+  window.addEventListener('cart-updated', updateCartCountGlobal);
 
-    const updateActiveLink = () => {
-        const path = window.location.pathname;
-        const navLinks = document.querySelectorAll(".nav-link");
+  // Gestion des liens actifs dans la navigation
+  const updateActiveLink = () => {
+    const path = window.location.pathname;
+    const navLinks = document.querySelectorAll('.nav-link');
 
-        navLinks.forEach(link => {
-            const href = link.getAttribute('href');
-            
-            // On retire la classe active partout
-            link.classList.remove('active');
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      link.classList.remove('active');
 
-            // On l'ajoute si le chemin correspond
-            if (path === href || (path === "/" && href === "/index")) {
-                link.classList.add('active');
-            }
-        });
-    };
+      if (path === href || (path === '/' && href === '/index')) {
+        link.classList.add('active');
+      }
+    });
+  };
 
-    // Lancement au chargement
-    updateActiveLink();
-    // Relance le script à chaque navigation entre les pages Astro
-    document.addEventListener('astro:page-load', updateActiveLink);
+  updateActiveLink();
+  document.addEventListener('astro:page-load', updateActiveLink);
 </script>
