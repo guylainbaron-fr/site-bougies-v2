@@ -193,6 +193,41 @@ const pageId = "panier";
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
+    .panier-items-column {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .clear-cart-left-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 0 4px;
+    }
+
+    .btn-clear-cart {
+        background: transparent;
+        border: none;
+        color: var(--bois-flotte);
+        font-family: inherit;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        cursor: pointer;
+        padding: 4px 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        opacity: 0.8;
+        transition: all 0.2s ease;
+    }
+
+    .btn-clear-cart:hover {
+        color: #b91c1c;
+        opacity: 1;
+    }
+
     /* Style du sélecteur de pays dans la modal */
     :global(.modal-search-group select) {
         padding: 12px;
@@ -235,8 +270,21 @@ const pageId = "panier";
             </div>
 
             <div id="cart-content" class="panier-main-grid hidden">
-                <div class="produits-panier-list" id="cart-items-list">
+                <!-- COLONNE GAUCHE (Articles + Actions) -->
+                <div class="panier-items-column">
+                    <!-- Cadre contenant la liste des articles générés par le JS -->
+                    <div id="cart-items-list" class="produits-panier-list"></div>
+
+                    <!-- Bouton Vider le panier sous la colonne des articles -->
+                    <div class="clear-cart-left-wrapper">
+                        <button type="button" class="btn-clear-cart" onclick="clearCart()">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                            </svg>
+                            Vider le panier
+                        </button>
                     </div>
+                </div>
 
 <aside class="panier-summary-sidebar">
     <div class="recap-card">
@@ -331,8 +379,7 @@ const pageId = "panier";
         </button>
 
         <p class="checkout-cgv-notice">
-            En validant votre commande, vous acceptez sans réserve nos 
-            <a href="/mentions-legales" target="_blank">Conditions Générales de Vente</a>.
+            En validant votre commande, vous acceptez sans réserve nos <a href="/mentions-legales" target="_blank">Conditions Générales de Vente</a>.
         </p>
 
         <a href="/boutique" class="btn-continue-shopping">
@@ -340,7 +387,7 @@ const pageId = "panier";
             Continuer mes achats
         </a>
 
-        <!-- TES LOGOS DE PAIEMENT PRÉSERVÉS -->
+        <!-- LOGOS DE PAIEMENT -->
         <div class="recap-trust">
             <div class="payment-row">
                 <img src="/images/paiement/visa.svg" alt="Visa" class="icon-visa">
@@ -950,6 +997,15 @@ window.closeMRModal = () => {
         renderPanier();
         window.dispatchEvent(new Event('storage'));
         showToast("Article retiré", "delete");
+    };
+
+    window.clearCart = () => {
+        localStorage.removeItem('panier-atelier');
+        localStorage.removeItem('panier-atelier-timestamp');
+        selectedRelay = null;
+        
+        renderPanier();
+        window.dispatchEvent(new Event('storage'));
     };
 
     function initCheckout() {

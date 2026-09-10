@@ -540,6 +540,34 @@ section {
 }
 
 /* ==========================================================================
+   BOUTON VIDER LE PANIER
+   ========================================================================== */
+.btn-clear-cart {
+    background: transparent;
+    border: none;
+    color: var(--bois-flotte);
+    font-family: var(--font-principale);
+    font-size: 0.85rem;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+.btn-clear-cart:hover {
+    color: #b91c1c; /* Rouge bordeaux pour marquer l'action de suppression */
+    opacity: 0.9;
+}
+
+/* ==========================================================================
    7. VARIANTES & NEWSLETTER : HARMONISATION "CARAÏBES & VANILLE"
    ========================================================================== */
 
