@@ -23,7 +23,8 @@ export default defineConfig({
         !page.includes('/success') &&
         !page.includes('/cancel') &&
         !page.includes('/merci') &&
-        !page.includes('/au-revoir'),
+        !page.includes('/au-revoir') &&
+        !page.includes('/dashboard-48'),
     }),
   ],
 });
