@@ -54,6 +54,8 @@ const currentYear = new Date().getFullYear();
           border-bottom: 1px dashed #eee;
       }
 
+      /* Couleur des étoiles — définie directement dans ThankYouCard.astro (#FFD700) */
+
       /* FOOTER HARMONISÉ */
       .dashboard-footer {
           margin-top: 30px;
@@ -74,12 +76,71 @@ const currentYear = new Date().getFullYear();
 
       /* --- MÉTHODE IMPRESSION --- */
       @media print {
-          @page { size: A4 portrait; margin: 0 !important; }
-          body { padding: 0; background: white; }
-          .admin-header, .dashboard-footer, .actions-bar { display: none !important; }
-          .dashboard-container { max-width: none; margin: 0; }
-          .preview-container { padding: 0; overflow: hidden; display: block; }
-          .page-a4 { transform: none !important; box-shadow: none !important; margin: 0 !important; width: 210mm !important; height: 297mm !important; }
+          @page {
+            size: A4 portrait;
+            margin: 0 !important;
+          }
+
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #fff !important;
+            height: 100%;
+            width: 100%;
+          }
+
+          header,
+          .admin-header,
+          .actions-bar,
+          .dashboard-footer,
+          footer {
+            display: none !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+          }
+
+          .dashboard-container {
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: block !important;
+          }
+
+          .preview-container {
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: visible !important;
+            display: block !important;
+            background: none !important;
+          }
+
+          .page-a4 {
+            transform: none !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 210mm !important;
+            height: 297mm !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            page-break-after: avoid !important;
+          }
+
+          .half {
+            height: 148.5mm !important;
+            flex: none !important;
+            width: 100% !important;
+          }
+
+          :global(.thank-you-card .star),
+          :global(.thank-you-card .fa-star) {
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+              color: #FFD700 !important;
+          }
       }
     </style>
   </head>
