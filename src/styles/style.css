@@ -3729,6 +3729,14 @@ h2::after {
     object-fit: cover;
     border-radius: 8px;
     display: block;
+    box-shadow: none !important;
+    transform: none !important;
+    transition: none !important;
+}
+
+.affiches-track .photo-presentation:hover img {
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 .affiches-track .photo-presentation h3 {
