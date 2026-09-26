@@ -2406,43 +2406,25 @@ h2::after {
 
 /* 4. ÉVÉNEMENTS PASSÉS - STYLE CHALEUREUX & ACCESSIBLE */
 .event-card.event-past {
-    /* Au lieu du gris, on utilise ton beige de section (Sable) */
     background: var(--fond-sable); 
-    border: 1px dashed var(--bois-flotte); /* Bordure en pointillés pour l'effet "souvenir" */
+    border: 1px dashed var(--bois-flotte);
     border-left: 4px solid var(--bois-flotte);
     box-shadow: none;
-    filter: none; /* On enlève le noir et blanc qui était triste */
+    filter: none;
+    position: relative;
 }
 
 .event-card.event-past .event-date {
-    /* La date devient plus douce (Bois flotté) au lieu de marron foncé */
     background-color: var(--bois-flotte);
     opacity: 0.9;
 }
 
 .event-card.event-past .event-details h3 {
-    /* Le titre reste en Coco mais un peu plus doux */
     color: var(--brun-coco) !important;
 }
 
 .event-card.event-past .event-details p {
-    /* On garde ton texte galet pour le contraste SEO */
     color: var(--texte-galet) !important;
-}
-
-.event-card.event-past::after {
-    content: "Édition Terminée";
-    position: absolute;
-    top: 15px; right: 20px;
-    font-size: 0.65rem;
-    font-weight: 600;
-    /* On utilise un ton "Vieux Papier/Sable" pour le badge */
-    color: var(--brun-profond);
-    text-transform: uppercase;
-    background: var(--sable-dore);
-    padding: 4px 10px;
-    border-radius: 20px; /* Badge arrondi plus moderne */
-    letter-spacing: 1px;
 }
 
 /* 5. ÉTAT VIDE */
@@ -2504,13 +2486,18 @@ h2::after {
 @media (max-width: 768px) {
     .market-info-wrapper { flex-direction: column; }
     .market-details, .market-map { width: 100%; }
+    
     .event-card {
         grid-template-columns: 1fr;
         text-align: center;
         gap: 20px;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
     }
+    
     .event-date { margin: 0 auto; }
-    .event-details { padding-left: 0; }
+    .event-details { padding-left: 0; width: 100%; }
     .event-details h3, .event-details p { text-align: center !important; }
     .event-details p { padding-left: 0; }
     .event-details p::before { display: none; }
@@ -3426,7 +3413,7 @@ h2::after {
     display: flex;
     justify-content: center;
     padding: 20px 0;
-    background: transparent !important; /* Laisse voir le fond de ta page */
+    background: transparent !important;
 }
 
 .luxe-market-card {
@@ -3434,7 +3421,7 @@ h2::after {
     background: var(--vanille-pure);
     border: 1px solid var(--sable-dore);
     border-radius: 4px;
-    margin: 0 auto; /* Centrage horizontal */
+    margin: 0 auto;
     overflow: hidden;
     width: 100%;
     max-width: 1000px;
@@ -3448,8 +3435,8 @@ h2::after {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center; /* Centre les éléments flex (bouton, meta) */
-    text-align: center;   /* Centre le texte */
+    align-items: center;
+    text-align: center;
     border-right: 1px solid var(--sable-dore);
 }
 
@@ -3467,7 +3454,7 @@ h2::after {
     font-size: 1.8rem;
     color: var(--brun-profond);
     font-family: var(--font-principale);
-    text-align: center !important; /* Titre centré */
+    text-align: center !important;
 }
 
 /* Bloc Meta (Dates et Horaires) */
@@ -3475,7 +3462,7 @@ h2::after {
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center; 
+    align-items: center;
     margin-bottom: 10px;
 }
 
@@ -3485,8 +3472,8 @@ h2::after {
     position: relative;
     font-size: 0.95rem;
     color: var(--texte-galet);
-    text-align: left; /* Texte aligné à gauche de son icône */
-    width: fit-content; /* Pour que le bloc reste centré */
+    text-align: left;
+    width: fit-content;
 }
 
 /* Icônes Goutte et Cercle */
@@ -3510,7 +3497,7 @@ h2::after {
 }
 
 .luxe-divider {
-    width: 60%; /* Ligne de séparation plus courte car centrée */
+    width: 60%;
     height: 1px;
     background: var(--sable-dore);
     margin: 20px auto;
@@ -3523,10 +3510,10 @@ h2::after {
     color: var(--bois-ecorce);
     margin-bottom: 30px;
     font-style: italic;
-    max-width: 400px; /* Évite que le texte soit trop large une fois centré */
+    max-width: 400px;
 }
 
-/* Bouton style Coco - Parfaitement Centré */
+/* Bouton style Coco */
 .luxe-btn {
     display: inline-block;
     align-self: center; 
@@ -3546,29 +3533,118 @@ h2::after {
     transform: translateY(-2px);
 }
 
-/* Partie Carte */
+/* Partie Affiche */
 .luxe-map {
     flex: 1;
-    min-height: 450px;
-    line-height: 0; /* Élimine tout espace blanc résiduel sous l'iframe */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fond-sable);
+    overflow: hidden;
+    min-height: 400px; /* Assure une hauteur de base confortable */
 }
 
-.luxe-map iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-}
-
-/* Affiche pour l'événement à venir */
 .luxe-event-poster {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* S'assure que l'image remplit le conteneur sans se déformer */
+    object-fit: cover;
+    display: block;
+    min-height: 400px;
+}
+
+/* AJOUT : Pour que la carte Google Maps prenne tout l'espace en grand */
+.luxe-map iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    border: 0;
     display: block;
 }
 
-/* Responsive */
+/* ============================================================
+   SECTION MARCHÉS PASSÉS (BLINDÉE CONTRE LES SUPERPOSITIONS)
+   ============================================================ */
+
+.event-card.event-past {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 24px !important;
+    background-color: var(--fond-sable) !important;
+    border: 1px solid var(--sable-dore) !important;
+    border-radius: 8px;
+    position: relative;
+    min-height: auto !important;
+}
+
+.event-card.event-past .event-date {
+    display: none !important;
+}
+
+/* Empilement vertical strict des détails */
+.event-card.event-past .event-details {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Bandeau de date */
+.event-past-date-full {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--brun-coco);
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--sable-dore);
+    width: 100%;
+}
+
+.event-past-date-full i {
+    font-size: 1rem;
+    color: var(--sable-dore);
+    flex-shrink: 0;
+}
+
+.event-card.event-past .event-details h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+    color: var(--brun-profond);
+    font-family: var(--font-principale);
+}
+
+.event-card.event-past .event-details p {
+    color: var(--texte-galet);
+    line-height: 1.5;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+/* CORRECTION DU BADGE : Centré sous le texte */
+.event-card.event-past .status-done {
+    display: inline-flex !important;
+    width: fit-content !important;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--brun-profond);
+    background: var(--sable-dore);
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    align-self: center; /* Centre parfaitement le badge horizontalement dans la carte */
+}
+
+
+/* ============================================================
+   RESPONSIVE MOBILE
+   ============================================================ */
+
 @media (max-width: 850px) {
     .luxe-market-card { 
         flex-direction: column;
@@ -3580,75 +3656,176 @@ h2::after {
         border-bottom: 1px solid var(--sable-dore); 
         padding: 30px 20px;
     }
-    .luxe-map { min-height: 350px; }
+    .luxe-map { 
+        min-height: 300px; 
+    }
 }
 
-/* --- Correction Style Marchés Passés (Accessibilité & Variables) --- */
+@media (max-width: 600px) {
+    .event-card.event-past {
+        padding: 16px !important;
+    }
+    .event-past-date-full {
+        flex-wrap: wrap;
+        font-size: 0.85rem;
+    }
+}
 
-/* Carte principale : On utilise --fond-sable pour bien la distinguer du fond blanc */
-.event-card.event-past {
-    display: block !important;
-    padding: 24px !important;
-    background-color: var(--fond-sable) !important;
-    border: 1px solid var(--sable-dore) !important;
+/* ==========================================================================
+   CARROUSEL AFFICHES — Style Atelier Artisanal
+   ========================================================================== */
+
+/* Zone globale du carrousel */
+.affiches-carousel-wrapper {
+    position: relative;
+    margin-bottom: 55px;
+    /* Padding latéral pour que les flèches ne se superposent pas aux cartes */
+    padding: 0 60px;
+}
+
+/* Le rail de scroll (cache le débordement) */
+.affiches-carousel-container {
+    width: 100%;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    /* Espace vertical pour l'ombre des cartes */
+    padding: 15px 5px 20px 5px;
+}
+
+.affiches-carousel-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* La piste flex qui aligne les cartes */
+.affiches-track {
+    display: flex;
+    gap: 28px;
+    width: max-content;
+}
+
+/* ── Carte affiche ─────────────────────────────────────── */
+.affiches-track .photo-presentation {
+    flex: 0 0 265px;
+    background: #fff;
+    border: 1px solid var(--sable-dore, #d4af37);
+    border-radius: 12px;
+    padding: 14px 14px 18px;
+    box-shadow: 0 4px 18px rgba(45, 34, 26, 0.08);
+    text-align: center;
+    cursor: default;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.affiches-track .photo-presentation:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(45, 34, 26, 0.14);
+}
+
+.affiches-track .photo-presentation img {
+    width: 100%;
+    height: 370px;
+    object-fit: cover;
     border-radius: 8px;
-    min-height: auto !important;
+    display: block;
 }
 
-/* On masque l'ancien carré de date */
-.event-card.event-past .event-date {
-    display: none !important;
+.affiches-track .photo-presentation h3 {
+    font-family: var(--font-principale, "Poppins", sans-serif);
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--brun-profond, #2d221a);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 14px 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Bandeau de date : Utilisation de --brun-coco pour un contraste texte/fond optimal (Accessibilité) */
-.event-past-date-full {
+/* ── Boutons de navigation ─────────────────────────────── */
+/* Style : rectangle arrondi, trait doré, dans l'esprit des boutons du site */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: #fff;
+    color: var(--brun-profond, #2d221a);
+    border: 1.5px solid var(--sable-dore, #d4af37);
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
+    box-shadow: 0 3px 10px rgba(45, 34, 26, 0.12);
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
     font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--brun-coco); /* Meilleure lisibilité que le doré sur fond clair */
-    text-transform: uppercase;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px dashed var(--sable-dore);
 }
 
-.event-past-date-full i {
-    font-size: 1rem;
-    color: var(--sable-dore); /* L'icône reste dorée pour le style */
+.carousel-btn:hover {
+    background: var(--brun-profond, #2d221a);
+    color: var(--vanille-pure, #fcf4dd);
+    border-color: var(--brun-profond, #2d221a);
+    transform: translateY(-50%) scale(1.05);
 }
 
-/* Titre : On utilise --brun-profond pour un impact maximal */
-.event-card.event-past .event-details h3 {
-    margin: 0 0 10px 0;
-    font-size: 1.2rem;
-    color: var(--brun-profond);
-    font-family: var(--font-principale);
+/* État désactivé quand on est en bout de liste */
+.carousel-btn:disabled,
+.carousel-btn[aria-disabled="true"] {
+    opacity: 0.3;
+    cursor: default;
+    pointer-events: none;
 }
 
-/* Description : Lisibilité accrue */
-.event-card.event-past .event-details p {
-    color: var(--texte-galet);
-    line-height: 1.5;
-    margin-bottom: 15px;
+.prev-btn { left: 5px; }
+.next-btn { right: 5px; }
+
+/* ── Indicateurs (dots) ────────────────────────────────── */
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 18px;
 }
 
-/* Étiquette TERMINÉ : Contraste élevé pour l'accessibilité */
-.event-card.event-past .status-done {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.7rem;
-    font-weight: 800;
-    color: var(--fond-ecume); /* Texte clair */
-    background-color: var(--bois-ecorce); /* Fond sombre pour le contraste */
-    padding: 5px 10px;
+.carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--sable-dore, #d4af37);
+    opacity: 0.35;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease, width 0.25s ease;
+}
+
+.carousel-dot.active {
+    opacity: 1;
+    width: 22px;
     border-radius: 4px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    background: var(--brun-profond, #2d221a);
 }
 
+/* ── Mobile : swipe natif, pas de flèches ───────────────── */
+@media (max-width: 768px) {
+    .affiches-carousel-wrapper {
+        padding: 0 8px;
+    }
+    .carousel-btn {
+        display: none;
+    }
+    .affiches-track .photo-presentation {
+        flex: 0 0 220px;
+    }
+    .affiches-track .photo-presentation img {
+        height: 300px;
+    }
+}
 /* ==========================================================================
    SECTION : COLLECTION SIGNATURE (Nouveauté 2026)
    ========================================================================== */

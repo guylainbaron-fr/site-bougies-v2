@@ -5,46 +5,37 @@ import AdminHeader from "../../components/AdminHeader.astro";
 import '../../styles/admin.css';
 
 interface EventData {
-  titre_annonce: string;
-  dates: string;
-  poster_url?: string; // Champ pour l'affiche (optionnel)
-  horaires: string[];
-  description: string;
-  map_url: string;
-  map_iframe: string; // Champ pour la carte
+    titre_annonce: string;
+    dates: string;
+    poster_url?: string;
+    horaires: string[];
+    description: string;
+    map_url: string;
+    map_iframe: string;
 }
 
-// Helper pour "décoder" les entités HTML avant de les afficher dans un formulaire
 function decodeForInput(str: string | undefined) {
     if (!str) return "";
     const map: Record<string, string> = {
-        '&amp;': '&',
-        '&lt;': '<',
-        '&gt;': '>',
-        '&quot;': '"',
-        '&#x27;': "'",
-        '&#x2F;': '/',
+        '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#x27;': "'", '&#x2F;': '/',
     };
-    // On remplace les entités par leurs caractères correspondants
     return str.replace(/&amp;|&lt;|&gt;|&quot;|&#x27;|&#x2F;/g, (m: string) => map[m]);
 }
 
-// 1. MODÈLE RÉEL PAR DÉFAUT (Mende avec ses 3 créneaux)
 const mendeModel = {
     titre_annonce: "Marché Couvert de Mende",
     dates: "Du 23 au 26 Janvier",
     horaires: [
-        "Ven. : 08h00 - 13h00",       // Case 1
-        "Sam. & Dim. : 09h00 - 19h00", // Case 2
-        "Lun. : 08h00 - 13h00"         // Case 3
+        "Ven. : 08h00 - 13h00",
+        "Sam. & Dim. : 09h00 - 19h00",
+        "Lun. : 08h00 - 13h00"
     ],
-    poster_url: "", // Pas d'affiche par défaut
+    poster_url: "",
     description: "Retrouvez-nous au cœur du marché couvert de Mende pour découvrir nos dernières sculptures sur bois et nos bougies artisanales.",
     map_url: "https://maps.app.goo.gl/pSesTFPPLNPwGptb7",
     map_iframe: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2844.9865659534867!2d3.4955737760506964!3d44.515428571074295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12b36de0792c499d%3A0xca92c4b3a1a2ef3e!2sMarch%C3%A9%20Couvert%20De%20Mende!5e0!3m2!1sfr!2sfr!4v1769263957380!5m2!1sfr!2sfr'
 };
 
-// --- LOGIQUE DE TRAITEMENT DES FORMULAIRES ---
 if (Astro.request.method === "POST") {
     try {
         const formData = await Astro.request.formData();
@@ -71,11 +62,34 @@ if (Astro.request.method === "POST") {
             
             if (currentData && currentData.titre_annonce) {
                 pastMarkets.unshift(currentData);
-                await kv.set('past_markets', pastMarkets.slice(0, 3));
+                await kv.set('past_markets', pastMarkets);
             }
             
             await kv.set('event_data', mendeModel); 
             await kv.set('event_status', 'attente');
+        }
+
+        if (action === "update_archive_item") {
+            const index = parseInt(formData.get("index")?.toString() || "-1");
+            let pastMarkets: any[] = await kv.get('past_markets') || [];
+            if (index >= 0 && index < pastMarkets.length) {
+                pastMarkets[index] = {
+                    titre_annonce: formData.get("edit_titre")?.toString() || "",
+                    dates: formData.get("edit_dates")?.toString() || "",
+                    description: formData.get("edit_desc")?.toString() || "",
+                    poster_url: formData.get("edit_poster")?.toString() || "",
+                };
+                await kv.set('past_markets', pastMarkets);
+            }
+        }
+
+        if (action === "delete_archive_item") {
+            const index = parseInt(formData.get("index")?.toString() || "-1");
+            let pastMarkets: any[] = await kv.get('past_markets') || [];
+            if (index >= 0 && index < pastMarkets.length) {
+                pastMarkets.splice(index, 1);
+                await kv.set('past_markets', pastMarkets);
+            }
         }
 
         if (action === "delete_history") {
@@ -87,11 +101,9 @@ if (Astro.request.method === "POST") {
     }
 }
 
-// --- RÉCUPÉRATION DES DONNÉES ET FUSION POUR L'AFFICHAGE ---
 const eventStatus = await kv.get<string>('event_status') || 'attente';
 const savedData = await kv.get<EventData>('event_data');
 
-// Fusion intelligente : si une donnée manque en base, on utilise Mende
 const eventData = {
     titre_annonce: savedData?.titre_annonce || mendeModel.titre_annonce,
     dates: savedData?.dates || mendeModel.dates,
@@ -112,12 +124,38 @@ const pastMarkets: any[] = await kv.get('past_markets') || [];
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <meta name="robots" content="noindex, nofollow">
     <title>Gestion Marchés | J.F. & Aniuta</title>
-
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <meta name="theme-color" content="#fdfaf7">
-    <!-- Chargement du Widget Cloudinary -->
     <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+    <style>
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(45, 34, 26, 0.6);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-card {
+            background: var(--vanille-pure, #fff);
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid var(--sable-dore);
+        }
+        .archive-edit-box {
+            background: #fff;
+            border: 1px solid var(--sable-dore);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard-container">
@@ -163,7 +201,7 @@ const pastMarkets: any[] = await kv.get('past_markets') || [];
                     </div>
 
                     <div class="form-group">
-                        <label for="poster_url" class="admin-label">Affiche de l'événement (Prioritaire)</label>
+                        <label for="poster_url" class="admin-label">Affiche de l'événement (Prioritaire sur la carte)</label>
                         <input type="text" id="poster_url" name="poster_url" class="admin-input" value={eventData.poster_url} placeholder="URL de l'image de l'affiche">
                         <button type="button" class="btn-upload" onclick="openUploadWidget('poster_url')" style="margin-top: 8px;"><i class="fa-solid fa-cloud-arrow-up"></i> Télécharger via Cloudinary</button>
                     </div>
@@ -174,7 +212,7 @@ const pastMarkets: any[] = await kv.get('past_markets') || [];
                     </div>
                     
                     <div class="form-group">
-                        <label class="admin-label">Code Carte (Iframe Google Maps - Secours)</label>
+                        <label class="admin-label">Code Carte (Iframe Google Maps - Affiché si pas d'affiche)</label>
                         <textarea class="admin-textarea" name="map_iframe" rows="4" placeholder="Code <iframe src=...">{eventData.map_iframe}</textarea>
                     </div>
                 </div>
@@ -185,83 +223,122 @@ const pastMarkets: any[] = await kv.get('past_markets') || [];
             <button type="submit" form="market-form" class="btn btn-add btn-save-market">
                 <i class="fa-solid fa-floppy-disk"></i> Enregistrer les modifications
             </button>
-            <button class="btn btn-archive-market" onclick="archiveEvent()">
+            <button type="button" class="btn btn-archive-market" onclick="openModal('archiveModal')">
                 <i class="fa-solid fa-box-archive"></i> Archiver et réinitialiser
             </button>
         </div>
 
         <div class="archive-list" style={pastMarkets.length === 0 ? 'display:none' : ''}>
-            <div class="archive-header">
-                <label class="admin-label" style="margin:0">Derniers marchés terminés</label>
-                <button class="btn-delete-history" onclick="deleteHistory()">Effacer tout</button>
+            <div class="archive-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <label class="admin-label" style="margin:0">Modifier ou gérer l'historique des marchés</label>
+                <button type="button" class="btn-delete-history" onclick="openModal('clearHistoryModal')">Tout effacer</button>
             </div>
-            {pastMarkets.map(m => (
-                <div class="archive-item">
-                    <span>{m.titre_annonce}</span>
-                    <span style="opacity:0.5">{m.dates}</span>
+
+            {pastMarkets.map((m, index) => (
+                <div class="archive-edit-box">
+                    <form method="POST" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px;">
+                        <input type="hidden" name="action" value="update_archive_item" />
+                        <input type="hidden" name="index" value={index} />
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <input class="admin-input" type="text" name="edit_titre" value={m.titre_annonce} placeholder="Titre" required style="flex:2;" />
+                            <input class="admin-input" type="text" name="edit_dates" value={m.dates} placeholder="Dates" required style="flex:1;" />
+                        </div>
+                        <textarea class="admin-textarea" name="edit_desc" rows="2" placeholder="Description">{m.description}</textarea>
+                        <input class="admin-input" type="text" name="edit_poster" value={m.poster_url || ""} placeholder="URL de l'affiche" />
+
+                        <div style="display: flex; justify-content: flex-end;">
+                            <button type="submit" class="btn" style="padding: 6px 12px; font-size: 0.8rem; background: var(--brun-coco); color: #fff;">
+                                <i class="fa-solid fa-pen"></i> Modifier
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <form method="POST" style="margin:0; display: flex; justify-content: flex-end;">
+                        <input type="hidden" name="action" value="delete_archive_item" />
+                        <input type="hidden" name="index" value={index} />
+                        <button type="submit" class="btn" style="padding: 6px 12px; font-size: 0.8rem; background: #c0392b; color: #fff;">
+                            <i class="fa-solid fa-trash"></i> Supprimer
+                        </button>
+                    </form>
                 </div>
             ))}
         </div>
     </div>
 
+    <div id="archiveModal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 style="margin-top:0; color:var(--brun-profond);">Archiver l'événement</h3>
+            <p style="color:var(--texte-galet); font-size:0.95rem;">Voulez-vous archiver le marché actuel dans les souvenirs et réinitialiser le formulaire ?</p>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button type="button" class="btn" onclick="closeModal('archiveModal')" style="background:#ddd; color:#333;">Annuler</button>
+                <button type="button" class="btn" onclick="submitAction('archive_market')" style="background:var(--brun-coco); color:#fff;">Confirmer l'archivage</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="clearHistoryModal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 style="margin-top:0; color:#c0392b;">Supprimer l'historique</h3>
+            <p style="color:var(--texte-galet); font-size:0.95rem;">Attention, cette action effacera l'intégralité des souvenirs de marchés enregistrés.</p>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button type="button" class="btn" onclick="closeModal('clearHistoryModal')" style="background:#ddd; color:#333;">Annuler</button>
+                <button type="button" class="btn" onclick="submitAction('delete_history')" style="background:#c0392b; color:#fff;">Tout effacer</button>
+            </div>
+        </div>
+    </div>
+
 <script is:inline define:vars={{ eventStatus, pastMarkets }}>
-    // 1. On passe les variables du serveur au client de manière sécurisée
     window.eventStatus = eventStatus;
     window.pastMarkets = pastMarkets;
 </script>
 <script>
-    // --- CONFIGURATION CLOUDINARY ---
+    declare global {
+        interface Window {
+            openUploadWidget: (inputId: string) => void;
+            openModal: (modalId: string) => void;
+            closeModal: (modalId: string) => void;
+            submitAction: (actionName: string) => void;
+        }
+    }
+
     const CLOUD_NAME = import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME || "dksok1rxg"; 
     const UPLOAD_PRESET = import.meta.env.PUBLIC_CLOUDINARY_UPLOAD_PRESET || "boutique_preset";
 
-    window.openUploadWidget = (inputId) => {
-        if (!window.cloudinary) {
-            return alert("Le module de téléchargement n'est pas prêt. Patientez ou vérifiez votre connexion.");
-        }
-        window.cloudinary.openUploadWidget({
-            cloudName: CLOUD_NAME,
-            uploadPreset: UPLOAD_PRESET,
-            sources: ['local', 'url', 'camera'],
-            showAdvancedOptions: false,
-            cropping: true,
-            croppingAspectRatio: 700 / 1000, // Force le ratio de l'affiche (700x1000)
-            transformation: [
-                { width: 700, crop: "limit" }, { quality: "auto" }, { fetch_format: "auto" }
-            ],
-            multiple: false,
-            defaultSource: 'local',
-            styles: { palette: { window: "#FDFDFD", sourceBg: "#F9F1E7", windowBorder: "#E0C297", tabIcon: "#4A3728", inactiveTabIcon: "#967969", menuIcons: "#4A3728", link: "#E9C46A", action: "#2D221A", inProgress: "#E9C46A", complete: "#2D221A", error: "#C0392B", textDark: "#2D221A", textLight: "#FFFFFF" }}
-        }, (error, result) => {
+    window.openUploadWidget = (inputId: string) => {
+        if (!(window as any).cloudinary) return alert("Le module de téléchargement n'est pas prêt.");
+        (window as any).cloudinary.openUploadWidget({
+            cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET, sources: ['local', 'url', 'camera'],
+            cropping: true, croppingAspectRatio: 700 / 1000,
+            transformation: [{ width: 700, crop: "limit" }, { quality: "auto" }, { fetch_format: "auto" }],
+            multiple: false, defaultSource: 'local',
+        }, (error: any, result: any) => {
             if (!error && result && result.event === "success") {
-                const url = (result.info.eager && result.info.eager[0]?.secure_url) 
-                    ? result.info.eager[0].secure_url 
-                    : result.info.secure_url;
-                (document.getElementById(inputId) as HTMLInputElement).value = url;
+                const url = (result.info.eager && result.info.eager[0]?.secure_url) ? result.info.eager[0].secure_url : result.info.secure_url;
+                const inputEl = document.getElementById(inputId) as HTMLInputElement;
+                if (inputEl) inputEl.value = url;
             }
         });
     };
 
-    window.archiveEvent = () => {
-        if (confirm('Archiver ce marché et réinitialiser ?')) {
-            const form = document.getElementById('market-form') as HTMLFormElement;
-            if (form) {
-                const actionInput = form.querySelector('input[name="action"]') as HTMLInputElement;
-                if(actionInput) actionInput.value = 'archive_market';
-                form.submit();
-            }
-        }
-    }
+    window.openModal = (modalId: string) => {
+        const modal = document.getElementById(modalId);
+        if (modal) modal.style.display = 'flex';
+    };
 
-    window.deleteHistory = () => {
-        if (confirm('Effacer tout l\'historique des marchés ?')) {
-            const form = document.getElementById('market-form') as HTMLFormElement;
-            if (form) {
-                const actionInput = form.querySelector('input[name="action"]') as HTMLInputElement;
-                if(actionInput) actionInput.value = 'delete_history';
-                form.submit();
-            }
+    window.closeModal = (modalId: string) => {
+        const modal = document.getElementById(modalId);
+        if (modal) modal.style.display = 'none';
+    };
+
+    window.submitAction = (actionName: string) => {
+        const form = document.getElementById('market-form') as HTMLFormElement;
+        if (form) {
+            const actionInput = form.querySelector('input[name="action"]') as HTMLInputElement;
+            if (actionInput) actionInput.value = actionName;
+            form.submit();
         }
-    }
+    };
 </script>
 </body>
 </html>

@@ -223,6 +223,10 @@ const galleryImages = Object.values(galleryFiles).map((img: any) => img.default)
 <div class="events-grid">
     {pastMarkets.map((market) => (
         <div class="event-card event-past">
+            <div class="event-date">
+                <i class="fa-regular fa-calendar-days" style="font-size: 1.5rem; margin-bottom: 5px;"></i>
+                <span class="month">Passé</span>
+            </div>
             <div class="event-details">
                 <div class="event-past-date-full">
                     <i class="fa-regular fa-calendar-days"></i>
@@ -233,20 +237,26 @@ const galleryImages = Object.values(galleryFiles).map((img: any) => img.default)
                 <p>{market.description}</p>
                 
                 <div class="status-done">
-                    <i class="fa-solid fa-check-circle"></i> Terminé
+                    <i class="fa-solid fa-check-circle"></i> Édition Terminée
                 </div>
             </div>
         </div>
     ))}
 
     <div class="event-card event-past">
+        <div class="event-date">
+            <span class="day">14</span>
+            <span class="month">Déc</span>
+        </div>
         <div class="event-details">
             <div class="event-past-date-full">
-                <i class="fa-regular fa-calendar-days"></i> Du 12 au 14 Décembre
+                <i class="fa-regular fa-calendar-days"></i> Du 12 au 14 Décembre 2025
             </div>
             <h3>Marché de Noël de Mende (48)</h3>
             <p>Place et halle au Blé & chapelle des pénitents</p>
-            <div class="status-done">Terminé</div>
+            <div class="status-done">
+                <i class="fa-solid fa-check-circle"></i> Édition Terminée
+            </div>
         </div>
     </div>
 </div>
@@ -256,39 +266,147 @@ const galleryImages = Object.values(galleryFiles).map((img: any) => img.default)
 <section id="souvenirs">
     <div class="container">
         <h2>Souvenirs de Nos Stands et Marchés</h2>
-        <div class="affiche-container">
-            <div class="photo-presentation">
-                <Image 
-                    src={afficheMende} 
-                    alt="Affiche Marché de Noël de Mende - Édition 2025" 
-                    width={350} 
-                    height={500}
-                    loading="eager"
-                    fetchpriority="high"
-                    decoding="async"
-                    quality={80}
-                />
-                <h3>Affiche du Marché de Noël de Mende</h3>
+        
+        <!-- Carrousel Affiches -->
+        <div class="affiches-carousel-wrapper">
+
+            <button class="carousel-btn prev-btn" id="prevBtn" aria-label="Affiche précédente" aria-disabled="true">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+
+            <div class="affiches-carousel-container" id="affichesCarousel">
+                <div class="affiches-track" id="affichesTrack">
+
+                    <!-- Affiche fixe de Mende -->
+                    <div class="photo-presentation">
+                        <Image
+                            src={afficheMende}
+                            alt="Marché de Noël de Mende — Édition 2025"
+                            width={350}
+                            height={500}
+                            loading="eager"
+                            fetchpriority="high"
+                            decoding="async"
+                            quality={80}
+                        />
+                        <h3>Marché de Noël de Mende</h3>
+                    </div>
+
+                    <!-- Affiches dynamiques des marchés archivés -->
+                    {pastMarkets && pastMarkets.length > 0 && pastMarkets.map((market) => (
+                        market.poster_url ? (
+                            <div class="photo-presentation">
+                                <Image
+                                    src={market.poster_url}
+                                    alt={`Affiche — ${market.titre_annonce}`}
+                                    width={350}
+                                    height={500}
+                                    loading="lazy"
+                                    decoding="async"
+                                    quality={80}
+                                />
+                                <h3>{market.titre_annonce}</h3>
+                            </div>
+                        ) : null
+                    ))}
+
+                </div>
             </div>
+
+            <button class="carousel-btn next-btn" id="nextBtn" aria-label="Affiche suivante">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
         </div>
 
+        <!-- Dots de pagination -->
+        <div class="carousel-dots" id="carouselDots"></div>
+
+        <!-- Tes photos de stand habituelles -->
         <div class="photo-gallery"> 
-    {galleryImages.map((imgSrc, index) => (
-        <div class="photo-item">
-            <Image 
-                src={imgSrc} 
-                alt={`Photo de notre stand artisanal numéro ${index + 1}`} 
-                width={380}
-                height={285}
-                loading="lazy"
-                decoding="async"
-                quality={80}
-            />
+            {galleryImages.map((imgSrc, index) => (
+                <div class="photo-item">
+                    <Image 
+                        src={imgSrc} 
+                        alt={`Photo de notre stand artisanal numéro ${index + 1}`} 
+                        width={380}
+                        height={285}
+                        loading="lazy"
+                        decoding="async"
+                        quality={80}
+                    />
+                </div>
+            ))}
         </div>
-    ))}
-</div>
     </div> 
-</section> 
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const rail      = document.getElementById('affichesCarousel');
+    const track     = document.getElementById('affichesTrack');
+    const prevBtn   = document.getElementById('prevBtn');
+    const nextBtn   = document.getElementById('nextBtn');
+    const dotsWrap  = document.getElementById('carouselDots');
+
+    if (!rail || !track || !prevBtn || !nextBtn || !dotsWrap) return;
+
+    const cards = Array.from(track.querySelectorAll('.photo-presentation'));
+    if (cards.length === 0) return;
+
+    // ── Largeur d'un pas (1 carte + son gap) ──────────────────
+    const getCardWidth = () => {
+        const card = cards[0] as HTMLElement;
+        const gap  = parseInt(getComputedStyle(track).gap) || 28;
+        return card.offsetWidth + gap;
+    };
+
+    // ── Création des dots ──────────────────────────────────────
+    cards.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', `Affiche ${i + 1}`);
+        dot.addEventListener('click', () => {
+            rail.scrollTo({ left: i * getCardWidth(), behavior: 'smooth' });
+        });
+        dotsWrap.appendChild(dot);
+    });
+
+    const dots = Array.from(dotsWrap.querySelectorAll('.carousel-dot'));
+
+    // ── Mise à jour de l'état (dots + flèches) ─────────────────
+    const updateState = () => {
+        const scrollLeft = rail.scrollLeft;
+        const maxScroll  = rail.scrollWidth - rail.clientWidth;
+
+        // Flèches
+        prevBtn.setAttribute('aria-disabled', scrollLeft <= 5 ? 'true' : 'false');
+        nextBtn.setAttribute('aria-disabled', scrollLeft >= maxScroll - 5 ? 'true' : 'false');
+
+        // Dot actif = carte la plus proche du bord gauche
+        const activeIndex = Math.round(scrollLeft / getCardWidth());
+        dots.forEach((dot, i) => dot.classList.toggle('active', i === activeIndex));
+    };
+
+    // ── Flèches ────────────────────────────────────────────────
+    nextBtn.addEventListener('click', () => {
+        rail.scrollBy({ left: getCardWidth(), behavior: 'smooth' });
+    });
+
+    prevBtn.addEventListener('click', () => {
+        rail.scrollBy({ left: -getCardWidth(), behavior: 'smooth' });
+    });
+
+    // ── Écoute du scroll (avec debounce léger) ─────────────────
+    let scrollTimer;
+    rail.addEventListener('scroll', () => {
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(updateState, 50);
+    }, { passive: true });
+
+    // ── Init ───────────────────────────────────────────────────
+    updateState();
+});
+</script>
 
 <section id="evenements-videos">
     <div class="container">
