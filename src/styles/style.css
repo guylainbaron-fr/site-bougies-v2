@@ -3766,12 +3766,22 @@ h2::after {
     font-size: 0.9rem;
 }
 
+.carousel-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    transition: transform 0.2s ease;
+}
+
 .carousel-btn:hover {
     background: var(--brun-profond, #2d221a);
     color: var(--vanille-pure, #fcf4dd);
     border-color: var(--brun-profond, #2d221a);
     transform: translateY(-50%) scale(1.05);
 }
+
+.prev-btn:hover:not([aria-disabled="true"]) svg { transform: translateX(-2px); }
+.next-btn:hover:not([aria-disabled="true"]) svg { transform: translateX(2px); }
 
 /* État désactivé quand on est en bout de liste */
 .carousel-btn:disabled,

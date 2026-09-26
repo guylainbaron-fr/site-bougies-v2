@@ -271,7 +271,9 @@ const galleryImages = Object.values(galleryFiles).map((img: any) => img.default)
         <div class="affiches-carousel-wrapper">
 
             <button class="carousel-btn prev-btn" id="prevBtn" aria-label="Affiche précédente" aria-disabled="true">
-                <i class="fa-solid fa-chevron-left"></i>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
             </button>
 
             <div class="affiches-carousel-container" id="affichesCarousel">
@@ -314,7 +316,9 @@ const galleryImages = Object.values(galleryFiles).map((img: any) => img.default)
             </div>
 
             <button class="carousel-btn next-btn" id="nextBtn" aria-label="Affiche suivante">
-                <i class="fa-solid fa-chevron-right"></i>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
             </button>
         </div>
 
@@ -378,7 +382,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const scrollLeft = rail.scrollLeft;
         const maxScroll  = rail.scrollWidth - rail.clientWidth;
 
-        // Flèches
+        // Si tout rentre dans l'écran sans scroller
+        if (maxScroll <= 5) {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            dotsWrap.style.display = 'none';
+            return;
+        } else {
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+            dotsWrap.style.display = 'flex';
+        }
+
+        // Flèches désactivées aux extrémités
         prevBtn.setAttribute('aria-disabled', scrollLeft <= 5 ? 'true' : 'false');
         nextBtn.setAttribute('aria-disabled', scrollLeft >= maxScroll - 5 ? 'true' : 'false');
 
@@ -396,12 +412,16 @@ document.addEventListener('DOMContentLoaded', () => {
         rail.scrollBy({ left: -getCardWidth(), behavior: 'smooth' });
     });
 
-    // ── Écoute du scroll (avec debounce léger) ─────────────────
+    // ── Écoute du scroll et du redimensionnement ───────────────
     let scrollTimer;
     rail.addEventListener('scroll', () => {
         clearTimeout(scrollTimer);
         scrollTimer = setTimeout(updateState, 50);
     }, { passive: true });
+
+    window.addEventListener('resize', () => {
+        updateState();
+    });
 
     // ── Init ───────────────────────────────────────────────────
     updateState();
