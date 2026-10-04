@@ -3,6 +3,7 @@ export const prerender = false;
 import { kv } from "../../lib/kv";
 import AdminHeader from "../../components/AdminHeader.astro";
 import '../../styles/admin.css';
+const currentYear = new Date().getFullYear();
 
 interface EventData {
     titre_annonce: string;
@@ -264,6 +265,10 @@ const pastMarkets: any[] = await kv.get('past_markets') || [];
                 </div>
             ))}
         </div>
+
+        <footer class="dashboard-footer">
+            <p>&copy; {currentYear} Jean François & Aniuta — Dashboard Atelier</p>
+        </footer>
     </div>
 
     <div id="archiveModal" class="modal-overlay">

@@ -18,14 +18,14 @@ const currentYear = new Date().getFullYear();
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <meta name="theme-color" content="#fdfaf7">
-    <style>
+    <style is:global>
         .preview-container {
             flex-grow: 1; 
             display: flex;
             justify-content: center; 
             padding: 40px 0;
             overflow-x: auto;
-            background: var(--fond-ecume);
+            background: rgba(0, 0, 0, 0.02); /* Fond subtil pour bien détacher la feuille */
         }
 
         .page-a4 {
@@ -34,10 +34,13 @@ const currentYear = new Date().getFullYear();
             background: white; 
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            /* Remplacement de l'ombre par un cadre propre et élégant */
+            border: 1px solid var(--sable-dore, #d3c5b4); 
+            box-shadow: none; 
             transform: scale(0.6);
             transform-origin: top center;
-            margin-bottom: -100mm;
+            margin-bottom: -100mm; /* Compensation du scale */
+            position: relative;
         }
 
         .half {
@@ -46,14 +49,15 @@ const currentYear = new Date().getFullYear();
           justify-content: center;
           align-items: center;
           position: relative;
+          overflow: hidden; /* Empêche les débordements visuels */
       }
 
       .cut-line {
           position: absolute;
           bottom: 0; left: 0; right: 0;
-          border-bottom: 1px dashed #eee;
+          border-bottom: 1px dashed #ccc;
+          z-index: 10;
       }
-
       /* Couleur des étoiles — définie directement dans ThankYouCard.astro (#FFD700) */
 
       /* FOOTER HARMONISÉ */
@@ -85,8 +89,6 @@ const currentYear = new Date().getFullYear();
             margin: 0 !important;
             padding: 0 !important;
             background: #fff !important;
-            height: 100%;
-            width: 100%;
           }
 
           header,
@@ -95,10 +97,6 @@ const currentYear = new Date().getFullYear();
           .dashboard-footer,
           footer {
             display: none !important;
-            height: 0 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            overflow: hidden !important;
           }
 
           .dashboard-container {
@@ -106,6 +104,9 @@ const currentYear = new Date().getFullYear();
             margin: 0 !important;
             padding: 0 !important;
             display: block !important;
+            border: none !important; /* Supprime la bordure qui crée la 2ème page */
+            box-shadow: none !important;
+            background: none !important;
           }
 
           .preview-container {
@@ -123,23 +124,22 @@ const currentYear = new Date().getFullYear();
             padding: 0 !important;
             width: 210mm !important;
             height: 297mm !important;
-            position: absolute !important;
+            position: relative !important;
             top: 0 !important;
             left: 0 !important;
             page-break-after: avoid !important;
+            overflow: hidden !important; /* Sécurité anti-débordement */
           }
 
           .half {
             height: 148.5mm !important;
             flex: none !important;
             width: 100% !important;
+            border: none !important;
           }
 
-          :global(.thank-you-card .star),
-          :global(.thank-you-card .fa-star) {
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-              color: #FFD700 !important;
+          .cut-line {
+            border-bottom: 1px dashed #eee !important;
           }
       }
     </style>
