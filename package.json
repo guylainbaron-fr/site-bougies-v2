@@ -32,6 +32,10 @@
     "picomatch": "^4.0.1",
     "postcss": "^8.5.10",
     "yaml": "^2.8.3",
-    "esbuild": "^0.28.1"
+    "esbuild": "^0.28.1",
+    "braces": "^3.0.3",
+    "chokidar": "^3.6.0",
+    "micromatch": "^4.0.8",
+    "http-cache-semantics": "^4.2.1"
   }
 }

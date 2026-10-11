@@ -1055,6 +1055,12 @@ window.closeMRModal = () => {
     }
 
     async function initPage() {
+        // --- 0. INTERCEPTION IMMÉDIATE DE L'ANCRE POUR ÉVITER LES CONFLITS ---
+        const isCartHash = window.location.hash === '#panier-page';
+        if (isCartHash) {
+            history.replaceState(null, '', window.location.pathname);
+        }
+
         // 1. GESTION DE L'EXPIRATION (48h)
         const rawData = localStorage.getItem('panier-atelier');
         const rawTimestamp = localStorage.getItem('panier-atelier-timestamp');
@@ -1103,6 +1109,22 @@ window.closeMRModal = () => {
         const initialMethod = document.querySelector('input[name="shipping-method"]:checked').value;
         handleShippingChange(initialMethod);
 
+        // --- POSITIONNEMENT FINAL PROPRE DE L'ANCRE ---
+        if (isCartHash) {
+            setTimeout(() => {
+                const el = document.getElementById('panier-page');
+                if (el) {
+                    const headerOffset = 0; // Hauteur de ton menu fixe (ajoute un peu si besoin)
+                    const elementPosition = el.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'auto'
+                    });
+                }
+            }, 50);
+        }
     }
 
     document.addEventListener('astro:page-load', initPage);
