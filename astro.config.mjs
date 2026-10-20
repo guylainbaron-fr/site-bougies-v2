@@ -1,7 +1,6 @@
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
-import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
@@ -9,7 +8,6 @@ export default defineConfig({
   output: 'server',
   adapter: vercel(),
   integrations: [
-    tailwind(),
     sitemap({
       customPages: [
         'https://jf-aniuta.vercel.app/boutique?cat=Sculptures',
