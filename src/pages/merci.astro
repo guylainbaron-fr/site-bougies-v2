@@ -1,6 +1,39 @@
 ---
+// src/pages/merci.astro
 import MainLayout from '../layouts/MainLayout.astro';
 const pageId = "merci";
+
+// Récupération dynamique de l'URL du site depuis le .env
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+
+// Schéma JSON-LD dynamique pour la page de remerciement
+const schemaData = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": `${siteUrl}/merci#webpage`,
+      "url": `${siteUrl}/merci`,
+      "name": "Inscription Confirmée - Jean-François & Aniuta",
+      "isPartOf": { "@id": `${siteUrl}/#website` },
+      "description": "Votre inscription à La Note de l'Atelier est bien confirmée. Bienvenue dans l'univers de Jean-François & Aniuta."
+    },
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      "name": "Jean-François & Aniuta",
+      "url": `${siteUrl}/`,
+      "logo": {
+        "@type": "ImageObject",
+        "@id": `${siteUrl}/#logo`,
+        "url": `${siteUrl}/images/logo_512.png`,
+        "contentUrl": `${siteUrl}/images/logo_512.png`,
+        "width": 512,
+        "height": 512
+      }
+    }
+  ]
+});
 ---
 
 <MainLayout 
@@ -9,36 +42,7 @@ const pageId = "merci";
   pageId={pageId}
 >
     <meta name="robots" content="noindex, nofollow" slot="head" />
-
-<script type="application/ld+json" slot="head">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebPage",
-      "@id": "https://jf-aniuta.vercel.app/merci#webpage",
-      "url": "https://jf-aniuta.vercel.app/merci",
-      "name": "Inscription Confirmée - Jean-François & Aniuta",
-      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
-      "description": "Votre inscription à La Note de l'Atelier est bien confirmée. Bienvenue dans l'univers de Jean-François & Aniuta."
-    },
-    {
-      "@type": "Organization",
-      "@id": "https://jf-aniuta.vercel.app/#organization",
-      "name": "Jean-François & Aniuta",
-      "url": "https://jf-aniuta.vercel.app/",
-      "logo": {
-        "@type": "ImageObject",
-        "@id": "https://jf-aniuta.vercel.app/#logo",
-        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
-        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
-        "width": 512,
-        "height": 512
-      }
-    }
-  ]
-}
-</script>
+    <script type="application/ld+json" slot="head" set:html={schemaData}></script>
 
     <section id="contact-page" style="padding: 80px 0; min-height: 50vh; display: flex; align-items: center;">
         <div class="container">

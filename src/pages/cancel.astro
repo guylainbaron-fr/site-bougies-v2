@@ -1,6 +1,10 @@
 ---
+// src/pages/cancel.astro
 import MainLayout from '../layouts/MainLayout.astro';
 const pageId = "cancel";
+
+// Récupération dynamique de l'URL du site depuis le .env
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
 
 const sessionId = Astro.url.searchParams.get('session_id');
 let errorMessage = null;
@@ -23,23 +27,21 @@ if (sessionId) {
         errorMessage = "Une erreur est survenue lors de la mise à jour du stock. Veuillez nous contacter si le problème persiste.";
     }
 }
----
 
-<MainLayout title="Paiement Annulé - Jean-François & Aniuta" pageId={pageId}>
-    <script type="application/ld+json" slot="head">
-{
+// Schéma JSON-LD dynamique pour la page d'annulation
+const schemaData = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "@id": `${siteUrl}/#organization`,
       "name": "Jean-François & Aniuta",
-      "url": "https://jf-aniuta.vercel.app/",
+      "url": `${siteUrl}/`,
       "logo": {
         "@type": "ImageObject",
-        "@id": "https://jf-aniuta.vercel.app/#logo",
-        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
-        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "@id": `${siteUrl}/#logo`,
+        "url": `${siteUrl}/images/logo_512.png`,
+        "contentUrl": `${siteUrl}/images/logo_512.png`,
         "width": 512,
         "height": 512
       },
@@ -59,11 +61,11 @@ if (sessionId) {
     },
     {
       "@type": "WebPage",
-      "@id": "https://jf-aniuta.vercel.app/panier-cancel#webpage",
-      "url": "https://jf-aniuta.vercel.app/panier-cancel",
+      "@id": `${siteUrl}/panier-cancel#webpage`,
+      "url": `${siteUrl}/panier-cancel`,
       "name": "Paiement Annulé - Jean-François & Aniuta",
       "description": "Votre processus de commande a été interrompu. Votre panier reste disponible pour finaliser vos achats ultérieurement.",
-      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+      "isPartOf": { "@id": `${siteUrl}/#website` },
       "breadcrumb": {
         "@type": "BreadcrumbList",
         "itemListElement": [
@@ -71,28 +73,28 @@ if (sessionId) {
             "@type": "ListItem",
             "position": 1,
             "name": "Accueil",
-            "item": "https://jf-aniuta.vercel.app/"
+            "item": `${siteUrl}/`
           },
           {
             "@type": "ListItem",
             "position": 2,
             "name": "Panier",
-            "item": "https://jf-aniuta.vercel.app/panier"
+            "item": `${siteUrl}/panier`
           },
           {
             "@type": "ListItem",
             "position": 3,
             "name": "Annulation",
-            "item": "https://jf-aniuta.vercel.app/panier-cancel"
+            "item": `${siteUrl}/panier-cancel`
           }
         ]
       }
     },
     {
       "@type": "LocalBusiness",
-      "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+      "@id": `${siteUrl}/#localbusiness`,
       "name": "Jean-François & Aniuta",
-      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
+      "image": `${siteUrl}/images/logo_512.png`,
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "149 Route du Pont du Vallat, Chasseradès",
@@ -100,11 +102,14 @@ if (sessionId) {
         "postalCode": "48250",
         "addressCountry": "FR"
       },
-      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+      "parentOrganization": { "@id": `${siteUrl}/#organization` }
     }
   ]
-}
-</script>
+});
+---
+
+<MainLayout title="Paiement Annulé - Jean-François & Aniuta" pageId={pageId}>
+  <script type="application/ld+json" slot="head" set:html={schemaData}></script>
 
     <section id="panier-cancel-page" style="background-color: var(--fond-ecume); padding: 80px 0;">
         <div class="container">

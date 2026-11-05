@@ -10,6 +10,9 @@ export const prerender = false;
 const pageId = "boutique";
 const categories = ["Bougies", "Sculptures", "Tableaux", "Accessoires", "Tous"];
 
+// Récupération dynamique de l'URL du site depuis le .env
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+
 // RÉCUPÉRATION DES DONNÉES
 const data = await kv.get("boutique:produits");
 const produits = (Array.isArray(data) ? data : [])
@@ -43,259 +46,21 @@ const queryString = searchParams.toString();
 if (queryString) {
     canonicalPath += `?${queryString}`;
 }
----
 
-<MainLayout title={pageTitle} description={pageDescription} pageId={pageId} canonical={canonicalPath}>
-    <style>
-        /* --- BADGES DE STATUT POUR PIÈCES UNIQUES --- */
-        .status-badge-container {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .status-badge {
-            background: var(--brun-profond); color: var(--vanille-pure); border: 1px solid var(--sable-dore);
-            padding: 5px 10px; font-size: 0.65rem; border-radius: 4px; font-weight: 800; text-transform: uppercase;
-        }
-        /* Style pour les boutons "Vendu" ou "Réservé" */
-        .btn-disabled-status {
-            background-color: var(--bois-flotte) !important;
-            border: none !important;
-            cursor: not-allowed !important;
-            opacity: 0.7 !important;
-            color: white !important;
-        }
-        /* Style spécifique pour les miniatures d'images */
-        .thumbnails-gallery {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            padding: 15px;
-            background: #fff;
-            border-bottom: 1px solid var(--fond-sable);
-        }
-        .thumb-img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            cursor: pointer;
-            border-radius: 6px;
-            border: 1.5px solid var(--sable-dore);
-            transition: all 0.2s ease;
-        }
-        .thumb-img:hover { transform: scale(1.1); border-color: var(--brun-coco); }
-
-        /* Style spécifique pour le bouton de partage */
-        .produit-card .image-container { position: relative; }
-        
-        .btn-share {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid var(--sable-dore);
-            border-radius: 50%;
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 10;
-            box-shadow: 0 4px 8px rgba(45, 34, 26, 0.1);
-        }
-        .btn-share:hover {
-            background: var(--vanille-pure);
-            border-color: var(--brun-coco);
-            transform: scale(1.1);
-        }
-        .btn-share img { width: 18px; height: 18px; }
-
-        /* Highlight pour le produit ciblé par l'ancre */
-        .produit-card { transition: border 0.6s ease, box-shadow 0.6s ease; border: 2px solid transparent; }
-        .produit-card.is-highlighted {
-            border: 2px solid var(--vanille-eclat);
-            box-shadow: 0 0 25px rgba(233, 196, 106, 0.4);
-        }
-
-        /* Style bouton WhatsApp "Sur demande" */
-        .btn-sur-demande {
-            background-color: var(--sable-dore) !important;
-            color: var(--brun-profond) !important;
-            border: 1px dashed var(--brun-coco) !important;
-            font-size: 0.75rem !important;
-            text-decoration: none !important;
-            margin: 0 !important;
-        }
-
-/* Ciblage global pour percer l'isolation CSS d'Astro */
-.prix-action :global(.phone-placeholder),
-.prix-action :global(a.btn-whatsapp-simple) {
-    background: #25D366 !important;
-    background-color: #25D366 !important;
-    color: #ffffff !important;
-    border: none !important;
-    text-align: center !important;
-    border-radius: 4px !important;
-    padding: 12px 10px !important;
-    text-decoration: none !important;
-    display: block !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-.prix-action :global(.phone-placeholder:hover),
-.prix-action :global(a.btn-whatsapp-simple:hover) {
-    background: #1eb855 !important;
-    background-color: #1eb855 !important;
-    color: #ffffff !important;
-}
-
-/* Style spécifique pour les miniatures d'images avec réservation d'espace */
-        .thumbnails-gallery {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            align-items: center;
-            padding: 10px 15px;
-            background: #fff;
-            border-bottom: 1px solid var(--fond-sable);
-            min-height: 72px; /* Hauteur fixe réservée pour toutes les cartes */
-            box-sizing: border-box;
-        }
-
-        .thumb-img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            cursor: pointer;
-            border-radius: 6px;
-            border: 1.5px solid var(--sable-dore);
-            transition: all 0.2s ease;
-        }
-        .thumb-img:hover { transform: scale(1.1); border-color: var(--brun-coco); }
-
-        /* --- ALIGNEMENT DES CARTES ET DES BLOCS PRIX/ACTION --- */
-        .produit-card {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            transition: border 0.6s ease, box-shadow 0.6s ease;
-            border: 2px solid transparent;
-        }
-
-        .produit-info {
-            display: flex;
-            flex-direction: column;
-            flex: 1; /* Absorbe l'espace vertical */
-        }
-
-        .produit-description {
-            flex: 1; /* Pousse la section prix-action tout en bas */
-        }
-
-        .prix-action {
-            margin-top: auto;
-            border-top: 1px dashed var(--sable-dore);
-            padding-top: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end; /* Pousse les boutons vers le bas */
-            min-height: 193px; /* Verrouille la hauteur pour aligner la ligne pointillée */
-        }
-
-        .prix-action .prix {
-            display: block;
-            margin-bottom: 12px;
-        }
-
-        .prix-action .btn,
-        .prix-action .btn-whatsapp-simple,
-        .prix-action :global(.phone-placeholder) {
-            width: 100% !important;
-            box-sizing: border-box !important;
-        }
-        /* --- STYLE LIGHTBOX (VISIONNEUSE D'IMAGES) --- */
-        .lightbox-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(45, 34, 26, 0.85); /* Fond Brun Profond semi-transparent */
-            display: flex; justify-content: center; align-items: center;
-            z-index: 2000; cursor: pointer;
-            animation: fadeIn 0.3s ease;
-        }
-        .lightbox-content {
-            max-width: 90%; max-height: 85%;
-            object-fit: contain;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            border: 4px solid var(--vanille-pure);
-            border-radius: 4px;
-            cursor: default;
-        }
-        .lightbox-close {
-            position: absolute; top: 20px; right: 35px;
-            color: var(--vanille-pure); font-size: 40px; font-weight: bold;
-            cursor: pointer; transition: color 0.3s ease;
-        }
-        .lightbox-close:hover { color: var(--vanille-eclat); }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Style pour les flèches de navigation de la lightbox */
-        .lightbox-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 2.5rem;
-            color: var(--vanille-pure);
-            cursor: pointer;
-            padding: 20px;
-            user-select: none;
-            transition: background-color 0.3s ease;
-        }
-        .lightbox-nav:hover { background-color: rgba(0,0,0,0.2); }
-        .lightbox-prev { left: 15px; }
-        .lightbox-next { right: 15px; }
-        .lightbox-nav.hidden { display: none; }
-
-        /* Ajout du curseur pour indiquer que l'image est cliquable */
-        .produit-card .image-container {
-            cursor: zoom-in;
-        }
-        /* Miniature sélectionnée / active */
-.thumb-img.active {
-    border-color: var(--brun-coco) !important;
-    box-shadow: 0 0 0 2px var(--vanille-eclat);
-    transform: scale(1.08);
-}
-
-/* Survol des miniatures non actives */
-.thumb-img:not(.active):hover {
-    opacity: 0.8;
-    transform: scale(1.05);
-}
-    </style>
-<script type="application/ld+json" slot="head">
-{
+// Schéma JSON-LD dynamique pour la boutique
+const schemaData = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "@id": `${siteUrl}/#organization`,
       "name": "Jean-François & Aniuta",
-      "url": "https://jf-aniuta.vercel.app/",
+      "url": `${siteUrl}/`,
       "logo": {
         "@type": "ImageObject",
-        "@id": "https://jf-aniuta.vercel.app/#logo",
-        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
-        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "@id": `${siteUrl}/#logo`,
+        "url": `${siteUrl}/images/logo_512.png`,
+        "contentUrl": `${siteUrl}/images/logo_512.png`,
         "width": 512,
         "height": 512
       },
@@ -315,11 +80,11 @@ if (queryString) {
     },
     {
       "@type": "CollectionPage",
-      "@id": "https://jf-aniuta.vercel.app/boutique#webpage",
-      "url": "https://jf-aniuta.vercel.app/boutique",
+      "@id": `${siteUrl}/boutique#webpage`,
+      "url": `${siteUrl}/boutique`,
       "name": "Boutique Artisanale de Sculptures et Bougies | Jean-François & Aniuta",
       "description": "Découvrez nos créations artisanales : sculptures sur bois uniques et bougies parfumées coulées à la main dans notre atelier en Lozère.",
-      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+      "isPartOf": { "@id": `${siteUrl}/#website` },
       "breadcrumb": {
         "@type": "BreadcrumbList",
         "itemListElement": [
@@ -327,22 +92,22 @@ if (queryString) {
             "@type": "ListItem",
             "position": 1,
             "name": "Accueil",
-            "item": "https://jf-aniuta.vercel.app/"
+            "item": `${siteUrl}/`
           },
           {
             "@type": "ListItem",
             "position": 2,
             "name": "Boutique",
-            "item": "https://jf-aniuta.vercel.app/boutique"
+            "item": `${siteUrl}/boutique`
           }
         ]
       }
     },
     {
       "@type": "LocalBusiness",
-      "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+      "@id": `${siteUrl}/#localbusiness`,
       "name": "Jean-François & Aniuta",
-      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
+      "image": `${siteUrl}/images/logo_512.png`,
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "149 Route du Pont du Vallat, Chasseradès",
@@ -350,11 +115,239 @@ if (queryString) {
         "postalCode": "48250",
         "addressCountry": "FR"
       },
-      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+      "parentOrganization": { "@id": `${siteUrl}/#organization` }
     }
   ]
+});
+---
+
+<MainLayout title={pageTitle} description={pageDescription} pageId={pageId} canonical={canonicalPath}>
+  <script type="application/ld+json" slot="head" set:html={schemaData}></script>
+    <style>
+    /* --- BADGES DE STATUT POUR PIÈCES UNIQUES --- */
+    .status-badge-container {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .status-badge {
+        background: var(--brun-profond); 
+        color: var(--vanille-pure); 
+        border: 1px solid var(--sable-dore);
+        padding: 5px 10px; 
+        font-size: 0.65rem; 
+        border-radius: 4px; 
+        font-weight: 800; 
+        text-transform: uppercase;
+    }
+
+    /* Style pour les boutons "Vendu" ou "Réservé" */
+    .btn-disabled-status {
+        background-color: var(--bois-flotte) !important;
+        border: none !important;
+        cursor: not-allowed !important;
+        opacity: 0.7 !important;
+        color: white !important;
+    }
+
+    /* --- MINIATURES D'IMAGES (GALERIE) --- */
+    .thumbnails-gallery {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 15px;
+        background: #fff;
+        border-bottom: 1px solid var(--fond-sable);
+        min-height: 72px; /* Hauteur fixe réservée pour toutes les cartes */
+        box-sizing: border-box;
+    }
+
+    .thumb-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 6px;
+    border: 1.5px solid var(--sable-dore);
+    transition: all 0.2s ease;
 }
-</script>
+
+    .thumb-img:hover { 
+        transform: scale(1.1); 
+        border-color: var(--brun-coco); 
+    }
+
+    /* Miniature sélectionnée / active */
+.thumb-img.active {
+    border-color: var(--brun-coco) !important;
+    box-shadow: none !important; /* Supprime le double contour/halo */
+    transform: scale(1.08);
+}
+
+    /* Survol des miniatures non actives */
+    .thumb-img:not(.active):hover {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+
+    /* --- BOUTON DE PARTAGE --- */
+    .produit-card .image-container { 
+        position: relative; 
+        cursor: zoom-in;
+    }
+    
+    .btn-share {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid var(--sable-dore);
+        border-radius: 50%;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+        box-shadow: 0 4px 8px rgba(45, 34, 26, 0.1);
+    }
+    .btn-share:hover {
+        background: var(--vanille-pure);
+        border-color: var(--brun-coco);
+        transform: scale(1.1);
+    }
+    .btn-share img { width: 18px; height: 18px; }
+
+    /* --- HIGHLIGHT ET CARTES PRODUITS --- */
+    .produit-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        transition: border 0.6s ease, box-shadow 0.6s ease;
+        border: 2px solid transparent;
+    }
+    .produit-card.is-highlighted {
+        border: 2px solid var(--vanille-eclat);
+        box-shadow: 0 0 25px rgba(233, 196, 106, 0.4);
+    }
+
+    .produit-info {
+        display: flex;
+        flex-direction: column;
+        flex: 1; /* Absorbe l'espace vertical */
+    }
+
+    .produit-description {
+        flex: 1; /* Pousse la section prix-action tout en bas */
+    }
+
+    /* --- STYLE BOUTON WHATSAPP "SUR DEMANDE" --- */
+    .btn-sur-demande {
+        background-color: var(--sable-dore) !important;
+        color: var(--brun-profond) !important;
+        border: 1px dashed var(--brun-coco) !important;
+        font-size: 0.75rem !important;
+        text-decoration: none !important;
+        margin: 0 !important;
+    }
+
+    /* Ciblage global pour percer l'isolation CSS d'Astro */
+    .prix-action :global(.phone-placeholder),
+    .prix-action :global(a.btn-whatsapp-simple) {
+        background: #25D366 !important;
+        background-color: #25D366 !important;
+        color: #ffffff !important;
+        border: none !important;
+        text-align: center !important;
+        border-radius: 4px !important;
+        padding: 12px 10px !important;
+        text-decoration: none !important;
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .prix-action :global(.phone-placeholder:hover),
+    .prix-action :global(a.btn-whatsapp-simple:hover) {
+        background: #1eb855 !important;
+        background-color: #1eb855 !important;
+        color: #ffffff !important;
+    }
+
+    .prix-action {
+        margin-top: auto;
+        border-top: 1px dashed var(--sable-dore);
+        padding-top: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end; /* Pousse les boutons vers le bas */
+        min-height: 193px; /* Verrouille la hauteur pour aligner la ligne pointillée */
+    }
+
+    .prix-action .prix {
+        display: block;
+        margin-bottom: 12px;
+    }
+
+    .prix-action .btn,
+    .prix-action .btn-whatsapp-simple,
+    .prix-action :global(.phone-placeholder) {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* --- STYLE LIGHTBOX (VISIONNEUSE D'IMAGES) --- */
+    .lightbox-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(45, 34, 26, 0.85); /* Fond Brun Profond semi-transparent */
+        display: flex; justify-content: center; align-items: center;
+        z-index: 2000; cursor: pointer;
+        animation: fadeIn 0.3s ease;
+    }
+    .lightbox-content {
+        max-width: 90%; max-height: 85%;
+        object-fit: contain;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        border: 4px solid var(--vanille-pure);
+        border-radius: 4px;
+        cursor: default;
+    }
+    .lightbox-close {
+        position: absolute; top: 20px; right: 35px;
+        color: var(--vanille-pure); font-size: 40px; font-weight: bold;
+        cursor: pointer; transition: color 0.3s ease;
+    }
+    .lightbox-close:hover { color: var(--vanille-eclat); }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* Style pour les flèches de navigation de la lightbox */
+    .lightbox-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2.5rem;
+        color: var(--vanille-pure);
+        cursor: pointer;
+        padding: 20px;
+        user-select: none;
+        transition: background-color 0.3s ease;
+    }
+    .lightbox-nav:hover { background-color: rgba(0,0,0,0.2); }
+    .lightbox-prev { left: 15px; }
+    .lightbox-next { right: 15px; }
+    .lightbox-nav.hidden { display: none; }
+</style>
 
     <section id="boutique-liste" style="background-color: var(--fond-ecume);">
         <div class="container">

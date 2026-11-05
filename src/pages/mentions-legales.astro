@@ -1,29 +1,30 @@
 ---
+// src/pages/mentions-legales.astro
 import MainLayout from '../layouts/MainLayout.astro';
 const pageId = "mentions-legales";
 import EmailProtect from '../components/EmailProtect.astro';
 import PhoneProtect from '../components/PhoneProtect.astro';
----
 
-<MainLayout 
-  title="Mentions Légales et Politique de Confidentialité | Jean François & ANIUTA"
-  description="Consultez les mentions légales, les conditions générales de vente (CGV) et la politique de confidentialité du site Jean François & ANIUTA."
-  pageId={pageId}
->
-<script type="application/ld+json" slot="head">
-{
+// Récupération dynamique de l'URL du site depuis le .env
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+
+// Extraction du nom de domaine propre (ex: "jf-aniuta.vercel.app" ou "mon-domaine.fr")
+const domainName = new URL(siteUrl).hostname;
+
+// Schéma JSON-LD dynamique pour les mentions légales
+const schemaData = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "@id": `${siteUrl}/#organization`,
       "name": "Jean-François & Aniuta",
-      "url": "https://jf-aniuta.vercel.app/",
+      "url": `${siteUrl}/`,
       "logo": {
         "@type": "ImageObject",
-        "@id": "https://jf-aniuta.vercel.app/#logo",
-        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
-        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "@id": `${siteUrl}/#logo`,
+        "url": `${siteUrl}/images/logo_512.png`,
+        "contentUrl": `${siteUrl}/images/logo_512.png`,
         "width": 512,
         "height": 512,
         "caption": "Jean-François & Aniuta"
@@ -44,11 +45,11 @@ import PhoneProtect from '../components/PhoneProtect.astro';
     },
     {
       "@type": "WebPage",
-      "@id": "https://jf-aniuta.vercel.app/mentions-legales#webpage",
-      "url": "https://jf-aniuta.vercel.app/mentions-legales",
+      "@id": `${siteUrl}/mentions-legales#webpage`,
+      "url": `${siteUrl}/mentions-legales`,
       "name": "Mentions Légales - Jean-François & Aniuta",
       "description": "Informations légales, conditions de vente et politique de confidentialité de l'Atelier Jean-François & Aniuta.",
-      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
+      "isPartOf": { "@id": `${siteUrl}/#website` },
       "breadcrumb": {
         "@type": "BreadcrumbList",
         "itemListElement": [
@@ -56,26 +57,33 @@ import PhoneProtect from '../components/PhoneProtect.astro';
             "@type": "ListItem",
             "position": 1,
             "name": "Accueil",
-            "item": "https://jf-aniuta.vercel.app/"
+            "item": `${siteUrl}/`
           },
           {
             "@type": "ListItem",
             "position": 2,
             "name": "Mentions Légales",
-            "item": "https://jf-aniuta.vercel.app/mentions-legales"
+            "item": `${siteUrl}/mentions-legales`
           }
         ]
       }
     }
   ]
-}
-</script>
+});
+---
+
+<MainLayout 
+  title="Mentions Légales et Politique de Confidentialité | Jean François & ANIUTA"
+  description="Consultez les mentions légales, les conditions générales de vente (CGV) et la politique de confidentialité du site Jean François & ANIUTA."
+  pageId={pageId}
+>
+  <script type="application/ld+json" slot="head" set:html={schemaData}></script>
 
     <section id="mentions-legales">
         <div class="container">
             <h2>Mentions Légales & CGV</h2>
             
-            <p>Conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 pour la confiance en l'économie numérique, il est précisé aux utilisateurs du site <strong>jf-aniuta.vercel.app</strong> l'identité des différents intervenants dans le cadre de sa réalisation et de son suivi.</p>
+            <p>Conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 pour la confiance en l'économie numérique, il est précisé aux utilisateurs du site <strong>{domainName}</strong> l'identité des différents intervenants dans le cadre de sa réalisation et de son suivi.</p>
 
             <h3>1. Identification de l'Éditeur du Site</h3>
             <dl class="legal-grid">
@@ -148,7 +156,7 @@ import PhoneProtect from '../components/PhoneProtect.astro';
                 <dd>Réseau Edge de Vercel</dd>
 
                 <dt>URL du site</dt>
-                <dd><a href="https://jf-aniuta.vercel.app" target="_blank" class="poetic-link">jf-aniuta.vercel.app</a></dd>
+                <dd><a href={siteUrl} target="_blank" class="poetic-link">{domainName}</a></dd>
 
                 <dt>Adresse hébergeur</dt>
                 <dd>340 S Lemon Ave #4133, Walnut, CA 91789, USA</dd>
@@ -170,7 +178,7 @@ import PhoneProtect from '../components/PhoneProtect.astro';
             <hr>
 
             <h3>4. Conditions Générales de Vente (CGV)</h3>
-            <p>Les présentes conditions générales de vente (CGV) s'appliquent à toutes les ventes de créations artisanales conclues sur le site <strong>jf-aniuta.vercel.app</strong> auprès de clients particuliers.</p>
+            <p>Les présentes conditions générales de vente (CGV) s'appliquent à toutes les ventes de créations artisanales conclues sur le site <strong>{domainName}</strong> auprès de clients particuliers.</p>
 
             <p><strong>Ventes à l'Atelier :</strong> Les ventes effectuées directement à l'Atelier (Chasseradès) sont fermes et définitives. Conformément à la loi, aucun droit de rétractation ne s'applique aux achats physiques sur place.</p>
 

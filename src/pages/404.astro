@@ -1,22 +1,26 @@
 ---
-// 1. Génération de l'année
+// 404.astro
+// 1. Récupération dynamique de l'URL du site depuis le .env (avec fallback)
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+
+// 2. Génération de l'année
 const currentYear = new Date().getFullYear();
 
 import PhoneProtect from '../components/PhoneProtect.astro';
 
-// 2. Imports pour la performance
+// 3. Imports pour la performance
 import '../styles/fa/css/brands.min.css';
 
-// 3. Schéma simplifié pour la 404 (Mode Forteresse)
+// 4. Schéma dynamique pour la 404 (Mode Forteresse)
 const schemaData = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "WebPage",
-      "@id": "https://jf-aniuta.vercel.app/404#webpage",
-      "url": "https://jf-aniuta.vercel.app/404",
+      "@id": `${siteUrl}/404#webpage`,
+      "url": `${siteUrl}/404`,
       "name": "Page non trouvée - Jean-François & Aniuta",
-      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" }
+      "isPartOf": { "@id": `${siteUrl}/#website` }
     }
   ]
 });

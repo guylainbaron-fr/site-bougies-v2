@@ -1,4 +1,5 @@
 ---
+// src/pages/index.astro
 export const prerender = false;
 
 import MainLayout from '../layouts/MainLayout.astro';
@@ -16,41 +17,44 @@ import tableau3d from "../assets/images/tableau-3d.webp";
 import atelierImg from "../assets/images/accueil-h2-2.webp";
 import aproposImg from "../assets/images/accueil-h2-3.webp";
 
+// Récupération dynamique de l'URL du site depuis le .env
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+
 // --- DONNÉES STRUCTURÉES ---
 const schemaData = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "@id": `${siteUrl}/#organization`,
       "name": "Jean-François & Aniuta",
-      "url": "https://jf-aniuta.vercel.app/",
+      "url": `${siteUrl}/`,
       "logo": {
         "@type": "ImageObject",
-        "@id": "https://jf-aniuta.vercel.app/#logo",
-        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
-        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "@id": `${siteUrl}/#logo`,
+        "url": `${siteUrl}/images/logo_512.png`,
+        "contentUrl": `${siteUrl}/images/logo_512.png`,
         "width": 512,
         "height": 512,
         "caption": "Jean-François & Aniuta"
       },
-      "image": { "@id": "https://jf-aniuta.vercel.app/#logo" }
+      "image": { "@id": `${siteUrl}/#logo` }
     },
     {
       "@type": "WebSite",
-      "@id": "https://jf-aniuta.vercel.app/#website",
-      "url": "https://jf-aniuta.vercel.app/",
+      "@id": `${siteUrl}/#website`,
+      "url": `${siteUrl}/`,
       "name": "Jean-François & Aniuta - Créations Artisanales",
       "inLanguage": "fr-FR",
-      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+      "publisher": { "@id": `${siteUrl}/#organization` }
     },
     {
       "@type": "LocalBusiness",
-      "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+      "@id": `${siteUrl}/#localbusiness`,
       "name": "Jean-François & Aniuta - Atelier Artisanal (Sculpture & Bougies)",
-      "url": "https://jf-aniuta.vercel.app/",
+      "url": `${siteUrl}/`,
       "priceRange": "€€",
-      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
+      "image": `${siteUrl}/images/logo_512.png`,
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "149 Route du Pont du Vallat, Chasseradès",
@@ -59,7 +63,7 @@ const schemaData = JSON.stringify({
         "addressRegion": "Occitanie",
         "addressCountry": "FR"
       },
-      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+      "parentOrganization": { "@id": `${siteUrl}/#organization` }
     }
   ]
 });
@@ -68,7 +72,8 @@ const schemaData = JSON.stringify({
 <MainLayout 
     title="Jean François & ANIUTA Artisans Sculpteurs Lozere 48"
     description="Artisanat du bois et de la bougie. Sculptures sur bois local, bougies champignons, tableaux, cèpes séchés et accessoires à Chasseradès."
-    pageId={pageId}>
+    pageId={pageId}
+>
 <script type="application/ld+json" slot="head" set:html={schemaData} />
 
     <section id="hero">

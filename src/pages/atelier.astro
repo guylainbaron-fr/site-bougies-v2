@@ -1,4 +1,5 @@
 ---
+// src/pages/atelier.astro
 import MainLayout from '../layouts/MainLayout.astro';
 const pageId = "atelier";
 
@@ -8,37 +9,34 @@ import { Image } from 'astro:assets';
 import sculptureBois from '../assets/images/sculpture-bois-artisanat.webp';
 import processusFabrication from '../assets/images/processus-fabrication-cepes.webp';
 import vitrineProduits from '../assets/images/vitrine-produits.webp';
----
 
-<MainLayout 
-  title="Atelier Sculpture Bois & Bougies Lozère | J.F. & ANIUTA à Chasseradès"
-  description="Découvrez l'atelier de Jean-François et Aniuta en Lozère (48). Sculpture sur bois local et fabrication de bougies champignons en cire 100% naturelle parfum vanille gourmande."
-  pageId={pageId}
->
-<script type="application/ld+json" slot="head">
-{
+// Récupération dynamique de l'URL du site depuis le .env
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+
+// Schéma JSON-LD dynamique pour la page atelier
+const schemaData = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "@id": `${siteUrl}/#organization`,
       "name": "Jean-François & Aniuta",
-      "url": "https://jf-aniuta.vercel.app/",
+      "url": `${siteUrl}/`,
       "logo": {
         "@type": "ImageObject",
-        "@id": "https://jf-aniuta.vercel.app/#logo",
-        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
-        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "@id": `${siteUrl}/#logo`,
+        "url": `${siteUrl}/images/logo_512.png`,
+        "contentUrl": `${siteUrl}/images/logo_512.png`,
         "width": 512,
         "height": 512
       }
     },
     {
       "@type": "LocalBusiness",
-      "@id": "https://jf-aniuta.vercel.app/#atelier",
+      "@id": `${siteUrl}/#atelier`,
       "name": "L'Atelier Jean-François & Aniuta",
-      "url": "https://jf-aniuta.vercel.app/atelier",
-      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
+      "url": `${siteUrl}/atelier`,
+      "image": `${siteUrl}/images/logo_512.png`,
       "priceRange": "€€",
       "description": "Atelier artisanal en Lozère spécialisé dans la sculpture sur bois et la manufacture de bougies champignons ultra-réalistes en cire 100% naturelle.",
       "address": {
@@ -59,20 +57,27 @@ import vitrineProduits from '../assets/images/vitrine-produits.webp';
         "https://www.instagram.com/jean_francois_aniuta/",
         "https://www.tiktok.com/@jeanfrancoisbaron2"
       ],
-      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+      "parentOrganization": { "@id": `${siteUrl}/#organization` }
     },
     {
       "@type": "WebPage",
-      "@id": "https://jf-aniuta.vercel.app/atelier#webpage",
-      "url": "https://jf-aniuta.vercel.app/atelier",
+      "@id": `${siteUrl}/atelier#webpage`,
+      "url": `${siteUrl}/atelier`,
       "name": "L'Atelier : Sculpture et Création - Jean-François & Aniuta",
-      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
-      "about": { "@id": "https://jf-aniuta.vercel.app/#atelier" },
+      "isPartOf": { "@id": `${siteUrl}/#website` },
+      "about": { "@id": `${siteUrl}/#atelier` },
       "description": "Découvrez le savoir-faire artisanal du bois et de la cire au cœur de la Lozère. Création de bougies cèpes et morilles."
     }
   ]
-}
-</script>
+});
+---
+
+<MainLayout 
+  title="Atelier Sculpture Bois & Bougies Lozère | J.F. & ANIUTA à Chasseradès"
+  description="Découvrez l'atelier de Jean-François et Aniuta en Lozère (48). Sculpture sur bois local et fabrication de bougies champignons en cire 100% naturelle parfum vanille gourmande."
+  pageId={pageId}
+>
+<script type="application/ld+json" slot="head" set:html={schemaData}></script>
 
     <section id="introduction-atelier">
         <div class="container">

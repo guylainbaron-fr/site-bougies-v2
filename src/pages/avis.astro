@@ -1,9 +1,55 @@
 ---
+// src/pages/avis.astro
 import MainLayout from '../layouts/MainLayout.astro';
 const pageId = "avis";
 
 import { Image } from 'astro:assets';
 import avisHeroImg from "../assets/images/avis-Img.webp";
+
+// Récupération dynamique de l'URL du site depuis le .env
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+
+// Schéma JSON-LD dynamique pour la page avis
+const schemaData = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      "name": "Jean-François & Aniuta",
+      "url": `${siteUrl}/`,
+      "logo": {
+        "@type": "ImageObject",
+        "@id": `${siteUrl}/#logo`,
+        "url": `${siteUrl}/images/logo_512.png`,
+        "contentUrl": `${siteUrl}/images/logo_512.png`,
+        "width": 512,
+        "height": 512
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": `${siteUrl}/avis/#webpage`,
+      "url": `${siteUrl}/avis`,
+      "name": "Livre d'Or et Avis Clients | Jean-François & Aniuta",
+      "description": "Découvrez les témoignages et avis sur nos sculptures en bois et bougies champignons ultra-réalistes.",
+      "isPartOf": { "@id": `${siteUrl}/#website` },
+      "about": { "@id": `${siteUrl}/#organization` }
+    },
+    {
+      "@type": "LocalBusiness",
+      "@id": `${siteUrl}/#localbusiness`,
+      "name": "Jean-François & Aniuta",
+      "image": `${siteUrl}/images/logo_512.png`,
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5",
+        "reviewCount": "12"
+      },
+      "parentOrganization": { "@id": `${siteUrl}/#organization` }
+    }
+  ]
+});
 ---
 
 <MainLayout 
@@ -11,48 +57,7 @@ import avisHeroImg from "../assets/images/avis-Img.webp";
   description="Découvrez les témoignages de nos clients. Le réalisme de nos bougies cèpes et la qualité de nos sculptures bois font la fierté de l'artisanat lozérien."
   pageId={pageId}
 >
-<script type="application/ld+json" slot="head">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://jf-aniuta.vercel.app/#organization",
-      "name": "Jean-François & Aniuta",
-      "url": "https://jf-aniuta.vercel.app/",
-      "logo": {
-        "@type": "ImageObject",
-        "@id": "https://jf-aniuta.vercel.app/#logo",
-        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
-        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
-        "width": 512,
-        "height": 512
-      }
-    },
-    {
-      "@type": "WebPage",
-      "@id": "https://jf-aniuta.vercel.app/avis/#webpage",
-      "url": "https://jf-aniuta.vercel.app/avis",
-      "name": "Livre d'Or et Avis Clients | Jean-François & Aniuta",
-      "description": "Découvrez les témoignages et avis sur nos sculptures en bois et bougies champignons ultra-réalistes.",
-      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" },
-      "about": { "@id": "https://jf-aniuta.vercel.app/#organization" }
-    },
-    {
-      "@type": "LocalBusiness",
-      "@id": "https://jf-aniuta.vercel.app/#localbusiness",
-      "name": "Jean-François & Aniuta",
-      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "5",
-        "reviewCount": "12" 
-      },
-      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
-    }
-  ]
-}
-</script>
+<script type="application/ld+json" slot="head" set:html={schemaData}></script>
 
     <section id="apropos-livre">
         <div class="container">

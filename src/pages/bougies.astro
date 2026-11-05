@@ -1,4 +1,5 @@
 ---
+// src/pages/bougies.astro
 import MainLayout from '../layouts/MainLayout.astro';
 import PhoneProtect from '../components/PhoneProtect.astro';
 const pageId = "bougies";
@@ -30,38 +31,34 @@ import VideoItem from '../components/VideoItem.astro';
 import poster1 from '../assets/images/miniature-cadeau-1.webp';
 import poster2 from '../assets/images/miniature-cadeau-2.webp';
 import poster3 from '../assets/images/miniature-cadeau-3.webp';
----
 
-<MainLayout 
-    title="Bougies Champignons Lozère : Amanite, Girolle, Morilles et Cèpes"
-    description="Découvrez nos 8 bougies champignons d'exception sculptées en Lozère : Amanite tue-mouches, Girolle, Morilles et Grand Cèpe Sublime au parfum Vanille Gourmande."
-    pageId={pageId}
->
-    <Fragment slot="head">
-<script type="application/ld+json">
-{
+// Récupération dynamique de l'URL du site depuis le .env
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+
+// Schéma JSON-LD dynamique pour la page bougies
+const schemaData = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "@id": `${siteUrl}/#organization`,
       "name": "Jean-François & Aniuta",
-      "url": "https://jf-aniuta.vercel.app/",
+      "url": `${siteUrl}/`,
       "logo": {
         "@type": "ImageObject",
-        "@id": "https://jf-aniuta.vercel.app/#logo",
-        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
-        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "@id": `${siteUrl}/#logo`,
+        "url": `${siteUrl}/images/logo_512.png`,
+        "contentUrl": `${siteUrl}/images/logo_512.png`,
         "width": 512,
         "height": 512
       }
     },
     {
       "@type": "Store",
-      "@id": "https://jf-aniuta.vercel.app/#store",
+      "@id": `${siteUrl}/#store`,
       "name": "Jean-François & Aniuta - Bougie Champignon Lozère",
-      "url": "https://jf-aniuta.vercel.app/bougies",
-      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
+      "url": `${siteUrl}/bougies`,
+      "image": `${siteUrl}/images/logo_512.png`,
       "priceRange": "€€",
       "description": "Créateur de bougies champignons réalistes en Lozère. Pièces d'exception : Morilles et Grands Cèpes à la Vanille Gourmande.",
       "address": {
@@ -76,38 +73,46 @@ import poster3 from '../assets/images/miniature-cadeau-3.webp';
         "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
         "https://www.instagram.com/jean_francois_aniuta/"
       ],
-      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+      "parentOrganization": { "@id": `${siteUrl}/#organization` }
     },
     {
       "@type": "VideoObject",
       "name": "La Bougie Cèpe (Présentation 1)",
       "description": "Démonstration visuelle du réalisme de nos bougies cèpes en cire naturelle.",
-      "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-1.webp",
+      "thumbnailUrl": `${siteUrl}/_astro/miniature-cadeau-1.webp`,
       "uploadDate": "2025-12-06T17:09:00+01:00",
-      "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-1.mp4",
-      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+      "contentUrl": `${siteUrl}/videos/video-noel-1.mp4`,
+      "publisher": { "@id": `${siteUrl}/#organization` }
     },
     {
       "@type": "VideoObject",
       "name": "Détails & Réalisme (Présentation 2)",
       "description": "Zoom sur les textures et finitions détaillées de nos créations artisanales.",
-      "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-2.webp",
+      "thumbnailUrl": `${siteUrl}/_astro/miniature-cadeau-2.webp`,
       "uploadDate": "2025-12-06T17:09:00+01:00",
-      "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-2.mp4",
-      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+      "contentUrl": `${siteUrl}/videos/video-noel-2.mp4`,
+      "publisher": { "@id": `${siteUrl}/#organization` }
     },
     {
       "@type": "VideoObject",
       "name": "Ambiance Vanille Gourmande (Présentation 3)",
       "description": "Mise en situation de nos bougies champignons allumées diffusant leur parfum signature.",
-      "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-cadeau-3.webp",
+      "thumbnailUrl": `${siteUrl}/_astro/miniature-cadeau-3.webp`,
       "uploadDate": "2025-12-06T17:09:00+01:00",
-      "contentUrl": "https://jf-aniuta.vercel.app/videos/video-noel-3.mp4",
-      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+      "contentUrl": `${siteUrl}/videos/video-noel-3.mp4`,
+      "publisher": { "@id": `${siteUrl}/#organization` }
     }
   ]
-}
-</script>
+});
+---
+
+<MainLayout 
+    title="Bougies Champignons Lozère : Amanite, Girolle, Morilles et Cèpes"
+    description="Découvrez nos 8 bougies champignons d'exception sculptées en Lozère : Amanite tue-mouches, Girolle, Morilles et Grand Cèpe Sublime au parfum Vanille Gourmande."
+    pageId={pageId}
+>
+    <Fragment slot="head">
+      <script type="application/ld+json" set:html={schemaData}></script>
     </Fragment>
 
 <section id="nouveautes-amanite-girolle" style="background-color: var(--fond-ecume);">

@@ -1,4 +1,5 @@
 ---
+// src/pages/evenements.astro
 export const prerender = false;
 import MainLayout from '../layouts/MainLayout.astro';
 const pageId = "evenements";
@@ -7,15 +8,18 @@ import VideoItem from '../components/VideoItem.astro';
 import { Image } from 'astro:assets';
 import { kv } from "../lib/kv";
 
+// Récupération dynamique de l'URL du site depuis le .env
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+
 // 1. Définition des types
 interface EventData {
-  titre_annonce: string;
-  dates: string;
-  poster_url?: string; // URL de l'affiche (optionnel)
-  horaires: string[];
-  description: string;
-  map_url: string;
-  map_iframe: string;
+    titre_annonce: string;
+    dates: string;
+    poster_url?: string; // URL de l'affiche (optionnel)
+    horaires: string[];
+    description: string;
+    map_url: string;
+    map_iframe: string;
 }
 
 // 2. Modèle de secours mis à jour
@@ -60,34 +64,28 @@ const galleryFiles = import.meta.glob('../assets/images/marches/photo_0*.webp', 
 
 // 2. On transforme l'objet en tableau d'images valides
 const galleryImages = Object.values(galleryFiles).map((img: any) => img.default);
----
 
-<MainLayout 
-  title="Jean François & ANIUTA | Artisans Sculpteurs et Créateurs de Bougies en Lozère (48)"
-  description="Découvrez l'artisanat du bois et de la bougie de J.F. & Aniuta. Sculptures uniques sur bois local et bougies naturelles parfumées à Chasseradès (Lozère)."
-  pageId={pageId}
->
-<script type="application/ld+json" slot="head">
-{
+// Schéma JSON-LD dynamique pour la page evenements
+const schemaData = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://jf-aniuta.vercel.app/#organization",
+      "@id": `${siteUrl}/#organization`,
       "name": "Jean-François & Aniuta",
-      "url": "https://jf-aniuta.vercel.app/",
+      "url": `${siteUrl}/`,
       "logo": {
         "@type": "ImageObject",
-        "@id": "https://jf-aniuta.vercel.app/#logo",
-        "url": "https://jf-aniuta.vercel.app/images/logo_512.png",
-        "contentUrl": "https://jf-aniuta.vercel.app/images/logo_512.png",
+        "@id": `${siteUrl}/#logo`,
+        "url": `${siteUrl}/images/logo_512.png`,
+        "contentUrl": `${siteUrl}/images/logo_512.png`,
         "width": 512,
         "height": 512
       }
     },
     {
       "@type": "EventVenue",
-      "@id": "https://jf-aniuta.vercel.app/evenements#venue",
+      "@id": `${siteUrl}/evenements#venue`,
       "name": "Jean-François & Aniuta en déplacement",
       "description": "Retrouvez nos créations artisanales sur les marchés et événements en Occitanie.",
       "address": {
@@ -101,47 +99,54 @@ const galleryImages = Object.values(galleryFiles).map((img: any) => img.default)
     },
     {
       "@type": "LocalBusiness",
-      "@id": "https://jf-aniuta.vercel.app/#localbusiness",
+      "@id": `${siteUrl}/#localbusiness`,
       "name": "Jean-François & Aniuta",
-      "url": "https://jf-aniuta.vercel.app/evenements",
-      "image": "https://jf-aniuta.vercel.app/images/logo_512.png",
+      "url": `${siteUrl}/evenements`,
+      "image": `${siteUrl}/images/logo_512.png`,
       "sameAs": [
         "https://www.facebook.com/profile.php?id=61550190415219&locale=fr_FR",
         "https://www.instagram.com/jean_francois_aniuta/",
         "https://www.tiktok.com/@jeanfrancoisbaron2"
       ],
-      "location": { "@id": "https://jf-aniuta.vercel.app/evenements#venue" },
-      "parentOrganization": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+      "location": { "@id": `${siteUrl}/evenements#venue` },
+      "parentOrganization": { "@id": `${siteUrl}/#organization` }
     },
     {
       "@type": "WebPage",
-      "@id": "https://jf-aniuta.vercel.app/evenements#webpage",
-      "url": "https://jf-aniuta.vercel.app/evenements",
+      "@id": `${siteUrl}/evenements#webpage`,
+      "url": `${siteUrl}/evenements`,
       "name": "Événements et Marchés - Jean-François & Aniuta",
       "description": "Photos et vidéos de nos marchés artisanaux et événements autour du Mont Lozère.",
-      "isPartOf": { "@id": "https://jf-aniuta.vercel.app/#website" }
+      "isPartOf": { "@id": `${siteUrl}/#website` }
     },
     {
       "@type": "VideoObject",
       "name": "L'Ambiance de Notre Stand de Noël",
       "description": "Immersion vidéo dans l'ambiance féerique de notre stand d'artisanat d'art lors du Marché de Noël 2025.",
-      "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-evenement-1.webp",
+      "thumbnailUrl": `${siteUrl}/_astro/miniature-evenement-1.webp`,
       "uploadDate": "2025-12-15T14:08:00+01:00",
-      "contentUrl": "https://jf-aniuta.vercel.app/videos/video-evenement-1.mp4",
-      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+      "contentUrl": `${siteUrl}/videos/video-evenement-1.mp4`,
+      "publisher": { "@id": `${siteUrl}/#organization` }
     },
     {
       "@type": "VideoObject",
       "name": "Immersion : Stand Artisanat à Mende",
       "description": "Découvrez nos sculptures sur bois et bougies champignons exposées au Marché de Noël de Mende.",
-      "thumbnailUrl": "https://jf-aniuta.vercel.app/_astro/miniature-evenement-2.webp",
+      "thumbnailUrl": `${siteUrl}/_astro/miniature-evenement-2.webp`,
       "uploadDate": "2025-12-15T14:08:00+01:00",
-      "contentUrl": "https://jf-aniuta.vercel.app/videos/video-evenement-2.mp4",
-      "publisher": { "@id": "https://jf-aniuta.vercel.app/#organization" }
+      "contentUrl": `${siteUrl}/videos/video-evenement-2.mp4`,
+      "publisher": { "@id": `${siteUrl}/#organization` }
     }
   ]
-}
-</script>
+});
+---
+
+<MainLayout 
+    title="Jean François & ANIUTA | Artisans Sculpteurs et Créateurs de Bougies en Lozère (48)"
+    description="Découvrez l'artisanat du bois et de la bougie de J.F. & Aniuta. Sculptures uniques sur bois local et bougies naturelles parfumées à Chasseradès (Lozère)."
+    pageId={pageId}
+>
+  <script type="application/ld+json" slot="head" set:html={schemaData}></script>
 
 <section id="evenements-page">
     <div class="container">
@@ -252,7 +257,7 @@ const galleryImages = Object.values(galleryFiles).map((img: any) => img.default)
             <div class="event-past-date-full">
                 <i class="fa-regular fa-calendar-days"></i> Du 12 au 14 Décembre 2025
             </div>
-            <h3>Marché de Noël de Mende (48)</h3>
+            <h3>Marché de Noël de Mende</h3>
             <p>Place et halle au Blé & chapelle des pénitents</p>
             <div class="status-done">
                 <i class="fa-solid fa-check-circle"></i> Édition Terminée

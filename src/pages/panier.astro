@@ -1,9 +1,34 @@
 ---
+// src/pages/panier.astro
 import MainLayout from '../layouts/MainLayout.astro';
 const pageId = "panier";
+
+// Récupération dynamique de l'URL du site depuis le .env
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+
+// Schéma JSON-LD dynamique pour la page panier
+const schemaData = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": `${siteUrl}/panier#webpage`,
+      "url": `${siteUrl}/panier`,
+      "name": "Mon Panier | Jean-François & Aniuta",
+      "description": "Consultez et gérez les articles de votre panier d'achat avant de finaliser votre commande d'artisanat.",
+      "isPartOf": { "@id": `${siteUrl}/#website` }
+    }
+  ]
+});
 ---
 
-<MainLayout title="Mon Panier - Jean-François & Aniuta" pageId={pageId}>
+<MainLayout 
+  title="Mon Panier | Jean-François & Aniuta - Sculptures & Bougies"
+  description="Consultez les articles de votre panier et finalisez votre commande de créations artisanales (bougies et sculptures) en toute sécurité."
+  pageId={pageId}
+>
+  <meta name="robots" content="noindex, nofollow" slot="head" />
+  <script type="application/ld+json" slot="head" set:html={schemaData}></script>
     <style>
     /* 1. ZONE DE SÉLECTION */
     .mr-selection-wrapper {

@@ -3,17 +3,20 @@ import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
 import sitemap from '@astrojs/sitemap';
 
+// Récupération dynamique de l'URL du site depuis les variables d'environnement (Node.js)
+const SITE_URL = process.env.SITE || 'https://jf-aniuta.vercel.app';
+
 export default defineConfig({
-  site: 'https://jf-aniuta.vercel.app',
+  site: SITE_URL,
   output: 'server',
   adapter: vercel(),
   integrations: [
     sitemap({
       customPages: [
-        'https://jf-aniuta.vercel.app/boutique?cat=Sculptures',
-        'https://jf-aniuta.vercel.app/boutique?cat=Tableaux',
-        'https://jf-aniuta.vercel.app/boutique?cat=Accessoires',
-        'https://jf-aniuta.vercel.app/boutique?cat=Tous',
+        `${SITE_URL}/boutique?cat=Sculptures`,
+        `${SITE_URL}/boutique?cat=Tableaux`,
+        `${SITE_URL}/boutique?cat=Accessoires`,
+        `${SITE_URL}/boutique?cat=Tous`,
       ],
       filter: (page) =>
         !page.includes('/api/') &&

@@ -1,8 +1,9 @@
 ---
+// MainLayout.astro
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import  Analytics  from '@vercel/analytics/astro';
-import  SpeedInsights  from '@vercel/speed-insights/astro';
+import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 import '../styles/style.css';
 import '../styles/fa/css/brands.min.css';
 
@@ -17,8 +18,11 @@ const {
     canonical,
 } = Astro.props;
 
-const canonicalURL = new URL(canonical || Astro.url.pathname, "https://jf-aniuta.vercel.app");
-const socialImageURL = new URL("/images/logo_512.png", "https://jf-aniuta.vercel.app");
+// Récupération dynamique depuis le .env (avec fallback de sécurité)
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+
+const canonicalURL = new URL(canonical || Astro.url.pathname, siteUrl);
+const socialImageURL = new URL("/images/logo_512.png", siteUrl);
 ---
 
 <!DOCTYPE html>

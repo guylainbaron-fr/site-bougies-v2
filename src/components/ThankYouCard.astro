@@ -1,5 +1,9 @@
 ---
 import QRCode from './QRCode.astro';
+
+// Récupération dynamique et nettoyage de l'URL pour l'affichage textuel (on enlève "https://")
+const rawSiteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+const displayUrl = rawSiteUrl.replace(/^https?:\/\//, '');
 ---
 
 <div class="card-artisan">
@@ -25,7 +29,7 @@ import QRCode from './QRCode.astro';
 
   <p class="decouvrir">
     Laissez votre avis sur : <br/>
-    <span class="url-site">jf-aniuta.vercel.app</span>
+    <span class="url-site">{displayUrl}</span>
   </p>
 </div>
 
