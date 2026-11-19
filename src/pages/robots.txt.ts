@@ -23,6 +23,8 @@ Disallow: /vercel.json
 
 # Sitemap dynamique
 Sitemap: ${siteUrl}/sitemap-index.xml
+Sitemap: ${siteUrl}/feed.xml
+Sitemap: ${siteUrl}/google-shopping.xml
 `;
 
   return new Response(robotsContent, {
