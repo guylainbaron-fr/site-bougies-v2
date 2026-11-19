@@ -39,12 +39,23 @@ export const GET: APIRoute = async ({ request }) => {
     const title = produit.nom || 'Création artisanale';
     const category = produit.categorie || 'Artisanat';
     
+    // Statut de disponibilité
+    let statusLabel = 'Disponible';
+    if (produit.enMagasinUniquement) {
+      statusLabel = 'Création sur mesure / Atelier';
+    } else if (produit.isUnique && produit.stock <= 0) {
+      statusLabel = 'Pièce unique vendue (Exemple de création)';
+    } else if (produit.stock <= 0) {
+      statusLabel = 'En cours de réapprovisionnement';
+    }
+
     // Description enrichie
     const descParts: string[] = [];
     if (produit.description) descParts.push(produit.description);
     if (produit.poids && produit.poids.trim()) descParts.push(`Poids : ${produit.poids}`);
     if (produit.parfum && produit.parfum.trim()) descParts.push(`Senteur : ${produit.parfum}`);
     if (typeof produit.prix === 'number' && produit.prix > 0) descParts.push(`Prix : ${produit.prix.toFixed(2)} €`);
+    descParts.push(`Statut : ${statusLabel}`);
     
     const plainDesc = descParts.join(' - ');
     const htmlDesc = `
@@ -53,6 +64,7 @@ export const GET: APIRoute = async ({ request }) => {
         <p>${escapeXml(produit.description || '')}</p>
         <ul>
           <li><strong>Catégorie :</strong> ${escapeXml(category)}</li>
+          <li><strong>Disponibilité :</strong> ${escapeXml(statusLabel)}</li>
           ${produit.poids ? `<li><strong>Poids :</strong> ${escapeXml(produit.poids)}</li>` : ''}
           ${produit.parfum ? `<li><strong>Senteur :</strong> ${escapeXml(produit.parfum)}</li>` : ''}
           ${typeof produit.prix === 'number' && produit.prix > 0 ? `<li><strong>Prix :</strong> ${produit.prix.toFixed(2)} €</li>` : ''}

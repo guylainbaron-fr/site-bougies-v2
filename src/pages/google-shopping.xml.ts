@@ -29,11 +29,15 @@ export const GET: APIRoute = async ({ request }) => {
     console.error('Erreur lecture KV google-shopping.xml:', error);
   }
 
-  // Filtrer uniquement les articles éligibles à la vente en ligne (prix > 0)
-  // ou qui sont des articles physiques de la boutique
+  // Filtrer uniquement les articles achetables et disponibles :
+  // - Prix > 0
+  // - Non réservé exclusivement au magasin physique sans vente en ligne
+  // - En stock (stock > 0)
+  // - Si c'est une pièce unique (tableaux, sculptures...), exclure si vendue (stock <= 0)
   const validProducts = produits.filter((p) => {
-    // Si c'est en magasin uniquement sans prix vente en ligne, Google Shopping le refusera s'il n'a pas de prix
-    return typeof p.prix === 'number' && p.prix > 0;
+    const hasPrice = typeof p.prix === 'number' && p.prix > 0;
+    const isAvailableOnline = !p.enMagasinUniquement && p.stock > 0;
+    return hasPrice && isAvailableOnline;
   });
 
   const itemsXml = validProducts.map((p) => {
@@ -49,14 +53,8 @@ export const GET: APIRoute = async ({ request }) => {
     const mainImage = p.image || `${siteUrl}/images/logo_512.png`;
     const priceStr = `${Number(p.prix).toFixed(2)} EUR`;
 
-    // Calcul de la disponibilité Google Merchant
-    // Options valides Google : in_stock, out_of_stock, preorder, backorder
-    let availability = 'in_stock';
-    if (p.enMagasinUniquement) {
-      availability = 'out_of_stock'; // ou géré en commande directe
-    } else if (p.stock <= 0) {
-      availability = 'out_of_stock';
-    }
+    // Disponibilité : tous les articles conservés dans ce flux sont disponibles
+    const availability = 'in_stock';
 
     // Google Product Category par défaut
     // 499893 = Home & Garden > Decor > Home Fragrances > Candles
