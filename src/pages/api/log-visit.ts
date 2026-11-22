@@ -144,10 +144,9 @@ export const POST: APIRoute = async ({ request }) => {
             sourceName = "Instagram";
         }
         // PRIORITÉ 2 : Détection classique via le Referrer
-        else if (
+else if (
     referrer &&
-    (!siteHost || !refLower.includes(siteHost)) &&
-    !refLower.includes('jf-aniuta.vercel.app')
+    (!siteHost || !refLower.includes(siteHost))
 ) {
             if (refLower.includes('instagram.com')) sourceName = "Instagram";
             else if (refLower.includes('facebook.com') || refLower.includes('fb.me')) sourceName = "Facebook";
