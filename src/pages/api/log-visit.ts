@@ -4,10 +4,13 @@ import type { APIRoute } from 'astro';
 // Helper to sanitize and limit string length
 function sanitizeString(input: string | undefined | null, maxLength: number = 255): string {
     if (!input) return '';
-    
+
+    // 0. Normaliser les &amp; déjà présents pour éviter le double échappement (&amp;amp;)
+    let normalized = input.replace(/&amp;/gi, '&');
+
     // 1. Suppression des caractères de contrôle
-    let sanitized = input.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
-    
+    let sanitized = normalized.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+
     // 2. Échappement des caractères HTML pour prévenir le XSS lors de l'affichage
     const map: Record<string, string> = {
         '&': '&amp;',
@@ -21,7 +24,6 @@ function sanitizeString(input: string | undefined | null, maxLength: number = 25
 
     sanitized = sanitized.trim();
 
-    // Limit length
     if (sanitized.length > maxLength) {
         sanitized = sanitized.substring(0, maxLength);
     }
@@ -108,6 +110,9 @@ export const POST: APIRoute = async ({ request }) => {
         // On récupère la source envoyée par le script du front
         const manualSource = sanitizeString(data.testSource || data.utmSource);
 
+        const rawHost = request.headers.get('x-forwarded-host') || request.headers.get('host') || '';
+        const siteHost = rawHost.split(':')[0].replace(/^www\./i, '').toLowerCase();
+
         // PRIORITÉ O : Si c'est l'IP officielle de Google, on force le label proprement
         if (isGoogleIP) {
             sourceName = "Google";
@@ -139,7 +144,11 @@ export const POST: APIRoute = async ({ request }) => {
             sourceName = "Instagram";
         }
         // PRIORITÉ 2 : Détection classique via le Referrer
-        else if (referrer && !refLower.includes('jf-aniuta.vercel.app')) {
+        else if (
+    referrer &&
+    (!siteHost || !refLower.includes(siteHost)) &&
+    !refLower.includes('jf-aniuta.vercel.app')
+) {
             if (refLower.includes('instagram.com')) sourceName = "Instagram";
             else if (refLower.includes('facebook.com') || refLower.includes('fb.me')) sourceName = "Facebook";
             else if (refLower.includes('whatsapp.com')) sourceName = "WhatsApp";
