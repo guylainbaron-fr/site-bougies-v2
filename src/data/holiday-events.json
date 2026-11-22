@@ -145,18 +145,18 @@
     "start": "11-20",
     "end": "12-31",
     "pages": {
-      "index": "La magie de Noël {{year}} commence ici : des cadeaux qui ont une âme.",
-      "boutique": "Trouvez le cadeau idéal parmi nos créations de Noël.",
-      "bougies": "Illuminez vos fêtes avec nos <strong>bougies artisanales</strong>.",
-      "evenements": "Retrouvez-nous sur les <strong>marchés de Noël {{year}}</strong> !",
-      "atelier": "L'atelier du Père Noël ? Presque ! Découvrez nos sculptures de fête.",
-      "apropos": "Un Noël {{year}} authentique sous le signe de l'artisanat français.",
-      "avis": "Merci de faire briller notre Noël par vos gentils messages.",
-      "contact": "Commandez vos cadeaux avant le grand jour !",
-      "merci": "Que la chaleur de l'artisanat vous accompagne pour ces fêtes.",
-      "au-revoir": "Joyeuses fêtes de fin d'année {{year}} à vous et vos proches !",
-      "mentions-legales": "Des fêtes sereines en toute confiance.",
-      "default": "Joyeux Noël et excellentes fêtes {{year}} !"
+      "index": "Il neige sur l’atelier ! Préparez un Noël {{year}} chaleureux avec des créations uniques.",
+      "boutique": "Sous les flocons, trouvez le cadeau fait main qui fera briller les yeux de vos proches.",
+      "bougies": "Quand la neige tombe dehors, réchauffez votre intérieur avec nos <strong>bougies artisanales</strong>.",
+      "evenements": "Venez nous retrouver sous les flocons lors des <strong>marchés de Noël {{year}}</strong> !",
+      "atelier": "Au chaud dans notre atelier enneigé, découvrez nos sculptures façonnée à la main.",
+      "apropos": "Un hiver {{year}} tout en douceur sous le signe du savoir-faire artisanal.",
+      "avis": "Vos gentils mots réchauffent notre atelier en plein cœur de l'hiver, merci !",
+      "contact": "Un projet cadeau sous le sapin ? Écrivez-nous vite avant que le traîneau ne parte !",
+      "merci": "Merci pour votre commande ! On emballe votre création bien au chaud à l'atelier.",
+      "au-revoir": "Passez de très belles fêtes de fin d'année {{year}} au chaud et bien entourés !",
+      "mentions-legales": "Même sous la neige, vos achats restent 100 % sereins et sécurisés.",
+      "default": "Il neige sur l'atelier — joyeux Noël et belles fêtes {{year}} à vous !"
     }
   },
   {
