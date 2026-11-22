@@ -19,7 +19,7 @@ const {
 } = Astro.props;
 
 // Récupération dynamique depuis le .env (avec fallback de sécurité)
-const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.fr";
 
 const canonicalURL = new URL(canonical || Astro.url.pathname, siteUrl);
 const socialImageURL = new URL("/images/logo_512.png", siteUrl);

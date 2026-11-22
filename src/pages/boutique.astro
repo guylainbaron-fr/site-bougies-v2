@@ -11,7 +11,7 @@ const pageId = "boutique";
 const categories = ["Bougies", "Sculptures", "Tableaux", "Accessoires", "Tous"];
 
 // Récupération dynamique de l'URL du site depuis le .env
-const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.fr";
 
 // RÉCUPÉRATION DES DONNÉES
 const data = await kv.get("boutique:produits");

@@ -4,7 +4,7 @@ import vercel from '@astrojs/vercel';
 import sitemap from '@astrojs/sitemap';
 
 // Récupération dynamique de l'URL du site depuis les variables d'environnement (Node.js)
-const SITE_URL = process.env.SITE || 'https://jf-aniuta.vercel.app';
+const SITE_URL = process.env.SITE || 'https://jf-aniuta.fr';
 
 export default defineConfig({
   site: SITE_URL,

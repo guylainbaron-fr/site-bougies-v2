@@ -6,7 +6,7 @@ interface Props {
 }
 
 // En local ou en prod, on pointe directement vers l'URL officielle (via SITE ou fallback)
-const siteUrl = import.meta.env.SITE || "https://jf-aniuta.vercel.app";
+const siteUrl = import.meta.env.SITE || "https://jf-aniuta.fr";
 const defaultUrl = `${siteUrl}/?ref=qr`;
 const { url = defaultUrl, size = 150 } = Astro.props;
 
